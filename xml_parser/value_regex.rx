@@ -1,0 +1,5 @@
+>.*?<
+
+
+>   <   match between HTML brackets
+ .*?    get as little as possible between the brackets

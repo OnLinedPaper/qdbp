@@ -1,0 +1,5 @@
+.atom-dbg.cson
+
+#object and header files
+*.o
+*.gch

@@ -1,0 +1,18 @@
+^\s*<([^/].*?)>((?!<.*>).)+</\1>\s*$
+
+
+^                                  $      make sure this is the only string in the regex
+ \s*                            \s*       allow leading and trailing whitespace
+    <         >                          match between html open brackets, tag format
+     (       )                           capture group - this lets us later use the "word" in here, the opening tag, to find a closing tag
+      [^/]                               do NOT match the slash, this is an opening tag, not a closing tag
+          .*                             match any character, as many times as necessary...
+            ?                            ...but ONLY as much as necessary
+               (         )+              match as many of this group as necessary, but at least one - no empty tags
+                (?!    ).                negative lookahead: match ant character, as long as the preceding string does NOT contain...
+                   <.*>                  ...text between HTML tags
+                           </  >         match an html closing tag
+                             \1          match the first group, to get the same tag name as the first found
+
+
+inspired by https://stackoverflow.com/a/406408

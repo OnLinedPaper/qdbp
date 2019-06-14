@@ -1,0 +1,18 @@
+<data>
+  <stuff>
+    <val>lol</val>
+    <unique>11</unique>
+    <deep>
+      <deeper>
+        <deepest>treasure</deepest>
+      </deeper>
+    </deep>
+  </stuff>
+  <stuff2>
+    <tag>tagval</tag>
+  </stuff2>
+</data>
+<more>
+  <example>12.4</example>
+  <stuff>4</stuff>
+</more>

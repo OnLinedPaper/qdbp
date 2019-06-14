@@ -1,0 +1,11 @@
+<([^/].*?)>(.|\n)*?</\1>
+
+
+<         >                 match between html open brackets, tag format
+ (       )                  capture group - this lets us later use the "word" in here, the opening tag, to find a closing tag
+  [^/]                      do NOT match the slash, this is an opening tag, not a closing tag
+      .*                    match any character, as many times as necessary...
+        ?                   ...but ONLY as much as necessary
+           (    )*?         match as few of these as possible - this means the same tag names unfortunately cannot be used in a nested structure, BUT they can be used in other places in the structure
+                   </  >    match an html closing tag
+                     \1     match the first group, to get the same tag name as the first found
