@@ -1,4 +1,5 @@
 .atom-dbg.cson
+valgrind-out.txt
 
 #object and header files
 *.o
