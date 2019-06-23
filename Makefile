@@ -3,9 +3,9 @@ CFLAGS= -Wall --std=c++11
 DFLAGS = -g -ggdb
 LFLAGS= -lSDL2 -lSDL2_image
 
-DEPS = engine.h texture.h render.h movable.h xml_parser/xmlparse.h xml_parser/xmlnode.h
-OBJS = main_driver.o engine.o texture.o render.o xml_parser/xmlparse.o xml_parser/xmlnode.o
-SRCS = main_driver.cpp engine.cpp texture.cpp render.cpp xml_parser/xmlparse.cpp xml_parser/xmlnode.cpp
+DEPS = engine.h texture.h render.h movable.h xml_parser/xmlparse.h xml_parser/xmlnode.h vec2d/vec2d.h debug_draw.h
+OBJS = main_driver.o engine.o texture.o render.o xml_parser/xmlparse.o xml_parser/xmlnode.o vec2d/vec2d.o debug_draw.o
+SRCS = main_driver.cpp engine.cpp texture.cpp render.cpp xml_parser/xmlparse.cpp xml_parser/xmlnode.cpp vec2d/vec2d.cpp debug_draw.cpp
 
 #for all .o files: use the .c files and the deps
 #compile them with
