@@ -1,13 +1,17 @@
 #ifndef MOVABLE_H_
 #define MOVABLE_H_
 
+#include "vec2d/vec2d.h"
+
 class movable {
 public:
 
+  virtual void draw() const = 0;
+
 protected:
-  double x_pos;
-  double y_pos;
-  
+  vec2d pos;
+  vec2d vel;
+
 };
 
 
