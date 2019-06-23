@@ -2,6 +2,7 @@
 #include "texture.h"
 #include "render.h"
 #include "movable.h"
+#include "debug_draw.h"
 #include "xml_parser/xmlparse.h"
 
 //looking for the constructors? they're below "play"
@@ -16,7 +17,7 @@ void engine::play() {
     const Uint8* keystate;
 
   texture *t = new texture("./file.png");
-  movable *m = new movable();
+  d_draw dd;
 
 
 
@@ -36,10 +37,10 @@ void engine::play() {
       }
     }
 
-    if(keystate[SDL_SCANCODE_W]) { m->adjust_y(-4); }
-    if(keystate[SDL_SCANCODE_A]) { m->adjust_x(-4); }
-    if(keystate[SDL_SCANCODE_S]) { m->adjust_y(4); }
-    if(keystate[SDL_SCANCODE_D]) { m->adjust_x(4); }
+    if(keystate[SDL_SCANCODE_W]) { dd.adjust_y(-4); }
+    if(keystate[SDL_SCANCODE_A]) { dd.adjust_x(-4); }
+    if(keystate[SDL_SCANCODE_S]) { dd.adjust_y(4); }
+    if(keystate[SDL_SCANCODE_D]) { dd.adjust_x(4); }
 
     if(controller) {
       //process controller input
@@ -55,7 +56,7 @@ void engine::play() {
     //SDL_RenderCopy(render::get()->get_renderer(), t->get_texture(), NULL, NULL);s
     SDL_SetRenderDrawColor(render::get().get_renderer(), 28, 28, 28, 255);
 
-    m->draw();
+    dd.draw();
     SDL_RenderPresent(render::get().get_renderer());
 
     SDL_Delay(20);
