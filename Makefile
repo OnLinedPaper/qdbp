@@ -26,4 +26,8 @@ clean:
 	$(RM) *.o *.gch run debug vec2d/*.o vec2d/*.gch xml_parser/*.o xml_parser/*.gch
 
 mem:
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt ./debug; less valgrind-out.txt
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=.v-out ./debug && \
+	cat .v-out | awk '/HEAP SUMMARY/{p=1}p' > v.out && \
+	sed 's/==.*== //' "v.out" > "full-valgrind-out.txt" && \
+	cat full-valgrind-out.txt > valgrind-out.txt
+	rm .v-out; less valgrind-out.txt
