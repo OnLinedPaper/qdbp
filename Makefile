@@ -30,5 +30,5 @@ mem:
 	cat .v.out | awk '/HEAP SUMMARY/{p=1}p' > .v2.out && \
 	sed 's/==.*== //' ".v2.out" > "full-valgrind-out.txt" && \
 	cat full-valgrind-out.txt > valgrind-out.txt && \
-	perl -i -ne 'BEGIN{$$/=""} print unless (/SDL_/ or /dlopen\@\@GLIBC_2.2.5/ or /XSetLocaleModifiers/ or /_dl_catch_exception/ or /_XlcCurrentLC/)' valgrind-out.txt;
+	perl -i -ne 'BEGIN{$$/=""} print unless (/SDL_/ or /dlopen\@\@GLIBC_2.2.5/ or /XSetLocaleModifiers/ or /_dl_catch_exception/ or /_XlcCurrentLC/ or /libpulsecommon/)' valgrind-out.txt;
 	rm .v.out .v2.out; less valgrind-out.txt
