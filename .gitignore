@@ -1,5 +1,7 @@
 .atom-dbg.cson
 valgrind-out.txt
+full-valgrind-out.txt
+
 debug
 run
 
