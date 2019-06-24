@@ -26,8 +26,9 @@ clean:
 	$(RM) *.o *.gch run debug vec2d/*.o vec2d/*.gch xml_parser/*.o xml_parser/*.gch
 
 mem:
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=.v-out ./debug && \
-	cat .v-out | awk '/HEAP SUMMARY/{p=1}p' > v.out && \
-	sed 's/==.*== //' "v.out" > "full-valgrind-out.txt" && \
-	cat full-valgrind-out.txt > valgrind-out.txt
-	rm .v-out; less valgrind-out.txt
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=.v.out ./debug && \
+	cat .v.out | awk '/HEAP SUMMARY/{p=1}p' > .v2.out && \
+	sed 's/==.*== //' ".v2.out" > "full-valgrind-out.txt" && \
+	cat full-valgrind-out.txt > valgrind-out.txt && \
+	perl -i -ne 'BEGIN{$$/=""} print unless (/SDL_/ or /dlopen\@\@GLIBC_2.2.5/ or /XSetLocaleModifiers/ or /_dl_catch_exception/ or /_XlcCurrentLC/)' valgrind-out.txt;
+	rm .v.out .v2.out; less valgrind-out.txt
