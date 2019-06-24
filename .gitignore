@@ -1,10 +1,15 @@
-.atom-dbg.cson
+#debugging files
 valgrind-out.txt
 full-valgrind-out.txt
+out.txt
 
+#executables
 debug
 run
 
 #object and header files
 *.o
 *.gch
+
+#...and this thing
+.atom-dbg.cson

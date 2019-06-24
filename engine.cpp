@@ -23,6 +23,7 @@ void engine::play() {
 
   while(!quit) {
 
+//==== PLAYER INPUT here ======================================================
     while(SDL_PollEvent(&e) != 0) {
       //get an event
       keystate = SDL_GetKeyboardState(NULL);
@@ -37,20 +38,21 @@ void engine::play() {
       }
     }
 
-    if(keystate[SDL_SCANCODE_W]) { dd.adjust_y(-4); }
-    if(keystate[SDL_SCANCODE_A]) { dd.adjust_x(-4); }
-    if(keystate[SDL_SCANCODE_S]) { dd.adjust_y(4); }
-    if(keystate[SDL_SCANCODE_D]) { dd.adjust_x(4); }
+    if(keystate[SDL_SCANCODE_W]) { dd.move_up(); }
+    if(keystate[SDL_SCANCODE_A]) { dd.move_left(); }
+    if(keystate[SDL_SCANCODE_S]) { dd.move_down(); }
+    if(keystate[SDL_SCANCODE_D]) { dd.move_right(); }
 
     if(controller) {
       //process controller input
 
     }
 
-    fprintf(stdout, "%c\r", debug_swirly());
-    fflush(stdout);
+//==== UPDATE stuff here ======================================================
+    dd.update();
 
-    //TODO; display stuff here
+
+//==== DISPLAY stuff here =====================================================
     SDL_SetRenderDrawColor(render::get().get_renderer(), 128, 128, 128, 255);
     SDL_RenderClear(render::get().get_renderer());
     //SDL_RenderCopy(render::get()->get_renderer(), t->get_texture(), NULL, NULL);s
@@ -58,6 +60,12 @@ void engine::play() {
 
     dd.draw();
     SDL_RenderPresent(render::get().get_renderer());
+
+
+//==== GAME TICK here =========================================================
+
+    fprintf(stdout, "%c\r", debug_swirly());
+    fflush(stdout);
 
     SDL_Delay(20);
   }
@@ -81,6 +89,9 @@ engine::engine() : debug_swirly_int(0), controller(NULL) {
     }
   }
 
+  if( SDL_InitSubSystem(SDL_INIT_EVERYTHING) < 0) {
+    throw(std::string("Couldn't init SDL! Error: ") + SDL_GetError());
+  }
 
 }
 
