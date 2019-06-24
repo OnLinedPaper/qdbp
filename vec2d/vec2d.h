@@ -47,7 +47,8 @@ public:
   //vec2d cross(const vec2d &v) const; //it's a 2d game, this isn't implemented
 
   vec2d cap(double scalar_val) const;
-  
+  vec2d decay(double scalar_val) const;
+
 
 
 
