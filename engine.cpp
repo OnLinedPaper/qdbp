@@ -1,8 +1,8 @@
 #include "engine.h"
-#include "texture.h"
-#include "render.h"
-#include "movable.h"
-#include "debug_draw.h"
+#include "renders/texture.h"
+#include "renders/render.h"
+#include "movers/movable.h"
+#include "movers/debug_draw.h"
 #include "xml_parser/xmlparse.h"
 
 //looking for the constructors? they're below "play"
