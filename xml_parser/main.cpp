@@ -12,7 +12,7 @@ int main(void) {
 
 
   try {
-    std::cout << "got: " << xmlp::get().get_xml_int("/data/stuff/unique/") << std::endl;
+    std::cout << "got: " << xmlp::get().get_xml_int("/data/stuff/unique") << std::endl;
   }
   catch (const std::string e) {
     std::cout << e;
