@@ -12,17 +12,22 @@ xmlparse::xmlparse() : root(new xmlnode()) {
   //because i can test new regex without recompiling
   std::string rx_str;
 
-  std::ifstream in("tree_regex.rx");
+  std::ifstream in("");
+
+  in.open("xml_parser/tree_regex.rx");
+  if(!in) { std::cerr << "S-H-I-T!\n"; }
   std::getline(in, rx_str);
   tree_rx = std::regex (rx_str);
   in.close();
 
-  in.open("tag_regex.rx");
+  in.open("xml_parser/tag_regex.rx");
+  if(!in) { std::cerr << "S-H-I-T!\n"; }
   std::getline(in, rx_str);
   tag_rx = std::regex (rx_str);
   in.close();
 
-  in.open("value_regex.rx");
+  in.open("xml_parser/value_regex.rx");
+  if(!in) { std::cerr << "S-H-I-T!\n"; }
   std::getline(in, rx_str);
   value_rx = std::regex (rx_str);
   in.close();
@@ -31,14 +36,6 @@ xmlparse::xmlparse() : root(new xmlnode()) {
 xmlparse::~xmlparse() {
   delete root;
 }
-
-/*xmlparse *xmlparse::get() {
-  if(instance == NULL) {
-    instance = new xmlparse();
-  }
-
-  return instance;
-}*/
 
 //============================================================================
 
@@ -111,10 +108,10 @@ int xmlparse::get_xml_int(const std::string path) {
 
 //============================================================================
 
-float xmlparse::get_xml_float(const std::string path) {
+double xmlparse::get_xml_double(const std::string path) {
   std::string retval = get_xml_string(path);
   try {
-    return std::stof(retval);
+    return std::stod(retval);
   }
   catch (const std::invalid_argument& ia) {
     //they probably tried to convert a string or something
