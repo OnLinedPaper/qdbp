@@ -1,0 +1,9 @@
+<movers>
+  <debug_draw>
+    <movement>
+      <vel_cap>20</vel_cap>
+      <vel_decay>0.1</vel_decay>
+      <vel_accel>1</vel_accel>
+    </movement>
+  </debug_draw>
+</movers>
