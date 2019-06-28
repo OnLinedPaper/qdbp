@@ -93,6 +93,8 @@ engine::engine() : debug_swirly_int(0), controller(NULL) {
     throw(std::string("Couldn't init SDL! Error: ") + SDL_GetError());
   }
 
+  xmlparse::get().build_tree("gamedata.xml");
+
 }
 
 engine::~engine() {

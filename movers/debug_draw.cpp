@@ -2,15 +2,19 @@
 #include "debug_draw.h"
 #include "../renders/render.h"
 #include "../vec2d/vec2d.h"
+#include "../xml_parser/xmlparse.h"
 #include <iostream>
+
+using xmlp = xmlparse;
+
 
 d_draw::d_draw() : moved(false) {
   pos = vec2d(0, 0);
   vel = vec2d(0, 0);
 
-  vel_accel = 1;
-  vel_cap = 20;
-  vel_decay = 0.1;
+  vel_accel = xmlp::get().get_xml_double("/movers/debug_draw/movement/vel_accel/");
+  vel_cap = xmlp::get().get_xml_double("/movers/debug_draw/movement/vel_cap/");
+  vel_decay = xmlp::get().get_xml_double("/movers/debug_draw/movement/vel_decay/");
 }
 
 void d_draw::move_up() { vel[1] -= vel_accel; moved = true; }
