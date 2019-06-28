@@ -12,9 +12,11 @@ d_draw::d_draw() : moved(false) {
   pos = vec2d(0, 0);
   vel = vec2d(0, 0);
 
-  vel_accel = xmlp::get().get_xml_double("/movers/debug_draw/movement/vel_accel/");
-  vel_cap = xmlp::get().get_xml_double("/movers/debug_draw/movement/vel_cap/");
-  vel_decay = xmlp::get().get_xml_double("/movers/debug_draw/movement/vel_decay/");
+  std::string path = "/movers/debug_draw";
+
+  vel_accel = xmlp::get().get_xml_double(path + "/movement/vel_accel");
+  vel_cap = xmlp::get().get_xml_double(path + "/movement/vel_cap");
+  vel_decay = xmlp::get().get_xml_double(path + "/movement/vel_decay");
 }
 
 void d_draw::move_up() { vel[1] -= vel_accel; moved = true; }
