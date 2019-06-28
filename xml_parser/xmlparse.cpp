@@ -5,14 +5,25 @@
 #include <regex>
 #include <fstream>
 
-xmlparse::xmlparse() : root(new xmlnode()) {
-
+xmlparse::xmlparse() : root(new xmlnode()),
+tree_rx(
+  std::regex("<([^/].*?)>(.|\\n)*?</\\1>")
+),
+tag_rx(
+  std::regex("^\\s*<([^/].*?)>((?!<.*>).)+</\\1>\\s*$")
+),
+value_rx(
+  std::regex(">.*?<")
+) {
+/*
   //load the regex from an external file
   //might change this later but it makes testing faster
   //because i can test new regex without recompiling
   std::string rx_str;
 
   std::ifstream in("");
+
+  //check to see if i should put this somewhere else
 
   in.open("xml_parser/tree_regex.rx");
   if(!in) { std::cerr << "S-H-I-T!\n"; }
@@ -31,6 +42,7 @@ xmlparse::xmlparse() : root(new xmlnode()) {
   std::getline(in, rx_str);
   value_rx = std::regex (rx_str);
   in.close();
+  */
 };
 
 xmlparse::~xmlparse() {

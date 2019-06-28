@@ -32,12 +32,15 @@ private:
 
   xmlnode *root;
 
-  //for getting a "tree" of tags - found in tree_regex.rx
-  std::regex tree_rx;
-  //for checking for a value inside a tag - found in tag_regex.rx
-  std::regex tag_rx;
-  //for getting the value inside a tag - found in value_regex.rx
-  std::regex value_rx;
+  //for getting a "tree" of tags - previously found in tree_regex.rx
+  const std::regex tree_rx =
+    std::regex("<([^/].*?)>(.|\\n)*?</\\1>");
+  //for checking for a value inside a tag - previously found in tag_regex.rx
+  const std::regex tag_rx =
+    std::regex("^\\s*<([^/].*?)>((?!<.*>).)+</\\1>\\s*$");
+  //for getting the value inside a tag - previously found in value_regex.rx
+  std::regex value_rx =
+    std::regex(">.*?<");
 
 };
 
