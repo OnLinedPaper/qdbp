@@ -5,17 +5,9 @@
 #include <regex>
 #include <fstream>
 
-xmlparse::xmlparse() : root(new xmlnode()),
-tree_rx(
-  std::regex("<([^/].*?)>(.|\\n)*?</\\1>")
-),
-tag_rx(
-  std::regex("^\\s*<([^/].*?)>((?!<.*>).)+</\\1>\\s*$")
-),
-value_rx(
-  std::regex(">.*?<")
-) {
-/*
+xmlparse::xmlparse() : root(new xmlnode()) {
+  /*
+
   //load the regex from an external file
   //might change this later but it makes testing faster
   //because i can test new regex without recompiling
