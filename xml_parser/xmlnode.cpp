@@ -12,7 +12,7 @@ xmlnode::~xmlnode() {
     //recursively free all children of this element
 
     delete it->second;
-    
+
     it++;
   }
 }
@@ -56,7 +56,7 @@ void xmlnode::insert_child(const std::string name, const std::string path, const
 
 std::string xmlnode::recursive_get_value(const std::string path) {
   try {
-    if(path == ("/")) {
+    if(path == ("")) {
       //this is where we get value
       return this->get_value();
     }
@@ -68,7 +68,15 @@ std::string xmlnode::recursive_get_value(const std::string path) {
       //get the new node's name
       std::string n = p.substr(0, p.find_first_of("/"));
       //get the new path
-      p = p.substr(p.find_first_of("/"), std::string::npos);
+      std::size_t found = p.find_first_of("/");
+      if(found != std::string::npos) {
+        //there's still another "tag"
+        p = p.substr(found, std::string::npos);
+      }
+      else {
+        //this is it, it's the value we want
+        p = "";
+      }
 
       //check to see if this is a child
       if(this->children.find(n) == this->children.end()) {
