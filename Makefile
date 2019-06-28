@@ -23,7 +23,7 @@ debug: $(SRCS) $(DEPS)
 
 
 clean:
-	$(RM) *.o *.gch run debugging/debug vec2d/*.o xml_parser/*.o movers/*.o renders/*.o
+	$(RM) *.o *.gch run debugging/debug vec2d/*.o xml_parser/*.o xml_parser/run movers/*.o renders/*.o
 
 mem:
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=debugging/.v.out ./debugging/debug && \
