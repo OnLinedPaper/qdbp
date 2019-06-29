@@ -13,6 +13,8 @@ double &vec2d::operator [](int i) {
     case 1:
       return y;
       break;
+    default:
+      return max;
   }
 }
 double vec2d::operator [](int i) const {
@@ -24,6 +26,8 @@ double vec2d::operator [](int i) const {
     case 1:
       return y;
       break;
+    default:
+      return max;
   }
 }
 

@@ -5,7 +5,7 @@ render::render() : w(nullptr), r(nullptr) {
     throw(std::string("Couldn't init SDL! Error: ") + SDL_GetError());
   }
 
-  if(!IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) {
+  if(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
     throw(std::string("Couldn't init images! Error: ") + SDL_GetError());
   }
 
@@ -22,7 +22,14 @@ render::~render() {
 SDL_Window *render::init_window() {
   std::string title = "TODO: new title";
   //TODO: read the window size
-  w = SDL_CreateWindow(title.c_str(), 0, 0, 1920, 1080, SDL_WINDOW_SHOWN || SDL_WINDOW_FULLSCREEN_DESKTOP);
+
+  //disable warnings for ints in boolean context, then re-enable them
+  #pragma GCC diagnostic ignored "-Wint-in-bool-context"
+  Uint32 flags = SDL_WINDOW_SHOWN || SDL_WINDOW_FULLSCREEN_DESKTOP;
+  #pragma GCC diagnostic pop
+
+
+  w = SDL_CreateWindow(title.c_str(), 0, 0, 1920, 1080, flags);
   if(w == NULL) {
     throw(std::string("Couldn't init a window! Error: ") + SDL_GetError());
   }
@@ -30,7 +37,14 @@ SDL_Window *render::init_window() {
 }
 
 SDL_Renderer *render::init_renderer() {
-  SDL_Renderer *r = SDL_CreateRenderer(w, -1, SDL_RENDERER_PRESENTVSYNC || SDL_RENDERER_ACCELERATED);
+
+    //disable warnings for ints in boolean context, then re-enable them
+  #pragma GCC diagnostic ignored "-Wint-in-bool-context"
+  Uint32 flags = SDL_RENDERER_PRESENTVSYNC || SDL_RENDERER_ACCELERATED;
+  #pragma GCC diagnostic pop
+
+  
+  SDL_Renderer *r = SDL_CreateRenderer(w, -1, flags);
   if(r == NULL) {
     throw(std::string("Couldn't init a renderer! Error: ") + SDL_GetError());
   }

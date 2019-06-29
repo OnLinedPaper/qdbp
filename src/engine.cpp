@@ -14,9 +14,8 @@ void engine::play() {
   SDL_Event e;
 
 
-    const Uint8* keystate;
+  const Uint8* keystate;
 
-  texture *t = new texture("./file.png");
   d_draw dd;
 
 
@@ -93,7 +92,7 @@ engine::engine() : debug_swirly_int(0), controller(NULL) {
     throw(std::string("Couldn't init SDL! Error: ") + SDL_GetError());
   }
 
-  xmlparse::get().build_tree("gamedata.xml");
+  xmlparse::get().build_tree("../resources/gamedata.xml");
 
 }
 

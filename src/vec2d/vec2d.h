@@ -2,6 +2,7 @@
 #define VEC2D_H_
 
 #include <iostream>
+#include <float.h>
 
 class vec2d {
   //a 2d vector class, for position and velocity
@@ -56,6 +57,7 @@ public:
 private:
   double x;
   double y;
+  double max = DBL_MAX;
 };
 
 std::ostream &operator<<(std::ostream &output, const vec2d &v);
