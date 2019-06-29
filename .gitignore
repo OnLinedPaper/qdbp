@@ -7,6 +7,10 @@ out.txt
 debug
 run
 
+#directories
+build
+bin
+debugging
 
 #object and header files
 *.o
