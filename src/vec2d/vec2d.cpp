@@ -102,7 +102,7 @@ vec2d vec2d::cap(double scalar_val) const {
 vec2d vec2d::decay(double scalar_val) const {
   //"decay" a vector by removing a fraction of its magnitude
   double m = this->magnitude();
-  if(m < 0.001 && m > -0.001) {
+  if(m < 0.05 && m > -0.05) {
     return(vec2d(0,0));
   }
   return((this->normalize() * (m - (m * scalar_val))));
