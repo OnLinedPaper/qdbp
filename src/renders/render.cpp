@@ -11,6 +11,8 @@ render::render() : w(nullptr), r(nullptr) {
 
   w = init_window();
   r = init_renderer();
+
+  SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
 }
 
 render::~render() {
@@ -43,7 +45,7 @@ SDL_Renderer *render::init_renderer() {
   Uint32 flags = SDL_RENDERER_PRESENTVSYNC || SDL_RENDERER_ACCELERATED;
   #pragma GCC diagnostic pop
 
-  
+
   SDL_Renderer *r = SDL_CreateRenderer(w, -1, flags);
   if(r == NULL) {
     throw(std::string("Couldn't init a renderer! Error: ") + SDL_GetError());

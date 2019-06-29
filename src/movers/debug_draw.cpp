@@ -46,28 +46,27 @@ void d_draw::draw() const {
   SDL_Rect r;
   r.x = this->pos[0];
   r.y = this->pos[1];
-  r.w = 10;
-  r.h = 10;
+  r.w = r.h = 20;
 
-  SDL_Color c;
   SDL_Color box;
-  box.r = 0;
-  box.g = 0;
-  box.b = 0;
-  box.a = 255;
+  box.r = box.g = box.b = 0;
+  box.a = 196;
 
   double mag = vel.magnitude();
   if(mag == 0) {
-    box.r = 255;
+    box.r = 64;
   }
   else if(mag > (vel_cap - 0.05)) {
     box.g = 255;
+    box.b = box.r = 128;
   }
   else {
     box.b = 255;
+    box.r = box.g = 64;
   }
 
   //save color
+  SDL_Color c;
   SDL_GetRenderDrawColor(render::get().get_renderer(), &(c.r), &(c.g), &(c.b), &(c.a));
 
   SDL_SetRenderDrawColor(render::get().get_renderer(), box.r, box.g, box.b, box.a);

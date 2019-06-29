@@ -16,9 +16,15 @@ void engine::play() {
 
   const Uint8* keystate;
 
+  //moves!
   d_draw dd;
   dd.adjust_x(1920/2);
   dd.adjust_y(1080/2);
+
+  //doesn't move!
+  d_draw post;
+  post.adjust_x(1920/4);
+  post.adjust_y(1080/4);
 
 
 
@@ -28,14 +34,9 @@ void engine::play() {
     while(SDL_PollEvent(&e) != 0) {
       //get an event: protect from keybounce
       keystate = SDL_GetKeyboardState(NULL);
-      if(e.type == SDL_QUIT) {
-        quit = true;
-      }
+      if(e.type == SDL_QUIT) { quit = true; }
       else if(e.type == SDL_KEYDOWN) {
-        if(keystate[SDL_SCANCODE_ESCAPE]) {
-          quit = true;
-        }
-
+        if(keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
       }
     }
 
@@ -54,25 +55,18 @@ void engine::play() {
       );
 
       if(abs(lrud[0]) > CONTROLLER_DEADZONE) {
-        if(lrud[0] < 0) {
-          dd.move_left();
-        }
-        else {
-          dd.move_right();
-        }
+        if(lrud[0] < 0) { dd.move_left(); }
+        else { dd.move_right(); }
       }
       if(abs(lrud[1]) > CONTROLLER_DEADZONE) {
-        if(lrud[1] < 0) {
-          dd.move_up();
-        }
-        else {
-          dd.move_down();
-        }
+        if(lrud[1] < 0) { dd.move_up(); }
+        else { dd.move_down(); }
       }
     }
 
 //==== UPDATE stuff here ======================================================
     dd.update();
+    post.update();
 
 
 //==== DISPLAY stuff here =====================================================
@@ -81,6 +75,7 @@ void engine::play() {
     //SDL_RenderCopy(render::get()->get_renderer(), t->get_texture(), NULL, NULL);s
     SDL_SetRenderDrawColor(render::get().get_renderer(), 28, 28, 28, 255);
 
+    post.draw();
     dd.draw();
     SDL_RenderPresent(render::get().get_renderer());
 
