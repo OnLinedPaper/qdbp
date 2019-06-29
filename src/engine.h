@@ -6,6 +6,15 @@
 #include <string>
 #include <iostream>
 
+#define CONTROLLER_DEADZONE 8000
+
+#define LSTICK_LR 0
+#define LSTICK_UD 1
+#define LTRIGGER 2
+#define RSTICK_LR 3
+#define RSTICK_UD 4
+#define RTRIGGER 5
+
 class engine {
 
 public:

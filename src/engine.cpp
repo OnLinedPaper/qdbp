@@ -17,6 +17,8 @@ void engine::play() {
   const Uint8* keystate;
 
   d_draw dd;
+  dd.adjust_x(1920/2);
+  dd.adjust_y(1080/2);
 
 
 
@@ -24,7 +26,7 @@ void engine::play() {
 
 //==== PLAYER INPUT here ======================================================
     while(SDL_PollEvent(&e) != 0) {
-      //get an event
+      //get an event: protect from keybounce
       keystate = SDL_GetKeyboardState(NULL);
       if(e.type == SDL_QUIT) {
         quit = true;
@@ -37,6 +39,8 @@ void engine::play() {
       }
     }
 
+    //no keybounce protection
+
     if(keystate[SDL_SCANCODE_W]) { dd.move_up(); }
     if(keystate[SDL_SCANCODE_A]) { dd.move_left(); }
     if(keystate[SDL_SCANCODE_S]) { dd.move_down(); }
@@ -44,7 +48,27 @@ void engine::play() {
 
     if(controller) {
       //process controller input
+      vec2d lrud(
+        SDL_JoystickGetAxis(controller, LSTICK_LR),
+        SDL_JoystickGetAxis(controller, LSTICK_UD)
+      );
 
+      if(abs(lrud[0]) > CONTROLLER_DEADZONE) {
+        if(lrud[0] < 0) {
+          dd.move_left();
+        }
+        else {
+          dd.move_right();
+        }
+      }
+      if(abs(lrud[1]) > CONTROLLER_DEADZONE) {
+        if(lrud[1] < 0) {
+          dd.move_up();
+        }
+        else {
+          dd.move_down();
+        }
+      }
     }
 
 //==== UPDATE stuff here ======================================================
@@ -83,7 +107,10 @@ engine::engine() : debug_swirly_int(0), controller(NULL) {
     if(SDL_NumJoysticks > 0) {
       controller = SDL_JoystickOpen(0);
       if(controller == NULL) {
-        fprintf(stderr, "Couldn't init a controller! SDL_Error: %s\n", SDL_GetError());
+        fprintf(stderr, "didn't find a controller. (SDL_Error: %s)\n", SDL_GetError());
+      }
+      else {
+        fprintf(stderr, "found a controller.\n");
       }
     }
   }
