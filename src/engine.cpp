@@ -2,7 +2,8 @@
 #include "renders/texture.h"
 #include "renders/render.h"
 #include "movers/movable.h"
-#include "movers/debug_draw.h"
+#include "movers/debug_movable.h"
+#include "movers/drawable/debug_drawable.h"
 #include "xml_parser/xmlparse.h"
 
 //looking for the constructors? they're below "play"
@@ -17,12 +18,12 @@ void engine::play() {
   const Uint8* keystate;
 
   //moves!
-  d_draw dd;
-  dd.adjust_x(1920/2);
-  dd.adjust_y(1080/2);
+  d_drawable dd;
+  dd.set_x(1920/2);
+  dd.set_y(1080/2);
 
   //doesn't move!
-  d_draw post;
+  d_movable post;
   post.adjust_x(1920/4);
   post.adjust_y(1080/4);
 
@@ -114,7 +115,7 @@ engine::engine() : debug_swirly_int(0), controller(NULL) {
     throw(std::string("Couldn't init SDL! Error: ") + SDL_GetError());
   }
 
-  xmlparse::get().build_tree("../resources/gamedata.xml");
+  xmlparse::get().build_tree("resources/gamedata.xml");
 
 }
 

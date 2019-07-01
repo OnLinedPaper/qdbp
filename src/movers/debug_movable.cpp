@@ -1,30 +1,30 @@
 #include "movable.h"
-#include "debug_draw.h"
-#include "../renders/render.h"
-#include "../vec2d/vec2d.h"
-#include "../xml_parser/xmlparse.h"
+#include "debug_movable.h"
+#include "src/renders/render.h"
+#include "src/vec2d/vec2d.h"
+#include "src/xml_parser/xmlparse.h"
 #include <iostream>
 
 using xmlp = xmlparse;
 
 
-d_draw::d_draw() : moved(false) {
+d_movable::d_movable() : moved(false) {
   pos = vec2d(0, 0);
   vel = vec2d(0, 0);
 
-  std::string path = "/movers/debug_draw";
+  path = "/movers/debug_movable";
 
   vel_accel = xmlp::get().get_xml_double(path + "/movement/vel_accel");
   vel_cap = xmlp::get().get_xml_double(path + "/movement/vel_cap");
   vel_decay = xmlp::get().get_xml_double(path + "/movement/vel_decay");
 }
 
-void d_draw::move_up() { vel[1] -= vel_accel; moved = true; }
-void d_draw::move_down() { vel[1] += vel_accel; moved = true; }
-void d_draw::move_left() { vel[0] -= vel_accel; moved = true; }
-void d_draw::move_right() { vel[0] += vel_accel; moved = true; }
+void d_movable::move_up() { vel[1] -= vel_accel; moved = true; }
+void d_movable::move_down() { vel[1] += vel_accel; moved = true; }
+void d_movable::move_left() { vel[0] -= vel_accel; moved = true; }
+void d_movable::move_right() { vel[0] += vel_accel; moved = true; }
 
-void d_draw::update() {
+void d_movable::update() {
 
   //cap velocity
   vel = vel.cap(vel_cap);
@@ -42,7 +42,7 @@ void d_draw::update() {
   moved = false;
 }
 
-void d_draw::draw() const {
+void d_movable::draw() const {
   SDL_Rect r;
   r.x = this->pos[0];
   r.y = this->pos[1];
