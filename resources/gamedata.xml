@@ -1,9 +1,21 @@
 <movers>
-  <debug_draw>
+  <drawable>
+    <debug_drawable>
+      <movement>
+        <vel_cap>20</vel_cap>
+        <vel_decay>0.1</vel_decay>
+        <vel_accel>1</vel_accel>
+      </movement>
+      <textures>
+        <body>resources/file.png</body>
+      </textures>
+    </debug_drawable>
+  </drawable>
+  <debug_movable>
     <movement>
       <vel_cap>20</vel_cap>
       <vel_decay>0.1</vel_decay>
       <vel_accel>1</vel_accel>
     </movement>
-  </debug_draw>
+  </debug_movable>
 </movers>
