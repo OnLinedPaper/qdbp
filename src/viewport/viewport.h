@@ -1,0 +1,36 @@
+#ifndef VIEWPORT_H_
+#define VIEWPORT_H_
+#include "src/vec2d/vec2d.h"
+
+class viewport {
+public:
+
+  static viewport &get() {
+    static viewport instance;
+    return instance;
+  }
+
+  ~viewport();
+
+
+
+  int get_w() const { return view_width; }
+  int get_h() const { return view_height; }
+
+  double get_x() const { return pos[0]; }
+  double get_y() const { return pos[1]; }
+  double get_tlc_x() const { return pos[0] - (view_width / 2); }
+  double get_tlc_y() const { return pos[1] - (view_height / 2); }
+
+  void set_pos(const vec2d p) { pos = p; }
+
+private:
+  int view_width, view_height;
+  vec2d pos;
+
+  viewport();
+  viewport(const viewport&) = delete;
+  viewport &operator=(const viewport&) = delete;
+};
+
+#endif
