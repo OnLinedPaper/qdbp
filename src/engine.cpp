@@ -5,6 +5,7 @@
 #include "movers/debug_movable.h"
 #include "movers/drawable/debug_drawable.h"
 #include "xml_parser/xmlparse.h"
+#include "viewport/viewport.h"
 
 //looking for the constructors? they're below "play"
 
@@ -18,14 +19,14 @@ void engine::play() {
   const Uint8* keystate;
 
   //moves!
-  d_drawable dd;
-  dd.set_x(1920/2);
-  dd.set_y(1080/2);
+  d_movable dd;
+  dd.set_x(viewport::get().get_w()/2);
+  dd.set_y(viewport::get().get_h()/2);
 
   //doesn't move!
   d_movable post;
-  post.adjust_x(1920/4);
-  post.adjust_y(1080/4);
+  post.adjust_x(1920/2);
+  post.adjust_y(1080/2);
 
 
 
@@ -68,17 +69,18 @@ void engine::play() {
 //==== UPDATE stuff here ======================================================
     dd.update();
     post.update();
+    viewport::get().set_pos(dd.get_pos());
 
 
 //==== DISPLAY stuff here =====================================================
-    SDL_SetRenderDrawColor(render::get().get_renderer(), 128, 128, 128, 255);
-    SDL_RenderClear(render::get().get_renderer());
-    //SDL_RenderCopy(render::get()->get_renderer(), t->get_texture(), NULL, NULL);s
-    SDL_SetRenderDrawColor(render::get().get_renderer(), 28, 28, 28, 255);
+    SDL_SetRenderDrawColor(render::get().get_r(), 128, 128, 128, 255);
+    SDL_RenderClear(render::get().get_r());
+    //SDL_RenderCopy(render::get()->get_r(), t->get_texture(), NULL, NULL);s
+    SDL_SetRenderDrawColor(render::get().get_r(), 28, 28, 28, 255);
 
     post.draw();
     dd.draw();
-    SDL_RenderPresent(render::get().get_renderer());
+    SDL_RenderPresent(render::get().get_r());
 
 
 //==== GAME TICK here =========================================================
@@ -115,7 +117,10 @@ engine::engine() : debug_swirly_int(0), controller(NULL) {
     throw(std::string("Couldn't init SDL! Error: ") + SDL_GetError());
   }
 
+  //init the singletons
   xmlparse::get().build_tree("resources/gamedata.xml");
+  render::get().get_r();
+  viewport::get();
 
 }
 

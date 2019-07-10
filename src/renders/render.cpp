@@ -1,4 +1,5 @@
 #include "render.h"
+#include <iostream>
 
 render::render() : w(nullptr), r(nullptr) {
   if( SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
@@ -11,6 +12,12 @@ render::render() : w(nullptr), r(nullptr) {
 
   w = init_window();
   r = init_renderer();
+
+  //get size of window and resize it - the renderer apparently resizes itself
+  int wd, ht;
+  wd = ht = -1;
+  SDL_GetRendererOutputSize(r, &wd, &ht);
+  SDL_SetWindowSize(w, wd, ht);
 
   SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
 }
@@ -30,8 +37,7 @@ SDL_Window *render::init_window() {
   Uint32 flags = SDL_WINDOW_SHOWN || SDL_WINDOW_FULLSCREEN_DESKTOP;
   #pragma GCC diagnostic pop
 
-
-  w = SDL_CreateWindow(title.c_str(), 0, 0, 1920, 1080, flags);
+  w = SDL_CreateWindow(title.c_str(), 0, 0, 10000, 10000, flags);
   if(w == NULL) {
     throw(std::string("Couldn't init a window! Error: ") + SDL_GetError());
   }

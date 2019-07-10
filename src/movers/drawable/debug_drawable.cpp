@@ -2,6 +2,7 @@
 #include "src/renders/render.h"
 #include "src/vec2d/vec2d.h"
 #include "src/xml_parser/xmlparse.h"
+#include "src/viewport/viewport.h"
 #include <iostream>
 #include <SDL2/SDL.h>
 
@@ -29,7 +30,7 @@ void d_drawable::load_texture() {
     fprintf(stderr, "couldn't load image! SDL_Error: %s\n", SDL_GetError());
   }
   else {
-    t = SDL_CreateTextureFromSurface(render::get().get_renderer(), surf);
+    t = SDL_CreateTextureFromSurface(render::get().get_r(), surf);
     if(t == NULL) {
       fprintf(stderr, "couldn't create texture! SDL_Error: %s\n", SDL_GetError());
     }
@@ -62,10 +63,10 @@ void d_drawable::update() {
 
 void d_drawable::draw() const {
   SDL_Rect dest_r;
-  dest_r.x = pos[0];
-  dest_r.y = pos[1];
+  dest_r.x = pos[0] - viewport::get().get_tlc_x();
+  dest_r.y = pos[1] - viewport::get().get_tlc_y();
   dest_r.w = 128;
   dest_r.h = 128;
 
-  SDL_RenderCopy(render::get().get_renderer(), t, NULL, &dest_r);
+  SDL_RenderCopy(render::get().get_r(), t, NULL, &dest_r);
 }

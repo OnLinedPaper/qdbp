@@ -15,8 +15,8 @@ static render &get() {
   return instance;
 }
 
-  SDL_Window *get_window() { return w; };
-  SDL_Renderer *get_renderer() { return r; };
+  SDL_Window *get_w() { return w; };
+  SDL_Renderer *get_r() { return r; };
 
 private:
 

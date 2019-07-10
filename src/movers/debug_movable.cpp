@@ -3,6 +3,7 @@
 #include "src/renders/render.h"
 #include "src/vec2d/vec2d.h"
 #include "src/xml_parser/xmlparse.h"
+#include "src/viewport/viewport.h"
 #include <iostream>
 
 using xmlp = xmlparse;
@@ -44,8 +45,8 @@ void d_movable::update() {
 
 void d_movable::draw() const {
   SDL_Rect r;
-  r.x = this->pos[0];
-  r.y = this->pos[1];
+  r.x = this->pos[0] - viewport::get().get_tlc_x();
+  r.y = this->pos[1] - viewport::get().get_tlc_y();
   r.w = r.h = 20;
 
   SDL_Color box;
@@ -67,13 +68,13 @@ void d_movable::draw() const {
 
   //save color
   SDL_Color c;
-  SDL_GetRenderDrawColor(render::get().get_renderer(), &(c.r), &(c.g), &(c.b), &(c.a));
+  SDL_GetRenderDrawColor(render::get().get_r(), &(c.r), &(c.g), &(c.b), &(c.a));
 
-  SDL_SetRenderDrawColor(render::get().get_renderer(), box.r, box.g, box.b, box.a);
+  SDL_SetRenderDrawColor(render::get().get_r(), box.r, box.g, box.b, box.a);
 
   //draw rect
-  SDL_RenderFillRect(render::get().get_renderer(), &r);
+  SDL_RenderFillRect(render::get().get_r(), &r);
 
   //restore color
-  SDL_SetRenderDrawColor(render::get().get_renderer(), c.r, c.g, c.b, c.a);
+  SDL_SetRenderDrawColor(render::get().get_r(), c.r, c.g, c.b, c.a);
 }
