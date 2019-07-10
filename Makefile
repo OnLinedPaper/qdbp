@@ -7,12 +7,17 @@ DDIR = debugging
 XDIR = bin
 BDIR = build
 
-DEPS = engine.h texture.h render.h movable.h xmlparse.h xmlnode.h vec2d.h debug_movable.h drawable.h debug_drawable.h
-OBJS:= main_driver.o engine.o texture.o render.o xmlparse.o xmlnode.o vec2d.o debug_movable.o debug_drawable.o
+
+DEPS = engine.h texture.h render.h movable.h xmlparse.h xmlnode.h vec2d.h debug_movable.h drawable.h debug_drawable.h viewport.h
+
+OBJS:= main_driver.o engine.o texture.o render.o xmlparse.o xmlnode.o vec2d.o debug_movable.o debug_drawable.o viewport.o
 OBJS:= $(addprefix $(BDIR)/,$(OBJS))
-SRCS = main_driver.cpp engine.cpp texture.cpp render.cpp xmlparse.cpp xmlnode.cpp vec2d.cpp debug_movable.cpp debug_drawable.cpp
-PATHS = . movers renders vec2d xml_parser movers/drawable
+
+SRCS = main_driver.cpp engine.cpp texture.cpp render.cpp xmlparse.cpp xmlnode.cpp vec2d.cpp debug_movable.cpp debug_drawable.cpp viewport.cpp
+
+PATHS = . movers renders vec2d xml_parser movers/drawable viewport
 VPATH = $(addprefix src/,$(PATHS))
+
 
 #for all .o files: use the .c files and the deps
 #compile them with

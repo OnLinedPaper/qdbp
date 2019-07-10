@@ -9,7 +9,7 @@ texture::texture(std::string path) : g_texture(NULL) {
   }
   else {
     //make the texture from the surface's pixels
-    g_texture = SDL_CreateTextureFromSurface(render::get().get_renderer(), s);
+    g_texture = SDL_CreateTextureFromSurface(render::get().get_r(), s);
     if(g_texture == NULL) {
       fprintf(stderr, "Couldn't create texture! Error: %s\n", SDL_GetError());
     }
