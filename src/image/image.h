@@ -11,7 +11,7 @@ public:
   image(const std::string);
   ~image();
 
-  void draw(double, double) const;
+  void draw(double x, double y) const;
 
 private:
   image();
@@ -20,7 +20,7 @@ private:
 
   vec2d dimensions;
 
-  SDL_Texture t;
+  SDL_Texture *t;
 
 };
 
