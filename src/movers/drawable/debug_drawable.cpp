@@ -3,12 +3,13 @@
 #include "src/vec2d/vec2d.h"
 #include "src/xml_parser/xmlparse.h"
 #include "src/viewport/viewport.h"
+#include "src/image/image.h"
 #include <iostream>
 #include <SDL2/SDL.h>
 
 using xmlp = xmlparse;
 
-d_drawable::d_drawable() : moved(false) {
+d_drawable::d_drawable() : moved(false), i("/arrow") {
   pos = vec2d(0, 0);
   vel = vec2d(0, 0);
 
@@ -19,6 +20,8 @@ d_drawable::d_drawable() : moved(false) {
   vel_decay = xmlp::get().get_xml_double(path + "/movement/vel_decay");
 
   load_texture();
+
+
 }
 
 void d_drawable::load_texture() {
@@ -68,5 +71,6 @@ void d_drawable::draw() const {
   dest_r.w = 128;
   dest_r.h = 128;
 
-  SDL_RenderCopy(render::get().get_r(), t, NULL, &dest_r);
+  i.draw(dest_r.x, dest_r.y);
+  //SDL_RenderCopy(render::get().get_r(), t, NULL, &dest_r);
 }

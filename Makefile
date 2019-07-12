@@ -8,14 +8,14 @@ XDIR = bin
 BDIR = build
 
 
-DEPS = engine.h texture.h render.h movable.h xmlparse.h xmlnode.h vec2d.h debug_movable.h drawable.h debug_drawable.h viewport.h
+DEPS = engine.h texture.h render.h movable.h xmlparse.h xmlnode.h vec2d.h debug_movable.h drawable.h debug_drawable.h viewport.h image.h
 
-OBJS:= main_driver.o engine.o texture.o render.o xmlparse.o xmlnode.o vec2d.o debug_movable.o debug_drawable.o viewport.o
+OBJS:= main_driver.o engine.o texture.o render.o xmlparse.o xmlnode.o vec2d.o debug_movable.o debug_drawable.o viewport.o image.o
 OBJS:= $(addprefix $(BDIR)/,$(OBJS))
 
-SRCS = main_driver.cpp engine.cpp texture.cpp render.cpp xmlparse.cpp xmlnode.cpp vec2d.cpp debug_movable.cpp debug_drawable.cpp viewport.cpp
+SRCS = main_driver.cpp engine.cpp texture.cpp render.cpp xmlparse.cpp xmlnode.cpp vec2d.cpp debug_movable.cpp debug_drawable.cpp viewport.cpp image.cpp
 
-PATHS = . movers renders vec2d xml_parser movers/drawable viewport
+PATHS = . movers renders vec2d xml_parser movers/drawable viewport image
 VPATH = $(addprefix src/,$(PATHS))
 
 
@@ -26,7 +26,7 @@ VPATH = $(addprefix src/,$(PATHS))
 #				$< 			for the first prepreq to make this file, i think a .h
 $(BDIR)/%.o: %.cpp %.h
 	@mkdir -p $(BDIR)
-	@echo 'building ' $@
+	@echo 'building' $@
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
 run: $(OBJS)

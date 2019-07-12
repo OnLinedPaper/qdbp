@@ -1,6 +1,7 @@
 #ifndef DEBUG_DRAWABLE_H
 #define DEBUG_DRAWABLE_H
 #include "drawable.h"
+#include "src/image/image.h"
 
 class d_drawable : public drawable {
 public:
@@ -21,6 +22,8 @@ private:
   double vel_cap;
   double vel_decay;
   bool moved;
+
+  image i;
 
 
 };

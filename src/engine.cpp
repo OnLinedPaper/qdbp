@@ -19,7 +19,7 @@ void engine::play() {
   const Uint8* keystate;
 
   //moves!
-  d_movable dd;
+  d_drawable dd;
   dd.set_x(viewport::get().get_w()/2);
   dd.set_y(viewport::get().get_h()/2);
 
@@ -119,6 +119,7 @@ engine::engine() : debug_swirly_int(0), controller(NULL) {
 
   //init the singletons
   xmlparse::get().build_tree("resources/gamedata.xml");
+  xmlparse::get().build_tree("resources/imagedata.xml");
   render::get().get_r();
   viewport::get();
 
