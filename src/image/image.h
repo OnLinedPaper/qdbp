@@ -2,6 +2,7 @@
 #define IMAGE_H_
 
 #include <SDL2/SDL.h>
+#include <vector>
 #include "src/vec2d/vec2d.h"
 
 //a class designed to store a texture to be drawn
@@ -19,8 +20,11 @@ private:
   image& operator=(const image&);
 
   vec2d dimensions;
+  int frames;
+  int curr_frame;
+  int frame_delay;
 
-  SDL_Texture *t;
+  std::vector<SDL_Texture *> t_vec;
 
 };
 
