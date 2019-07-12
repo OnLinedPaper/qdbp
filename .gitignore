@@ -16,5 +16,8 @@ debugging
 *.o
 *.gch
 
+#krita backup files
+*~
+
 #...and this thing
 .atom-dbg.cson
