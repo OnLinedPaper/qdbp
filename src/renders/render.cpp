@@ -1,7 +1,7 @@
 #include "render.h"
 #include <iostream>
 
-render::render() : w(nullptr), r(nullptr) {
+render::render() : w(nullptr), r(nullptr), frame(0) {
   if( SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
     throw(std::string("Couldn't init SDL! Error: ") + SDL_GetError());
   }

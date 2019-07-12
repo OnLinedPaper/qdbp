@@ -1,3 +1,5 @@
+#include <chrono>
+
 #include "engine.h"
 #include "renders/texture.h"
 #include "renders/render.h"
@@ -88,7 +90,7 @@ void engine::play() {
     fprintf(stdout, "%c\r", debug_swirly());
     fflush(stdout);
 
-    SDL_Delay(20);
+    next_frame();
   }
 
 
@@ -97,7 +99,7 @@ void engine::play() {
 
 
 
-engine::engine() : debug_swirly_int(0), controller(NULL) {
+engine::engine() : f_delay(20), debug_swirly_int(0), controller(NULL) {
   if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
     fprintf(stderr, "Couldn't init joysticks subsystem! SDL_Error: %s\n", SDL_GetError());
   }
@@ -123,11 +125,50 @@ engine::engine() : debug_swirly_int(0), controller(NULL) {
   render::get().get_r();
   viewport::get();
 
+  //grab framerate data, can't do this tillsingletons are created
+  f_delay = xmlparse::get().get_xml_double("/msdelay");
 }
 
 engine::~engine() {
   SDL_JoystickClose(controller);
   close_SDL();
+}
+
+void engine::next_frame() {
+
+  static double elapsed = 0;
+
+  //get the current millisecond
+  elapsed =
+    (std::chrono::duration_cast<std::chrono::milliseconds>(
+      std::chrono::system_clock::now().time_since_epoch())
+    ).count() - elapsed;
+
+  //delay some ms
+  if(f_delay - elapsed > 0){
+    //took some time to compute
+    if(f_delay - elapsed <= f_delay) {
+      //took less than delay to compute
+      SDL_Delay(f_delay - elapsed);
+    }
+    else {
+      //took "no time" - usually happens on startup. delay max time
+      SDL_Delay(f_delay);
+    }
+  }
+  else {
+    //took a longtime to compute this round - no delay
+    //SDL_Delay(0);
+  }
+
+  //get the next millisecond
+  elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+    std::chrono::system_clock::now().time_since_epoch()
+  ).count();
+
+  //go to next frame
+  render::get().incr_f();
+
 }
 
 void engine::close_SDL() {

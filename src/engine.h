@@ -31,6 +31,9 @@ private:
   void load_media();
   void close_SDL();
 
+  void next_frame();
+  double f_delay;
+
   int debug_swirly_int;
   char debug_swirly();
   SDL_Joystick *controller;
