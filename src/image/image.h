@@ -21,7 +21,6 @@ private:
 
   vec2d dimensions;
   int frames;
-  int curr_frame;
   int frame_delay;
 
   std::vector<SDL_Texture *> t_vec;
