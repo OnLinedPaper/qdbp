@@ -166,11 +166,6 @@ void engine::next_frame() {
   //go to next frame
   t_frame::get().incr_f();
 
-  //debugging: artificial lag spike
-  if(int(t_frame::get().get_f()) % 100 < 10) {
-    SDL_Delay(100);
-  }
-
 }
 
 void engine::close_SDL() {
