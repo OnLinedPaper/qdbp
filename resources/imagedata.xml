@@ -1,9 +1,9 @@
 <arrow>
   <file>resources/images/arrow.png</file>
   <dimensions>
-    <width>64</width>
-    <height>64</height>
-    <frames>1</frames>
-    <frame_delay>0</frame_delay>
+    <width>72</width>
+    <height>72</height>
+    <frames>4</frames>
+    <frame_delay>20</frame_delay>
   </dimensions>
 </arrow>
