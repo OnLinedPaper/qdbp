@@ -1,6 +1,8 @@
 #ifndef TIMEFRAME_H_
 #define TIMEFRAME_H_
 
+#include <chrono>
+
 class t_frame {
 public:
 
@@ -21,7 +23,6 @@ public:
     elapsed = get_ms() - e;
     delay_factor = elapsed / frame_delay;
     e = get_ms();
-
 
     frame++;
   }
