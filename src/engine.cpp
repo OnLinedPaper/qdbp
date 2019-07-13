@@ -8,6 +8,7 @@
 #include "movers/drawable/debug_drawable.h"
 #include "xml_parser/xmlparse.h"
 #include "viewport/viewport.h"
+#include "timeframe/timeframe.h"
 
 //looking for the constructors? they're below "play"
 
@@ -99,7 +100,7 @@ void engine::play() {
 
 
 
-engine::engine() : f_delay(20), debug_swirly_int(0), controller(NULL) {
+engine::engine() : debug_swirly_int(0), controller(NULL) {
   if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
     fprintf(stderr, "Couldn't init joysticks subsystem! SDL_Error: %s\n", SDL_GetError());
   }
@@ -124,9 +125,10 @@ engine::engine() : f_delay(20), debug_swirly_int(0), controller(NULL) {
   xmlparse::get().build_tree("resources/imagedata.xml");
   render::get().get_r();
   viewport::get();
+  t_frame::get();
 
-  //grab framerate data, can't do this tillsingletons are created
-  f_delay = xmlparse::get().get_xml_double("/msdelay");
+  //grab framerate data, can't do this till singletons are created
+  t_frame::get().set_delay(xmlparse::get().get_xml_double("/msdelay"));
 }
 
 engine::~engine() {
@@ -136,10 +138,10 @@ engine::~engine() {
 
 void engine::next_frame() {
 
-  static double elapsed = 0;
-
-  //get the current millisecond
-  elapsed = render::get().get_ms() - elapsed;
+  //get the desired delay between frames
+  double f_delay = t_frame::get().get_delay();
+  //get the actual delay
+  double elapsed = t_frame::get().get_elapsed();
 
   //delay some ms
   if(f_delay - elapsed > 0){
@@ -159,13 +161,13 @@ void engine::next_frame() {
   }
 
   //get the next millisecond
-  elapsed = render::get().get_ms();
+  elapsed = t_frame::get().get_ms();
 
   //go to next frame
-  render::get().incr_f();
+  t_frame::get().incr_f();
 
   //debugging: artificial lag spike
-  if(int(render::get().get_f()) % 100 < 10) {
+  if(int(t_frame::get().get_f()) % 100 < 10) {
     SDL_Delay(100);
   }
 

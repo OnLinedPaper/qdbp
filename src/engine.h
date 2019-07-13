@@ -32,7 +32,6 @@ private:
   void close_SDL();
 
   void next_frame();
-  double f_delay;
 
   int debug_swirly_int;
   char debug_swirly();

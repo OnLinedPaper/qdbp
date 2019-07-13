@@ -1,7 +1,9 @@
 #ifndef DEBUG_DRAWABLE_H
 #define DEBUG_DRAWABLE_H
+#include <chrono>
 #include "drawable.h"
 #include "src/image/image.h"
+#include "src/timeframe/timeframe.h"
 
 class d_drawable : public drawable {
 public:
@@ -24,7 +26,6 @@ private:
   bool moved;
 
   image i;
-
 
 };
 

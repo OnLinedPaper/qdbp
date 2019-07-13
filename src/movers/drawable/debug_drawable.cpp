@@ -4,6 +4,7 @@
 #include "src/xml_parser/xmlparse.h"
 #include "src/viewport/viewport.h"
 #include "src/image/image.h"
+#include "src/timeframe/timeframe.h"
 #include <iostream>
 #include <SDL2/SDL.h>
 
@@ -41,10 +42,10 @@ void d_drawable::load_texture() {
   }
 }
 
-void d_drawable::move_up() { vel[1] -= vel_accel; moved = true; }
-void d_drawable::move_down() { vel[1] += vel_accel; moved = true; }
-void d_drawable::move_left() { vel[0] -= vel_accel; moved = true; }
-void d_drawable::move_right() { vel[0] += vel_accel; moved = true; }
+void d_drawable::move_up() { vel[1] -= vel_accel * t_frame::get().d_factor(); moved = true; }
+void d_drawable::move_down() { vel[1] += vel_accel * t_frame::get().d_factor(); moved = true; }
+void d_drawable::move_left() { vel[0] -= vel_accel * t_frame::get().d_factor(); moved = true; }
+void d_drawable::move_right() { vel[0] += vel_accel * t_frame::get().d_factor(); moved = true; }
 
 void d_drawable::update() {
 
@@ -52,16 +53,16 @@ void d_drawable::update() {
   vel = vel.cap(vel_cap);
 
   //move, based on velocity AND time since last frame -
-  //this will hopefully prevent lag spikes
-  pos[0] += vel[0];
-  pos[1] += vel[1];
+  //this prevents lag spikes from "slowing time"
+  pos[0] += vel[0] * t_frame::get().d_factor();
+  pos[1] += vel[1] * t_frame::get().d_factor();
 
   if(moved == false) {
     //decay velocity only when user hasn't moved
-    vel = vel.decay(vel_decay);
+    vel = vel.decay(vel_decay * t_frame::get().d_factor());
   }
 
-  //reset this
+  //reset moved
   moved = false;
 }
 

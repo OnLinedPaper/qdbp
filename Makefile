@@ -8,14 +8,14 @@ XDIR = bin
 BDIR = build
 
 
-DEPS = engine.h texture.h render.h movable.h xmlparse.h xmlnode.h vec2d.h debug_movable.h drawable.h debug_drawable.h viewport.h image.h
+DEPS = engine.h texture.h render.h movable.h xmlparse.h xmlnode.h vec2d.h debug_movable.h drawable.h debug_drawable.h viewport.h image.h timeframe.h
 
 OBJS:= main_driver.o engine.o texture.o render.o xmlparse.o xmlnode.o vec2d.o debug_movable.o debug_drawable.o viewport.o image.o
 OBJS:= $(addprefix $(BDIR)/,$(OBJS))
 
 SRCS = main_driver.cpp engine.cpp texture.cpp render.cpp xmlparse.cpp xmlnode.cpp vec2d.cpp debug_movable.cpp debug_drawable.cpp viewport.cpp image.cpp
 
-PATHS = . movers renders vec2d xml_parser movers/drawable viewport image
+PATHS = . movers renders vec2d xml_parser movers/drawable viewport image timeframe
 VPATH = $(addprefix src/,$(PATHS))
 
 
