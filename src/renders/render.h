@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <string>
+#include <chrono>
 
 class render {
 
@@ -15,8 +16,14 @@ public:
     return instance;
   }
 
-  double get_f() { return frame; }
+  double get_f() const { return frame; }
   void incr_f() { frame ++; }
+
+  double get_ms() const {
+    return std::chrono::duration_cast<std::chrono::milliseconds>(
+      std::chrono::system_clock::now().time_since_epoch()
+    ).count();
+  }
 
   SDL_Window *get_w() { return w; };
   SDL_Renderer *get_r() { return r; };

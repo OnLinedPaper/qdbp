@@ -34,8 +34,9 @@ image::image (const std::string name) :
 }
 
 image::~image() {
-  for(SDL_Texture *t : t_vec)
-  SDL_DestroyTexture(t);
+  for(SDL_Texture *t : t_vec) {
+    SDL_DestroyTexture(t);
+  }
 }
 
 void image::draw(double x_pos, double y_pos) const {

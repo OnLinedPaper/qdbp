@@ -139,10 +139,7 @@ void engine::next_frame() {
   static double elapsed = 0;
 
   //get the current millisecond
-  elapsed =
-    (std::chrono::duration_cast<std::chrono::milliseconds>(
-      std::chrono::system_clock::now().time_since_epoch())
-    ).count() - elapsed;
+  elapsed = render::get().get_ms() - elapsed;
 
   //delay some ms
   if(f_delay - elapsed > 0){
@@ -162,12 +159,15 @@ void engine::next_frame() {
   }
 
   //get the next millisecond
-  elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
-    std::chrono::system_clock::now().time_since_epoch()
-  ).count();
+  elapsed = render::get().get_ms();
 
   //go to next frame
   render::get().incr_f();
+
+  //debugging: artificial lag spike
+  if(int(render::get().get_f()) % 100 < 10) {
+    SDL_Delay(100);
+  }
 
 }
 

@@ -51,7 +51,8 @@ void d_drawable::update() {
   //cap velocity
   vel = vel.cap(vel_cap);
 
-  //move, based on velocity
+  //move, based on velocity AND time since last frame -
+  //this will hopefully prevent lag spikes
   pos[0] += vel[0];
   pos[1] += vel[1];
 
