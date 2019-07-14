@@ -109,6 +109,19 @@ vec2d vec2d::decay(double scalar_val) const {
 }
 
 
+//------------------------------------------------------------------------------
+//compute angles from the vectors
+
+double vec2d::angle_rad() const {
+return(std::atan2(y, x));
+}
+
+double vec2d::angle_deg() const {
+  //return an angle between 0 and 360
+  return(int((this->angle_rad() * (180/M_PI) + 90) + 360) % 360);
+}
+
+
 //-----------------------------------------------------------------------------
 //and then there's this one just hangin' around down here
 

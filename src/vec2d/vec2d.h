@@ -51,7 +51,8 @@ public:
   vec2d decay(double scalar_val) const;
 
 
-
+  double angle_rad() const;
+  double angle_deg() const;
 
 
 private:
