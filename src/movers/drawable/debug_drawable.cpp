@@ -10,7 +10,7 @@
 
 using xmlp = xmlparse;
 
-d_drawable::d_drawable() : moved(false), i("/arrow") {
+d_drawable::d_drawable() : moved(false), i("/arrow"), last_angle(0) {
   pos = vec2d(0, 0);
   vel = vec2d(0, 0);
 
@@ -62,17 +62,45 @@ void d_drawable::update() {
     vel = vel.decay(vel_decay * t_frame::get().d_factor());
   }
 
+//recompute the angle the ship will be drawn at, smoothing it out for sudden
+//changes in direction
+  if(vel.magnitude() != 0) {
+    //smooth-spin the image
+    //if the angle change is greater than 30, turn 30 at a time
+    double a = vel.angle_deg();
+
+    //add 360 so there's no issue with dropping from 0 to 360, this
+    //will later be modded out
+    a += 360;
+    last_angle += 360;
+
+    if(abs(a - last_angle) > 15) {
+      //steep turn - change it by finding which way to turn
+      if((int(a - last_angle) + 360) % 360 > 180) {
+        last_angle -= 15;
+      }
+      else {
+        last_angle += 15;
+      }
+    }
+    else {
+      last_angle = a;
+    }
+  }
+  last_angle = int(last_angle) % 360;
+
   //reset moved
   moved = false;
 }
 
 void d_drawable::draw() const {
   SDL_Rect dest_r;
+
   dest_r.x = pos[0] - viewport::get().get_tlc_x();
   dest_r.y = pos[1] - viewport::get().get_tlc_y();
   dest_r.w = 128;
   dest_r.h = 128;
 
-  i.draw(dest_r.x, dest_r.y);
+  i.draw_rotate(dest_r.x, dest_r.y, last_angle);
   //SDL_RenderCopy(render::get().get_r(), t, NULL, &dest_r);
 }

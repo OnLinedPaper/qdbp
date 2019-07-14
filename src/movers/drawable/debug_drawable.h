@@ -26,6 +26,7 @@ private:
   bool moved;
 
   image i;
+  double last_angle;
 
 };
 
