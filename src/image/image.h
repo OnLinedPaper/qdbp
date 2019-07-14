@@ -13,6 +13,8 @@ public:
   ~image();
 
   void draw(double x, double y) const;
+  void draw_rotate(double x, double y, const vec2d v) const;
+  void draw_rotate(double x, double y, double a) const;
 
 private:
   image();
@@ -20,6 +22,7 @@ private:
   image& operator=(const image&);
 
   vec2d dimensions;
+  vec2d pivot;
   int frames;
   int frame_delay;
 

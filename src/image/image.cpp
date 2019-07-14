@@ -4,6 +4,7 @@
 #include "image.h"
 #include "src/timeframe/timeframe.h"
 #include <iostream>
+#include <cmath>
 
 using xmlp = xmlparse;
 
@@ -11,6 +12,10 @@ image::image (const std::string name) :
   dimensions(
     xmlp::get().get_xml_double(name + "/dimensions/width"),
     xmlp::get().get_xml_double(name + "/dimensions/height")
+  ),
+  pivot(
+    xmlp::get().get_xml_double(name + "/dimensions/pivot_x"),
+    xmlp::get().get_xml_double(name + "/dimensions/pivot_y")
   ),
   frames(xmlp::get().get_xml_double(name + "/dimensions/frames")),
   frame_delay(xmlp::get().get_xml_double(name + "/dimensions/frame_delay"))
@@ -70,7 +75,14 @@ image::~image() {
   }
 }
 
-void image::draw(double x_pos, double y_pos) const {
+void image::draw_rotate(double x_pos, double y_pos, double angle) const {
+  SDL_Point *piv = NULL;
+  if(pivot.magnitude() != 0) {
+    piv = new SDL_Point();
+    piv->x = pivot[0];
+    piv->y = pivot[1];
+  }
+
   SDL_Rect dest_r;
   dest_r.x = x_pos;
   dest_r.y = y_pos;
@@ -88,5 +100,18 @@ void image::draw(double x_pos, double y_pos) const {
 
   SDL_Texture *t = t_vec[frame_to_render];
 
-  SDL_RenderCopy(render::get().get_r(), t, NULL, &dest_r);
+  SDL_RenderCopyEx(render::get().get_r(), t, NULL, &dest_r, angle, piv, SDL_FLIP_NONE);
+
+  delete piv;
+  piv = NULL;
+
+}
+
+void image::draw_rotate(double x_pos, double y_pos, const vec2d v) const {
+  draw_rotate(x_pos, y_pos, v.angle_deg());
+
+}
+
+void image::draw(double x_pos, double y_pos) const {
+  draw_rotate(x_pos, y_pos, 0);
 }
