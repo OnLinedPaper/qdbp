@@ -6,6 +6,7 @@ LFLAGS= -lSDL2 -lSDL2_image
 DDIR = debugging
 XDIR = bin
 BDIR = build
+SDIR = src
 
 
 DEPS = engine.h texture.h render.h movable.h xmlparse.h xmlnode.h vec2d.h debug_movable.h drawable.h debug_drawable.h viewport.h image.h timeframe.h
@@ -42,9 +43,8 @@ debug: $(SRCS) $(DEPS)
 	@mkdir -p $(DDIR);
 	$(CC) $(CFLAGS) $(DFLAGS) -o $(DDIR)/$@ $^ $(LFLAGS)
 
-
 clean:
-	@$(RM) *.o *.gch run $(DDIR)/debug vec2d/*.o xml_parser/*.o xml_parser/run movers/*.o renders/*.o $(XDIR)/run $(BDIR)/*.o
+	@$(RM) *.o *.gch run $(DDIR)/debug $(XDIR)/run $(BDIR)/*.o
 
 mem:
 	@valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=$(DDIR)/.v.out $(DDIR)/debug && \

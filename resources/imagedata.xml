@@ -3,6 +3,10 @@
   <dimensions>
     <width>72</width>
     <height>72</height>
+
+    <pivot_x>0</pivot_x>
+    <pivot_y>0</pivot_y>
+
     <frames>4</frames>
     <frame_delay>20</frame_delay>
   </dimensions>
