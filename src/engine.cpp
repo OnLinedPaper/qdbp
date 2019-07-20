@@ -9,6 +9,7 @@
 #include "xml_parser/xmlparse.h"
 #include "viewport/viewport.h"
 #include "timeframe/timeframe.h"
+#include "environment/chunk.h"
 
 //looking for the constructors? they're below "play"
 
@@ -21,15 +22,13 @@ void engine::play() {
 
   const Uint8* keystate;
 
+  chunk ch(0, 0, 1, 1, 1, 0);
+  chunk ch1(1, 0, 1, 1, 0, 1);
+
   //moves!
   d_drawable dd;
   dd.set_x(viewport::get().get_w()/2);
   dd.set_y(viewport::get().get_h()/2);
-
-  //doesn't move!
-  d_movable post;
-  post.adjust_x(1920/2);
-  post.adjust_y(1080/2);
 
 
 
@@ -71,7 +70,6 @@ void engine::play() {
 
 //==== UPDATE stuff here ======================================================
     dd.update();
-    post.update();
     viewport::get().set_pos(dd.get_pos());
 
 
@@ -81,7 +79,8 @@ void engine::play() {
     //SDL_RenderCopy(render::get()->get_r(), t->get_texture(), NULL, NULL);s
     SDL_SetRenderDrawColor(render::get().get_r(), 28, 28, 28, 255);
 
-    post.draw();
+    ch.draw();
+    ch1.draw();
     dd.draw();
     SDL_RenderPresent(render::get().get_r());
 

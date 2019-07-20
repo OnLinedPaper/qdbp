@@ -9,14 +9,14 @@ BDIR = build
 SDIR = src
 
 
-DEPS = engine.h texture.h render.h movable.h xmlparse.h xmlnode.h vec2d.h debug_movable.h drawable.h debug_drawable.h viewport.h image.h timeframe.h
+DEPS = engine.h texture.h render.h movable.h xmlparse.h xmlnode.h vec2d.h debug_movable.h drawable.h debug_drawable.h viewport.h image.h timeframe.h chunk.h
 
-OBJS:= main_driver.o engine.o texture.o render.o xmlparse.o xmlnode.o vec2d.o debug_movable.o debug_drawable.o viewport.o image.o timeframe.o
+OBJS:= main_driver.o engine.o texture.o render.o xmlparse.o xmlnode.o vec2d.o debug_movable.o debug_drawable.o viewport.o image.o timeframe.o chunk.o
 OBJS:= $(addprefix $(BDIR)/,$(OBJS))
 
-SRCS = main_driver.cpp engine.cpp texture.cpp render.cpp xmlparse.cpp xmlnode.cpp vec2d.cpp debug_movable.cpp debug_drawable.cpp viewport.cpp image.cpp timeframe.cpp
+SRCS = main_driver.cpp engine.cpp texture.cpp render.cpp xmlparse.cpp xmlnode.cpp vec2d.cpp debug_movable.cpp debug_drawable.cpp viewport.cpp image.cpp timeframe.cpp chunk.cpp
 
-PATHS = . movers renders vec2d xml_parser movers/drawable viewport image timeframe
+PATHS = . movers renders vec2d xml_parser movers/drawable viewport image timeframe environment
 VPATH = $(addprefix src/,$(PATHS))
 
 

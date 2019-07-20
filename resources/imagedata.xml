@@ -1,13 +1,30 @@
 <arrow>
   <file>resources/images/arrow.png</file>
   <dimensions>
+    <!--height of ONE SPRITE, not hte whole sheet-->
     <width>72</width>
     <height>72</height>
 
+    <!--pivot point of sprite - leave 0, 0 for default pivot-->
     <pivot_x>0</pivot_x>
     <pivot_y>0</pivot_y>
 
+    <!--number of frames in the sprite-->
     <frames>4</frames>
+    <!--delay in game frames between sprite animations-->
     <frame_delay>20</frame_delay>
   </dimensions>
 </arrow>
+
+<boundary_marker>
+  <file>resources/images/boundary_marker.png</file>
+  <dimensions>
+    <width>64</width>
+    <height>64</height>
+
+    <pivot_x>0</pivot_x>
+    <pivot_y>0</pivot_y>
+    <frames>12</frames>
+    <frame_delay>8</frame_delay>
+  </dimensions>
+</boundary_marker>

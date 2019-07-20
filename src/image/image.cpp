@@ -5,6 +5,7 @@
 #include "src/timeframe/timeframe.h"
 #include <iostream>
 #include <cmath>
+#include <stdlib.h>
 
 using xmlp = xmlparse;
 
@@ -18,7 +19,8 @@ image::image (const std::string name) :
     xmlp::get().get_xml_double(name + "/dimensions/pivot_y")
   ),
   frames(xmlp::get().get_xml_double(name + "/dimensions/frames")),
-  frame_delay(xmlp::get().get_xml_double(name + "/dimensions/frame_delay"))
+  frame_delay(xmlp::get().get_xml_double(name + "/dimensions/frame_delay")),
+  frame_bump(rand() % frames)
 {
   //get some space for the frames
   t_vec.reserve(frames);
@@ -84,8 +86,8 @@ void image::draw_rotate(double x_pos, double y_pos, double angle) const {
   }
 
   SDL_Rect dest_r;
-  dest_r.x = x_pos;
-  dest_r.y = y_pos;
+  dest_r.x = x_pos - (dimensions[0] / 2);
+  dest_r.y = y_pos - (dimensions[1] / 2);
   dest_r.w = dimensions[0];
   dest_r.h = dimensions[1];
 
@@ -95,7 +97,14 @@ void image::draw_rotate(double x_pos, double y_pos, double angle) const {
   int frame_to_render = 0;
   if(frame_delay != 0) {
     frame_to_render =
-      int(t_frame::get().get_f()) % int((frames * frame_delay)) / frame_delay;
+      int(t_frame::get().get_f()) //the current frame, from timeframe class
+      %
+      int((frames * frame_delay)) //total frames to complete one animation loop
+      /
+      frame_delay; //get the current frame
+
+    //introduce a little randomness, predetermined at beginning
+    frame_to_render = (frame_to_render + frame_bump) % frames;
   }
 
   SDL_Texture *t = t_vec[frame_to_render];

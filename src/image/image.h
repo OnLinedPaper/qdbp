@@ -25,6 +25,7 @@ private:
   vec2d pivot;
   int frames;
   int frame_delay;
+  int frame_bump;
 
   std::vector<SDL_Texture *> t_vec;
 
