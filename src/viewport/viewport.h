@@ -17,10 +17,15 @@ public:
   int get_w() const { return view_width; }
   int get_h() const { return view_height; }
 
+  //center of the screen - player position
   double get_x() const { return pos[0]; }
   double get_y() const { return pos[1]; }
+  //top left corner
   double get_tlc_x() const { return pos[0] - (view_width / 2); }
   double get_tlc_y() const { return pos[1] - (view_height / 2); }
+  //bottom right corner
+  double get_brc_x() const { return pos[0] + (view_width / 2); }
+  double get_brc_y() const { return pos[1] + (view_height / 2); }
 
   void set_pos(const vec2d p) { pos = p; }
 

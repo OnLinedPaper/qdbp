@@ -3,6 +3,7 @@
 #include "src/xml_parser/xmlparse.h"
 #include "image.h"
 #include "src/timeframe/timeframe.h"
+#include "src/viewport/viewport.h"
 #include <iostream>
 #include <cmath>
 #include <stdlib.h>
@@ -78,18 +79,40 @@ image::~image() {
 }
 
 void image::draw_rotate(double x_pos, double y_pos, double angle) const {
+
+  //check to see if the entity is anywhere on-screen - if it's not,
+  //don't draw it, to save time
+  if(
+    x_pos + dimensions[0] < viewport::get().get_tlc_x() ||
+    x_pos > viewport::get().get_brc_x() ||
+    y_pos + dimensions[0] < viewport::get().get_tlc_y() ||
+    y_pos > viewport::get().get_brc_y()
+  ) { return; }
+
+  SDL_Rect dest_r;
+  dest_r.x = x_pos - (dimensions[0] / 2) - viewport::get().get_tlc_x();
+  dest_r.y = y_pos - (dimensions[1] / 2) - viewport::get().get_tlc_y();
+  dest_r.w = dimensions[0];
+  dest_r.h = dimensions[1];
+  /*if(
+    dest_r.x + viewport::get().get_tlc_x() + dimensions[0] <
+      viewport::get().get_tlc_x() ||
+    dest_r.x + viewport::get().get_tlc_x() >
+      viewport::get().get_brc_x() ||
+    dest_r.y + viewport::get().get_tlc_y() + dimensions[1] <
+      viewport::get().get_tlc_y() ||
+    dest_r.y + viewport::get().get_tlc_y() >
+      viewport::get().get_brc_y()
+  ) {
+    return;
+  }*/
+
   SDL_Point *piv = NULL;
   if(pivot.magnitude() != 0) {
     piv = new SDL_Point();
     piv->x = pivot[0];
     piv->y = pivot[1];
   }
-
-  SDL_Rect dest_r;
-  dest_r.x = x_pos - (dimensions[0] / 2);
-  dest_r.y = y_pos - (dimensions[1] / 2);
-  dest_r.w = dimensions[0];
-  dest_r.h = dimensions[1];
 
   //animate by frame
   //"frame_count" is how many frames have elapsed since the first frame
