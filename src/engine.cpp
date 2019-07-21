@@ -22,8 +22,9 @@ void engine::play() {
 
   const Uint8* keystate;
 
-  chunk ch(0, 0, 1, 1, 1, 0);
-  chunk ch1(1, 0, 1, 1, 0, 1);
+  chunk ch(0, 0, 1, 1, 1, 1);
+  //chunk ch1(1, 0, 1, 0, 0, 1);
+  //chunk ch2(1, 1, 0, 1, 1, 1);
 
   //moves!
   d_drawable dd;
@@ -80,10 +81,24 @@ void engine::play() {
     SDL_SetRenderDrawColor(render::get().get_r(), 28, 28, 28, 255);
 
     ch.draw();
-    ch1.draw();
+    //ch1.draw();
+    //ch2.draw();
     dd.draw();
     SDL_RenderPresent(render::get().get_r());
 
+//==== DEBUG STUFF here =======================================================
+
+  unsigned char posi = ch.chunk_pos(dd.get_pos());
+  dd.rebuff(posi);
+
+/*
+  if( !(posi) ) { std::cerr << "in "; }
+  if( posi & chunk::UP ) { std::cerr << "up "; }
+  if( posi & chunk::DN ) { std::cerr << "down "; }
+  if( posi & chunk::LF ) { std::cerr << "left "; }
+  if( posi & chunk::RT ) { std::cerr << "right "; }
+  std::cerr << std::endl;
+*/
 
 //==== GAME TICK here =========================================================
 
@@ -92,8 +107,6 @@ void engine::play() {
 
     next_frame();
   }
-
-
 }
 
 

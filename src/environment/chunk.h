@@ -11,6 +11,17 @@ public:
   chunk(vec2d, bool, bool, bool, bool);
   chunk(double, double, bool, bool, bool, bool);
 
+  static const unsigned char IN;
+  static const unsigned char UP;
+  static const unsigned char DN;
+  static const unsigned char LF;
+  static const unsigned char RT;
+
+  //check if a given point is in a chunk - if not, check if it's above,
+  //below, left, or right
+  unsigned char chunk_pos(vec2d) const;
+  unsigned char chunk_pos(double, double) const;
+
   //check if the edges are "borders", that is, if they touch nothing
   bool is_b_up() { return border[0]; }
   bool is_b_dn() { return border[1]; }
