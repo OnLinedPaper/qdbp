@@ -34,6 +34,8 @@ public:
   virtual void draw() const = 0;
 
 protected:
+  void update() { }
+
   vec2d pos;
   vec2d vel;
 

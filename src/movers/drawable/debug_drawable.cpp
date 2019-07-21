@@ -48,6 +48,7 @@ void d_drawable::move_left() { vel[0] -= vel_accel * t_frame::get().d_factor(); 
 void d_drawable::move_right() { vel[0] += vel_accel * t_frame::get().d_factor(); moved = true; }
 
 void d_drawable::update() {
+  drawable::update();
 
   //cap velocity
   vel = vel.cap(vel_cap);

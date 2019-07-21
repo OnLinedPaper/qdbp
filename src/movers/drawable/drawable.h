@@ -10,6 +10,8 @@ public:
   SDL_Texture *get_texture() const { return t; }
 
 protected:
+  void update() { movable::update(); }
+
   virtual void load_texture() = 0;
   SDL_Texture* t;
 
