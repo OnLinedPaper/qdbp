@@ -88,6 +88,9 @@ void engine::play() {
 
 //==== DEBUG STUFF here =======================================================
 
+  //this will eventually be handled by map, and will apply to
+  //ALL entities - movable may even have its own update function
+  //specifically for this
   unsigned char posi = ch.chunk_pos(dd.get_pos());
   dd.rebuff(posi);
 
