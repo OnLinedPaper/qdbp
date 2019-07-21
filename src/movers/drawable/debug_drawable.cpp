@@ -96,8 +96,8 @@ void d_drawable::update() {
 void d_drawable::draw() const {
   SDL_Rect dest_r;
 
-  dest_r.x = pos[0] - viewport::get().get_tlc_x();
-  dest_r.y = pos[1] - viewport::get().get_tlc_y();
+  dest_r.x = pos[0];
+  dest_r.y = pos[1];
   dest_r.w = 128;
   dest_r.h = 128;
 

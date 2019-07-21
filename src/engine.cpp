@@ -23,7 +23,7 @@ void engine::play() {
   const Uint8* keystate;
 
   chunk ch(0, 0, 1, 1, 1, 1);
-  //chunk ch1(1, 0, 1, 0, 0, 1);
+  chunk ch1(2, 0, 1, 1, 1, 1);
   //chunk ch2(1, 1, 0, 1, 1, 1);
 
   //moves!
@@ -81,7 +81,7 @@ void engine::play() {
     SDL_SetRenderDrawColor(render::get().get_r(), 28, 28, 28, 255);
 
     ch.draw();
-    //ch1.draw();
+    ch1.draw();
     //ch2.draw();
     dd.draw();
     SDL_RenderPresent(render::get().get_r());

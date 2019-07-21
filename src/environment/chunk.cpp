@@ -69,8 +69,8 @@ unsigned char chunk::chunk_pos(double x_coord, double y_coord) const {
 
 void chunk::draw() const {
 
-  double x = tlc[0] - viewport::get().get_tlc_x();
-  double y = tlc[1] - viewport::get().get_tlc_y();
+  double x = tlc[0];
+  double y = tlc[1];
   //debug_draw(x, y);
   //draw 2 barriers on each line where border[i] = true -
   //that's where a border is
