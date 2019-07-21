@@ -2,7 +2,7 @@
 #define MOVABLE_H_
 
 #include "src/vec2d/vec2d.h"
-#include "src/environment/chunk.h"
+#include "src/environment/chunk/chunk.h"
 
 class movable {
 public:
@@ -10,6 +10,11 @@ public:
   void set_x(double x) { pos[0] = x; }
   void set_y(double y) { pos[1] = y; }
   vec2d get_pos() const { return pos; }
+  void set_pos(vec2d p) { pos = p; }
+  void set_pos(double x, double y) { pos[0] = x; pos[1] = y; }
+
+  vec2d get_curr_chunk() const { return curr_chunk; }
+  void set_curr_chunk(vec2d const &v) { curr_chunk = v; }
 
   void rebuff(unsigned char posi) {
     if(posi & chunk::UP) {
@@ -37,6 +42,7 @@ protected:
   void update() { }
 
   vec2d pos;
+  vec2d curr_chunk;
   vec2d vel;
 
   std::string path;

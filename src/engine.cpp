@@ -9,7 +9,8 @@
 #include "xml_parser/xmlparse.h"
 #include "viewport/viewport.h"
 #include "timeframe/timeframe.h"
-#include "environment/chunk.h"
+#include "environment/chunk/chunk.h"
+#include "environment/map/map.h"
 
 //looking for the constructors? they're below "play"
 
@@ -22,14 +23,14 @@ void engine::play() {
 
   const Uint8* keystate;
 
-  chunk ch(0, 0, 1, 1, 1, 1);
-  chunk ch1(2, 0, 1, 1, 1, 1);
+  map mp("/debug_1");
+  //chunk ch(0, 0, 1, 1, 1, 1);
+  //chunk ch1(2, 0, 1, 1, 1, 1);
   //chunk ch2(1, 1, 0, 1, 1, 1);
 
   //moves!
   d_drawable dd;
-  dd.set_x(viewport::get().get_w()/2);
-  dd.set_y(viewport::get().get_h()/2);
+  dd.set_pos(mp.get_start_pos());
 
 
 
@@ -80,8 +81,9 @@ void engine::play() {
     //SDL_RenderCopy(render::get()->get_r(), t->get_texture(), NULL, NULL);s
     SDL_SetRenderDrawColor(render::get().get_r(), 28, 28, 28, 255);
 
-    ch.draw();
-    ch1.draw();
+    mp.draw();
+    //ch.draw();
+    //ch1.draw();
     //ch2.draw();
     dd.draw();
     SDL_RenderPresent(render::get().get_r());
@@ -91,8 +93,8 @@ void engine::play() {
   //this will eventually be handled by map, and will apply to
   //ALL entities - movable may even have its own update function
   //specifically for this
-  unsigned char posi = ch.chunk_pos(dd.get_pos());
-  dd.rebuff(posi);
+  //unsigned char posi = ch.chunk_pos(dd.get_pos());
+  //dd.rebuff(posi);
 
 /*
   if( !(posi) ) { std::cerr << "in "; }
@@ -136,8 +138,12 @@ engine::engine() : debug_swirly_int(0), controller(NULL) {
   }
 
   //init the singletons
+  //note that many require xmlparse to init themselves, so
+  //xmlparse builds its trees first
   xmlparse::get().build_tree("resources/gamedata.xml");
   xmlparse::get().build_tree("resources/imagedata.xml");
+  xmlparse::get().build_tree("resources/mapdata.xml");
+
   render::get().get_r();
   viewport::get();
   t_frame::get();

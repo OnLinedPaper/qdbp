@@ -1,0 +1,17 @@
+<debug_1>
+  <dimensions>
+    <x_dim>3</x_dim>
+    <y_dim>4</y_dim>
+  </dimensions>
+  <generation>
+    <style>
+      <!--can be blank, random, or userdef-->
+      blank
+    </style>
+  </generation>
+  <start_chunk>
+    <!--the chunk where the player is placed to start-->
+    <x_chunk>1</x_chunk>
+    <y_chunk>2</y_chunk>
+  </start_chunk>
+</debug_1>
