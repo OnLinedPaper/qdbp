@@ -39,9 +39,12 @@ public:
   virtual void draw() const = 0;
 
 protected:
-  void update() { }
+  void update() {
+    last_pos = pos;
+  }
 
   vec2d pos;
+  vec2d last_pos;
   vec2d curr_chunk;
   vec2d vel;
 

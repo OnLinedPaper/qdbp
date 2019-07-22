@@ -9,7 +9,7 @@ BDIR = build
 SDIR = src
 
 
-DEPS = engine.h texture.h render.h movable.h xmlparse.h xmlnode.h vec2d.h debug_movable.h drawable.h debug_drawable.h viewport.h image.h timeframe.h chunk.h map.h
+DEPS = engine.h texture.h render.h movable.h xmlparse.h xmlnode.h vec2d.h debug_movable.h drawable.h debug_drawable.h viewport.h image.h timeframe.h chunk.h map.h map_handler.h
 
 OBJS:= main_driver.o engine.o texture.o render.o xmlparse.o xmlnode.o vec2d.o debug_movable.o debug_drawable.o viewport.o image.o timeframe.o chunk.o map.o
 OBJS:= $(addprefix $(BDIR)/,$(OBJS))

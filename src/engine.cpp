@@ -11,6 +11,7 @@
 #include "timeframe/timeframe.h"
 #include "environment/chunk/chunk.h"
 #include "environment/map/map.h"
+#include "environment/map/map_handler.h"
 
 //looking for the constructors? they're below "play"
 
@@ -23,14 +24,15 @@ void engine::play() {
 
   const Uint8* keystate;
 
-  map mp("/debug_1");
+  //map mp("/debug_1");
   //chunk ch(0, 0, 1, 1, 1, 1);
   //chunk ch1(2, 0, 1, 1, 1, 1);
   //chunk ch2(1, 1, 0, 1, 1, 1);
 
   //moves!
   d_drawable dd;
-  dd.set_pos(mp.get_start_pos());
+  dd.set_pos(map_h::get().get_start_pos());
+  dd.set_curr_chunk(map_h::get().get_start_chunk());
 
 
 
@@ -81,7 +83,8 @@ void engine::play() {
     //SDL_RenderCopy(render::get()->get_r(), t->get_texture(), NULL, NULL);s
     SDL_SetRenderDrawColor(render::get().get_r(), 28, 28, 28, 255);
 
-    mp.draw();
+    map_h::get().draw();
+    //mp.draw();
     //ch.draw();
     //ch1.draw();
     //ch2.draw();
@@ -144,6 +147,8 @@ engine::engine() : debug_swirly_int(0), controller(NULL) {
   xmlparse::get().build_tree("resources/imagedata.xml");
   xmlparse::get().build_tree("resources/mapdata.xml");
 
+
+  map_h::get().set_map("/" + xmlparse::get().get_xml_string("/first_map"));
   render::get().get_r();
   viewport::get();
   t_frame::get();

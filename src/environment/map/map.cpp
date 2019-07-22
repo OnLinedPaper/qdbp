@@ -1,4 +1,5 @@
 #include <deque>
+#include <vector>
 #include "map.h"
 #include "src/xml_parser/xmlparse.h"
 
@@ -11,7 +12,7 @@ map::map(std::string name) {
   );
 
 
-  //init c_map, now that we have dims
+  //init c_deque, now that we have dims
   init_c_deque();
 }
 
