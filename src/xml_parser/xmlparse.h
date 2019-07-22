@@ -7,8 +7,6 @@
 
 class xmlparse {
 public:
-  xmlparse(const xmlparse&) = delete;
-  xmlparse &operator=(const xmlparse&) = delete;
   ~xmlparse();
 
   static xmlparse &get() {
@@ -29,6 +27,8 @@ private:
   //singleton
 
   xmlparse();
+  xmlparse(const xmlparse&) = delete;
+  xmlparse &operator=(const xmlparse&) = delete;
 
   xmlnode *root;
 
