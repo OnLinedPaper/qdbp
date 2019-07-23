@@ -1,8 +1,9 @@
 CC=g++
+WC=x86_64-w64-mingw32-g++
 DIR := ${CURDIR}
 CFLAGS= -Wall --std=c++11 -I $(DIR)
 DFLAGS = -g -ggdb
-LFLAGS= -lSDL2 -lSDL2_image
+LFLAGS= -lSDL2 -lSDL2_image -lSDL2main
 DDIR = debugging
 XDIR = bin
 BDIR = build
@@ -35,6 +36,9 @@ run: $(OBJS)
 	@echo -n 'final compilation... '
 	@$(CC) $(CFLAGS) -o $(XDIR)/$@ $^ $(LFLAGS)
 	@echo 'done'
+
+win: $(SRCS) $(DEPS)
+	$(CC) $(CFLAGS) -o $(DDIR)/$@.exe $^ -lmingw64 $(LFLAGS)
 
 dir:
 	@echo $(DIR)
