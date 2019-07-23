@@ -6,9 +6,9 @@
 
 class chunk {
 public:
-  chunk(vec2d);
+  chunk(vec2d&);
   chunk(double, double);
-  chunk(vec2d, bool, bool, bool, bool);
+  chunk(vec2d&, bool, bool, bool, bool);
   chunk(double, double, bool, bool, bool, bool);
 
   static const unsigned char IN;
@@ -17,10 +17,13 @@ public:
   static const unsigned char LF;
   static const unsigned char RT;
 
+  static const double length;
+
   //check if a given point is in a chunk - if not, check if it's above,
   //below, left, or right
-  unsigned char chunk_pos(vec2d) const;
+  unsigned char chunk_pos(vec2d&) const;
   unsigned char chunk_pos(double, double) const;
+  unsigned char chunk_rebuff(vec2d &) const;
 
   //check if the edges are "borders", that is, if they touch nothing
   bool is_b_up() const { return border[0]; }
@@ -44,7 +47,6 @@ public:
 
 private:
 
-  double length = 1000; //pre-determined - this doesn't change
   vec2d tlc; //top-left corner
   bool border[4];
 

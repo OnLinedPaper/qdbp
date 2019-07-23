@@ -1,5 +1,6 @@
 #include <deque>
 #include <vector>
+#include <sstream>
 #include "map.h"
 #include "src/xml_parser/xmlparse.h"
 
@@ -11,6 +12,7 @@ map::map(std::string name) {
     xmlparse::get().get_xml_int(name + "/start_chunk/y_chunk")
   );
 
+  validate();
 
   //init c_deque, now that we have dims
   init_c_deque();
@@ -43,6 +45,23 @@ vec2d map::get_start_pos() const {
   return(c_deque[index(start_chunk[0], start_chunk[1])].get_midpoint());
 }
 
+vec2d map::convert_chunk_index(vec2d &pos) const {
+  return(vec2d(int(pos[0] / chunk::length), int(pos[1] / chunk::length)));
+}
+
+unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) const {
+  //check the last chunk that was occupied, and return the position
+  //relative to that chunk
+
+  vec2d index_pos = convert_chunk_index(prev_pos);
+  return(
+    c_deque[index(
+      index_pos[0],
+      index_pos[1]
+    )].chunk_rebuff(curr_pos)
+  );
+}
+
 void map::draw() const {
   //delegate this to each chunk's draw
   for(int j=0; j<y_dim; j++) {
@@ -50,4 +69,32 @@ void map::draw() const {
       c_deque[index(i, j)].draw();
     }
   }
+}
+
+void map::validate() {
+  std::ostringstream errors;
+
+  if(x_dim <=0 ) {
+    errors << "bad map dimension! x_dim must be > 0\n";
+  }
+  if(y_dim <= 0) {
+    errors << "bad map dimension! y_dim must be > 0\n";
+  }
+  if(start_chunk[0] <= -1 || start_chunk[0] >= x_dim) {
+    errors << "bad start position! x_chunk " <<
+    start_chunk[0] <<
+    " is not in map - range is 0 to " <<
+    (x_dim - 1);
+  }
+  if(start_chunk[1] <= -1 || start_chunk[1] >= y_dim) {
+    errors << "bad start position! y_chunk " <<
+    start_chunk[1] <<
+    " is not in map - range is 0 to " <<
+    (y_dim - 1);
+  }
+  if(!errors.str().empty()) {
+    std::cerr << errors.str() << std::endl;
+    throw(errors);
+  }
+
 }

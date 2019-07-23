@@ -8,37 +8,33 @@ const unsigned char chunk::UP = 1;
 const unsigned char chunk::DN = 2;
 const unsigned char chunk::LF = 4;
 const unsigned char chunk::RT = 8;
+const double chunk::length = 1000;
 
-
-chunk::chunk(vec2d v) :
-  length(1000),
+chunk::chunk(vec2d &v) :
   tlc(v),
   border {0, 0, 0, 0},
   i("/boundary_marker")
   { }
 
 chunk::chunk(double x, double y) :
-  length(1000),
   tlc(x*length, y*length),
   border {0, 0, 0, 0},
   i("/boundary_marker")
   { }
 
-chunk::chunk(vec2d v, bool u, bool d, bool l, bool r) :
-  length(1000),
+chunk::chunk(vec2d &v, bool u, bool d, bool l, bool r) :
   tlc(v),
   border {u, d, l, r},
   i("/boundary_marker")
   { }
 
 chunk::chunk(double x, double y, bool u, bool d, bool l, bool r) :
-  length(1000),
   tlc(x*length, y*length),
   border {u, d, l, r},
   i("/boundary_marker")
   { }
 
-unsigned char chunk::chunk_pos(vec2d v) const {
+unsigned char chunk::chunk_pos(vec2d &v) const {
   return( this->chunk_pos(v[0], v[1]) );
 }
 
@@ -65,6 +61,25 @@ unsigned char chunk::chunk_pos(double x_coord, double y_coord) const {
   }
 
   return retval;
+}
+
+unsigned char chunk::chunk_rebuff(vec2d &pos) const {
+  unsigned char c = chunk_pos(pos);
+  unsigned char ret = 0;
+  if(!c) {
+    //still in chunk, no check
+    return ret;
+  }
+
+  //check each "hit" to see if it's also a barrier - if so,
+  //rebuff it in that direction
+  if((c & UP) && is_b_up()) { ret = ret|UP; }
+  if((c & DN) && is_b_dn()) { ret = ret|DN; }
+  if((c & LF) && is_b_lf()) { ret = ret|LF; }
+  if((c & RT) && is_b_rt()) { ret = ret|RT; }
+
+
+  return ret;
 }
 
 void chunk::draw() const {

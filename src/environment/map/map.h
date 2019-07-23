@@ -12,6 +12,11 @@ public:
   void draw() const;
   vec2d get_start_chunk() const { return start_chunk; }
   vec2d get_start_pos() const;
+  vec2d convert_chunk_index(vec2d &pos) const;
+
+  unsigned char check_rebuff(vec2d &curr_pos, vec2d &prev_pos) const;
+
+  chunk &get_chunk(vec2d &coord) { return c_deque[index(coord[0], coord[1])]; }
 
 private:
   int x_dim;
@@ -19,6 +24,7 @@ private:
 
   vec2d start_chunk;
 
+  void validate();
   void init_c_deque();
 
   //will be a SINGLE array, with clever referenceing

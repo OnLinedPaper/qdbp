@@ -6,7 +6,7 @@
 //a singleton to handle map processing by all entities
 class map_h {
 public:
-  ~map_h() { delete m; }
+  ~map_h() { delete m; m = nullptr; }
 
   static map_h &get() {
     static map_h instance;
@@ -14,6 +14,10 @@ public:
   }
 
   void set_map(std::string s) { delete m; m = new map(s); }
+
+  unsigned char check_rebuff(vec2d &curr_pos, vec2d &prev_pos) const {
+    return( m->check_rebuff(curr_pos, prev_pos) );
+  }
 
   vec2d get_start_pos() const { return m->get_start_pos(); }
   vec2d get_start_chunk() const { return m->get_start_chunk(); }
