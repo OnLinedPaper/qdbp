@@ -59,6 +59,7 @@ private:
   double x;
   double y;
   double max = DBL_MAX;
+  double PI = 3.141592653589793238462643383279502884;
 };
 
 std::ostream &operator<<(std::ostream &output, const vec2d &v);

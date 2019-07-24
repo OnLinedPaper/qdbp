@@ -2,6 +2,8 @@
 #include <iostream>
 #include <cmath>
 
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 //these operators let us return values with array notation
 double &vec2d::operator [](int i) {
@@ -118,7 +120,7 @@ return(std::atan2(y, x));
 
 double vec2d::angle_deg() const {
   //return an angle between 0 and 360
-  return(int((this->angle_rad() * (180/M_PI) + 90) + 360) % 360);
+  return(int((this->angle_rad() * (180/PI) + 90) + 360) % 360);
 }
 
 

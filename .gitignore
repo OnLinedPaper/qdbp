@@ -11,6 +11,7 @@ run
 build
 bin
 debugging
+win_demo
 
 #object and header files
 *.o
@@ -18,6 +19,9 @@ debugging
 
 #krita backup files
 *~
+
+#demo files
+win_demo.zip
 
 #...and this thing
 .atom-dbg.cson

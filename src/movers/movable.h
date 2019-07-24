@@ -4,6 +4,7 @@
 #include "src/vec2d/vec2d.h"
 #include "src/environment/chunk/chunk.h"
 #include "src/environment/map/map_handler.h"
+#include <cmath>
 
 class movable {
 public:
