@@ -10,7 +10,7 @@
         <vel_accel>1</vel_accel>
       </movement>
       <textures>
-        <body>resources/file.png</body>
+        <body>arrow</body>
       </textures>
     </debug_drawable>
   </drawable>
@@ -20,5 +20,8 @@
       <vel_decay>0.1</vel_decay>
       <vel_accel>1</vel_accel>
     </movement>
+    <textures>
+      <body>arrow</body>
+    </textures>
   </debug_movable>
 </movers>

@@ -72,7 +72,7 @@ void engine::play() {
 
 
 //==== DISPLAY stuff here =====================================================
-    SDL_SetRenderDrawColor(render::get().get_r(), 128, 128, 128, 255);
+    SDL_SetRenderDrawColor(render::get().get_r(), 32, 32, 32, 255);
     SDL_RenderClear(render::get().get_r());
     //SDL_RenderCopy(render::get()->get_r(), t->get_texture(), NULL, NULL);s
     SDL_SetRenderDrawColor(render::get().get_r(), 28, 28, 28, 255);

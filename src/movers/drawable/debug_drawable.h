@@ -7,6 +7,8 @@
 
 class d_drawable : public drawable {
 public:
+  static const std::string path;
+
   d_drawable();
 
   void move_up();
@@ -17,7 +19,6 @@ public:
   void update();
 
   void draw() const;
-  void load_texture();
 
 private:
   double vel_accel;

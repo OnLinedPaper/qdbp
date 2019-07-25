@@ -8,38 +8,24 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 
+const std::string d_drawable::path = "/movers/drawable/debug_drawable";
+
 using xmlp = xmlparse;
 
-d_drawable::d_drawable() : moved(false), i("/arrow"), last_angle(0) {
+d_drawable::d_drawable() :
+  moved(false),
+  i("/" + xmlp::get().get_xml_string(path + "/textures/body")),
+  last_angle(0)
+{
   pos = vec2d(0, 0);
   vel = vec2d(0, 0);
 
-  path = "/movers/drawable/debug_drawable";
 
   vel_accel = xmlp::get().get_xml_double(path + "/movement/vel_accel");
   vel_cap = xmlp::get().get_xml_double(path + "/movement/vel_cap");
   vel_decay = xmlp::get().get_xml_double(path + "/movement/vel_decay");
 
-  load_texture();
-
-
-}
-
-void d_drawable::load_texture() {
-
-  //load the texture
-  set_texture(NULL);
-  SDL_Surface *surf = IMG_Load((xmlp::get().get_xml_string(path + "/textures/body")).c_str());
-  if(surf == NULL) {
-    fprintf(stderr, "couldn't load image! SDL_Error: %s\n", SDL_GetError());
-  }
-  else {
-    t = SDL_CreateTextureFromSurface(render::get().get_r(), surf);
-    if(t == NULL) {
-      fprintf(stderr, "couldn't create texture! SDL_Error: %s\n", SDL_GetError());
-    }
-    SDL_FreeSurface(surf);
-  }
+  std::string s = path + xmlp::get().get_xml_string(path + "/textures/body");
 }
 
 void d_drawable::move_up() { vel[1] -= vel_accel * t_frame::get().d_factor(); moved = true; }
