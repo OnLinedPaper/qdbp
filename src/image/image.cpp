@@ -94,18 +94,6 @@ void image::draw_rotate(double x_pos, double y_pos, double angle) const {
   dest_r.y = y_pos - (dimensions[1] / 2) - viewport::get().get_tlc_y();
   dest_r.w = dimensions[0];
   dest_r.h = dimensions[1];
-  /*if(
-    dest_r.x + viewport::get().get_tlc_x() + dimensions[0] <
-      viewport::get().get_tlc_x() ||
-    dest_r.x + viewport::get().get_tlc_x() >
-      viewport::get().get_brc_x() ||
-    dest_r.y + viewport::get().get_tlc_y() + dimensions[1] <
-      viewport::get().get_tlc_y() ||
-    dest_r.y + viewport::get().get_tlc_y() >
-      viewport::get().get_brc_y()
-  ) {
-    return;
-  }*/
 
   SDL_Point *piv = NULL;
   if(pivot.magnitude() != 0) {
