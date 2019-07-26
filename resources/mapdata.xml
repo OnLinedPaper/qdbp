@@ -1,7 +1,7 @@
 <debug_1>
   <dimensions>
-    <x_dim>2</x_dim>
-    <y_dim>3</y_dim>
+    <x_dim>1</x_dim>
+    <y_dim>8</y_dim>
   </dimensions>
   <generation>
     <style>
@@ -11,7 +11,7 @@
   </generation>
   <start_chunk>
     <!--the chunk where the player is placed to start-->
-    <x_chunk>1</x_chunk>
-    <y_chunk>2</y_chunk>
+    <x_chunk>0</x_chunk>
+    <y_chunk>7</y_chunk>
   </start_chunk>
 </debug_1>

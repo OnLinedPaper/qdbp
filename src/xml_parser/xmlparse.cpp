@@ -5,37 +5,7 @@
 #include <regex>
 #include <fstream>
 
-xmlparse::xmlparse() : root(new xmlnode()) {
-  /*
-
-  //load the regex from an external file
-  //might change this later but it makes testing faster
-  //because i can test new regex without recompiling
-  std::string rx_str;
-
-  std::ifstream in("");
-
-  //check to see if i should put this somewhere else
-
-  in.open("xml_parser/tree_regex.rx");
-  if(!in) { std::cerr << "S-H-I-T!\n"; }
-  std::getline(in, rx_str);
-  tree_rx = std::regex (rx_str);
-  in.close();
-
-  in.open("xml_parser/tag_regex.rx");
-  if(!in) { std::cerr << "S-H-I-T!\n"; }
-  std::getline(in, rx_str);
-  tag_rx = std::regex (rx_str);
-  in.close();
-
-  in.open("xml_parser/value_regex.rx");
-  if(!in) { std::cerr << "S-H-I-T!\n"; }
-  std::getline(in, rx_str);
-  value_rx = std::regex (rx_str);
-  in.close();
-  */
-};
+xmlparse::xmlparse() : root(new xmlnode()) { }
 
 xmlparse::~xmlparse() {
   delete root;
@@ -63,7 +33,11 @@ void xmlparse::build_tree(const std::string file_name) {
 
   //go the fromt and read everything into the string
   std::rewind(fp);
-  std::fread(&contents[0], 1, contents.size(), fp);
+  size_t read = 0;
+  read = std::fread(&contents[0], 1, contents.size(), fp);
+  if(read != contents.size()) {
+    std::cerr << "warn: xmlparser expected " << contents.size() << ", read " << read << std::endl;
+  }
 
   std::fclose(fp);
 

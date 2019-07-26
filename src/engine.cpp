@@ -45,9 +45,9 @@ void engine::play() {
     //no keybounce protection
 
     if(keystate[SDL_SCANCODE_W]) { dd.move_up(); }
-    if(keystate[SDL_SCANCODE_A]) { dd.move_left(); }
-    if(keystate[SDL_SCANCODE_S]) { dd.move_down(); }
-    if(keystate[SDL_SCANCODE_D]) { dd.move_right(); }
+    if(keystate[SDL_SCANCODE_A]) { dd.move_lf(); }
+    if(keystate[SDL_SCANCODE_S]) { dd.move_dn(); }
+    if(keystate[SDL_SCANCODE_D]) { dd.move_rt(); }
 
     if(controller) {
       //process controller input
@@ -57,12 +57,12 @@ void engine::play() {
       );
 
       if(abs(lrud[0]) > CONTROLLER_DEADZONE) {
-        if(lrud[0] < 0) { dd.move_left(); }
-        else { dd.move_right(); }
+        if(lrud[0] < 0) { dd.move_lf(); }
+        else { dd.move_rt(); }
       }
       if(abs(lrud[1]) > CONTROLLER_DEADZONE) {
         if(lrud[1] < 0) { dd.move_up(); }
-        else { dd.move_down(); }
+        else { dd.move_dn(); }
       }
     }
 
