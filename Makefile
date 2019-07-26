@@ -1,7 +1,7 @@
 CC=g++
 WC=x86_64-w64-mingw32-g++
 DIR := ${CURDIR}
-CFLAGS= -Wall --std=c++11 -I $(DIR)
+CFLAGS= -Wall -Wpedantic --std=c++11 -O3 -I $(DIR)
 DFLAGS = -g -ggdb
 LFLAGS= -lSDL2main -lSDL2 -lSDL2_image
 WFLAGS= -lmingw32 -mwindows
