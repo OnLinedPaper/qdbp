@@ -2,18 +2,16 @@
 #define DRAWABLE_H_
 
 #include "src/movers/movable.h"
+#include "src/image/image.h"
 #include <SDL2/SDL.h>
 
 class drawable : public movable {
 public:
-  void set_texture(SDL_Texture *tex) { t = tex; }
-  SDL_Texture *get_texture() const { return t; }
+  drawable(const std::string im) : i(im) { }
 
 protected:
-  void update() { movable::update(); }
-
-  virtual void load_texture() = 0;
-  SDL_Texture* t;
+  void update() override { movable::update(); }
+  image i;
 
 
 };

@@ -36,10 +36,15 @@ public:
     }
   }
 
+  virtual void move_up() = 0;
+  virtual void move_dn() = 0;
+  virtual void move_lf() = 0;
+  virtual void move_rt() = 0;
+
   virtual void draw() const = 0;
 
 protected:
-  void update() {
+  virtual void update() {
     //check if this next move is legal
     rebuff(map_h::get().check_rebuff(pos, last_pos));
 
@@ -50,6 +55,10 @@ protected:
   vec2d pos;
   vec2d last_pos;
   vec2d vel;
+  double vel_accel;
+  double vel_cap;
+  double vel_decay;
+  bool moved;
 
   std::string path;
 

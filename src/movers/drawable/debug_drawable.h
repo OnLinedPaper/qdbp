@@ -11,22 +11,17 @@ public:
 
   d_drawable();
 
-  void move_up();
-  void move_down();
-  void move_left();
-  void move_right();
+  void move_up() override;
+  void move_dn() override;
+  void move_lf() override;
+  void move_rt() override;
 
-  void update();
+  void update() override;
 
-  void draw() const;
+  void draw() const override;
 
 private:
-  double vel_accel;
-  double vel_cap;
-  double vel_decay;
-  bool moved;
 
-  image i;
   double last_angle;
 
 };
