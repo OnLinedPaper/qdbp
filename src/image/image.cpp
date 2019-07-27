@@ -4,6 +4,7 @@
 #include "image.h"
 #include "src/timeframe/timeframe.h"
 #include "src/viewport/viewport.h"
+#include "src/utils/message.h"
 #include <iostream>
 #include <cmath>
 #include <stdlib.h>
@@ -23,12 +24,48 @@ image::image (const std::string name) :
   frame_delay(xmlp::get().get_xml_double(name + "/dimensions/frame_delay")),
   frame_bump(rand() % frames)
 {
+
+  if(dimensions[0] <= 0) {
+    std::string warn = name + "/dimensions/width is <= 0";
+    msg::print_warn(warn);
+    msg::print_alert("setting to 16");
+    dimensions[0] = 16;
+  }
+  if(dimensions[1] <= 0) {
+    std::string warn = name + "/dimensions/height is <= 0";
+    msg::print_warn(warn);
+    msg::print_alert("setting to 16");
+    dimensions[1] = 16;
+  }
+  if(frames <= 0) {
+    std::string warn = name + "/dimensions/frames is <= 0";
+    msg::print_warn(warn);
+    msg::print_alert("setting to 1 (no animation)");
+    frames = 1;
+  }
+  if(frame_delay <= 0)
+  {
+    std::string warn = name + "/dimensions/frame_delay is <= 0";
+    msg::print_warn(warn);
+    msg::print_alert("setting to 0 (no animation)");
+    frame_delay = 0;
+  }
+
   //get some space for the frames
   t_vec.reserve(frames);
 
   //load an image, based on a given string - this string will be used on
   //imagedata.xml to retrieve image data, such as filename and dimensions
   SDL_Surface *full_surf = IMG_Load((xmlp::get().get_xml_string(name + "/file")).c_str());
+
+  if(full_surf == NULL) {
+    msg::print_warn("couldn't open image file \"" + xmlp::get().get_xml_string(name + "/file") + "\"!");
+    msg::print_alert("(check imagedata.xml <" + name + "> - is the <file> path spelled right?)");
+    msg::print_alert("(does " + xmlp::get().get_xml_string(name + "/file") + " exist?)");
+
+    full_surf = SDL_CreateRGBSurface(0, dimensions[0], dimensions[1], 32, 0, 0, 0, 0);
+    SDL_FillRect(full_surf, NULL, SDL_MapRGB(full_surf->format, 255, 0, 255));
+  }
 
   //splice the image into pieces based on frames
   SDL_Rect clip;
