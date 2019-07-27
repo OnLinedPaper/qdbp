@@ -3,6 +3,7 @@
 #include <sstream>
 #include "map.h"
 #include "src/xml_parser/xmlparse.h"
+#include "src/utils/message.h"
 
 map::map(std::string name) {
   x_dim = xmlparse::get().get_xml_int(name + "/dimensions/x_dim");
@@ -75,26 +76,30 @@ void map::validate() {
   std::ostringstream errors;
 
   if(x_dim <=0 ) {
-    errors << "bad map dimension! x_dim must be > 0\n";
+    msg::print_warn("bad map dimension; x_dim must be > 0");
+    msg::print_alert("setting to 1");
+    x_dim = 1;
   }
   if(y_dim <= 0) {
-    errors << "bad map dimension! y_dim must be > 0\n";
+    msg::print_warn("bad map dimension; y_dim must be > 0");
+    msg::print_alert("setting to 1");
+    y_dim = 1;
   }
   if(start_chunk[0] <= -1 || start_chunk[0] >= x_dim) {
-    errors << "bad start position! x_chunk " <<
-    start_chunk[0] <<
-    " is not in map - range is 0 to " <<
-    (x_dim - 1);
+    msg::print_warn("bad start position; x_chunk " +
+    std::to_string(start_chunk[0]) +
+    " is not in map - range is 0 to " +
+    std::to_string((x_dim - 1)));
+    msg::print_alert("setting to 0");
+    start_chunk[0] = 0;
   }
   if(start_chunk[1] <= -1 || start_chunk[1] >= y_dim) {
-    errors << "bad start position! y_chunk " <<
-    start_chunk[1] <<
-    " is not in map - range is 0 to " <<
-    (y_dim - 1);
-  }
-  if(!errors.str().empty()) {
-    std::cerr << errors.str() << std::endl;
-    throw(errors);
+    msg::print_warn("bad start position; y_chunk " +
+    std::to_string(start_chunk[1]) +
+    " is not in map - range is 0 to " +
+    std::to_string((y_dim - 1)));
+    msg::print_alert("setting to 0");
+    start_chunk[1] = 0;
   }
 
 }
