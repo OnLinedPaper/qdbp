@@ -17,7 +17,7 @@ public:
   void build_tree(const std::string file_name); //make the tree
   void recurse_build_tree(const std::smatch, const std::string);
 
-  void print_tree() { root->recursive_print(0); }
+  void print_tree();
 
   std::string get_xml_string(const std::string path);
   int get_xml_int(const std::string path);

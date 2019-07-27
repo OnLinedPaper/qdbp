@@ -1,4 +1,5 @@
 #include "xmlnode.h"
+#include "src/utils/message.h"
 #include <iostream>
 
 xmlnode::xmlnode() : name(""), value(""), children() { }
@@ -6,7 +7,6 @@ xmlnode::xmlnode(std::string name) : name(name), value(""), children() {}
 xmlnode::xmlnode(std::string name, std::string value) : name(name), value(value), children() {}
 
 xmlnode::~xmlnode() {
-//  std::cerr << "xmlnode delete called\n";
   std::map<std::string, xmlnode*>::iterator it = children.begin();
   while(it != children.end()) {
     //recursively free all children of this element
@@ -81,7 +81,18 @@ std::string xmlnode::recursive_get_value(const std::string path) {
       //check to see if this is a child
       if(this->children.find(n) == this->children.end()) {
         //it's not a child
-        std::string error = "error! \"" + n + "\" is not a child of \"" + this->get_name() + "\"!\n";
+        std::string name = this->get_name();
+        std::string error = "";
+        if(name == "") {
+          error ="\"" + n + "\" is not in the xml tree!";
+        }
+        else {
+          error = "\"" + n + "\" is not a child of \"" + this->get_name() + "\"!";
+        }
+        std::string alert = "(might be misspelled, or have non-matching open and close tags)";
+
+        msg::print_error(error);
+        msg::print_alert(alert);
         throw error;
       }
       else {

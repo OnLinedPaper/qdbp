@@ -1,7 +1,6 @@
 #include <chrono>
 
 #include "engine.h"
-#include "renders/texture.h"
 #include "renders/render.h"
 #include "movers/movable.h"
 #include "movers/debug_movable.h"
@@ -12,6 +11,7 @@
 #include "environment/chunk/chunk.h"
 #include "environment/map/map.h"
 #include "environment/map/map_handler.h"
+#include "utils/message.h"
 
 //looking for the constructors? they're below "play"
 
@@ -33,6 +33,10 @@ void engine::play() {
   while(!quit) {
 
 //==== PLAYER INPUT here ======================================================
+
+    //disable warnings for uninitialized use, keystate keeps throwing them
+    #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+
     while(SDL_PollEvent(&e) != 0) {
       //get an event: protect from keybounce
       keystate = SDL_GetKeyboardState(NULL);
@@ -48,6 +52,8 @@ void engine::play() {
     if(keystate[SDL_SCANCODE_A]) { dd.move_lf(); }
     if(keystate[SDL_SCANCODE_S]) { dd.move_dn(); }
     if(keystate[SDL_SCANCODE_D]) { dd.move_rt(); }
+
+    #pragma GCC diagnostic pop
 
     if(controller) {
       //process controller input
@@ -97,25 +103,6 @@ void engine::play() {
 
 
 engine::engine() : debug_swirly_int(0), controller(NULL) {
-  if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
-    fprintf(stderr, "Couldn't init joysticks subsystem! SDL_Error: %s\n", SDL_GetError());
-  }
-  else {
-    if(SDL_NumJoysticks > 0) {
-      controller = SDL_JoystickOpen(0);
-      if(controller == NULL) {
-        fprintf(stderr, "didn't find a controller. (SDL_Error: %s)\n", SDL_GetError());
-      }
-      else {
-        fprintf(stderr, "found a controller.\n");
-      }
-    }
-  }
-
-  if( SDL_InitSubSystem(SDL_INIT_EVERYTHING) < 0) {
-    throw(std::string("Couldn't init SDL! Error: ") + SDL_GetError());
-  }
-
   //init the singletons
   //note that many require xmlparse to init themselves, so
   //xmlparse builds its trees first
@@ -131,6 +118,27 @@ engine::engine() : debug_swirly_int(0), controller(NULL) {
 
   //grab framerate data, can't do this till singletons are created
   t_frame::get().set_delay(xmlparse::get().get_xml_double("/msdelay"));
+
+
+  if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
+    msg::print_error("couldn't init joysticks subsystem! SDL_Error: " + std::string(SDL_GetError()));
+  }
+  else {
+    if(SDL_NumJoysticks > 0) {
+      controller = SDL_JoystickOpen(0);
+      if(controller == NULL) {
+        msg::print_alert("didn't find a controller. (SDL_Error: " + std::string(SDL_GetError()) + ")");
+      }
+      else {
+        msg::print_good("found a controller.");
+      }
+    }
+  }
+
+  if( SDL_InitSubSystem(SDL_INIT_EVERYTHING) < 0) {
+    msg::print_error("Couldn't init SDL! Error: " + std::string(SDL_GetError()));
+    throw("couldn't start SDL!");
+  }
 }
 
 engine::~engine() {

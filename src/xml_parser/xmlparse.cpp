@@ -1,4 +1,5 @@
 #include "xmlparse.h"
+#include "src/utils/message.h"
 #include <iostream>
 #include <string>
 #include <cstdio>
@@ -19,7 +20,8 @@ void xmlparse::build_tree(const std::string file_name) {
   //get the xml file
   std::FILE *fp = std::fopen(file_name.c_str(), "rb");
   if(!fp) {
-    std::cout << "Error! File couldn't be opened!\n";
+    msg::print_warn("when bulding tree, file \"" + file_name + "\" couldn't be opened!");
+    msg::print_alert("(did you rename / misspell / delete the file by mistake?)");
     return;
   }
 
@@ -36,7 +38,7 @@ void xmlparse::build_tree(const std::string file_name) {
   size_t read = 0;
   read = std::fread(&contents[0], 1, contents.size(), fp);
   if(read != contents.size()) {
-    std::cerr << "warn: xmlparser expected " << contents.size() << ", read " << read << std::endl;
+    msg::print_warn("xmlparser expected " + std::to_string(contents.size()) + ", read " + std::to_string(read));
   }
 
   std::fclose(fp);
@@ -63,8 +65,9 @@ std::string xmlparse::get_xml_string(const std::string path) {
   }
   catch (const std::string e) {
     //something went wrong, add some data and throw the exception
-    std::string error = e + "- bad tag path: " + path + "\n";
-    std::cerr << error;
+    msg::print_alert("bad tag path: " + path);
+    std::string error = e + "bad tag path: " + path;
+
     throw error;
   }
 }
@@ -78,9 +81,10 @@ int xmlparse::get_xml_int(const std::string path) {
   }
   catch (const std::invalid_argument& ia) {
     //they probably tried to convert a string or something
-    std::string error = "error! can't convert this value to an int!\n";
-    error += "- value: " + retval + "\n";
-    error += "- bad tag path: " + path + "\n";
+    std::string error = "can't convert this value to an int!";
+    msg::print_error(error);
+    msg::print_alert("value: " + retval);
+    msg::print_alert("bad tag path: " + path);
     throw error;
   }
 }
@@ -94,11 +98,20 @@ double xmlparse::get_xml_double(const std::string path) {
   }
   catch (const std::invalid_argument& ia) {
     //they probably tried to convert a string or something
-    std::string error = "error! can't convert this value to a float!\n";
-    error += "- value: " + retval + "\n";
-    error += "- bad tag path: " + path + "\n";
+    std::string error = "can't convert this value to a double!";
+    msg::print_error(error);
+    msg::print_alert("value: " + retval);
+    msg::print_alert("bad tag path: " + path);
     throw error;
   }
+}
+
+//============================================================================
+
+void xmlparse::print_tree() {
+  std::cout << msg::cn << std::endl;
+  root->recursive_print(0);
+  std::cout << msg::none << std::endl;
 }
 
 //============================================================================
