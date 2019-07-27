@@ -1,3 +1,19 @@
+<!--
+<@@>
+  <file>@@</file>
+  <dimensions>
+    <width>##</width>
+    <height>##</height>
+
+    <pivot_x>##</pivot_x>
+    <pivot_y>##</pivot_y>
+
+    <frames>##</frames>
+    <frame_delay>##</frame_delay>
+  </dimensions>
+</@@>
+-->
+
 <arrow>
   <file>resources/images/arrow.png</file>
   <dimensions>
@@ -15,6 +31,20 @@
     <frame_delay>20</frame_delay>
   </dimensions>
 </arrow>
+
+<arrow2>
+  <file>resources/images/arrow2.png</file>
+  <dimensions>
+    <width>84</width>
+    <height>72</height>
+
+    <pivot_x>0</pivot_x>
+    <pivot_y>0</pivot_y>
+
+    <frames>4</frames>
+    <frame_delay>24</frame_delay>
+  </dimensions>
+</arrow2>
 
 <boundary_marker>
   <file>resources/images/boundary_marker.png</file>
@@ -41,3 +71,29 @@
     <frame_delay>20</frame_delay>
   </dimensions>
 </fork_ship>
+
+<glow_ship>
+  <file>resources/images/glow_ship.png</file>
+  <dimensions>
+    <width>64</width>
+    <height>64</height>
+
+    <pivot_x>0</pivot_x>
+    <pivot_y>0</pivot_y>
+    <frames>4</frames>
+    <frame_delay>24</frame_delay>
+  </dimensions>
+</glow_ship>
+
+<tracker>
+  <file>resources/images/tracker.png</file>
+  <dimensions>
+    <width>48</width>
+    <height>78</height>
+
+    <pivot_x>0</pivot_x>
+    <pivot_y>0</pivot_y>
+    <frames>3</frames>
+    <frame_delay>16</frame_delay>
+  </dimensions>
+</tracker>

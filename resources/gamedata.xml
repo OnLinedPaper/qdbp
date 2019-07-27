@@ -10,11 +10,11 @@
         <vel_accel>1</vel_accel>
       </movement>
       <textures>
-        <body>arrow</body>
+        <body>arrow2</body>
       </textures>
     </debug_drawable>
   </drawable>
-  
+
   <debug_movable>
     <movement>
       <vel_cap>20</vel_cap>
