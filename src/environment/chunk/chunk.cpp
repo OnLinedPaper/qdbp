@@ -2,6 +2,7 @@
 #include "src/renders/render.h"
 #include "src/viewport/viewport.h"
 #include "src/image/image.h"
+#include "src/image/image_handler.h"
 
 const unsigned char chunk::IN = 0;
 const unsigned char chunk::UP = 1;
@@ -13,25 +14,29 @@ const double chunk::length = 1000;
 chunk::chunk(vec2d &v) :
   tlc(v),
   border {0, 0, 0, 0},
-  i("/boundary_marker")
+  i_name("/boundary_marker"),
+  frame_bump(rand())
   { }
 
 chunk::chunk(double x, double y) :
   tlc(x*length, y*length),
   border {0, 0, 0, 0},
-  i("/boundary_marker")
+  i_name("/boundary_marker"),
+  frame_bump(rand())
   { }
 
 chunk::chunk(vec2d &v, bool u, bool d, bool l, bool r) :
   tlc(v),
   border {u, d, l, r},
-  i("/boundary_marker")
+  i_name("/boundary_marker"),
+  frame_bump(rand())
   { }
 
 chunk::chunk(double x, double y, bool u, bool d, bool l, bool r) :
   tlc(x*length, y*length),
   border {u, d, l, r},
-  i("/boundary_marker")
+  i_name("/boundary_marker"),
+  frame_bump(rand())
   { }
 
 unsigned char chunk::chunk_pos(vec2d &v) const {
@@ -92,23 +97,23 @@ void chunk::draw() const {
   //check in order: u, d, l, r
   if(border[0]) {
     //the top is a border
-    i.draw_rotate(x + (length / 4), y, 0);
-    i.draw_rotate(x + 3 * (length / 4), y, 0);
+    image_handler::get().draw_rotate(i_name, x + (length / 4), y, frame_bump, 0);
+    image_handler::get().draw_rotate(i_name, x + 3 * (length / 4), y, frame_bump, 0);
   }
   if(border[1]) {
     //the bottom is a border
-    i.draw_rotate(x + (length / 4), y + length, 180);
-    i.draw_rotate(x + 3 * (length / 4), y + length, 180);
+    image_handler::get().draw_rotate(i_name, x + (length / 4), y + length, frame_bump, 180);
+    image_handler::get().draw_rotate(i_name, x + 3 * (length / 4), y + length, frame_bump, 180);
   }
   if(border[2]) {
     //the left is a border
-    i.draw_rotate(x, y + (length / 4), 270);
-    i.draw_rotate(x, y + 3 * (length / 4), 270);
+    image_handler::get().draw_rotate(i_name, x, y + (length / 4), frame_bump, 270);
+    image_handler::get().draw_rotate(i_name, x, y + 3 * (length / 4), frame_bump, 270);
   }
   if(border[3]) {
     //the right is a border
-    i.draw_rotate(x + length, y + (length / 4), 90);
-    i.draw_rotate(x + length, y + 3 * (length / 4), 90);
+    image_handler::get().draw_rotate(i_name, x + length, y + (length / 4), frame_bump, 90);
+    image_handler::get().draw_rotate(i_name, x + length, y + 3 * (length / 4), frame_bump, 90);
   }
 
 }

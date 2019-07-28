@@ -54,7 +54,8 @@ private:
   chunk(const chunk&) = delete;
   chunk &operator=(const chunk&) = delete;
 
-  image i;
+  std::string i_name;
+  double frame_bump;
 
 };
 
