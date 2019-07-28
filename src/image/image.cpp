@@ -21,8 +21,7 @@ image::image (const std::string name) :
     xmlp::get().get_xml_double(name + "/dimensions/pivot_y")
   ),
   frames(xmlp::get().get_xml_double(name + "/dimensions/frames")),
-  frame_delay(xmlp::get().get_xml_double(name + "/dimensions/frame_delay")),
-  frame_bump(rand() % frames)
+  frame_delay(xmlp::get().get_xml_double(name + "/dimensions/frame_delay"))
 {
 
   if(dimensions[0] <= 0) {
@@ -115,7 +114,7 @@ image::~image() {
   }
 }
 
-void image::draw_rotate(double x_pos, double y_pos, double angle) const {
+void image::draw_rotate(double x_pos, double y_pos, double angle, double frame_bump) const {
 
   //check to see if the entity is anywhere on-screen - if it's not,
   //don't draw it, to save time
@@ -152,7 +151,7 @@ void image::draw_rotate(double x_pos, double y_pos, double angle) const {
       frame_delay; //get the current frame
 
     //introduce a little randomness, predetermined at beginning
-    frame_to_render = (frame_to_render + frame_bump) % frames;
+    frame_to_render = int(frame_to_render + frame_bump) % frames;
   }
 
   SDL_Texture *t = t_vec[frame_to_render];
@@ -161,14 +160,4 @@ void image::draw_rotate(double x_pos, double y_pos, double angle) const {
 
   delete piv;
   piv = NULL;
-
-}
-
-void image::draw_rotate(double x_pos, double y_pos, const vec2d v) const {
-  draw_rotate(x_pos, y_pos, v.angle_deg());
-
-}
-
-void image::draw(double x_pos, double y_pos) const {
-  draw_rotate(x_pos, y_pos, 0);
 }

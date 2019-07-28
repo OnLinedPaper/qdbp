@@ -11,10 +11,8 @@ public:
 
   image(const std::string);
   ~image();
-
-  void draw(double x, double y) const;
-  void draw_rotate(double x, double y, const vec2d v) const;
-  void draw_rotate(double x, double y, double a) const;
+  
+  void draw_rotate(double x, double y, double a, double frame_bump) const;
 
 private:
   image();
@@ -25,7 +23,6 @@ private:
   vec2d pivot;
   int frames;
   int frame_delay;
-  int frame_bump;
 
   std::vector<SDL_Texture *> t_vec;
 
