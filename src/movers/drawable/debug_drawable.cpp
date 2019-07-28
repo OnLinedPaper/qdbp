@@ -5,6 +5,7 @@
 #include "src/viewport/viewport.h"
 #include "src/image/image.h"
 #include "src/timeframe/timeframe.h"
+#include "src/image/image_handler.h"
 #include <iostream>
 #include <SDL2/SDL.h>
 
@@ -28,7 +29,7 @@ d_drawable::d_drawable() :
   std::string s = path + xmlp::get().get_xml_string(path + "/textures/body");
 }
 
-void d_drawable::move_up() 
+void d_drawable::move_up()
   { vel[1] -= vel_accel * t_frame::get().d_factor(); moved = true; }
 void d_drawable::move_dn()
   { vel[1] += vel_accel * t_frame::get().d_factor(); moved = true; }
@@ -97,6 +98,5 @@ void d_drawable::draw() const {
   dest_r.w = 128;
   dest_r.h = 128;
 
-  i.draw_rotate(dest_r.x, dest_r.y, last_angle);
-  //SDL_RenderCopy(render::get().get_r(), t, NULL, &dest_r);
+  image_handler::get().draw_rotate(image_name, dest_r.x, dest_r.y, 0, last_angle);
 }

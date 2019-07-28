@@ -7,11 +7,15 @@
 
 class drawable : public movable {
 public:
-  drawable(const std::string im) : i(im) { }
+  drawable(const std::string im) : image_name(im), frame_bump(rand()) { }
 
 protected:
   void update() override { movable::update(); }
-  image i;
+  std::string image_name;
+
+  //this is so when the image is drawn, each one has a different
+  //frame
+  double frame_bump;
 
 
 };
