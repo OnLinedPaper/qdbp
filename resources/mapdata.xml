@@ -12,6 +12,6 @@
   <start_chunk>
     <!--the chunk where the player is placed to start-->
     <x_chunk>0</x_chunk>
-    <y_chunk>7</y_chunk>
+    <y_chunk>0</y_chunk>
   </start_chunk>
 </debug_1>
