@@ -14,4 +14,5 @@
     <x_chunk>0</x_chunk>
     <y_chunk>0</y_chunk>
   </start_chunk>
+  <background>/debug_heart_</background>
 </debug_1>

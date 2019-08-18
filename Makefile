@@ -14,14 +14,14 @@ SDLLIBS=`sdl-config --cflags --libs`
 WEXE= qdbp.exe
 
 
-DEPS = engine.h render.h movable.h xmlparse.h xmlnode.h vec2d.h debug_movable.h drawable.h debug_drawable.h viewport.h image.h timeframe.h chunk.h map.h map_handler.h message.h image_handler.h
+DEPS = engine.h render.h movable.h xmlparse.h xmlnode.h vec2d.h debug_movable.h drawable.h debug_drawable.h viewport.h image.h timeframe.h chunk.h map.h map_handler.h message.h image_handler.h background.h
 
-OBJS:= engine.o render.o xmlparse.o xmlnode.o vec2d.o debug_movable.o debug_drawable.o viewport.o image.o timeframe.o chunk.o map.o message.o image_handler.o
+OBJS:= engine.o render.o xmlparse.o xmlnode.o vec2d.o debug_movable.o debug_drawable.o viewport.o image.o timeframe.o chunk.o map.o message.o image_handler.o background.o
 OBJS:= $(addprefix $(BDIR)/,$(OBJS))
 
-SRCS = engine.cpp render.cpp xmlparse.cpp xmlnode.cpp vec2d.cpp debug_movable.cpp debug_drawable.cpp viewport.cpp image.cpp timeframe.cpp chunk.cpp map.cpp message.cpp image_handler.cpp
+SRCS = engine.cpp render.cpp xmlparse.cpp xmlnode.cpp vec2d.cpp debug_movable.cpp debug_drawable.cpp viewport.cpp image.cpp timeframe.cpp chunk.cpp map.cpp message.cpp image_handler.cpp background.cpp
 
-PATHS = . movers renders vec2d xml_parser movers/drawable viewport image timeframe environment/chunk environment/map utils
+PATHS = . movers renders vec2d xml_parser movers/drawable viewport image timeframe environment/chunk environment/map utils environment/background
 VPATH = $(addprefix src/,$(PATHS))
 
 
@@ -58,7 +58,8 @@ dir:
 
 debug: $(SRCS) $(DEPS) main_driver.cpp
 	@mkdir -p $(DDIR);
-	$(CC) $(CFLAGS) $(DFLAGS) -o $(DDIR)/$@ $^ $(LFLAGS) $(SDLLIBS)
+	$(CC) $(CFLAGS) $(DFLAGS) -o $(DDIR)/$@ $^ $(LFLAGS) $(SDLLIBS);
+	@paplay /usr/share/sounds/ubuntu/notifications/Positive.ogg
 
 clean:
 	@$(RM) *.o *.gch run $(DDIR)/debug $(XDIR)/run $(BDIR)/*.o

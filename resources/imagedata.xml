@@ -97,3 +97,18 @@
     <frame_delay>16</frame_delay>
   </dimensions>
 </tracker>
+
+
+<debug_heart_bg>
+  <file>resources/images/debug_heart_bg.png</file>
+  <dimensions>
+    <width>1000</width>
+    <height>1000</height>
+
+    <pivot_x>0</pivot_x>
+    <pivot_y>0</pivot_y>
+
+    <frames>1</frames>
+    <frame_delay>1</frame_delay>
+  </dimensions>
+</debug_heart_bg>
