@@ -184,8 +184,8 @@ void image::draw_tile(double parallax) const {
   //"fixed" like an unmoving background.
 
   SDL_Rect dest_r;
-  dest_r.x = (0 - viewport::get().get_tlc_x());
-  dest_r.y = (0 - viewport::get().get_tlc_y());
+  dest_r.x = (0 - viewport::get().get_tlc_x()) * parallax;
+  dest_r.y = (0 - viewport::get().get_tlc_y()) * parallax;
   dest_r.w = dimensions[0];
   dest_r.h = dimensions[1];
 
@@ -193,7 +193,7 @@ void image::draw_tile(double parallax) const {
   //check if viewport is too far to the left
   if(viewport::get().get_tlc_x() < 0) {
     //calculate HOW far to the left it needs to be shifted
-    dest_r.x -= dimensions[0] * ((int)(0 - viewport::get().get_tlc_x()) / (int)(dimensions[0]) + 1);
+    dest_r.x -= dimensions[0] * ((int)(0 - viewport::get().get_tlc_x() * parallax) / (int)(dimensions[0]) + 1);
   }
 
   //check if the viewport is too far to the right
@@ -202,17 +202,17 @@ void image::draw_tile(double parallax) const {
     //get the top left corner, then divide it by the tile width -
     //this allows us to tell how many "tiles" too far we are, and
     //adjust accordingly
-    dest_r.x += dimensions[0] * ((int)(viewport::get().get_tlc_x()) / (int)(dimensions[0]));
+    dest_r.x += dimensions[0] * ((int)(viewport::get().get_tlc_x() * parallax) / (int)(dimensions[0]));
   }
 
   //check if viewport is too far up
   if(viewport::get().get_tlc_y() < 0) {
-    dest_r.y -= dimensions[1] * ((int)(0 - viewport::get().get_tlc_y()) / (int)(dimensions[1]) + 1);
+    dest_r.y -= dimensions[1] * ((int)(0 - viewport::get().get_tlc_y() * parallax) / (int)(dimensions[1]) + 1);
   }
 
   //check if viewport is too far down
   if(viewport::get().get_tlc_y() > dimensions[1]) {
-    dest_r.y += dimensions[1] * ((int)(viewport::get().get_tlc_y()) / (int)(dimensions[1]));
+    dest_r.y += dimensions[1] * ((int)(viewport::get().get_tlc_y() * parallax) / (int)(dimensions[1]));
   }
 
   SDL_Rect draw_me = dest_r;
