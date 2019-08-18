@@ -11,7 +11,8 @@
 
 using xmlp = xmlparse;
 
-image::image (const std::string name) :
+image::image (const std::string name)
+/*try*/ :
   dimensions(
     xmlp::get().get_xml_double(name + "/dimensions/width"),
     xmlp::get().get_xml_double(name + "/dimensions/height")
@@ -49,6 +50,26 @@ image::image (const std::string name) :
     msg::print_alert("setting to 0 (no animation)");
     frame_delay = 0;
   }
+
+  fill_t_vec(name);
+}
+/*catch (std::string &s) {
+  //something went wrong with image initialization
+  msg::print_warn("couldn't load " + name);
+  msg::print_alert("(loading a default texture...)");
+
+  fill_t_vec("");
+
+  msg::print_alert("(success)");
+}*/
+
+image::~image() {
+  for(SDL_Texture *t : t_vec) {
+    SDL_DestroyTexture(t);
+  }
+}
+
+void image::fill_t_vec(const std::string &name) {
 
   //get some space for the frames
   t_vec.reserve(frames);
@@ -106,12 +127,7 @@ image::image (const std::string name) :
     SDL_FreeSurface(surf);
   }
   SDL_FreeSurface(full_surf);
-}
 
-image::~image() {
-  for(SDL_Texture *t : t_vec) {
-    SDL_DestroyTexture(t);
-  }
 }
 
 void image::draw_rotate(double x_pos, double y_pos, double angle, double frame_bump) const {
@@ -160,4 +176,56 @@ void image::draw_rotate(double x_pos, double y_pos, double angle, double frame_b
 
   delete piv;
   piv = NULL;
+}
+
+void image::draw_tile(double parallax) const {
+  //draw the image in a tile-like format across the screen, shifting it
+  //with player's movement according to parallax. parallax 1 means it's
+  //"fixed" like an unmoving background.
+
+  SDL_Rect dest_r;
+  dest_r.x = (0 - viewport::get().get_tlc_x());
+  dest_r.y = (0 - viewport::get().get_tlc_y());
+  dest_r.w = dimensions[0];
+  dest_r.h = dimensions[1];
+
+
+  //check if viewport is too far to the left
+  if(viewport::get().get_tlc_x() < 0) {
+    //calculate HOW far to the left it needs to be shifted
+    dest_r.x -= dimensions[0] * ((int)(0 - viewport::get().get_tlc_x()) / (int)(dimensions[0]) + 1);
+  }
+
+  //check if the viewport is too far to the right
+  if(viewport::get().get_tlc_x() > dimensions[0]) {
+    //calculate how far to the right it needs to be shifted
+    //get the top left corner, then divide it by the tile width -
+    //this allows us to tell how many "tiles" too far we are, and
+    //adjust accordingly
+    dest_r.x += dimensions[0] * ((int)(viewport::get().get_tlc_x()) / (int)(dimensions[0]));
+  }
+
+  //check if viewport is too far up
+  if(viewport::get().get_tlc_y() < 0) {
+    dest_r.y -= dimensions[1] * ((int)(0 - viewport::get().get_tlc_y()) / (int)(dimensions[1]) + 1);
+  }
+
+  //check if viewport is too far down
+  if(viewport::get().get_tlc_y() > dimensions[1]) {
+    dest_r.y += dimensions[1] * ((int)(viewport::get().get_tlc_y()) / (int)(dimensions[1]));
+  }
+
+  SDL_Rect draw_me = dest_r;
+
+
+  //draw the tiles with nested for - they draw in stripes
+  for(int i = dest_r.x; i < viewport::get().get_w(); i += dimensions[0]) {
+    draw_me.x = i;
+    for(int j = dest_r.y; j < viewport::get().get_h(); j += dimensions[0]) {
+    draw_me.y = j;
+      SDL_RenderCopyEx(render::get().get_r(), t_vec[0], NULL, &draw_me, 0, 0, SDL_FLIP_NONE);
+    }
+  }
+
+
 }

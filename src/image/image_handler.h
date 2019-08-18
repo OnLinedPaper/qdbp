@@ -13,6 +13,7 @@ public:
   ~image_handler();
 
   void draw_rotate(const std::string name, double x, double y, double frame_bump, double angle);
+  void draw_tile(const std::string name, double parallax);
 
 private:
   std::unordered_map<std::string, image> images;
