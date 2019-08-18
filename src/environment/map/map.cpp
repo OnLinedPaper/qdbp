@@ -5,7 +5,9 @@
 #include "src/xml_parser/xmlparse.h"
 #include "src/utils/message.h"
 
-map::map(std::string name) {
+map::map(std::string name) :
+  bg(xmlparse::get().get_xml_string(name + "/background"))
+{
   x_dim = xmlparse::get().get_xml_int(name + "/dimensions/x_dim");
   y_dim = xmlparse::get().get_xml_int(name + "/dimensions/y_dim");
   start_chunk = vec2d(
@@ -42,11 +44,11 @@ void map::init_c_deque() {
   }
 }
 
-vec2d map::get_start_pos() const {
+const vec2d map::get_start_pos() const {
   return(c_deque[index(start_chunk[0], start_chunk[1])].get_midpoint());
 }
 
-vec2d map::convert_chunk_index(vec2d &pos) const {
+const vec2d map::convert_chunk_index(vec2d &pos) const {
   return(vec2d(int(pos[0] / chunk::length), int(pos[1] / chunk::length)));
 }
 
@@ -64,6 +66,9 @@ unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) const {
 }
 
 void map::draw() const {
+  //draw the bg first
+  bg.draw();
+
   //delegate this to each chunk's draw
   for(int j=0; j<y_dim; j++) {
     for(int i=0; i<x_dim; i++) {
