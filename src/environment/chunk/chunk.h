@@ -36,7 +36,7 @@ public:
   void set_b_lf(bool b) { border[2] = b; }
   void set_b_rt(bool b) { border[3] = b; }
 
-  vec2d get_midpoint() const { return vec2d(
+  const vec2d get_midpoint() const { return vec2d(
     tlc[0] + length/2,
     tlc[1] + length/2
   );

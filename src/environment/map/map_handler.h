@@ -19,8 +19,8 @@ public:
     return( m->check_rebuff(curr_pos, prev_pos) );
   }
 
-  vec2d get_start_pos() const { return m->get_start_pos(); }
-  vec2d get_start_chunk() const { return m->get_start_chunk(); }
+  const vec2d get_start_pos() const { return m->get_start_pos(); }
+  const vec2d get_start_chunk() const { return m->get_start_chunk(); }
   void draw() const { m->draw(); }
 
 private:

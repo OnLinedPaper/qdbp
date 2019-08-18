@@ -11,8 +11,9 @@ public:
 
   image(const std::string);
   ~image();
-  
+
   void draw_rotate(double x, double y, double a, double frame_bump) const;
+  const vec2d &get_dim() const { return dimensions; }
 
 private:
   image();
