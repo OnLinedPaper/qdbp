@@ -19,6 +19,7 @@ win_demo
 
 #krita backup files
 *~
+*-autosave.kra
 
 #demo files
 win_demo.zip
