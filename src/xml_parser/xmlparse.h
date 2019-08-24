@@ -18,10 +18,12 @@ public:
   void recurse_build_tree(const std::smatch, const std::string);
 
   void print_tree();
+  std::vector<std::string> get_all_child_tags(const std::string path) const;
 
   std::string get_xml_string(const std::string path);
   int get_xml_int(const std::string path);
   double get_xml_double(const std::string path);
+  bool get_xml_bool(const std::string path);
 
 private:
   //singleton

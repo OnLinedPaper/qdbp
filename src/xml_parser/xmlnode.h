@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
 class xmlnode {
 public:
@@ -23,6 +24,11 @@ public:
 
   void recursive_print(const int depth);
   std::string recursive_get_value(const std::string path);
+  std::vector<std::string> recursive_get_all_child_tags(const std::string path);
+
+protected:
+  std::string dive_name(const std::string) const;
+  std::string dive_path(const std::string) const;
 
 private:
   std::string name; //one name for the tag

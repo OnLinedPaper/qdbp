@@ -108,10 +108,42 @@ double xmlparse::get_xml_double(const std::string path) {
 
 //============================================================================
 
+bool xmlparse::get_xml_bool(const std::string path) {
+  std::string retval = get_xml_string(path);
+
+  std::regex t("^[Tt][Rr][Uu][Ee]$");
+  std::regex f("^[Ff][Aa][Ll][Ss][Ee]$");
+
+  if(std::regex_match(retval, t)) {
+    return true;
+  }
+  else if(std::regex_match(retval, f)) {
+    return false;
+  }
+  else {
+    std::string error = "can't convert this value to bool!";
+    msg::print_error(error);
+    msg::print_alert("value: " + retval);
+    msg::print_alert("bad tag path: " + path);
+    throw error;
+  }
+}
+
 void xmlparse::print_tree() {
   std::cout << msg::cn << std::endl;
   root->recursive_print(0);
   std::cout << msg::none << std::endl;
+}
+
+std::vector<std::string> xmlparse::get_all_child_tags(const std::string path) const {
+  try {
+    return(root->recursive_get_all_child_tags(path));
+  }
+  catch (std::string s) {
+    //one of the tags was bad
+    msg::print_alert("bad tag path: " + path);
+    return std::vector<std::string>();
+  }
 }
 
 //============================================================================

@@ -1,6 +1,7 @@
 #include "xmlnode.h"
 #include "src/utils/message.h"
 #include <iostream>
+#include <map>
 
 xmlnode::xmlnode() : name(""), value(""), children() { }
 xmlnode::xmlnode(std::string name) : name(name), value(""), children() {}
@@ -108,6 +109,36 @@ std::string xmlnode::recursive_get_value(const std::string path) {
 
 //=============================================================================
 
+std::string xmlnode::dive_name(const std::string path) const {
+
+  //cut the first "/" we find, and then return the name left over
+  std::string p = path.substr(1, std::string::npos);
+  //get the new node's name
+  return(p.substr(0, p.find_first_of("/")));
+}
+
+//=============================================================================
+
+std::string xmlnode::dive_path(const std::string path) const {
+
+  //cut the first "/"
+  std::string p = path.substr(1, std::string::npos);
+  //get the new path
+  std::size_t found = p.find_first_of("/");
+  if(found != std::string::npos) {
+    //there's still another "tag"
+    p = p.substr(found, std::string::npos);
+  }
+  else {
+    //this is it, it's the value we want
+    p = "";
+  }
+
+  return(p);
+}
+
+//=============================================================================
+
 void xmlnode::recursive_print(const int depth) {
   //print out this node's name and value, followed by each child
 
@@ -127,5 +158,33 @@ void xmlnode::recursive_print(const int depth) {
     //recursive print call on child
     it->second->recursive_print(depth + 1);
     it++;
+  }
+}
+
+//=============================================================================
+
+std::vector<std::string> xmlnode::recursive_get_all_child_tags(const std::string path) {
+  if(path == "") {
+    //get the children of this node
+    std::vector<std::string> v;
+
+    //iterate through children
+    for(auto const &it : this->children) {
+      //add each child's name
+      v.push_back(it.first);
+    }
+
+    return v;
+  }
+  else {
+    //dive deeper
+    if(children.find(dive_name(path)) != children.end()) {
+      return(this->children[dive_name(path)]->recursive_get_all_child_tags(dive_path(path)));
+    }
+    else {
+      std::string warn = "could not find children for " + dive_name(path);
+      msg::print_warn(warn);
+      throw(warn);
+    }
   }
 }
