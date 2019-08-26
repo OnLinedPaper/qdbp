@@ -109,6 +109,7 @@ engine::engine() : debug_swirly_int(0), controller(NULL) {
   xmlparse::get().build_tree("resources/gamedata.xml");
   xmlparse::get().build_tree("resources/imagedata.xml");
   xmlparse::get().build_tree("resources/mapdata.xml");
+  xmlparse::get().build_tree("resources/chunkdata.xml");
 
 
   map_h::get().set_map("/" + xmlparse::get().get_xml_string("/first_map"));
