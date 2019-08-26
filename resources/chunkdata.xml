@@ -1,0 +1,11 @@
+<chunk_types>
+  <default>
+    <in_bounds>true</in_bounds>
+  </default>
+
+  <default_impassible>
+    <in_bounds>false</in_bounds>
+  </default_impassible>
+
+
+</chunk_types>
