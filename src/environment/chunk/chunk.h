@@ -10,6 +10,10 @@ public:
   chunk(double, double);
   chunk(vec2d&, bool, bool, bool, bool);
   chunk(double, double, bool, bool, bool, bool);
+  chunk(double, double, bool, bool, bool, bool, std::string);
+
+  chunk(const chunk&);
+  chunk &operator=(const chunk&);
 
   static const unsigned char IN;
   static const unsigned char UP;
@@ -36,11 +40,20 @@ public:
   void set_b_lf(bool b) { border[2] = b; }
   void set_b_rt(bool b) { border[3] = b; }
 
+  //if it's in bounds, set a barrier; else, un-set it
+  void set_bound_b_up() { border[0] = in_bounds; }
+  void set_bound_b_dn() { border[1] = in_bounds; }
+  void set_bound_b_lf() { border[2] = in_bounds; }
+  void set_bound_b_rt() { border[3] = in_bounds; }
+
   const vec2d get_midpoint() const { return vec2d(
     tlc[0] + length/2,
     tlc[1] + length/2
   );
   }
+
+  bool get_in_bounds() const { return in_bounds; }
+  void set_in_bounds(bool i) { in_bounds = i; }
 
   void draw() const;
   void debug_draw(double x, double y) const;
@@ -51,11 +64,11 @@ private:
   bool border[4];
 
   chunk();
-  chunk(const chunk&) = delete;
-  chunk &operator=(const chunk&) = delete;
 
   std::string i_name;
   double frame_bump;
+
+  bool in_bounds;
 
 };
 

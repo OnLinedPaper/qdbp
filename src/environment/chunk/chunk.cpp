@@ -3,6 +3,7 @@
 #include "src/viewport/viewport.h"
 #include "src/image/image.h"
 #include "src/image/image_handler.h"
+#include "src/xml_parser/xmlparse.h"
 
 const unsigned char chunk::IN = 0;
 const unsigned char chunk::UP = 1;
@@ -15,29 +16,78 @@ chunk::chunk(vec2d &v) :
   tlc(v),
   border {0, 0, 0, 0},
   i_name("/boundary_marker"),
-  frame_bump(rand())
+  frame_bump(rand()),
+  in_bounds(false)
   { }
 
 chunk::chunk(double x, double y) :
   tlc(x*length, y*length),
   border {0, 0, 0, 0},
   i_name("/boundary_marker"),
-  frame_bump(rand())
+  frame_bump(rand()),
+  in_bounds(false)
   { }
 
 chunk::chunk(vec2d &v, bool u, bool d, bool l, bool r) :
   tlc(v),
   border {u, d, l, r},
   i_name("/boundary_marker"),
-  frame_bump(rand())
+  frame_bump(rand()),
+  in_bounds(false)
   { }
 
 chunk::chunk(double x, double y, bool u, bool d, bool l, bool r) :
   tlc(x*length, y*length),
   border {u, d, l, r},
   i_name("/boundary_marker"),
-  frame_bump(rand())
+  frame_bump(rand()),
+  in_bounds(false)
   { }
+
+chunk::chunk(double x, double y, bool u, bool d, bool l, bool r, std::string type) :
+  tlc(x*length, y*length),
+  border {u, d, l, r},
+  i_name("/boundary_marker"),
+  frame_bump(rand()),
+  in_bounds(false)
+{
+  if(type != "") {
+    //load the chunk data here
+    in_bounds = xmlparse::get().get_xml_bool("/chunk_types/"+type+"/in_bounds");
+  }
+}
+
+chunk::chunk(const chunk&c) :
+  tlc(c.tlc),
+  i_name(c.i_name),
+  frame_bump(c.frame_bump),
+  in_bounds(c.in_bounds)
+{ 
+  this->set_b_up(c.is_b_up());
+  this->set_b_dn(c.is_b_dn());
+  this->set_b_lf(c.is_b_lf());
+  this->set_b_rt(c.is_b_rt());
+}
+
+chunk &chunk::operator=(const chunk& c) {
+  //check if these are the same chunk
+  if(this == &c) { return *this; }
+
+  this->set_b_up(c.is_b_up());
+  this->set_b_dn(c.is_b_dn());
+  this->set_b_lf(c.is_b_lf());
+  this->set_b_rt(c.is_b_rt());
+
+  this->tlc = c.tlc;
+
+  this->i_name = c.i_name;
+  this->frame_bump = c.frame_bump;
+
+  this->in_bounds = c.in_bounds;
+
+  return *this;
+}
+
 
 unsigned char chunk::chunk_pos(vec2d &v) const {
   return( this->chunk_pos(v[0], v[1]) );

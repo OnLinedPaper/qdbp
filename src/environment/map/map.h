@@ -27,8 +27,12 @@ private:
 
   b_ground bg;
 
+  std::string name;
+
   void validate();
   void init_c_deque();
+  void init_special_chunks();
+  void check_barriers(int, int);
 
   //will be a SINGLE array, with clever referenceing
   std::deque<chunk> c_deque;
