@@ -16,3 +16,27 @@
   </start_chunk>
   <background>/debug_heart_</background>
 </debug_1>
+
+<debug_2>
+  <dimensions>
+    <x_dim>3</x_dim>
+    <y_dim>3</y_dim>
+  </dimensions>
+  <generation>
+    <style>userdef</style>
+    <default_chunk_type>default</default_chunk_type>
+  </generation>
+  <start_chunk>
+    <x_chunk>0</x_chunk>
+    <y_chunk>0</y_chunk>
+  </start_chunk>
+  <background></background>
+
+  <special_chunks>
+    <1-1>
+      <x_chunk>1</x_chunk>
+      <y_chunk>1</y_chunk>
+      <type>default_impassible</type>
+    </1-1>
+  </special_chunks>
+</debug_2>
