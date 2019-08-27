@@ -15,7 +15,8 @@ const double chunk::length = 1000;
 chunk::chunk(vec2d &v) :
   tlc(v),
   border {0, 0, 0, 0},
-  i_name("/boundary_marker"),
+  i1_name("/boundary_marker"),
+  i2_name("/boundary_point"),
   frame_bump(rand()),
   in_bounds(false)
   { }
@@ -23,7 +24,8 @@ chunk::chunk(vec2d &v) :
 chunk::chunk(double x, double y) :
   tlc(x*length, y*length),
   border {0, 0, 0, 0},
-  i_name("/boundary_marker"),
+  i1_name("/boundary_marker"),
+  i2_name("/boundary_point"),
   frame_bump(rand()),
   in_bounds(false)
   { }
@@ -31,7 +33,8 @@ chunk::chunk(double x, double y) :
 chunk::chunk(vec2d &v, bool u, bool d, bool l, bool r) :
   tlc(v),
   border {u, d, l, r},
-  i_name("/boundary_marker"),
+  i1_name("/boundary_marker"),
+  i2_name("/boundary_point"),
   frame_bump(rand()),
   in_bounds(false)
   { }
@@ -39,7 +42,8 @@ chunk::chunk(vec2d &v, bool u, bool d, bool l, bool r) :
 chunk::chunk(double x, double y, bool u, bool d, bool l, bool r) :
   tlc(x*length, y*length),
   border {u, d, l, r},
-  i_name("/boundary_marker"),
+  i1_name("/boundary_marker"),
+  i2_name("/boundary_point"),
   frame_bump(rand()),
   in_bounds(false)
   { }
@@ -47,7 +51,8 @@ chunk::chunk(double x, double y, bool u, bool d, bool l, bool r) :
 chunk::chunk(double x, double y, bool u, bool d, bool l, bool r, std::string type) :
   tlc(x*length, y*length),
   border {u, d, l, r},
-  i_name("/boundary_marker"),
+  i1_name("/boundary_marker"),
+  i2_name("/boundary_point"),
   frame_bump(rand()),
   in_bounds(false)
 {
@@ -59,10 +64,11 @@ chunk::chunk(double x, double y, bool u, bool d, bool l, bool r, std::string typ
 
 chunk::chunk(const chunk&c) :
   tlc(c.tlc),
-  i_name(c.i_name),
+  i1_name(c.i1_name),
+  i2_name(c.i2_name),
   frame_bump(c.frame_bump),
   in_bounds(c.in_bounds)
-{ 
+{
   this->set_b_up(c.is_b_up());
   this->set_b_dn(c.is_b_dn());
   this->set_b_lf(c.is_b_lf());
@@ -80,7 +86,8 @@ chunk &chunk::operator=(const chunk& c) {
 
   this->tlc = c.tlc;
 
-  this->i_name = c.i_name;
+  this->i1_name = c.i1_name;
+  this->i2_name = c.i2_name;
   this->frame_bump = c.frame_bump;
 
   this->in_bounds = c.in_bounds;
@@ -147,23 +154,35 @@ void chunk::draw() const {
   //check in order: u, d, l, r
   if(border[0]) {
     //the top is a border
-    image_handler::get().draw_rotate(i_name, x + (length / 4), y, frame_bump, 0);
-    image_handler::get().draw_rotate(i_name, x + 3 * (length / 4), y, frame_bump, 0);
+    image_handler::get().draw_rotate(i1_name, x + (length / 4), y, frame_bump, 0);
+    image_handler::get().draw_rotate(i1_name, x + 3 * (length / 4), y, frame_bump, 0);
+
+    image_handler::get().draw_rotate(i2_name, x, y, frame_bump, 0);
+    image_handler::get().draw_rotate(i2_name, x + (length / 2), y, frame_bump, 0);
   }
   if(border[1]) {
     //the bottom is a border
-    image_handler::get().draw_rotate(i_name, x + (length / 4), y + length, frame_bump, 180);
-    image_handler::get().draw_rotate(i_name, x + 3 * (length / 4), y + length, frame_bump, 180);
+    image_handler::get().draw_rotate(i1_name, x + (length / 4), y + length, frame_bump, 180);
+    image_handler::get().draw_rotate(i1_name, x + 3 * (length / 4), y + length, frame_bump, 180);
+
+    image_handler::get().draw_rotate(i2_name, x + (length / 2), y + length, frame_bump, 0);
+    image_handler::get().draw_rotate(i2_name, x + length, y + length, frame_bump, 0);
   }
   if(border[2]) {
     //the left is a border
-    image_handler::get().draw_rotate(i_name, x, y + (length / 4), frame_bump, 270);
-    image_handler::get().draw_rotate(i_name, x, y + 3 * (length / 4), frame_bump, 270);
+    image_handler::get().draw_rotate(i1_name, x, y + (length / 4), frame_bump, 270);
+    image_handler::get().draw_rotate(i1_name, x, y + 3 * (length / 4), frame_bump, 270);
+
+    image_handler::get().draw_rotate(i2_name, x, y + (length / 2), frame_bump, 0);
+    image_handler::get().draw_rotate(i2_name, x, y + length, frame_bump, 0);
   }
   if(border[3]) {
     //the right is a border
-    image_handler::get().draw_rotate(i_name, x + length, y + (length / 4), frame_bump, 90);
-    image_handler::get().draw_rotate(i_name, x + length, y + 3 * (length / 4), frame_bump, 90);
+    image_handler::get().draw_rotate(i1_name, x + length, y + (length / 4), frame_bump, 90);
+    image_handler::get().draw_rotate(i1_name, x + length, y + 3 * (length / 4), frame_bump, 90);
+
+    image_handler::get().draw_rotate(i2_name, x + length, y, frame_bump, 0);
+    image_handler::get().draw_rotate(i2_name, x + length, y + (length / 2), frame_bump, 0);
   }
 
 }

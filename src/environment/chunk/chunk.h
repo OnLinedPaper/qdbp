@@ -65,7 +65,8 @@ private:
 
   chunk();
 
-  std::string i_name;
+  std::string i1_name;
+  std::string i2_name;
   double frame_bump;
 
   bool in_bounds;
