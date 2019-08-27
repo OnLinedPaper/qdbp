@@ -59,6 +59,19 @@
   </dimensions>
 </boundary_marker>
 
+<boundary_point>
+  <file>resources/images/boundary_point.png</file>
+  <dimensions>
+    <width>40</width>
+    <height>40</height>
+
+    <pivot_x>0</pivot_x>
+    <pivot_y>0</pivot_y>
+    <frames>8</frames>
+    <frame_delay>12</frame_delay>
+  </dimensions>
+</boundary_point>
+
 <fork_ship>
   <file>resources/images/fork_ship.png</file>
   <dimensions>
