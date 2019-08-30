@@ -144,6 +144,27 @@ unsigned char chunk::chunk_rebuff(vec2d &pos) const {
   return ret;
 }
 
+unsigned char chunk::chunk_rebuff_forced(vec2d &pos) const {
+  //force a rebuff - this is used to handle issues where it would otherwise
+  //be possible to fly into out of bounds chunks
+
+  unsigned char c = chunk_pos(pos);
+  unsigned char ret = 0;
+  if(!c) {
+    //still in chunk, no check
+    return ret;
+  }
+
+  //check each "hit" to see if it's out of bounds - ignore barriers or not
+  //rebuff it in that direction
+  if(c & UP) { ret = ret|UP; }
+  if(c & DN) { ret = ret|DN; }
+  if(c & LF) { ret = ret|LF; }
+  if(c & RT) { ret = ret|RT; }
+
+  return ret;
+}
+
 void chunk::draw() const {
 
   double x = tlc[0];

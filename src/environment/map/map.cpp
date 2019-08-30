@@ -217,13 +217,30 @@ unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) const {
   //check the last chunk that was occupied, and return the position
   //relative to that chunk
 
+  //check to see if the new chunk is valid - previously, through an oversight,
+  //it was possible to leave the map through a chunk that has no barriers
+  //if the corner was hit at EXACTLY the right angle to travel into the new
+  //chunk
   vec2d index_pos = convert_chunk_index(prev_pos);
-  return(
-    c_deque[index(
-      index_pos[0],
-      index_pos[1]
-    )].chunk_rebuff(curr_pos)
-  );
+  vec2d new_chunk = convert_chunk_index(curr_pos);
+
+  //it's a valid chunk
+  unsigned char r = c_deque[
+    index(index_pos[0], index_pos[1])
+  ].chunk_rebuff(curr_pos);
+  if(!r) {
+    //the new chunk is not blocked by barriers
+    //check if it's in bounds
+    if(c_deque[index(new_chunk[0], new_chunk[1])].get_in_bounds() == false) {
+      //this is out of bounds - force a rebuff
+      r = c_deque[index(
+          index_pos[0],
+          index_pos[1]
+        )].chunk_rebuff_forced(curr_pos);
+    }
+  }
+
+  return (r);
 }
 
 void map::draw() const {

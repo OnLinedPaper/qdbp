@@ -28,6 +28,7 @@ public:
   unsigned char chunk_pos(vec2d&) const;
   unsigned char chunk_pos(double, double) const;
   unsigned char chunk_rebuff(vec2d &) const;
+  unsigned char chunk_rebuff_forced(vec2d &) const;
 
   //check if the edges are "borders", that is, if they touch nothing
   bool is_b_up() const { return border[0]; }
