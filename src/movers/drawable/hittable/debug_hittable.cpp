@@ -5,22 +5,16 @@
 
 d_hittable::d_hittable(const std::string path) :
   hittable(path)
-{
-  hitboxes.push_back(hitbox(20.0, vec2d(0, 10), hitbox::TYPE_HITBOX));
-  weakboxes.push_back(hitbox(20.0, vec2d(0, -10), hitbox::TYPE_WEAKBOX));
-  hitboxes.push_back(hitbox(20.0, vec2d(20, -8), hitbox::TYPE_HITBOX));
-  hitboxes.push_back(hitbox(20.0, vec2d(-20, -8), hitbox::TYPE_HITBOX));
-
-}
+{ }
 
 void d_hittable::move_up()
-  { vel[1] -= vel_accel * t_frame::get().d_factor(); moved = true; }
+  { vel[1] -= vel_accel * t_frame::get().t_adjust(); moved = true; }
 void d_hittable::move_dn()
-  { vel[1] += vel_accel * t_frame::get().d_factor(); moved = true; }
+  { vel[1] += vel_accel * t_frame::get().t_adjust(); moved = true; }
 void d_hittable::move_lf()
-  { vel[0] -= vel_accel * t_frame::get().d_factor(); moved = true; }
+  { vel[0] -= vel_accel * t_frame::get().t_adjust(); moved = true; }
 void d_hittable::move_rt()
-  { vel[0] += vel_accel * t_frame::get().d_factor(); moved = true; }
+  { vel[0] += vel_accel * t_frame::get().t_adjust(); moved = true; }
 
 void d_hittable::update() {
   hittable::update();

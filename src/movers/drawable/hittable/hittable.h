@@ -8,11 +8,11 @@
 
 class hittable : public drawable {
 public:
-  hittable(const std::string path) :
-    drawable(path)
-  { }
+  hittable(const std::string path);
 
   void draw_boxes() const;
+
+  bool collides(const hitbox &h, int type) const;
 
 protected:
   void update() override;
