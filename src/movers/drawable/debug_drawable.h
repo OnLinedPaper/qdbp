@@ -19,11 +19,7 @@ public:
   void update() override;
 
   void draw() const override;
-
-private:
-
-  double last_angle;
-
+  
 };
 
 #endif
