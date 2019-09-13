@@ -2,6 +2,68 @@
 <first_map>debug_2</first_map>
 
 <movers>
+  <hittable>
+    <debug_hittable>
+      <movement>
+        <vel_cap>20</vel_cap>
+        <vel_decay>0.1</vel_decay>
+        <vel_accel>1</vel_accel>
+      </movement>
+      <textures>
+        <body>arrow2</body>
+      </textures>
+      <hitboxes>
+        <top>
+          <x_offset>0</x_offset>
+          <y_offset>10</y_offset>
+          <size>20</size>
+          <type>HIT</type>
+        </top>
+        <bottom>
+          <x_offset>0</x_offset>
+          <y_offset>-10</y_offset>
+          <size>20</size>
+          <type>WEAK</type>
+        </bottom>
+        <left>
+          <x_offset>20</x_offset>
+          <y_offset>-8</y_offset>
+          <size>20</size>
+          <type>HIT</type>
+        </left>
+        <right>
+          <x_offset>-20</x_offset>
+          <y_offset>-8</y_offset>
+          <size>20</size>
+          <type>HIT</type>
+        </right>
+      </hitboxes>
+    </debug_hittable>
+    <debug_stationary>
+      <movement>
+        <vel_cap>0</vel_cap>
+        <vel_decay>1</vel_decay>
+        <vel_accel>0</vel_accel>
+      </movement>
+      <textures>
+        <body>tracker</body>
+      </textures>
+      <hitboxes>
+        <pointy>
+          <x_offset>0</x_offset>
+          <y_offset>15</y_offset>
+          <size>30</size>
+          <type>HURT</type>
+        </pointy>
+        <flat>
+          <x_offset>0</x_offset>
+          <y_offset>-10</y_offset>
+          <size>20</size>
+          <type>WEAK</type>
+        </flat>
+      </hitboxes>
+    </debug_stationary>
+  </hittable>
   <drawable>
     <debug_drawable>
       <movement>

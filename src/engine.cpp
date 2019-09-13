@@ -3,7 +3,6 @@
 #include "engine.h"
 #include "renders/render.h"
 #include "movers/movable.h"
-#include "movers/debug_movable.h"
 #include "movers/drawable/debug_drawable.h"
 #include "xml_parser/xmlparse.h"
 #include "viewport/viewport.h"
@@ -12,6 +11,8 @@
 #include "environment/map/map.h"
 #include "environment/map/map_handler.h"
 #include "utils/message.h"
+#include "src/rect2d/rect2d.h"
+#include "src/movers/drawable/hittable/debug_hittable.h"
 
 //looking for the constructors? they're below "play"
 
@@ -25,10 +26,14 @@ void engine::play() {
   const Uint8* keystate;
 
   //moves!
-  d_drawable dd;
+  d_hittable dd("/movers/hittable/debug_hittable");
   dd.set_pos(map_h::get().get_start_pos());
 
-
+  vec2d v(0,0);
+  hitbox hit(100.0, v, 1);
+  v[0] = 700;
+  v[1] = 700;
+  hit.set_box_center(v, 0);
 
   while(!quit) {
 
@@ -85,10 +90,17 @@ void engine::play() {
 
     map_h::get().draw();
     dd.draw();
+    if(!dd.collides(hit, hitbox::TYPE_HITBOX)) {
+      hit.tlc_draw();
+    }
     SDL_RenderPresent(render::get().get_r());
 
 //==== DEBUG STUFF here =======================================================
 
+//dd.move_up();
+//dd.move_lf();
+//dd.move_dn();
+//dd.move_rt();
 
 //==== GAME TICK here =========================================================
 

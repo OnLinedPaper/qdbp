@@ -30,7 +30,7 @@
     <x_chunk>0</x_chunk>
     <y_chunk>0</y_chunk>
   </start_chunk>
-  <background></background>
+  <background>/debug_heart_</background>
 
   <special_chunks>
     <1-1>

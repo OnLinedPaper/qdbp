@@ -14,14 +14,14 @@ SDLLIBS=`sdl-config --cflags --libs`
 WEXE= qdbp.exe
 
 
-DEPS = engine.h render.h movable.h xmlparse.h xmlnode.h vec2d.h debug_movable.h drawable.h debug_drawable.h viewport.h image.h timeframe.h chunk.h map.h map_handler.h message.h image_handler.h background.h
+DEPS = engine.h render.h movable.h xmlparse.h xmlnode.h vec2d.h drawable.h debug_drawable.h viewport.h image.h timeframe.h chunk.h map.h map_handler.h message.h image_handler.h background.h rect2d.h hittable.h debug_hittable.h hitbox.h
 
-OBJS:= engine.o render.o xmlparse.o xmlnode.o vec2d.o debug_movable.o debug_drawable.o viewport.o image.o timeframe.o chunk.o map.o message.o image_handler.o background.o
+OBJS:= engine.o render.o xmlparse.o xmlnode.o vec2d.o debug_drawable.o viewport.o image.o timeframe.o chunk.o map.o message.o image_handler.o background.o rect2d.o debug_hittable.o drawable.o hittable.o hitbox.o
 OBJS:= $(addprefix $(BDIR)/,$(OBJS))
 
-SRCS = engine.cpp render.cpp xmlparse.cpp xmlnode.cpp vec2d.cpp debug_movable.cpp debug_drawable.cpp viewport.cpp image.cpp timeframe.cpp chunk.cpp map.cpp message.cpp image_handler.cpp background.cpp
+SRCS = engine.cpp render.cpp xmlparse.cpp xmlnode.cpp vec2d.cpp debug_drawable.cpp viewport.cpp image.cpp timeframe.cpp chunk.cpp map.cpp message.cpp image_handler.cpp background.cpp rect2d.cpp debug_hittable.cpp drawable.cpp hittable.cpp hitbox.cpp
 
-PATHS = . movers renders vec2d xml_parser movers/drawable viewport image timeframe environment/chunk environment/map utils environment/background
+PATHS = . movers renders vec2d xml_parser movers/drawable viewport image timeframe environment/chunk environment/map utils environment/background rect2d movers/drawable/hittable rect2d/hitbox
 VPATH = $(addprefix src/,$(PATHS))
 
 
