@@ -64,6 +64,10 @@ vec2d vec2d::operator+(const vec2d &v) const {
   return vec2d(x + v[0], y + v[1]);
 }
 
+vec2d vec2d::operator-(const vec2d &v) const {
+  return vec2d(x - v[0], y - v[1]);
+}
+
 //-----------------------------------------------------------------------------
 //related to vector properties
 
