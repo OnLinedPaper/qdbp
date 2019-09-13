@@ -4,10 +4,22 @@
 #include "src/vec2d/vec2d.h"
 #include "src/environment/chunk/chunk.h"
 #include "src/environment/map/map_handler.h"
+#include "src/xml_parser/xmlparse.h"
 #include <cmath>
+#include "src/timeframe/timeframe.h"
 
 class movable {
 public:
+
+  movable(std::string path) :
+    pos(0,0),
+    last_pos(0,0),
+    vel(0,0),
+    vel_accel(xmlparse::get().get_xml_double(path + "/movement/vel_accel") * t_frame::get().f_factor()),
+    vel_cap(xmlparse::get().get_xml_double(path + "/movement/vel_cap") * t_frame::get().f_factor()),
+    vel_decay(xmlparse::get().get_xml_double(path + "/movement/vel_decay") * t_frame::get().f_factor()),
+    moved(false)
+  { }
 
   void set_x(double x) { pos[0] = x; }
   void set_y(double y) { pos[1] = y; }
