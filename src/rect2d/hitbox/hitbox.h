@@ -11,9 +11,17 @@ public:
   static const int TYPE_WEAKBOX;
   static const int TYPE_SHIELDBOX;
 
-  hitbox(double size, vec2d offset, int type);
+  hitbox(double size, vec2d &offset, int type);
+  hitbox(std::string path);
 
-  void set_box_center(vec2d pos, double last_angle);
+  int str_to_type(std::string) const;
+  std::string type_to_str(int) const;
+
+  void set_box_center(vec2d &pos, double last_angle);
+
+  bool collides(const hitbox &h) const;
+
+  int get_type() const { return type; }
 
   void draw() const;
 
@@ -22,5 +30,7 @@ private:
   int type;
 
 };
+
+std::ostream &operator<<(std::ostream &output, const hitbox &h);
 
 #endif
