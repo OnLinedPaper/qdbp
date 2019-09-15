@@ -34,6 +34,8 @@ void rect2d::coord_draw(double x, double y) const {
   SDL_RenderFillRect(render::get().get_r(), &r);
   SDL_SetRenderDrawColor(render::get().get_r(), 64, 255, 64, 255);
   SDL_RenderDrawRect(render::get().get_r(), &r);
+  //restore color
+  SDL_SetRenderDrawColor(render::get().get_r(), c.r, c.g, c.b, c.a);
 }
 
 void rect2d::draw(int red, int green, int blue) const {
