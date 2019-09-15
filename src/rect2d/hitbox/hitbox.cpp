@@ -1,6 +1,6 @@
 #include "hitbox.h"
 #include "src/vec2d/vec2d.h"
-#include "math.h"
+#include <math.h>
 #include "src/xml_parser/xmlparse.h"
 
 const int hitbox::TYPE_HITBOX = 0;

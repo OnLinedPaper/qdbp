@@ -13,6 +13,7 @@
 #include "utils/message.h"
 #include "src/rect2d/rect2d.h"
 #include "src/movers/drawable/hittable/debug_hittable.h"
+#include "src/rect2d/hitbox/hitline.h"
 
 //looking for the constructors? they're below "play"
 
@@ -29,11 +30,22 @@ void engine::play() {
   d_hittable dd("/movers/hittable/debug_hittable");
   dd.set_pos(map_h::get().get_start_pos());
 
+  //TODO: remove from final build
   vec2d v(0,0);
   hitbox hit(100.0, v, 1);
   v[0] = 700;
   v[1] = 700;
   hit.set_box_center(v, 0);
+
+  //TODO: remove from final build
+  v[0] = 0; v[1] = 0;
+  hitbox hit2(80.0, v, 1);
+  v[0] = 1700;
+  v[1] = 700;
+  hit2.set_box_center(v, 0);
+
+  v[0] = 250; v[1] = 250;
+  hitline hl(v, 800, 120);
 
   while(!quit) {
 
@@ -93,6 +105,8 @@ void engine::play() {
     if(!dd.collides(hit, hitbox::TYPE_HITBOX)) {
       hit.tlc_draw();
     }
+    hit2.tlc_draw();
+    hl.draw();
     SDL_RenderPresent(render::get().get_r());
 
 //==== DEBUG STUFF here =======================================================
