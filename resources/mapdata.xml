@@ -38,5 +38,15 @@
       <y_chunk>1</y_chunk>
       <type>default_impassible</type>
     </1-1>
+    <2-2>
+      <x_chunk>2</x_chunk>
+      <y_chunk>2</y_chunk>
+      <type>default</type>
+
+      <jump_gate>
+        <destination>debug_1</destination>
+        <body>debug_gate</body>
+      </jump_gate>
+    </2-2>
   </special_chunks>
 </debug_2>

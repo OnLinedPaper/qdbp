@@ -56,6 +56,8 @@ public:
   bool get_in_bounds() const { return in_bounds; }
   void set_in_bounds(bool i) { in_bounds = i; }
 
+  void add_gate(std::string dest, std::string name);
+
   void draw() const;
   void debug_draw(double x, double y) const;
 
@@ -71,6 +73,10 @@ private:
   double frame_bump;
 
   bool in_bounds;
+
+  bool has_gate;
+  std::string g_dest;
+  std::string g_name;
 
 };
 

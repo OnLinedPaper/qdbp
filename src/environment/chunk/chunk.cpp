@@ -18,7 +18,10 @@ chunk::chunk(vec2d &v) :
   i1_name("/boundary_marker"),
   i2_name("/boundary_point"),
   frame_bump(rand()),
-  in_bounds(false)
+  in_bounds(false),
+  has_gate(false),
+  g_dest(""),
+  g_name("")
   { }
 
 chunk::chunk(double x, double y) :
@@ -27,7 +30,10 @@ chunk::chunk(double x, double y) :
   i1_name("/boundary_marker"),
   i2_name("/boundary_point"),
   frame_bump(rand()),
-  in_bounds(false)
+  in_bounds(false),
+  has_gate(false),
+  g_dest(""),
+  g_name("")
   { }
 
 chunk::chunk(vec2d &v, bool u, bool d, bool l, bool r) :
@@ -36,7 +42,10 @@ chunk::chunk(vec2d &v, bool u, bool d, bool l, bool r) :
   i1_name("/boundary_marker"),
   i2_name("/boundary_point"),
   frame_bump(rand()),
-  in_bounds(false)
+  in_bounds(false),
+  has_gate(false),
+  g_dest(""),
+  g_name("")
   { }
 
 chunk::chunk(double x, double y, bool u, bool d, bool l, bool r) :
@@ -45,7 +54,10 @@ chunk::chunk(double x, double y, bool u, bool d, bool l, bool r) :
   i1_name("/boundary_marker"),
   i2_name("/boundary_point"),
   frame_bump(rand()),
-  in_bounds(false)
+  in_bounds(false),
+  has_gate(false),
+  g_dest(""),
+  g_name("")
   { }
 
 chunk::chunk(double x, double y, bool u, bool d, bool l, bool r, std::string type) :
@@ -54,7 +66,10 @@ chunk::chunk(double x, double y, bool u, bool d, bool l, bool r, std::string typ
   i1_name("/boundary_marker"),
   i2_name("/boundary_point"),
   frame_bump(rand()),
-  in_bounds(false)
+  in_bounds(false),
+  has_gate(false),
+  g_dest(""),
+  g_name("")
 {
   if(type != "") {
     //load the chunk data here
@@ -165,6 +180,12 @@ unsigned char chunk::chunk_rebuff_forced(vec2d &pos) const {
   return ret;
 }
 
+void chunk::add_gate(std::string dest, std::string name) {
+  has_gate = true;
+  g_dest = dest;
+  g_name = "/" + name;
+}
+
 void chunk::draw() const {
 
   double x = tlc[0];
@@ -204,6 +225,10 @@ void chunk::draw() const {
 
     image_handler::get().draw_rotate(i2_name, x + length, y, 0, 0);
     image_handler::get().draw_rotate(i2_name, x + length, y + (length / 2), 0, 0);
+  }
+
+  if(has_gate) {
+    image_handler::get().draw_rotate(g_name, x + length/2, y + length/2, 0, 0);
   }
 
 }

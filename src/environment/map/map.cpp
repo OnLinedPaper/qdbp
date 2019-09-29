@@ -77,6 +77,8 @@ void map::init_special_chunks() {
     y = xmlparse::get().get_xml_int(s_path + "/" + s_c_name + "/y_chunk");
     t = xmlparse::get().get_xml_string(s_path + "/" + s_c_name + "/type");
 
+    std::vector<std::string> traits = xmlparse::get().get_all_child_tags(s_path + "/" + s_c_name);
+
     if(x < 0 || x >= x_dim || y < 0 || y >= y_dim) {
       //this chunk isn't valid - skip it
       msg::print_warn("bad coordinate for special chunk " + s_path + "/" +
@@ -90,6 +92,14 @@ void map::init_special_chunks() {
 
       //check the barriers
       check_barriers(x, y);
+
+      //add the gate
+      if(std::find(traits.begin(), traits.end(), "jump_gate") != traits.end()) {
+        c_deque[index(x, y)].add_gate(
+          xmlparse::get().get_xml_string(s_path + "/" + s_c_name + "/jump_gate/destination"),
+          xmlparse::get().get_xml_string(s_path + "/" + s_c_name + "/jump_gate/body")
+        );
+      }
     }
   }
 }
