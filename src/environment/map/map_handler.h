@@ -13,7 +13,8 @@ public:
     return instance;
   }
 
-  void set_map(std::string s) { delete m; m = new map(s); }
+  void set_map(std::string);
+  void jump();
 
   unsigned char check_rebuff(vec2d &curr_pos, vec2d &prev_pos) const {
     return( m->check_rebuff(curr_pos, prev_pos) );
