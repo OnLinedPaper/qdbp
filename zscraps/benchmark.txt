@@ -1,0 +1,43 @@
+//DEBUG -----------------------------------------------------------------------
+//benchmarking hitline and hitbox algorithms
+
+  std::vector<hitbox> boxes;
+  boxes.reserve(2000);
+  vec2d ve(0,0);
+
+  //generate some random hitboxes
+  for(int i=0; i<800000; i++) {
+    static std::minstd_rand eng{std::random_device{}()};
+    ve[0] = eng() % 10; ve[1] = eng() % 10;
+    boxes.emplace_back(hitbox(
+      eng() % 20 + 20,
+      ve,
+      0)
+    );
+    ve[0] = eng() % 1000; ve[1] = eng() % 1000;
+    boxes[i].set_box_center(ve, eng() % 360);
+  }
+
+  //benchmark the hitbox algorithm
+  double start_time = t_frame::get().get_ms();
+  for(hitbox &h : boxes) {
+    hit.collides(h);
+  }
+  double end_time = t_frame::get().get_ms() - start_time;
+  std::cout << end_time << std::endl;
+
+  //benchmark the hitline algorithm
+  start_time = t_frame::get().get_ms();
+
+  for(hitbox &h : boxes) {
+    hit.check_point_side(h.get_tlc(), hl);
+    hit.check_point_side(h.get_brc(), hl);
+    hit.check_point_side(vec2d(h.get_tlc()[0], h.get_brc()[1]), hl);
+    hit.check_point_side(vec2d(h.get_brc()[0], h.get_tlc()[1]), hl);
+  }
+
+  end_time = t_frame::get().get_ms() - start_time;
+  std::cout << end_time << std::endl;
+
+  return;
+//-----------------------------------------------------------------------------

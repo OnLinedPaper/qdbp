@@ -57,6 +57,87 @@ void rect2d::draw(int red, int green, int blue) const {
   SDL_RenderDrawRect(render::get().get_r(), &r);
 }
 
+bool rect2d::overlap(const hitline &l) const {
+
+  //first, make a "box" of the rect and check it - this is about
+  //3x faster than the next part of the algorithm
+  rect2d line_rect(
+    std::min(l.get_start()[0], l.get_end()[0]),
+    std::min(l.get_start()[1], l.get_end()[1]),
+    std::abs(l.get_start()[0] - l.get_end()[0]),
+    std::abs(l.get_start()[0] - l.get_end()[0])
+  );
+
+  if(this->overlap(line_rect)) {
+    //check the four corners of the rectangle - if they're all on the same
+    //"side" of the rectangle, there's no collision
+
+    vec2d trc(get_brc()[0], get_tlc()[1]);
+    vec2d blc(get_tlc()[0], get_brc()[1]);
+
+    //result is 0 if it's above, 1 if it's below
+    //doing this because mingw doesn't like std::signbit
+    int sum = (check_point_side(get_tlc(), l) < 0 ? 1 : 0) +
+              (check_point_side(trc, l) < 0 ? 1 : 0) +
+              (check_point_side(get_brc(), l) < 0 ? 1 : 0) +
+              (check_point_side(blc, l) < 0 ? 1 : 0);
+
+    //if sum is 0 or 4, all on the same side; else, collision
+    return(sum % 4 != 0);
+  }
+
+  return false;
+}
+/*
+bool rect2d::overlap(const hitline &l) const {
+
+  //check for hitbox collision first - it's about 3x faster
+
+  //check the four corners of the rectangle - if they're all on the same "side"
+  //of the rectangle, there's no collision
+
+  vec2d trc(get_brc()[0], get_tlc()[1]);
+  vec2d blc(get_tlc()[0], get_brc()[1]);
+
+  //result is 0 if it's above, 1 if it's below
+  //doing this because minge doesn't like std::signbit
+  int sum = (check_point_side(get_tlc(), l) < 0 ? 1 : 0) +
+            (check_point_side(trc, l) < 0 ? 1 : 0) +
+            (check_point_side(get_brc(), l) < 0 ? 1 : 0) +
+            (check_point_side(blc, l) < 0 ? 1 : 0);
+
+  if(sum % 4 != 0) {
+    //the box is within the line's axis - check if it touches
+
+    //use the previous collision algorithm to see if the "box" of the
+    //line overlaps
+
+    rect2d line_rect(
+      std::min(l.get_start()[0], l.get_end()[0]),
+      std::min(l.get_start()[1], l.get_end()[1]),
+      std::abs(l.get_start()[0] - l.get_end()[0]),
+      std::abs(l.get_start()[0] - l.get_end()[0])
+    );
+
+    line_rect.draw();
+
+    return this->overlap(line_rect);
+  }
+
+  return false;
+}*/
+
+double rect2d::check_point_side(const vec2d &in_point, const hitline &l) const {
+  //i won't pretend i know how this works, it's from
+  //https://stackoverflow.com/a/293052/7431860
+  //uses implicit equation of line to determine what side the point is on
+
+  vec2d start = l.get_start();
+  vec2d end = l.get_end();
+
+  return (end[1]-start[1])*in_point[0] + (start[0]-end[0])*in_point[1] + (end[0]*start[1] - start[0] * end[1]);
+}
+
 bool rect2d::overlap(const rect2d &r) const {
 
   /*
@@ -97,12 +178,18 @@ bool rect2d::overlap(const rect2d &r) const {
     //leftmost x of other rect between least and greatest x of this rect
     (rtlc[0] >= ttlc[0] && rtlc[0] <= tbrc[0]) ||
     //rightmost x of other rect between least and greatest x of this rect
-    (rbrc[0] >= ttlc[0] && rbrc[0] <= tbrc[0])
+    (rbrc[0] >= ttlc[0] && rbrc[0] <= tbrc[0]) ||
+    //leftmost x of this rect between least and greatest x of other rect
+    (ttlc[0] >= rtlc[0] && ttlc[0] <= rbrc[0]) ||
+    //rightmost x of this rect between least and greatest x of other rect
+    (tbrc[0] >= rtlc[0] && tbrc[0] <= rbrc[0])
   ) {
     //the x-shadows overlap, now see if the y-shadows overlap
     if(
       (rtlc[1] >= ttlc[1] && rtlc[1] <= tbrc[1]) ||
-      (rbrc[1] >= ttlc[1] && rbrc[1] <= tbrc[1])
+      (rbrc[1] >= ttlc[1] && rbrc[1] <= tbrc[1]) ||
+      (ttlc[1] >= rtlc[1] && ttlc[1] <= rbrc[1]) ||
+      (tbrc[1] >= rtlc[1] && tbrc[1] <= rbrc[1])
     ) {
       //both shadows overlap
       return true;

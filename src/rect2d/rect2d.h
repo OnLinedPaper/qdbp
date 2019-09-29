@@ -2,6 +2,7 @@
 #define RECT_2D_
 
 #include "src/vec2d/vec2d.h"
+#include "src/rect2d/hitbox/hitline.h"
 
 class rect2d {
 public:
@@ -27,11 +28,15 @@ public:
   void coord_draw(double, double) const;
 
   bool overlap(const rect2d &r) const;
+  bool overlap(const hitline &l) const;
+
+  double check_point_side(const vec2d &v, const hitline &l) const;
 
   vec2d get_tlc() const { return tlc; }
   vec2d get_brc() const { return vec2d(tlc[0] + dims[0], tlc[1] + dims[1]); }
 
 private:
+
   vec2d tlc;
   vec2d dims;
 };
