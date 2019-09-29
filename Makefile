@@ -78,4 +78,4 @@ mem:
 	@rm $(DDIR)/.v.out $(DDIR)/.v2.out; less $(DDIR)/valgrind-out.txt;
 
 #ffmpeg -ss 4.3 -t 6 -i sample3.mp4 -vf "fps=30,scale=1280:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 out5.gif
-#use this to make gifs? simplescreenrecorder > ffmpeg > gifcompress.com
+#use this to make gifs? simplescreenrecorder > ffmpeg > gifcompress.com 
