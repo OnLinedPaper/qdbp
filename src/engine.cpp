@@ -63,6 +63,7 @@ void engine::play() {
       if(e.type == SDL_QUIT) { quit = true; }
       else if(e.type == SDL_KEYDOWN) {
         if(keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
+        if(keystate[SDL_SCANCODE_J]) { map_h::get().jump(); } 
       }
     }
 
@@ -105,19 +106,6 @@ void engine::play() {
 
     map_h::get().draw();
     dd.draw();
-    dd.draw_boxes();
-    if(dd.collides(hit, hitbox::TYPE_HITBOX)) {
-      dd.draw_boxes();
-    }
-    if(dd.collides(hit2, hitbox::TYPE_VACUUMBOX)) {
-      dd.draw_boxes();
-    }
-    if(dd.collides(hl, hitbox::TYPE_WEAKBOX)) {
-      dd.draw_boxes();
-    }
-    hit2.tlc_draw();
-    hit.tlc_draw();
-    hl.draw();
     SDL_RenderPresent(render::get().get_r());
 
 //==== DEBUG STUFF here =======================================================
