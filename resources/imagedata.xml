@@ -72,45 +72,19 @@
   </dimensions>
 </boundary_point>
 
-<fork_ship>
-  <file>resources/images/fork_ship.png</file>
+<debug_gate>
+  <file>resources/images/debug_gate.png</file>
   <dimensions>
-    <width>96</width>
-    <height>180</height>
-
-    <pivot_x>48</pivot_x>
-    <pivot_y>67</pivot_y>
-    <frames>4</frames>
-    <frame_delay>20</frame_delay>
-  </dimensions>
-</fork_ship>
-
-<glow_ship>
-  <file>resources/images/glow_ship.png</file>
-  <dimensions>
-    <width>64</width>
-    <height>64</height>
+    <width>410</width>
+    <height>410</height>
 
     <pivot_x>0</pivot_x>
     <pivot_y>0</pivot_y>
-    <frames>4</frames>
-    <frame_delay>24</frame_delay>
+
+    <frames>1</frames>
+    <frame_delay>1</frame_delay>
   </dimensions>
-</glow_ship>
-
-<tracker>
-  <file>resources/images/tracker.png</file>
-  <dimensions>
-    <width>48</width>
-    <height>78</height>
-
-    <pivot_x>0</pivot_x>
-    <pivot_y>0</pivot_y>
-    <frames>3</frames>
-    <frame_delay>16</frame_delay>
-  </dimensions>
-</tracker>
-
+</debug_gate>
 
 <debug_heart_bg>
   <file>resources/images/debug_heart_bg.png</file>
@@ -153,3 +127,42 @@
     <frame_delay>1</frame_delay>
   </dimensions>
 </debug_heart_fg>
+
+<fork_ship>
+  <file>resources/images/fork_ship.png</file>
+  <dimensions>
+    <width>96</width>
+    <height>180</height>
+
+    <pivot_x>48</pivot_x>
+    <pivot_y>67</pivot_y>
+    <frames>4</frames>
+    <frame_delay>20</frame_delay>
+  </dimensions>
+</fork_ship>
+
+<glow_ship>
+  <file>resources/images/glow_ship.png</file>
+  <dimensions>
+    <width>64</width>
+    <height>64</height>
+
+    <pivot_x>0</pivot_x>
+    <pivot_y>0</pivot_y>
+    <frames>4</frames>
+    <frame_delay>24</frame_delay>
+  </dimensions>
+</glow_ship>
+
+<tracker>
+  <file>resources/images/tracker.png</file>
+  <dimensions>
+    <width>48</width>
+    <height>78</height>
+
+    <pivot_x>0</pivot_x>
+    <pivot_y>0</pivot_y>
+    <frames>3</frames>
+    <frame_delay>16</frame_delay>
+  </dimensions>
+</tracker>
