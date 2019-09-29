@@ -7,6 +7,8 @@ const int hitbox::TYPE_HITBOX = 0;
 const int hitbox::TYPE_HURTBOX = 1;
 const int hitbox::TYPE_WEAKBOX = 2;
 const int hitbox::TYPE_SHIELDBOX = 3;
+const int hitbox::TYPE_PICKUPBOX = 4;
+const int hitbox::TYPE_VACUUMBOX = 5;
 
 hitbox::hitbox(double size, vec2d &offs, int t) :
   rect2d(0, 0, size, size),
@@ -54,11 +56,18 @@ bool hitbox::collides(const hitbox& h) const {
   return this->overlap(h);
 }
 
+bool hitbox::collides(const hitline &l) const {
+
+  return this->overlap(l);
+}
+
 int hitbox::str_to_type(std::string s) const {
   if(s.compare("HIT") == 0) { return TYPE_HITBOX; }
   if(s.compare("HURT") == 0) { return TYPE_HURTBOX; }
   if(s.compare("WEAK") == 0) { return TYPE_WEAKBOX; }
   if(s.compare("SHIELD") == 0) { return TYPE_SHIELDBOX; }
+  if(s.compare("PICKUP") == 0) { return TYPE_PICKUPBOX; }
+  if(s.compare("VACUUM") == 0) { return TYPE_VACUUMBOX; }
   return -1;
 }
 
@@ -67,6 +76,8 @@ std::string hitbox::type_to_str(int type) const {
   if(type == TYPE_HURTBOX) { return "HURT"; }
   if(type == TYPE_WEAKBOX) { return "WEAK"; }
   if(type == TYPE_SHIELDBOX) { return "SHIELD"; }
+  if(type == TYPE_PICKUPBOX) { return "PICKUP"; }
+  if(type == TYPE_VACUUMBOX) { return "VACUUM"; }
   return "INVALID TYPE";
 }
 
@@ -76,6 +87,8 @@ void hitbox::draw() const {
   if(type == TYPE_HURTBOX) { rect2d::draw(255, 0, 0); }
   if(type == TYPE_WEAKBOX) { rect2d::draw(255, 255, 0); }
   if(type == TYPE_SHIELDBOX) { rect2d::draw(0, 255, 255); }
+  if(type == TYPE_PICKUPBOX) { rect2d::draw(255, 128, 255); }
+  if(type == TYPE_VACUUMBOX) { rect2d::draw(0, 0, 128); }
 
 }
 

@@ -3,6 +3,7 @@
 
 #include "src/rect2d/rect2d.h"
 #include "src/vec2d/vec2d.h"
+#include "src/rect2d/hitbox/hitline.h"
 
 class hitbox : public rect2d {
 public:
@@ -10,6 +11,8 @@ public:
   static const int TYPE_HURTBOX;
   static const int TYPE_WEAKBOX;
   static const int TYPE_SHIELDBOX;
+  static const int TYPE_PICKUPBOX;
+  static const int TYPE_VACUUMBOX;
 
   hitbox(double size, vec2d &offset, int type);
   hitbox(std::string path);
@@ -20,6 +23,7 @@ public:
   void set_box_center(vec2d &pos, double last_angle);
 
   bool collides(const hitbox &h) const;
+  bool collides(const hitline &l) const;
 
   int get_type() const { return type; }
 
