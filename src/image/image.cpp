@@ -136,9 +136,9 @@ void image::draw_rotate(double x_pos, double y_pos, double angle, double frame_b
   //don't draw it, to save time
   if(
     x_pos + dimensions[0] < viewport::get().get_tlc_x() ||
-    x_pos > viewport::get().get_brc_x() ||
-    y_pos + dimensions[0] < viewport::get().get_tlc_y() ||
-    y_pos > viewport::get().get_brc_y()
+    x_pos - dimensions[0] > viewport::get().get_brc_x() ||
+    y_pos + dimensions[1] < viewport::get().get_tlc_y() ||
+    y_pos - dimensions[1] > viewport::get().get_brc_y()
   ) { return; }
 
   SDL_Rect dest_r;
