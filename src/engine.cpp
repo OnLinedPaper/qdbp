@@ -31,24 +31,6 @@ void engine::play() {
   d_hittable dd("/movers/hittable/debug_hittable");
   dd.set_pos(map_h::get().get_start_pos());
 
-  //TODO: remove from final build
-  vec2d v(0,0);
-  hitbox hit(100.0, v, 1);
-  v[0] = 700;
-  v[1] = 700;
-  hit.set_box_center(v, 0);
-
-  //TODO: remove from final build
-  v[0] = 0; v[1] = 0;
-  hitbox hit2(10.0, v, 4);
-  v[0] = 1700;
-  v[1] = 700;
-  hit2.set_box_center(v, 0);
-
-  //TODO: remove from final build
-  v[0] = 250; v[1] = 1500;
-  hitline hl(v, 800, 45);
-
 
   while(!quit) {
 
@@ -63,7 +45,7 @@ void engine::play() {
       if(e.type == SDL_QUIT) { quit = true; }
       else if(e.type == SDL_KEYDOWN) {
         if(keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
-        if(keystate[SDL_SCANCODE_J]) { map_h::get().jump(); } 
+        if(keystate[SDL_SCANCODE_J]) { map_h::get().jump(); }
       }
     }
 
