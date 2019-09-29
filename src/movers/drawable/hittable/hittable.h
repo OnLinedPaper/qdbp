@@ -13,6 +13,7 @@ public:
   void draw_boxes() const;
 
   bool collides(const hitbox &h, int type) const;
+  bool collides(const hitline &l, int type) const;
 
 protected:
   void update() override;
@@ -24,6 +25,8 @@ protected:
   std::vector<hitbox> hurtboxes;
   std::vector<hitbox> weakboxes;
   std::vector<hitbox> shieldboxes;
+  std::vector<hitbox> pickupboxes;
+  std::vector<hitbox> vacuumboxes;
 
 private:
 
