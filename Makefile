@@ -46,6 +46,8 @@ win: $(SRCS) $(DEPS) main_driver_w.cpp
 	$(WC) $(CFLAGS) $^ $(WFLAGS) $(LFLAGS) -o $(WDDIR)/$(WEXE)
 	@cp -r resources/ $(WDDIR)/
 	@cp win_dll/*.dll $(WDDIR)/
+	zip -r win_demo.zip $(WDDIR)
+	@paplay /usr/share/sounds/ubuntu/notifications/Positive.ogg
 
 wintest:
 	wine $(WDDIR)/$(WEXE)
@@ -74,3 +76,6 @@ mem:
 	cat $(DDIR)/full-valgrind-out.txt > $(DDIR)/valgrind-out.txt && \
 	perl -i -ne 'BEGIN{$$/=""} print unless (/SDL_.*Init/ or /X11_ShowCursor/ or  /dlopen\@\@GLIBC_2.2.5/ or /XSetLocaleModifiers/ or /_dl_catch_exception/ or /_XlcCurrentLC/ or /libpulsecommon/)' $(DDIR)/valgrind-out.txt;
 	@rm $(DDIR)/.v.out $(DDIR)/.v2.out; less $(DDIR)/valgrind-out.txt;
+
+#ffmpeg -ss 4.3 -t 6 -i sample3.mp4 -vf "fps=30,scale=1280:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 out5.gif
+#use this to make gifs? simplescreenrecorder > ffmpeg > gifcompress.com

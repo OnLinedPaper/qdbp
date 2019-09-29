@@ -1,4 +1,5 @@
 #include <chrono>
+#include <random>
 
 #include "engine.h"
 #include "renders/render.h"
@@ -26,7 +27,7 @@ void engine::play() {
 
   const Uint8* keystate;
 
-  //moves!
+  //TODO: entity handler
   d_hittable dd("/movers/hittable/debug_hittable");
   dd.set_pos(map_h::get().get_start_pos());
 
@@ -39,13 +40,15 @@ void engine::play() {
 
   //TODO: remove from final build
   v[0] = 0; v[1] = 0;
-  hitbox hit2(80.0, v, 1);
+  hitbox hit2(10.0, v, 4);
   v[0] = 1700;
   v[1] = 700;
   hit2.set_box_center(v, 0);
 
-  v[0] = 250; v[1] = 250;
-  hitline hl(v, 800, 120);
+  //TODO: remove from final build
+  v[0] = 250; v[1] = 1500;
+  hitline hl(v, 800, 45);
+
 
   while(!quit) {
 
@@ -102,10 +105,18 @@ void engine::play() {
 
     map_h::get().draw();
     dd.draw();
-    if(!dd.collides(hit, hitbox::TYPE_HITBOX)) {
-      hit.tlc_draw();
+    dd.draw_boxes();
+    if(dd.collides(hit, hitbox::TYPE_HITBOX)) {
+      dd.draw_boxes();
+    }
+    if(dd.collides(hit2, hitbox::TYPE_VACUUMBOX)) {
+      dd.draw_boxes();
+    }
+    if(dd.collides(hl, hitbox::TYPE_WEAKBOX)) {
+      dd.draw_boxes();
     }
     hit2.tlc_draw();
+    hit.tlc_draw();
     hl.draw();
     SDL_RenderPresent(render::get().get_r());
 

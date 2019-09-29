@@ -47,6 +47,4 @@ void d_hittable::draw() const {
   dest_r.h = 128;
 
   image_handler::get().draw_rotate(image_name, dest_r.x, dest_r.y, 0, last_angle);
-
-  hittable::draw_boxes();
 }

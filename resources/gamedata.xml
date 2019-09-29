@@ -37,6 +37,12 @@
           <size>20</size>
           <type>HIT</type>
         </right>
+        <pickup>
+          <x_offset>0</x_offset>
+          <y_offset>0</y_offset>
+          <size>60</size>
+          <type>VACUUM</type>
+        </pickup>
       </hitboxes>
     </debug_hittable>
     <debug_stationary>
