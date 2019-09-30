@@ -24,8 +24,9 @@ public:
   void set_x(double x) { pos[0] = x; }
   void set_y(double y) { pos[1] = y; }
   const vec2d get_pos() const { return pos; }
-  void set_pos(vec2d p) { pos = p; }
+  void set_pos(vec2d p) { pos = p; last_pos = p; }
   void set_pos(double x, double y) { pos[0] = x; pos[1] = y; }
+  void stop() { vel[0] = 0; vel[1] = 0; }
 
   void rebuff(unsigned char posi) {
     if(posi) {

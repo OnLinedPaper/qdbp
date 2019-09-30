@@ -108,6 +108,6 @@ void hittable::draw_boxes() const {
   for(hitbox h : weakboxes) { h.draw(); }
   for(hitbox h : hitboxes) { h.draw(); }
   for(hitbox h : shieldboxes) { h.draw(); }
-  
+
   for(hitbox h : pickupboxes) { h.draw(); }
 }
