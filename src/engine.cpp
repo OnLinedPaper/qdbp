@@ -45,7 +45,13 @@ void engine::play() {
       if(e.type == SDL_QUIT) { quit = true; }
       else if(e.type == SDL_KEYDOWN) {
         if(keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
-        if(keystate[SDL_SCANCODE_J]) { map_h::get().jump(); }
+        if(keystate[SDL_SCANCODE_J]) {
+          if(map_h::get().debug_jump(dd.get_pos())) {
+            //jumped
+            dd.stop();
+            dd.set_pos(map_h::get().get_start_pos());
+          }
+        }
       }
     }
 
