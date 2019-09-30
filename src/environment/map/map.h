@@ -13,11 +13,13 @@ public:
   void draw() const;
   const vec2d get_start_chunk() const { return start_chunk; }
   const vec2d get_start_pos() const;
-  const vec2d convert_chunk_index(vec2d &pos) const;
+  const vec2d convert_chunk_index(const vec2d &pos) const;
 
   unsigned char check_rebuff(vec2d &curr_pos, vec2d &prev_pos) const;
+  bool check_gate(const vec2d &);
+  std::string get_gate_dest(const vec2d &);
 
-  chunk &get_chunk(vec2d &coord) { return c_deque[index(coord[0], coord[1])]; }
+  chunk &get_chunk(vec2d coord) { return c_deque[index(coord[0], coord[1])]; }
 
 private:
   int x_dim;
@@ -39,6 +41,7 @@ private:
   //get index of the map location
   size_t index(int x, int y) const { return (x + x_dim * y); }
   size_t index(double x, double y) const { return (x + x_dim * y); }
+  size_t index(const vec2d &v) const { return (v[0] + x_dim * v[1]); }
 };
 
 

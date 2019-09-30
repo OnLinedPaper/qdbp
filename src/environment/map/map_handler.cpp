@@ -12,3 +12,13 @@ void map_h::jump() {
   //jump to a new map
   return;
 }
+
+bool map_h::debug_jump(const vec2d &pos) {
+
+  if(m->check_gate(pos)) {
+    set_map("/" + m->get_gate_dest(pos));
+
+    return true;
+  }
+  return false;
+}

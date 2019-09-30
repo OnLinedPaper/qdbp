@@ -61,6 +61,11 @@ void map::init_special_chunks() {
   //make path, for convenience's sake
   std::string s_path = name + "/special_chunks";
 
+  if(!xmlparse::get().check_path(s_path, false)) {
+    //special chunks isn't in the xml path - return immediately
+    return;
+  }
+
   //get the special chunks
   std::vector<std::string> specials = xmlparse::get().get_all_child_tags(s_path);
 
@@ -219,7 +224,7 @@ const vec2d map::get_start_pos() const {
   }
 }
 
-const vec2d map::convert_chunk_index(vec2d &pos) const {
+const vec2d map::convert_chunk_index(const vec2d &pos) const {
   return(vec2d(int(pos[0] / chunk::length), int(pos[1] / chunk::length)));
 }
 
@@ -251,6 +256,14 @@ unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) const {
   }
 
   return (r);
+}
+
+bool map::check_gate(const vec2d &pos) {
+  return(get_chunk(convert_chunk_index(pos)).get_has_gate());
+}
+
+std::string map::get_gate_dest(const vec2d &pos) {
+  return(get_chunk(convert_chunk_index(pos)).get_gate_dest());
 }
 
 void map::draw() const {

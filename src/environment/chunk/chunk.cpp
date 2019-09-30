@@ -75,6 +75,9 @@ chunk::chunk(double x, double y, bool u, bool d, bool l, bool r, std::string typ
     //load the chunk data here
     in_bounds = xmlparse::get().get_xml_bool("/chunk_types/"+type+"/in_bounds");
   }
+  else {
+    in_bounds = true;
+  }
 }
 
 chunk::chunk(const chunk&c) :

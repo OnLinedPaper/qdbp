@@ -1,7 +1,7 @@
 <debug_1>
   <dimensions>
     <x_dim>3</x_dim>
-    <y_dim>2</y_dim>
+    <y_dim>1</y_dim>
   </dimensions>
   <generation>
     <style>
@@ -15,6 +15,19 @@
     <y_chunk>0</y_chunk>
   </start_chunk>
   <background>/debug_heart_</background>
+
+  <special_chunks>
+    <2-0>
+      <x_chunk>1</x_chunk>
+      <y_chunk>0</y_chunk>
+      <type>default</type>
+
+      <jump_gate>
+        <destination>debug_2</destination>
+        <body>debug_gate</body>
+      </jump_gate>
+    </2-0>
+  </special_chunks>
 </debug_1>
 
 <debug_2>
@@ -38,15 +51,15 @@
       <y_chunk>1</y_chunk>
       <type>default_impassible</type>
     </1-1>
-    <2-2>
-      <x_chunk>2</x_chunk>
-      <y_chunk>2</y_chunk>
+    <0-1>
+      <x_chunk>0</x_chunk>
+      <y_chunk>1</y_chunk>
       <type>default</type>
 
       <jump_gate>
         <destination>debug_1</destination>
         <body>debug_gate</body>
       </jump_gate>
-    </2-2>
+    </0-1>
   </special_chunks>
 </debug_2>
