@@ -129,6 +129,10 @@ bool xmlparse::get_xml_bool(const std::string path) {
   }
 }
 
+bool xmlparse::check_path(const std::string path, bool send_alert) const {
+  return(root->recursive_check_path(path, send_alert));
+}
+
 void xmlparse::print_tree() {
   std::cout << msg::cn << std::endl;
   root->recursive_print(0);

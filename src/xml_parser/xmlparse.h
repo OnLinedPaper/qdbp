@@ -19,6 +19,7 @@ public:
 
   void print_tree();
   std::vector<std::string> get_all_child_tags(const std::string path) const;
+  bool check_path(const std::string path, bool send_alert) const;
 
   std::string get_xml_string(const std::string path);
   int get_xml_int(const std::string path);

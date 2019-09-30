@@ -25,6 +25,7 @@ public:
   void recursive_print(const int depth);
   std::string recursive_get_value(const std::string path);
   std::vector<std::string> recursive_get_all_child_tags(const std::string path);
+  bool recursive_check_path(const std::string path, bool send_alert);
 
 protected:
   std::string dive_name(const std::string) const;

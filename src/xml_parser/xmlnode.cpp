@@ -55,6 +55,55 @@ void xmlnode::insert_child(const std::string name, const std::string path, const
 
 //=============================================================================
 
+bool xmlnode::recursive_check_path(const std::string path, bool send_alert) {
+  //check to see if a path is valid, optionally throwing errors if it's not
+  if(path == "") {
+    return true;
+  }
+  else {
+    //dive deeper
+
+    //cut the first "/"
+    std::string p = path.substr(1, std::string::npos);
+    //get the new node's name
+    std::string n = p.substr(0, p.find_first_of("/"));
+    //get the new path
+    std::size_t found = p.find_first_of("/");
+    if(found != std::string::npos) {
+      //there's still another "tag"
+      p = p.substr(found, std::string::npos);
+    }
+    else {
+      //this is it, it's the value we want
+      p = "";
+    }
+
+    if(this->children.find(n) == this->children.end()) {
+      //it's not a child
+
+      if(send_alert) {
+        std::string name = this->get_name();
+        std::string alert = "";
+        if(name == "") {
+          alert ="\"" + n + "\" is not in the xml tree!";
+        }
+        else {
+          alert = "\"" + n + "\" is not a child of \"" + this->get_name() + "\"!";
+        }
+        msg::print_alert(alert);
+      }
+
+      return false;
+    }
+    else {
+      //it's a valid child, go deeper
+      return(this->children[n]->recursive_check_path(p, send_alert));
+    }
+  }
+}
+
+//=============================================================================
+
 std::string xmlnode::recursive_get_value(const std::string path) {
   try {
     if(path == ("")) {
