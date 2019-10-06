@@ -10,6 +10,7 @@ public:
   static const int TYPE_HITBOX;
   static const int TYPE_HURTBOX;
   static const int TYPE_WEAKBOX;
+  static const int TYPE_ARMORBOX;
   static const int TYPE_SHIELDBOX;
   static const int TYPE_PICKUPBOX;
   static const int TYPE_VACUUMBOX;

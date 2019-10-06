@@ -24,6 +24,7 @@ protected:
   std::vector<hitbox> hitboxes;
   std::vector<hitbox> hurtboxes;
   std::vector<hitbox> weakboxes;
+  std::vector<hitbox> armorboxes;
   std::vector<hitbox> shieldboxes;
   std::vector<hitbox> pickupboxes;
   std::vector<hitbox> vacuumboxes;

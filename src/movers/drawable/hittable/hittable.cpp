@@ -21,6 +21,9 @@ hittable::hittable(std::string path) :
       else if(h.get_type() == hitbox::TYPE_WEAKBOX) {
         weakboxes.push_back(h);
       }
+      else if(h.get_type() == hitbox::TYPE_ARMORBOX) {
+        armorboxes.push_back(h);
+      }
       else if(h.get_type() == hitbox::TYPE_SHIELDBOX) {
         shieldboxes.push_back(h);
       }
@@ -40,6 +43,7 @@ hittable::hittable(std::string path) :
 
     boxes.push_back(&weakboxes);
     boxes.push_back(&hitboxes);
+    boxes.push_back(&armorboxes);
     boxes.push_back(&shieldboxes);
 
     boxes.push_back(&pickupboxes);
@@ -59,6 +63,9 @@ bool hittable::collides(const hitbox& in_box, int type) const {
   }
   else if(type == hitbox::TYPE_WEAKBOX) {
     for(hitbox h : weakboxes) { if(h.collides(in_box)) { return true; } }
+  }
+  else if(type == hitbox::TYPE_ARMORBOX) {
+    for(hitbox h : armorboxes) { if(h.collides(in_box)) { return true; } }
   }
   else if(type == hitbox::TYPE_SHIELDBOX) {
     for(hitbox h : shieldboxes) { if(h.collides(in_box)) { return true; } }
@@ -83,6 +90,9 @@ bool hittable::collides(const hitline& in_line, int type) const {
   }
   else if(type == hitbox::TYPE_WEAKBOX) {
     for(hitbox h : weakboxes) { if(h.collides(in_line)) { return true; } }
+  }
+  else if(type == hitbox::TYPE_ARMORBOX) {
+    for(hitbox h : armorboxes) { if(h.collides(in_line)) { return true; } }
   }
   else if(type == hitbox::TYPE_SHIELDBOX) {
     for(hitbox h : shieldboxes) { if(h.collides(in_line)) { return true; } }
