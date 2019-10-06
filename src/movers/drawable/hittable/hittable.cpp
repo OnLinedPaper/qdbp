@@ -32,6 +32,17 @@ hittable::hittable(std::string path) :
       }
 
   }
+
+    //push the boxes into one big vector
+    //ordered this way for display
+    boxes.push_back(&vacuumboxes);
+    boxes.push_back(&hurtboxes);
+
+    boxes.push_back(&weakboxes);
+    boxes.push_back(&hitboxes);
+    boxes.push_back(&shieldboxes);
+
+    boxes.push_back(&pickupboxes);
 }
 
 void hittable::update() {
@@ -91,23 +102,18 @@ void hittable::update_boxes() {
   //hitboxes from lagging behind the model
 
   //update location of the hitboxes, based on their positions
-  for(hitbox &h : hitboxes) { h.set_box_center(pos, last_angle); }
-  for(hitbox &h : hurtboxes) { h.set_box_center(pos, last_angle); }
-  for(hitbox &h : weakboxes) { h.set_box_center(pos, last_angle); }
-  for(hitbox &h : shieldboxes) { h.set_box_center(pos, last_angle); }
-  for(hitbox &h : pickupboxes) { h.set_box_center(pos, last_angle); }
-  for(hitbox &h : vacuumboxes) { h.set_box_center(pos, last_angle); }
+  for(std::vector<hitbox> *v : boxes) {
+    for(hitbox &h : *v) {
+      h.set_box_center(pos, last_angle);
+    }
+  }
 }
 
 void hittable::draw_boxes() const {
-  //reordered here just because
-  for(hitbox h : vacuumboxes) { h.draw(); }
 
-  for(hitbox h : hurtboxes) { h.draw(); }
-
-  for(hitbox h : weakboxes) { h.draw(); }
-  for(hitbox h : hitboxes) { h.draw(); }
-  for(hitbox h : shieldboxes) { h.draw(); }
-
-  for(hitbox h : pickupboxes) { h.draw(); }
+  for(std::vector<hitbox> *v : boxes) {
+    for(hitbox &h : *v) {
+      h.draw();
+    }
+  }
 }

@@ -19,7 +19,7 @@ protected:
   void update() override;
   void update_boxes();
 
-  std::vector<std::vector<hitbox>> boxes;
+  std::vector<std::vector<hitbox> *> boxes;
 
   std::vector<hitbox> hitboxes;
   std::vector<hitbox> hurtboxes;
