@@ -34,6 +34,8 @@ public:
   vec2d operator+(const vec2d &v) const;
   vec2d operator-(const vec2d &v) const;
   vec2d operator*(const vec2d &v) const;
+  void operator+=(const vec2d &v);
+  void operator-=(const vec2d &v);
   //not implementing divide, no way to do that safely since
   //x or y could be 0
 
@@ -49,6 +51,7 @@ public:
 
   vec2d cap(double scalar_val) const;
   vec2d decay(double scalar_val) const;
+
 
 
   double angle_rad() const;
