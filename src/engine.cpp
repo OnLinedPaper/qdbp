@@ -14,6 +14,7 @@
 #include "utils/message.h"
 #include "src/rect2d/rect2d.h"
 #include "src/movers/drawable/hittable/debug_hittable.h"
+#include "src/movers/drawable/hittable/debug_follower.h"
 #include "src/rect2d/hitbox/hitline.h"
 
 //looking for the constructors? they're below "play"
@@ -30,6 +31,9 @@ void engine::play() {
   //TODO: entity handler
   d_hittable dd("/movers/hittable/debug_hittable");
   dd.set_pos(map_h::get().get_start_pos());
+
+  d_follower df("/movers/hittable/debug_follower");
+  df.set_pos(200,200);
 
 
   while(!quit) {
@@ -48,8 +52,7 @@ void engine::play() {
         if(keystate[SDL_SCANCODE_J]) {
           if(map_h::get().debug_jump(dd.get_pos())) {
             //jumped
-            dd.stop();
-            dd.set_pos(map_h::get().get_start_pos());
+            dd.teleport(map_h::get().get_start_pos());
           }
         }
       }
@@ -83,6 +86,8 @@ void engine::play() {
 
 //==== UPDATE stuff here ======================================================
     dd.update();
+    df.set_player_pos(dd.get_pos());
+    df.update();
     viewport::get().set_pos(dd.get_pos());
 
 
@@ -94,6 +99,8 @@ void engine::play() {
 
     map_h::get().draw();
     dd.draw();
+    //dd.draw_boxes();
+    df.draw();
     SDL_RenderPresent(render::get().get_r());
 
 //==== DEBUG STUFF here =======================================================
