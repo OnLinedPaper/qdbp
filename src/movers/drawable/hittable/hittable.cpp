@@ -51,6 +51,9 @@ hittable::hittable(std::string path) :
 
 void hittable::update() {
   drawable::update();
+
+  //update hitboxes
+  hittable::update_boxes();
 }
 
 bool hittable::collides(const hitbox& in_box, int type) const {

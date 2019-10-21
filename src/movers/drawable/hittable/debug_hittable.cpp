@@ -18,24 +18,6 @@ void d_hittable::move_rt()
 
 void d_hittable::update() {
   hittable::update();
-
-  //cap velocity
-  vel = vel.cap(vel_cap);
-
-  //move, based on velocity AND time since last frame -
-  //this prevents lag spikes from "slowing time"
-  pos[0] += vel[0] * t_frame::get().d_factor();
-  pos[1] += vel[1] * t_frame::get().d_factor();
-
-  if(moved == false) {
-    //decay velocity only when user hasn't moved
-    vel = vel.decay(vel_decay * t_frame::get().d_factor());
-  }
-  //reset moved
-  moved = false;
-
-  //update hitboxes
-  hittable::update_boxes();
 }
 
 void d_hittable::draw() const {

@@ -26,6 +26,7 @@ public:
   const vec2d get_pos() const { return pos; }
   void set_pos(vec2d p) { pos = p; last_pos = p; }
   void set_pos(double x, double y) { pos[0] = x; pos[1] = y; }
+  void teleport(vec2d p) { set_pos(p); }
   void stop() { vel[0] = 0; vel[1] = 0; }
 
   void rebuff(unsigned char posi) {
@@ -58,6 +59,23 @@ public:
 
 protected:
   virtual void update() {
+
+    //cap velocity
+    vel = vel.cap(vel_cap);
+
+    //move, based on velocity AND time since last frame -
+    //this prevents lag spikes from "slowing time"
+    pos[0] += vel[0] * t_frame::get().d_factor();
+    pos[1] += vel[1] * t_frame::get().d_factor();
+
+    if(moved == false) {
+      //decay velocity only when user hasn't moved
+      vel = vel.decay(vel_decay * t_frame::get().d_factor());
+    }
+    //reset moved
+    moved = false;
+
+
     //check if this next move is legal
     rebuff(map_h::get().check_rebuff(pos, last_pos));
 
