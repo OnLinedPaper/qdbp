@@ -16,6 +16,7 @@
 #include "src/movers/drawable/hittable/debug_hittable.h"
 #include "src/movers/drawable/hittable/debug_follower.h"
 #include "src/rect2d/hitbox/hitline.h"
+#include "src/entity_handler/entity_handler.h"
 
 //looking for the constructors? they're below "play"
 
@@ -28,9 +29,7 @@ void engine::play() {
 
   const Uint8* keystate;
 
-  //TODO: entity handler
-  d_hittable dd("/movers/hittable/debug_hittable");
-  dd.set_pos(map_h::get().get_start_pos());
+  e_handler::get().create_player("/movers/hittable/debug_hittable");
 
   d_follower df("/movers/hittable/debug_follower");
   df.set_pos(200,200);
@@ -50,9 +49,9 @@ void engine::play() {
       else if(e.type == SDL_KEYDOWN) {
         if(keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
         if(keystate[SDL_SCANCODE_J]) {
-          if(map_h::get().debug_jump(dd.get_pos())) {
+          if(map_h::get().debug_jump(e_handler::get().get_player_pos())) {
             //jumped
-            dd.teleport(map_h::get().get_start_pos());
+            e_handler::get().teleport_player_new_map();
           }
         }
       }
@@ -60,10 +59,14 @@ void engine::play() {
 
     //no keybounce protection
 
-    if(keystate[SDL_SCANCODE_W]) { dd.move_up(); }
-    if(keystate[SDL_SCANCODE_A]) { dd.move_lf(); }
-    if(keystate[SDL_SCANCODE_S]) { dd.move_dn(); }
-    if(keystate[SDL_SCANCODE_D]) { dd.move_rt(); }
+    if(keystate[SDL_SCANCODE_W])
+      { e_handler::get().move_player(e_handler::UP); }
+    if(keystate[SDL_SCANCODE_A])
+      { e_handler::get().move_player(e_handler::LF); }
+    if(keystate[SDL_SCANCODE_S])
+      { e_handler::get().move_player(e_handler::DN); }
+    if(keystate[SDL_SCANCODE_D])
+      { e_handler::get().move_player(e_handler::RT); }
 
     #pragma GCC diagnostic pop
 
@@ -75,20 +78,21 @@ void engine::play() {
       );
 
       if(abs(lrud[0]) > CONTROLLER_DEADZONE) {
-        if(lrud[0] < 0) { dd.move_lf(); }
-        else { dd.move_rt(); }
+        if(lrud[0] < 0) { e_handler::get().move_player(e_handler::LF); }
+        else { e_handler::get().move_player(e_handler::RT); }
       }
       if(abs(lrud[1]) > CONTROLLER_DEADZONE) {
-        if(lrud[1] < 0) { dd.move_up(); }
-        else { dd.move_dn(); }
+        if(lrud[1] < 0) { e_handler::get().move_player(e_handler::UP); }
+        else { e_handler::get().move_player(e_handler::DN); }
       }
     }
 
 //==== UPDATE stuff here ======================================================
-    dd.update();
-    df.set_player_pos(dd.get_pos());
+
+    df.set_player_pos(e_handler::get().get_player_pos());
     df.update();
-    viewport::get().set_pos(dd.get_pos());
+    e_handler::get().update_entities();
+    viewport::get().set_pos(e_handler::get().get_player_pos());
 
 
 //==== DISPLAY stuff here =====================================================
@@ -98,9 +102,8 @@ void engine::play() {
     SDL_SetRenderDrawColor(render::get().get_r(), 28, 28, 28, 255);
 
     map_h::get().draw();
-    dd.draw();
-    //dd.draw_boxes();
     df.draw();
+    e_handler::get().draw_entities();
     SDL_RenderPresent(render::get().get_r());
 
 //==== DEBUG STUFF here =======================================================
