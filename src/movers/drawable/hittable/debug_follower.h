@@ -14,7 +14,7 @@ public:
 
   void set_player_pos(const vec2d &v) { player_pos = v; }
 
-  void update() override;
+  virtual void update() override;
   void draw() const override;
 
 private:

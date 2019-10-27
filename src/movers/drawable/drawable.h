@@ -14,9 +14,10 @@ public:
     frame_bump(rand()),
     last_angle(0)
   { }
+  virtual ~drawable() = default;
 
 protected:
-  void update() override;
+  virtual void update() override;
   std::string image_name;
 
   //this is so when the image is drawn, each one has a different

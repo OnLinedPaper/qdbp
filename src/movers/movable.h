@@ -20,6 +20,7 @@ public:
     vel_decay(xmlparse::get().get_xml_double(path + "/movement/vel_decay") * t_frame::get().f_factor()),
     moved(false)
   { }
+  virtual ~movable() = default;
 
   void set_x(double x) { pos[0] = x; }
   void set_y(double y) { pos[1] = y; }

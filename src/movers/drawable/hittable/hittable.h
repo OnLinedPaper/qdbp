@@ -9,14 +9,16 @@
 class hittable : public drawable {
 public:
   hittable(const std::string path);
+  virtual ~hittable() = default;
 
   void draw_boxes() const;
 
   bool collides(const hitbox &h, int type) const;
   bool collides(const hitline &l, int type) const;
 
+  virtual void update() override;
+
 protected:
-  void update() override;
   void update_boxes();
 
   std::vector<std::vector<hitbox> *> boxes;
