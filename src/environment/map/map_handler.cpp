@@ -1,4 +1,5 @@
 #include "map_handler.h"
+#include "src/entity_handler/entity_handler.h"
 
 void map_h::set_map(std::string s) {
   //TODO: warn entity handler to remove all entities, and then
