@@ -24,6 +24,7 @@
 //main loop that plays the game
 void engine::play() {
   bool quit = false;
+  bool pause = false;
   SDL_Event e;
 
 
@@ -47,51 +48,64 @@ void engine::play() {
       keystate = SDL_GetKeyboardState(NULL);
       if(e.type == SDL_QUIT) { quit = true; }
       else if(e.type == SDL_KEYDOWN) {
-        if(keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
-        if(keystate[SDL_SCANCODE_J]) {
-          //TODO: make "tryjump" in map handler
-          if(map_h::get().debug_jump(e_handler::get().get_player_pos())) {
-            //jumped
-            e_handler::get().teleport_player_new_map();
-          }
-        }
+        if(keystate[SDL_SCANCODE_ESCAPE]) { pause = !pause; } //pause unpause
+        if(keystate[SDL_SCANCODE_Q]) { if(pause) { quit = true; } }
+
       }
     }
 
-    //no keybounce protection
 
-    if(keystate[SDL_SCANCODE_W])
-      { e_handler::get().move_player(e_handler::UP); }
-    if(keystate[SDL_SCANCODE_A])
-      { e_handler::get().move_player(e_handler::LF); }
-    if(keystate[SDL_SCANCODE_S])
-      { e_handler::get().move_player(e_handler::DN); }
-    if(keystate[SDL_SCANCODE_D])
-      { e_handler::get().move_player(e_handler::RT); }
+    if(pause) {
+      //pause menu
+    }
+    else {
 
-    #pragma GCC diagnostic pop
+      //no keybounce protection
 
-    if(controller) {
-      //process controller input
-      vec2d lrud(
-        SDL_JoystickGetAxis(controller, LSTICK_LR),
-        SDL_JoystickGetAxis(controller, LSTICK_UD)
-      );
-
-      if(abs(lrud[0]) > CONTROLLER_DEADZONE) {
-        if(lrud[0] < 0) { e_handler::get().move_player(e_handler::LF); }
-        else { e_handler::get().move_player(e_handler::RT); }
+      if(keystate[SDL_SCANCODE_J]) {
+        //TODO: make "tryjump" in map handler
+        if(map_h::get().debug_jump(e_handler::get().get_player_pos())) {
+          //jumped
+          e_handler::get().teleport_player_new_map();
+        }
       }
-      if(abs(lrud[1]) > CONTROLLER_DEADZONE) {
-        if(lrud[1] < 0) { e_handler::get().move_player(e_handler::UP); }
-        else { e_handler::get().move_player(e_handler::DN); }
+
+
+      if(keystate[SDL_SCANCODE_W])
+        { e_handler::get().move_player(e_handler::UP); }
+      if(keystate[SDL_SCANCODE_A])
+        { e_handler::get().move_player(e_handler::LF); }
+      if(keystate[SDL_SCANCODE_S])
+        { e_handler::get().move_player(e_handler::DN); }
+      if(keystate[SDL_SCANCODE_D])
+        { e_handler::get().move_player(e_handler::RT); }
+
+      #pragma GCC diagnostic pop
+
+      if(controller) {
+        //process controller input
+        vec2d lrud(
+          SDL_JoystickGetAxis(controller, LSTICK_LR),
+          SDL_JoystickGetAxis(controller, LSTICK_UD)
+        );
+
+        if(abs(lrud[0]) > CONTROLLER_DEADZONE) {
+          if(lrud[0] < 0) { e_handler::get().move_player(e_handler::LF); }
+          else { e_handler::get().move_player(e_handler::RT); }
+        }
+        if(abs(lrud[1]) > CONTROLLER_DEADZONE) {
+          if(lrud[1] < 0) { e_handler::get().move_player(e_handler::UP); }
+          else { e_handler::get().move_player(e_handler::DN); }
+        }
       }
     }
 
 //==== UPDATE stuff here ======================================================
 
-    e_handler::get().update_entities();
-    viewport::get().set_pos(e_handler::get().get_player_pos());
+    if(!pause) {
+      e_handler::get().update_entities();
+      viewport::get().set_pos(e_handler::get().get_player_pos());
+    }
 
 
 //==== DISPLAY stuff here =====================================================
