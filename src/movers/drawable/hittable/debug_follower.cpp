@@ -1,6 +1,7 @@
 
 #include "debug_follower.h"
 #include "src/image/image_handler.h"
+#include "src/entity_handler/entity_handler.h"
 
 d_follower::d_follower(const std::string path) :
   hittable(path),
@@ -14,6 +15,9 @@ void d_follower::move_rt() { return; }
 
 void d_follower::update() {
   hittable::update();
+
+  //update the player's position
+  set_player_pos(e_handler::get().get_player_pos());
 
   //check how far from the player we are
   float distance = (this->get_pos() - player_pos).magnitude();
