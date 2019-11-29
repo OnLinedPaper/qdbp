@@ -31,8 +31,8 @@ void engine::play() {
 
   e_handler::get().create_player("/movers/hittable/debug_hittable");
 
-  d_follower df("/movers/hittable/debug_follower");
-  df.set_pos(200,200);
+  e_handler::get()
+    .add_npe(new d_follower("/movers/hittable/debug_follower"));
 
 
   while(!quit) {
@@ -49,6 +49,7 @@ void engine::play() {
       else if(e.type == SDL_KEYDOWN) {
         if(keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
         if(keystate[SDL_SCANCODE_J]) {
+          //TODO: make "tryjump" in map handler
           if(map_h::get().debug_jump(e_handler::get().get_player_pos())) {
             //jumped
             e_handler::get().teleport_player_new_map();
@@ -89,8 +90,6 @@ void engine::play() {
 
 //==== UPDATE stuff here ======================================================
 
-    df.set_player_pos(e_handler::get().get_player_pos());
-    df.update();
     e_handler::get().update_entities();
     viewport::get().set_pos(e_handler::get().get_player_pos());
 
@@ -102,7 +101,6 @@ void engine::play() {
     SDL_SetRenderDrawColor(render::get().get_r(), 28, 28, 28, 255);
 
     map_h::get().draw();
-    df.draw();
     e_handler::get().draw_entities();
     SDL_RenderPresent(render::get().get_r());
 

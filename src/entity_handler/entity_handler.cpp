@@ -13,16 +13,32 @@ const unsigned char e_handler::RT = 8;
 e_handler::e_handler() { }
 e_handler::~e_handler() {
   delete player;
+
+  for(hittable *h : npe_all) { delete h; h = NULL; }
 }
 
 //==== GENERIC THINGS =========================================================
 
 void e_handler::update_entities() {
   player->update();
+
+  //update each entity - do this last in case others need
+  //to be updated first
+  for(hittable *h : npe_all) { h->update(); }
 }
 
 void e_handler::draw_entities() {
   player->draw();
+
+  for(hittable *h : npe_all) { h->draw(); }
+}
+
+void e_handler::add_npe(hittable *h) {
+  //a function to add a hittable to the vector - note that this
+  //shouldn't really be called from the engine, it should be
+  //used "behind the scenes" for loading from a map or the like
+
+  npe_all.push_back(h);
 }
 
 //==== PLAYER THINGS ==========================================================

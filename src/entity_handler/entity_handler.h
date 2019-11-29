@@ -36,11 +36,14 @@ public:
   void update_entities();
   void draw_entities();
 
+  void add_npe(hittable *h);
+
 
 private:
   e_handler();
   hittable *player;
 
+  std::vector<hittable *> npe_all;
 
 
 };
