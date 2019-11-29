@@ -29,7 +29,7 @@ render::~render() {
 }
 
 SDL_Window *render::init_window() {
-  std::string title = "TODO: new title";
+  std::string title = "qdbp (dev)";
   //TODO: read the window size
 
   //disable warnings for ints in boolean context, then re-enable them
