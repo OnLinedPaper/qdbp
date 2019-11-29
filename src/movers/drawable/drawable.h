@@ -22,9 +22,9 @@ protected:
 
   //this is so when the image is drawn, each one has a different
   //frame
-  double frame_bump;
+  float frame_bump;
 
-  double last_angle;
+  float last_angle;
 
 
 };

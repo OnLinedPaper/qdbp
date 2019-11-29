@@ -40,7 +40,7 @@ private:
   std::deque<chunk> c_deque;
   //get index of the map location
   size_t index(int x, int y) const { return (x + x_dim * y); }
-  size_t index(double x, double y) const { return (x + x_dim * y); }
+  size_t index(float x, float y) const { return (x + x_dim * y); }
   size_t index(const vec2d &v) const { return (v[0] + x_dim * v[1]); }
 };
 

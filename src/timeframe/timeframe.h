@@ -13,10 +13,10 @@ public:
     return instance;
   }
 
-  double get_delay() const { return frame_delay; }
-  void set_delay(double d) { frame_delay = d; }
+  float get_delay() const { return frame_delay; }
+  void set_delay(float d) { frame_delay = d; }
 
-  double get_f() const { return frame; }
+  float get_f() const { return frame; }
   void incr_f() {
     //increment the frame, and recalculate the delay factor
     static double e = get_ms();
@@ -29,15 +29,15 @@ public:
 
   //the game was originally coded at 50fps, a 20 ms delay.
   //adjust other fps to reflect this
-  double f_factor() const { return frame_delay / 20; }
+  float f_factor() const { return frame_delay / 20; }
 
   //deltatime for lag
-  double d_factor() const { return delay_factor; }
+  float d_factor() const { return delay_factor; }
 
   //time adjust: lag compensation and fps modification
-  double t_adjust() const { return d_factor() * f_factor(); }
+  float t_adjust() const { return d_factor() * f_factor(); }
 
-  double get_elapsed() { return elapsed; }
+  float get_elapsed() { return elapsed; }
 
   double get_ms() const {
     return(
@@ -49,11 +49,11 @@ public:
 
 
 private:
-  double frame;
-  double frame_delay;
-  double delay_factor;
-  double fps_factor;
-  double elapsed;
+  float frame;
+  float frame_delay;
+  float delay_factor;
+  float fps_factor;
+  float elapsed;
 
   t_frame() : frame(0), frame_delay(0), delay_factor(1), elapsed(0) { }
   t_frame(const t_frame&) = delete;

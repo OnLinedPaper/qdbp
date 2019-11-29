@@ -8,7 +8,7 @@ hitline::hitline(const vec2d &s, const vec2d &e) :
   end(e)
 { }
 
-hitline::hitline(const vec2d &s, double length, double in_angle) :
+hitline::hitline(const vec2d &s, float length, float in_angle) :
   start(s),
   end(s)
 {

@@ -20,9 +20,9 @@ d_drawable::d_drawable() :
   vel = vec2d(0, 0);
 
 
-  vel_accel = xmlp::get().get_xml_double(path + "/movement/vel_accel");
-  vel_cap = xmlp::get().get_xml_double(path + "/movement/vel_cap");
-  vel_decay = xmlp::get().get_xml_double(path + "/movement/vel_decay");
+  vel_accel = xmlp::get().get_xml_float(path + "/movement/vel_accel");
+  vel_cap = xmlp::get().get_xml_float(path + "/movement/vel_cap");
+  vel_decay = xmlp::get().get_xml_float(path + "/movement/vel_decay");
   moved = false;
 
   std::string s = path + xmlp::get().get_xml_string(path + "/textures/body");

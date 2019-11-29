@@ -1,3 +1,4 @@
+
 #include "debug_follower.h"
 #include "src/image/image_handler.h"
 
@@ -15,7 +16,7 @@ void d_follower::update() {
   hittable::update();
 
   //check how far from the player we are
-  double distance = (this->get_pos() - player_pos).magnitude();
+  float distance = (this->get_pos() - player_pos).magnitude();
   if(distance < 1100 && distance > 200) {
     //accelerate towards player
     vec2d move_towards = this->get_pos() - player_pos;

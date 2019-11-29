@@ -91,14 +91,14 @@ int xmlparse::get_xml_int(const std::string path) {
 
 //============================================================================
 
-double xmlparse::get_xml_double(const std::string path) {
+float xmlparse::get_xml_float(const std::string path) {
   std::string retval = get_xml_string(path);
   try {
     return std::stod(retval);
   }
   catch (const std::invalid_argument& ia) {
     //they probably tried to convert a string or something
-    std::string error = "can't convert this value to a double!";
+    std::string error = "can't convert this value to a float!";
     msg::print_error(error);
     msg::print_alert("value: " + retval);
     msg::print_alert("bad tag path: " + path);

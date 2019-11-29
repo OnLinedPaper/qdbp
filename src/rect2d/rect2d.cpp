@@ -17,7 +17,7 @@ void rect2d::tlc_draw() const {
   );
 }
 
-void rect2d::coord_draw(double x, double y) const {
+void rect2d::coord_draw(float x, float y) const {
   SDL_Rect r;
   r.x = x;
   r.y = y;
@@ -127,7 +127,7 @@ bool rect2d::overlap(const hitline &l) const {
   return false;
 }*/
 
-double rect2d::check_point_side(const vec2d &in_point, const hitline &l) const {
+float rect2d::check_point_side(const vec2d &in_point, const hitline &l) const {
   //i won't pretend i know how this works, it's from
   //https://stackoverflow.com/a/293052/7431860
   //uses implicit equation of line to determine what side the point is on

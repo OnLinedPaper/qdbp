@@ -10,7 +10,7 @@ const unsigned char chunk::UP = 1;
 const unsigned char chunk::DN = 2;
 const unsigned char chunk::LF = 4;
 const unsigned char chunk::RT = 8;
-const double chunk::length = 1000;
+const float chunk::length = 1000;
 
 chunk::chunk(vec2d &v) :
   tlc(v),
@@ -24,7 +24,7 @@ chunk::chunk(vec2d &v) :
   g_name("")
   { }
 
-chunk::chunk(double x, double y) :
+chunk::chunk(float x, float y) :
   tlc(x*length, y*length),
   border {0, 0, 0, 0},
   i1_name("/boundary_marker"),
@@ -48,7 +48,7 @@ chunk::chunk(vec2d &v, bool u, bool d, bool l, bool r) :
   g_name("")
   { }
 
-chunk::chunk(double x, double y, bool u, bool d, bool l, bool r) :
+chunk::chunk(float x, float y, bool u, bool d, bool l, bool r) :
   tlc(x*length, y*length),
   border {u, d, l, r},
   i1_name("/boundary_marker"),
@@ -60,7 +60,7 @@ chunk::chunk(double x, double y, bool u, bool d, bool l, bool r) :
   g_name("")
   { }
 
-chunk::chunk(double x, double y, bool u, bool d, bool l, bool r, std::string type) :
+chunk::chunk(float x, float y, bool u, bool d, bool l, bool r, std::string type) :
   tlc(x*length, y*length),
   border {u, d, l, r},
   i1_name("/boundary_marker"),
@@ -118,7 +118,7 @@ unsigned char chunk::chunk_pos(vec2d &v) const {
   return( this->chunk_pos(v[0], v[1]) );
 }
 
-unsigned char chunk::chunk_pos(double x_coord, double y_coord) const {
+unsigned char chunk::chunk_pos(float x_coord, float y_coord) const {
   unsigned char retval = 0;
   //return 0 if it's in this chunk - otherwise, use bitwise
   //OR to add the location qualifiers
@@ -191,8 +191,8 @@ void chunk::add_gate(std::string dest, std::string name) {
 
 void chunk::draw() const {
 
-  double x = tlc[0];
-  double y = tlc[1];
+  float x = tlc[0];
+  float y = tlc[1];
   //debug_draw(x, y);
   //draw 2 barriers on each line where border[i] = true -
   //that's where a border is
@@ -236,7 +236,7 @@ void chunk::draw() const {
 
 }
 
-void chunk::debug_draw(double x, double y) const {
+void chunk::debug_draw(float x, float y) const {
   SDL_Rect r;
   r.x = x;
   r.y = y;

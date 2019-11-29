@@ -15,18 +15,18 @@ public:
     pos(0,0),
     last_pos(0,0),
     vel(0,0),
-    vel_accel(xmlparse::get().get_xml_double(path + "/movement/vel_accel") * t_frame::get().f_factor()),
-    vel_cap(xmlparse::get().get_xml_double(path + "/movement/vel_cap") * t_frame::get().f_factor()),
-    vel_decay(xmlparse::get().get_xml_double(path + "/movement/vel_decay") * t_frame::get().f_factor()),
+    vel_accel(xmlparse::get().get_xml_float(path + "/movement/vel_accel") * t_frame::get().f_factor()),
+    vel_cap(xmlparse::get().get_xml_float(path + "/movement/vel_cap") * t_frame::get().f_factor()),
+    vel_decay(xmlparse::get().get_xml_float(path + "/movement/vel_decay") * t_frame::get().f_factor()),
     moved(false)
   { }
   virtual ~movable() = default;
 
-  void set_x(double x) { pos[0] = x; }
-  void set_y(double y) { pos[1] = y; }
+  void set_x(float x) { pos[0] = x; }
+  void set_y(float y) { pos[1] = y; }
   const vec2d get_pos() const { return pos; }
   void set_pos(vec2d p) { pos = p; last_pos = p; }
-  void set_pos(double x, double y) { pos[0] = x; pos[1] = y; }
+  void set_pos(float x, float y) { pos[0] = x; pos[1] = y; }
   void teleport(vec2d p) { set_pos(p); }
   void stop() { vel[0] = 0; vel[1] = 0; }
 
@@ -87,9 +87,9 @@ protected:
   vec2d pos;
   vec2d last_pos;
   vec2d vel;
-  double vel_accel;
-  double vel_cap;
-  double vel_decay;
+  float vel_accel;
+  float vel_cap;
+  float vel_decay;
   bool moved;
 
   std::string path;

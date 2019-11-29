@@ -6,7 +6,7 @@
 
 class rect2d {
 public:
-  rect2d(double x, double y, double w, double h) : tlc(x, y), dims(w, h) { }
+  rect2d(float x, float y, float w, float h) : tlc(x, y), dims(w, h) { }
   rect2d(const rect2d &r) {
     tlc[0] = r.tlc[0];
     tlc[1] = r.tlc[1];
@@ -25,12 +25,12 @@ public:
   void draw() const;
   void draw(int, int, int) const;
   void tlc_draw() const;
-  void coord_draw(double, double) const;
+  void coord_draw(float, float) const;
 
   bool overlap(const rect2d &r) const;
   bool overlap(const hitline &l) const;
 
-  double check_point_side(const vec2d &v, const hitline &l) const;
+  float check_point_side(const vec2d &v, const hitline &l) const;
 
   vec2d get_tlc() const { return tlc; }
   vec2d get_brc() const { return vec2d(tlc[0] + dims[0], tlc[1] + dims[1]); }

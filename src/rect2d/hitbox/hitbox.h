@@ -15,13 +15,13 @@ public:
   static const int TYPE_PICKUPBOX;
   static const int TYPE_VACUUMBOX;
 
-  hitbox(double size, vec2d &offset, int type);
+  hitbox(float size, vec2d &offset, int type);
   hitbox(std::string path);
 
   int str_to_type(std::string) const;
   std::string type_to_str(int) const;
 
-  void set_box_center(vec2d &pos, double last_angle);
+  void set_box_center(vec2d &pos, float last_angle);
 
   bool collides(const hitbox &h) const;
   bool collides(const hitline &l) const;

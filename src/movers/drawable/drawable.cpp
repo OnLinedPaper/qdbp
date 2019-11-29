@@ -5,9 +5,9 @@ void drawable::update() {
   //changes in direction
     if(vel.magnitude() != 0) {
       //smooth-spin the image
-      double threshold = 15;
+      float threshold = 15;
       //if the angle change is greater than threshold, turn threshold at a time
-      double a = vel.angle_deg();
+      float a = vel.angle_deg();
 
       //add 360 so there's no issue with dropping from 0 to 360, this
       //will later be modded out

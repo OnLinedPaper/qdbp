@@ -12,7 +12,7 @@ public:
   //constructor with 2 points
   hitline(const vec2d &s, const vec2d &e);
   //constructor with start point, angle, and length
-  hitline(const vec2d &s, double length, double in_angle);
+  hitline(const vec2d &s, float length, float in_angle);
 
   const vec2d get_start() const { return start; }
   void set_start(const vec2d &v) { start = v; }

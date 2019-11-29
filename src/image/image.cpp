@@ -14,15 +14,15 @@ using xmlp = xmlparse;
 image::image (const std::string name)
 /*try*/ :
   dimensions(
-    xmlp::get().get_xml_double(name + "/dimensions/width"),
-    xmlp::get().get_xml_double(name + "/dimensions/height")
+    xmlp::get().get_xml_float(name + "/dimensions/width"),
+    xmlp::get().get_xml_float(name + "/dimensions/height")
   ),
   pivot(
-    xmlp::get().get_xml_double(name + "/dimensions/pivot_x"),
-    xmlp::get().get_xml_double(name + "/dimensions/pivot_y")
+    xmlp::get().get_xml_float(name + "/dimensions/pivot_x"),
+    xmlp::get().get_xml_float(name + "/dimensions/pivot_y")
   ),
-  frames(xmlp::get().get_xml_double(name + "/dimensions/frames")),
-  frame_delay(xmlp::get().get_xml_double(name + "/dimensions/frame_delay"))
+  frames(xmlp::get().get_xml_float(name + "/dimensions/frames")),
+  frame_delay(xmlp::get().get_xml_float(name + "/dimensions/frame_delay"))
 {
 
   if(dimensions[0] <= 0) {
@@ -130,7 +130,7 @@ void image::fill_t_vec(const std::string &name) {
 
 }
 
-void image::draw_rotate(double x_pos, double y_pos, double angle, double frame_bump) const {
+void image::draw_rotate(float x_pos, float y_pos, float angle, float frame_bump) const {
 
   //check to see if the entity is anywhere on-screen - if it's not,
   //don't draw it, to save time
@@ -178,7 +178,7 @@ void image::draw_rotate(double x_pos, double y_pos, double angle, double frame_b
   piv = NULL;
 }
 
-void image::draw_tile(double parallax) const {
+void image::draw_tile(float parallax) const {
   //draw the image in a tile-like format across the screen, shifting it
   //with player's movement according to parallax. parallax 1 means it's
   //"fixed" like an unmoving background.

@@ -8,7 +8,7 @@ class vec2d {
   //a 2d vector class, for position and velocity
 public:
   vec2d() : x(0), y(0) { }
-  vec2d(double xin, double yin) : x(xin), y(yin) { }
+  vec2d(float xin, float yin) : x(xin), y(yin) { }
   vec2d(const vec2d& v) : x(v[0]), y(v[1]) { }
   vec2d& operator=(const vec2d &v) {
     if(this != &v) {
@@ -20,14 +20,14 @@ public:
 
 
   //these operators let us return values with array notation
-  double &operator [](int i);
-  double operator [](int i) const;
+  float &operator [](int i);
+  float operator [](int i) const;
 
   //these return a vector modified in a scalar way
-  vec2d operator+(double scalar_val) const;
-  vec2d operator-(double scalar_val) const;
-  vec2d operator*(double scalar_val) const;
-  vec2d operator/(double scalar_val) const;
+  vec2d operator+(float scalar_val) const;
+  vec2d operator-(float scalar_val) const;
+  vec2d operator*(float scalar_val) const;
+  vec2d operator/(float scalar_val) const;
   vec2d operator-() const; //negation
 
   //these return a vector modified by another vector
@@ -42,27 +42,27 @@ public:
   //these modify the vector in question itself in a scalar way
   //TODO: +=, -=, *=? may not even need these
 
-  double magnitude() const;
-  double magnitudeSquared() const;
+  float magnitude() const;
+  float magnitudeSquared() const;
   vec2d normalize() const; //NOTE: will not normalize beyond .001, returns this
 
-  double dot(const vec2d &v) const;
+  float dot(const vec2d &v) const;
   //vec2d cross(const vec2d &v) const; //it's a 2d game, this isn't implemented
 
-  vec2d cap(double scalar_val) const;
-  vec2d decay(double scalar_val) const;
+  vec2d cap(float scalar_val) const;
+  vec2d decay(float scalar_val) const;
 
 
 
-  double angle_rad() const;
-  double angle_deg() const;
+  float angle_rad() const;
+  float angle_deg() const;
 
 
 private:
-  double x;
-  double y;
-  double max = DBL_MAX;
-  double PI = 3.141592653589793238462643383279502884;
+  float x;
+  float y;
+  float max = FLT_MAX;
+  float PI = 3.141592653589793238462643383279502884;
 };
 
 std::ostream &operator<<(std::ostream &output, const vec2d &v);

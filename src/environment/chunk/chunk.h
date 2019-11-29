@@ -7,10 +7,10 @@
 class chunk {
 public:
   chunk(vec2d&);
-  chunk(double, double);
+  chunk(float, float);
   chunk(vec2d&, bool, bool, bool, bool);
-  chunk(double, double, bool, bool, bool, bool);
-  chunk(double, double, bool, bool, bool, bool, std::string);
+  chunk(float, float, bool, bool, bool, bool);
+  chunk(float, float, bool, bool, bool, bool, std::string);
 
   chunk(const chunk&);
   chunk &operator=(const chunk&);
@@ -21,12 +21,12 @@ public:
   static const unsigned char LF;
   static const unsigned char RT;
 
-  static const double length;
+  static const float length;
 
   //check if a given point is in a chunk - if not, check if it's above,
   //below, left, or right
   unsigned char chunk_pos(vec2d&) const;
-  unsigned char chunk_pos(double, double) const;
+  unsigned char chunk_pos(float, float) const;
   unsigned char chunk_rebuff(vec2d &) const;
   unsigned char chunk_rebuff_forced(vec2d &) const;
 
@@ -61,7 +61,7 @@ public:
   void add_gate(std::string dest, std::string name);
 
   void draw() const;
-  void debug_draw(double x, double y) const;
+  void debug_draw(float x, float y) const;
 
 private:
 
@@ -72,7 +72,7 @@ private:
 
   std::string i1_name;
   std::string i2_name;
-  double frame_bump;
+  float frame_bump;
 
   bool in_bounds;
 

@@ -171,7 +171,7 @@ engine::engine() : debug_swirly_int(0), controller(NULL) {
   t_frame::get();
 
   //grab framerate data, can't do this till singletons are created
-  t_frame::get().set_delay(xmlparse::get().get_xml_double("/msdelay"));
+  t_frame::get().set_delay(xmlparse::get().get_xml_float("/msdelay"));
 
 
   if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
@@ -203,9 +203,9 @@ engine::~engine() {
 void engine::next_frame() {
 
   //get the desired delay between frames
-  double f_delay = t_frame::get().get_delay();
+  float f_delay = t_frame::get().get_delay();
   //get the actual delay
-  double elapsed = t_frame::get().get_elapsed();
+  float elapsed = t_frame::get().get_elapsed();
 
   //delay some ms
   if(f_delay - elapsed > 0){

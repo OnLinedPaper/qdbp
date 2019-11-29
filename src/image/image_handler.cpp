@@ -9,7 +9,7 @@ image_handler::~image_handler() {
   images.clear();
 }
 
-void image_handler::draw_rotate(const std::string name, double x, double y, double frame_bump, double angle) {
+void image_handler::draw_rotate(const std::string name, float x, float y, float frame_bump, float angle) {
   if(images.find(name) == images.end()) {
     //lazy initialization
     add_image(name);
@@ -17,7 +17,7 @@ void image_handler::draw_rotate(const std::string name, double x, double y, doub
   images.at(name).draw_rotate(x, y, angle, frame_bump);
 }
 
-void image_handler::draw_tile(const std::string name, double parallax) {
+void image_handler::draw_tile(const std::string name, float parallax) {
   if(images.find(name) == images.end()) {
     //lazy initialization
     add_image(name);

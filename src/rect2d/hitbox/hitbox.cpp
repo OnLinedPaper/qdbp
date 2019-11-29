@@ -11,7 +11,7 @@ const int hitbox::TYPE_SHIELDBOX = 4;
 const int hitbox::TYPE_PICKUPBOX = 5;
 const int hitbox::TYPE_VACUUMBOX = 6;
 
-hitbox::hitbox(double size, vec2d &offs, int t) :
+hitbox::hitbox(float size, vec2d &offs, int t) :
   rect2d(0, 0, size, size),
   offset(offs),
   type(t)
@@ -21,22 +21,22 @@ hitbox::hitbox(std::string path) :
   rect2d(
     0,
     0,
-    xmlparse::get().get_xml_double(path + "/size"),
-    xmlparse::get().get_xml_double(path + "/size")
+    xmlparse::get().get_xml_float(path + "/size"),
+    xmlparse::get().get_xml_float(path + "/size")
   ),
   offset(
-    xmlparse::get().get_xml_double(path + "/x_offset"),
-    xmlparse::get().get_xml_double(path + "/y_offset")
+    xmlparse::get().get_xml_float(path + "/x_offset"),
+    xmlparse::get().get_xml_float(path + "/y_offset")
   ),
   type(
     str_to_type(xmlparse::get().get_xml_string(path + "/type"))
   )
 { }
 
-void hitbox::set_box_center(vec2d &pos, double last_angle) {
+void hitbox::set_box_center(vec2d &pos, float last_angle) {
   //adjust rectangle's position based on last angle and offset
-  double PI = 3.141592653589793238462643383279502884;
-  double angle = (last_angle * PI) / 180;
+  float PI = 3.141592653589793238462643383279502884;
+  float angle = (last_angle * PI) / 180;
 
   vec2d new_center = pos;
 

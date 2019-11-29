@@ -12,8 +12,8 @@ public:
   image(const std::string);
   ~image();
 
-  void draw_rotate(double x, double y, double a, double frame_bump) const;
-  void draw_tile(double parallax) const;
+  void draw_rotate(float x, float y, float a, float frame_bump) const;
+  void draw_tile(float parallax) const;
   const vec2d &get_dim() const { return dimensions; }
 
 private:
