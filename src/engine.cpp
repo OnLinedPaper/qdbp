@@ -49,7 +49,13 @@ void engine::play() {
       if(e.type == SDL_QUIT) { quit = true; }
       else if(e.type == SDL_KEYDOWN) {
         if(keystate[SDL_SCANCODE_ESCAPE]) { pause = !pause; } //pause unpause
-        if(keystate[SDL_SCANCODE_Q]) { if(pause) { quit = true; } }
+        if(pause) {
+          //pause menu
+          if(keystate[SDL_SCANCODE_Q]) { quit = true; }
+        }
+        else {
+
+        }
 
       }
     }
@@ -102,7 +108,9 @@ void engine::play() {
 
 //==== UPDATE stuff here ======================================================
 
-    if(!pause) {
+    if(pause) {
+    }
+    else {
       e_handler::get().update_entities();
       viewport::get().set_pos(e_handler::get().get_player_pos());
     }
