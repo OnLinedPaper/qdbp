@@ -1,5 +1,6 @@
 #include "render.h"
 #include <iostream>
+#include "src/viewport/viewport.h"
 
 render::render() : w(nullptr), r(nullptr) {
   if( SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
@@ -57,4 +58,18 @@ SDL_Renderer *render::init_renderer() {
     throw(std::string("Couldn't init a renderer! Error: ") + SDL_GetError());
   }
   return r;
+}
+
+void render::shade_display(float shade) {
+  static SDL_Rect r{
+    0,
+    0,
+    viewport::get().get_w(),
+    viewport::get().get_h()
+  };
+
+  SDL_SetRenderDrawColor(
+    render::get().get_r(), 0, 0, 0, 255*shade
+  );
+  SDL_RenderFillRect(render::get().get_r(), &r);
 }

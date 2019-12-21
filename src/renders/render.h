@@ -19,6 +19,8 @@ public:
   SDL_Window *get_w() { return w; };
   SDL_Renderer *get_r() { return r; };
 
+  void shade_display(float shade);
+
 private:
 
   SDL_Window *w;
