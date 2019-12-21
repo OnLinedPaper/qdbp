@@ -1,7 +1,6 @@
 #ifndef TIMEFRAME_H_
 #define TIMEFRAME_H_
 
-#include <chrono>
 
 class t_frame {
 public:
@@ -17,15 +16,7 @@ public:
   void set_delay(float d) { frame_delay = d; }
 
   float get_f() const { return frame; }
-  void incr_f() {
-    //increment the frame, and recalculate the delay factor
-    static double e = get_ms();
-    elapsed = get_ms() - e;
-    delay_factor = elapsed / frame_delay;
-    e = get_ms();
-
-    frame++;
-  }
+  void incr_f();
 
   //the game was originally coded at 50fps, a 20 ms delay.
   //adjust other fps to reflect this
@@ -39,13 +30,7 @@ public:
 
   float get_elapsed() { return elapsed; }
 
-  double get_ms() const {
-    return(
-      std::chrono::duration_cast<std::chrono::milliseconds>(
-        std::chrono::system_clock::now().time_since_epoch()
-      ).count()
-    );
-  }
+  double get_ms() const;
 
 
 private:
