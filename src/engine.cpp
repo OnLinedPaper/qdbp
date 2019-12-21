@@ -48,10 +48,12 @@ void engine::play() {
       keystate = SDL_GetKeyboardState(NULL);
       if(e.type == SDL_QUIT) { quit = true; }
       else if(e.type == SDL_KEYDOWN) {
-        if(keystate[SDL_SCANCODE_ESCAPE]) { pause = !pause; } //pause unpause
-        if(pause) {
+
+        //pause unpause
+        if(keystate[SDL_SCANCODE_P]) { pause = !pause; }
+        if(pause || !pause) { //TODO: remove this / update it
           //pause menu
-          if(keystate[SDL_SCANCODE_Q]) { quit = true; }
+          if(keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
         }
         else {
 
@@ -124,6 +126,9 @@ void engine::play() {
 
     map_h::get().draw();
     e_handler::get().draw_entities();
+
+    if(pause) { render::get().shade_display(0.7); }
+
     SDL_RenderPresent(render::get().get_r());
 
 //==== DEBUG STUFF here =======================================================
