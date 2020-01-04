@@ -1,5 +1,7 @@
 #include "entity_handler.h"
 #include "src/environment/map/map_handler.h"
+#include "src/movers/drawable/hittable/debug_follower.h"
+#include "src/utils/message.h"
 
 //==== CONSTANT THINGS ========================================================
 
@@ -33,18 +35,27 @@ void e_handler::draw_entities() {
   for(hittable *h : npe_all) { h->draw(); }
 }
 
-void e_handler::add_npe(hittable *h) {
+void e_handler::add_npe(const std::string type) {
   //a function to add a hittable to the vector - note that this
   //shouldn't really be called from the engine, it should be
   //used "behind the scenes" for loading from a map or the like
 
-  npe_all.push_back(h);
+  hittable *h = NULL;
+
+  if(!type.compare("debug_follower"))
+    { h = new d_follower(entity_xml_root + type); }
+  else {
+    msg::print_warn("couldn't find entity \"" + type + "\"");
+    msg::print_alert("tried to check at " + entity_xml_root + type);
+  }
+
+  if(h) { npe_all.push_back(h); }
 }
 
 //==== PLAYER THINGS ==========================================================
 
 void e_handler::create_player(std::string s) {
-  player = new d_hittable(s);
+  player = new d_hittable(entity_xml_root + s);
   player->set_pos(map_h::get().get_start_pos());
 }
 

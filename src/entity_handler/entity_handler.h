@@ -36,12 +36,13 @@ public:
   void update_entities();
   void draw_entities();
 
-  void add_npe(hittable *h);
+  void add_npe(const std::string type);
 
 
 private:
   e_handler();
   hittable *player;
+  const std::string entity_xml_root = "/movers/hittable/";
 
   std::vector<hittable *> npe_all;
 
