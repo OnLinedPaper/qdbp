@@ -3,20 +3,14 @@
 
 #include "engine.h"
 #include "renders/render.h"
-#include "movers/movable.h"
-#include "movers/drawable/debug_drawable.h"
 #include "xml_parser/xmlparse.h"
 #include "viewport/viewport.h"
 #include "timeframe/timeframe.h"
-#include "environment/chunk/chunk.h"
-#include "environment/map/map.h"
 #include "environment/map/map_handler.h"
 #include "utils/message.h"
-#include "src/rect2d/rect2d.h"
-#include "src/movers/drawable/hittable/debug_hittable.h"
-#include "src/movers/drawable/hittable/debug_follower.h"
-#include "src/rect2d/hitbox/hitline.h"
 #include "src/entity_handler/entity_handler.h"
+
+#include <SDL2/SDL_ttf.h>
 
 //looking for the constructors? they're below "play"
 
@@ -27,14 +21,21 @@ void engine::play() {
   bool pause = false;
   SDL_Event e;
 
+  TTF_Init();
+  TTF_Font *font = NULL;
+  font = TTF_OpenFont("./resources/fonts/thank-you-prophessor.ttf", 28);
+  if(font == NULL) {
+    msg::print_error("couldn't init font: " + std::string(SDL_GetError()));
+    return;
+  }
+
 
   const Uint8* keystate;
 
-  e_handler::get().create_player("/movers/hittable/debug_hittable");
+  e_handler::get().create_player("debug_hittable");
 
   e_handler::get()
-    .add_npe(new d_follower("/movers/hittable/debug_follower"));
-
+    .add_npe("debug_follower");
 
   while(!quit) {
 
@@ -128,6 +129,17 @@ void engine::play() {
     e_handler::get().draw_entities();
 
     if(pause) { render::get().shade_display(0.7); }
+
+    SDL_Color col;
+    col.r = col.g = col.b = col.a = 255;
+    SDL_Surface *txts = TTF_RenderText_Solid(font, "test", col);
+    SDL_Texture *txtt = SDL_CreateTextureFromSurface(render::get().get_r(), txts);
+    SDL_Rect dest;
+    dest.x = dest.y = 0;
+    dest.w = txts->w;
+    dest.h = txts->h;
+    SDL_RenderCopy(render::get().get_r(), txtt, NULL, &dest);
+    SDL_FreeSurface(txts);
 
     SDL_RenderPresent(render::get().get_r());
 
