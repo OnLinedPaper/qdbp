@@ -2,32 +2,57 @@
 #include <random>
 
 #include "engine.h"
-#include "renders/render.h"
-#include "xml_parser/xmlparse.h"
-#include "viewport/viewport.h"
-#include "timeframe/timeframe.h"
-#include "environment/map/map_handler.h"
-#include "utils/message.h"
+#include "src/renders/render.h"
+#include "src/xml_parser/xmlparse.h"
+#include "src/viewport/viewport.h"
+#include "src/timeframe/timeframe.h"
+#include "src/environment/map/map_handler.h"
+#include "src/utils/message.h"
 #include "src/entity_handler/entity_handler.h"
+#include "src/text/text_handler.h"
 
 #include <SDL2/SDL_ttf.h>
+#include "src/text/text.h"
 
 //looking for the constructors? they're below "play"
 
 
 //main loop that plays the game
 void engine::play() {
+try{
   bool quit = false;
   bool pause = false;
   SDL_Event e;
 
-  TTF_Init();
-  TTF_Font *font = NULL;
-  font = TTF_OpenFont("./resources/fonts/thank-you-prophessor.ttf", 28);
-  if(font == NULL) {
-    msg::print_error("couldn't init font: " + std::string(SDL_GetError()));
-    return;
-  }
+
+
+  static double iii = 0;
+  static double avggenericms = 0;
+  static double genericms = 0;
+  static double avgupdatems = 0;
+  static double updatems = 0;
+  static double avgdrawms = 0;
+  static double drawms = 0;
+  static double avgrenderms = 0;
+  static double renderms = 0;
+
+  static double avgfps = 0;
+
+  genericms = t_frame::get().get_ms();
+
+  text t("debug info", 10, 10);
+  text ta("", 280, 10);
+  text t1("avg fps:", 10, 40);
+  text t1a("", 280, 40);
+  text t2("avg ms/tick:", 10, 70);
+  text t2a("", 280, 70);
+  text t3("avg ms/update:", 10, 100);
+  text t3a("", 280, 100);
+  text t4("avg ms/draw:", 10, 130);
+  text t4a("", 280, 130);
+  text t5("avg ms/render:", 10, 160);
+  text t5a("", 280, 160);
+
 
 
   const Uint8* keystate;
@@ -110,16 +135,18 @@ void engine::play() {
     }
 
 //==== UPDATE stuff here ======================================================
-
+updatems = t_frame::get().get_ms();
     if(pause) {
     }
     else {
       e_handler::get().update_entities();
       viewport::get().set_pos(e_handler::get().get_player_pos());
     }
-
+updatems = t_frame::get().get_ms() - updatems;
 
 //==== DISPLAY stuff here =====================================================
+
+drawms = t_frame::get().get_ms();
     SDL_SetRenderDrawColor(render::get().get_r(), 32, 32, 32, 255);
     SDL_RenderClear(render::get().get_r());
     //SDL_RenderCopy(render::get()->get_r(), t->get_texture(), NULL, NULL);s
@@ -130,19 +157,47 @@ void engine::play() {
 
     if(pause) { render::get().shade_display(0.7); }
 
-    SDL_Color col;
-    col.r = col.g = col.b = col.a = 255;
-    SDL_Surface *txts = TTF_RenderText_Solid(font, "test", col);
-    SDL_Texture *txtt = SDL_CreateTextureFromSurface(render::get().get_r(), txts);
-    SDL_Rect dest;
-    dest.x = dest.y = 0;
-    dest.w = txts->w;
-    dest.h = txts->h;
-    SDL_RenderCopy(render::get().get_r(), txtt, NULL, &dest);
-    SDL_FreeSurface(txts);
+drawms = t_frame::get().get_ms() - drawms;
+//---- DRAW DEBUG STUFF here --------------------------------------------------
+
+    iii++;
+
+    avggenericms = avggenericms + (1.0/iii) * ((t_frame::get().get_ms() - genericms) - avggenericms);
+
+    avgfps = avgfps + (1.0/iii) * ((1000 / (t_frame::get().get_ms() - genericms)) - avgfps);
+
+    avgupdatems = avgupdatems + (1.0/iii) * (updatems - avgupdatems);
+    avgdrawms = avgdrawms + (1.0/iii) * (drawms - avgdrawms);
+    avgrenderms = avgrenderms + (1.0/iii) * (renderms - avgrenderms);
+
+    ta.set_msg(std::string(1, debug_swirly()));
+    t1a.set_msg(std::to_string(avgfps));
+    t2a.set_msg(std::to_string(avggenericms));
+    t3a.set_msg(std::to_string(avgupdatems));
+    t4a.set_msg(std::to_string(avgdrawms));
+    t5a.set_msg(std::to_string(avgrenderms));
+
+    t.draw();
+    ta.draw();
+    t1.draw();
+    t1a.draw();
+    t2.draw();
+    t2a.draw();
+    t3.draw();
+    t3a.draw();
+    t4.draw();
+    t4a.draw();
+    t5.draw();
+    t5a.draw();
+
+    genericms = t_frame::get().get_ms();
+
+//-----------------------------------------------------------------------------
+renderms = t_frame::get().get_ms();
 
     SDL_RenderPresent(render::get().get_r());
 
+renderms = t_frame::get().get_ms() - renderms;
 //==== DEBUG STUFF here =======================================================
 
 //dd.move_up();
@@ -152,11 +207,15 @@ void engine::play() {
 
 //==== GAME TICK here =========================================================
 
+    incr_debug_swirly();
     fprintf(stdout, "%c\r", debug_swirly());
     fflush(stdout);
 
     next_frame();
   }
+  SDL_Quit();
+}
+catch(std::string e) { msg::print_error(e); throw; }
 }
 
 /*#############################################################################
@@ -193,6 +252,7 @@ void engine::play() {
 
 
 engine::engine() : debug_swirly_int(0), controller(NULL) {
+try{
   //init the singletons
   //note that many require xmlparse to init themselves, so
   //xmlparse builds its trees first
@@ -206,6 +266,7 @@ engine::engine() : debug_swirly_int(0), controller(NULL) {
   render::get().get_r();
   viewport::get();
   t_frame::get();
+  text_h::get();
 
   //grab framerate data, can't do this till singletons are created
   t_frame::get().set_delay(xmlparse::get().get_xml_float("/msdelay"));
@@ -230,6 +291,7 @@ engine::engine() : debug_swirly_int(0), controller(NULL) {
     msg::print_error("Couldn't init SDL! Error: " + std::string(SDL_GetError()));
     throw("couldn't start SDL!");
   }
+} catch (std::string e) { msg::print_error(e); throw; }
 }
 
 engine::~engine() {
@@ -274,9 +336,11 @@ void engine::close_SDL() {
   SDL_Quit();
 }
 
-char engine::debug_swirly() {
+void engine::incr_debug_swirly() {
+    debug_swirly_int = (debug_swirly_int+1) % 4;
+}
 
-  debug_swirly_int = (debug_swirly_int+1) % 4;
+char const engine::debug_swirly() {
   char c = '+';
 
   switch(debug_swirly_int) {

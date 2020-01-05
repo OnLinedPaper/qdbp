@@ -34,7 +34,8 @@ private:
   void next_frame();
 
   int debug_swirly_int;
-  char debug_swirly();
+  char const debug_swirly();
+  void incr_debug_swirly();
   SDL_Joystick *controller;
 };
 
