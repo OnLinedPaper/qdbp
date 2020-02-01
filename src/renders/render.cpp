@@ -26,7 +26,6 @@ render::render() : w(nullptr), r(nullptr) {
 render::~render() {
   SDL_DestroyRenderer(r);
   SDL_DestroyWindow(w);
-  SDL_Quit();
 }
 
 SDL_Window *render::init_window() {
