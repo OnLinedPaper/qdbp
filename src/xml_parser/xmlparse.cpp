@@ -161,10 +161,31 @@ void xmlparse::recurse_build_tree(const std::smatch m, const std::string path) {
   unsigned first = 0;
   unsigned last = 0;
 
-  //get the top tag - note that it is expected there are no children
-  //whose names are duplicated by one of their parents
-  first = content.find_first_of("<") + 1;
-  last = content.find_first_of(">");
+  bool is_comment = true;
+
+  while(is_comment) {
+    is_comment = false;
+
+    //get the top tag - note that it is expected there are
+    //no children whose names are duplicated by one of
+    //their parents
+    first = content.find_first_of("<") + 1;
+    last = content.find_first_of(">");
+
+    //check first to see if this is a comment - if so,
+    //ignore it
+    if(
+      !content.substr(first, 3).compare("!--") &&
+      !content.substr(last-2, 2).compare("--")
+    ) {
+      //it's a comment
+      //erase it and try again
+      is_comment = true;
+
+      content = content.erase(first-1, last-first+2);
+    }
+  }
+
   std::string top_tag = content.substr(first, last-first);
   std::string open_tag = "<" + top_tag + ">";
   std::string close_tag = "</" + top_tag + ">";
