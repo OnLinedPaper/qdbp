@@ -1,7 +1,10 @@
 #include "text_handler.h"
 #include <string>
 
-text_h::text_h() {
+text_h::text_h() :
+  active_t(),
+  recycled_t()
+{
 
   if( TTF_Init() == -1 ) {
     throw(std::string("Couldn't init SDL text! Error: ") + SDL_GetError());
