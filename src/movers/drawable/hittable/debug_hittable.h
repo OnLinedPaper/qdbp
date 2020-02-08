@@ -1,5 +1,5 @@
-#ifndef DEBUG_HITTABLE_H
-#define DEBUG_HITTABLE_H
+#ifndef DEBUG_HITTABLE_H_
+#define DEBUG_HITTABLE_H_
 
 #include "hittable.h"
 
