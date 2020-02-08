@@ -5,7 +5,7 @@
 #include "src/movers/drawable/hittable/hittable.h"
 
 
-hittable::hittable(std::string path) :
+hittable::hittable(const std::string path) :
   drawable(path)
 {
   //load all hitboxes
