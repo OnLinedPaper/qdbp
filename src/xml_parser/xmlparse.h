@@ -24,6 +24,7 @@ public:
   std::string get_xml_string(const std::string path);
   int get_xml_int(const std::string path);
   float get_xml_float(const std::string path);
+  float safe_get_xml_float(const std::string path);
   bool get_xml_bool(const std::string path);
 
 private:

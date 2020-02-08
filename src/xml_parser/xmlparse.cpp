@@ -108,6 +108,18 @@ float xmlparse::get_xml_float(const std::string path) {
 
 //============================================================================
 
+float xmlparse::safe_get_xml_float(const std::string path) {
+  try {
+    return get_xml_float(path);
+  }
+  catch (std::string e) {
+    msg::print_alert("==== safe mode: returning 0 ====");
+    return 0;
+  }
+}
+
+//============================================================================
+
 bool xmlparse::get_xml_bool(const std::string path) {
   std::string retval = get_xml_string(path);
 
