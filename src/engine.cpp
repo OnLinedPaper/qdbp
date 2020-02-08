@@ -26,41 +26,20 @@ try{
 
 
 
-  static double iii = 0;
-  static double avggenericms = 0;
-  static double genericms = 0;
-  static double avgupdatems = 0;
-  static double updatems = 0;
-  static double avgdrawms = 0;
-  static double drawms = 0;
-  static double avgrenderms = 0;
-  static double renderms = 0;
+  text t6("heat:", 10, 30);
+  text t6a("", 280, 30);
+  text t7("overheat:", 10, 60);
+  text t7a("", 280, 60);
 
-  static double avgfps = 0;
-
-  genericms = t_frame::get().get_ms();
-
-  text t("debug info", 10, 10);
-  text ta("", 280, 10);
-  text t1("avg fps:", 10, 40);
-  text t1a("", 280, 40);
-  text t2("avg ms/tick:", 10, 70);
-  text t2a("", 280, 70);
-  text t3("avg ms/update:", 10, 100);
-  text t3a("", 280, 100);
-  text t4("avg ms/draw:", 10, 130);
-  text t4a("", 280, 130);
-  text t5("avg ms/render:", 10, 160);
-  text t5a("", 280, 160);
 
 
 
   const Uint8* keystate;
 
-  e_handler::get().create_player("debug_hittable");
+  e_handler::get().create_player("heatable/debug_heatable");
 
   e_handler::get()
-    .add_npe("debug_follower");
+    .add_npe("hittable/debug_follower");
 
   while(!quit) {
 
@@ -114,6 +93,9 @@ try{
       if(keystate[SDL_SCANCODE_D])
         { e_handler::get().move_player(e_handler::RT); }
 
+      if(keystate[SDL_SCANCODE_LSHIFT])
+        { e_handler::get().boost_player(true); }
+
       #pragma GCC diagnostic pop
 
       if(controller) {
@@ -135,18 +117,16 @@ try{
     }
 
 //==== UPDATE stuff here ======================================================
-updatems = t_frame::get().get_ms();
+
     if(pause) {
     }
     else {
       e_handler::get().update_entities();
       viewport::get().set_pos(e_handler::get().get_player_pos());
     }
-updatems = t_frame::get().get_ms() - updatems;
 
 //==== DISPLAY stuff here =====================================================
 
-drawms = t_frame::get().get_ms();
     SDL_SetRenderDrawColor(render::get().get_r(), 32, 32, 32, 255);
     SDL_RenderClear(render::get().get_r());
     //SDL_RenderCopy(render::get()->get_r(), t->get_texture(), NULL, NULL);s
@@ -157,47 +137,21 @@ drawms = t_frame::get().get_ms();
 
     if(pause) { render::get().shade_display(0.7); }
 
-drawms = t_frame::get().get_ms() - drawms;
 //---- DRAW DEBUG STUFF here --------------------------------------------------
 
-    iii++;
 
-    avggenericms = avggenericms + (1.0/iii) * ((t_frame::get().get_ms() - genericms) - avggenericms);
+    t6a.set_msg(std::to_string(e_handler::get().get_player_heat_percent()));
+    t7a.set_msg(std::to_string(e_handler::get().get_player_overheat_percent()));
 
-    avgfps = avgfps + (1.0/iii) * ((1000 / (t_frame::get().get_ms() - genericms)) - avgfps);
-
-    avgupdatems = avgupdatems + (1.0/iii) * (updatems - avgupdatems);
-    avgdrawms = avgdrawms + (1.0/iii) * (drawms - avgdrawms);
-    avgrenderms = avgrenderms + (1.0/iii) * (renderms - avgrenderms);
-
-    ta.set_msg(std::string(1, debug_swirly()));
-    t1a.set_msg(std::to_string(avgfps));
-    t2a.set_msg(std::to_string(avggenericms));
-    t3a.set_msg(std::to_string(avgupdatems));
-    t4a.set_msg(std::to_string(avgdrawms));
-    t5a.set_msg(std::to_string(avgrenderms));
-
-    t.draw();
-    ta.draw();
-    t1.draw();
-    t1a.draw();
-    t2.draw();
-    t2a.draw();
-    t3.draw();
-    t3a.draw();
-    t4.draw();
-    t4a.draw();
-    t5.draw();
-    t5a.draw();
-
-    genericms = t_frame::get().get_ms();
+    t6.draw();
+    t6a.draw();
+    t7.draw();
+    t7a.draw();
 
 //-----------------------------------------------------------------------------
-renderms = t_frame::get().get_ms();
 
     SDL_RenderPresent(render::get().get_r());
 
-renderms = t_frame::get().get_ms() - renderms;
 //==== DEBUG STUFF here =======================================================
 
 //dd.move_up();

@@ -2,7 +2,7 @@
 #define ENTITY_HANDLER_H_
 
 #include "src/movers/drawable/drawable.h"
-#include "src/movers/drawable/hittable/hittable.h"
+#include "src/movers/drawable/hittable/heatable/heatable.h"
 #include "src/movers/drawable/hittable/debug_hittable.h"
 #include <vector>
 
@@ -27,6 +27,9 @@ public:
 
   void create_player(std::string);
   void move_player(unsigned char);
+  void boost_player(bool);
+  float get_player_heat_percent();
+  float get_player_overheat_percent();
   void teleport_player(const vec2d &);
   void teleport_player_new_map();
   const vec2d get_player_pos();
@@ -41,8 +44,8 @@ public:
 
 private:
   e_handler();
-  hittable *player;
-  const std::string entity_xml_root = "/movers/hittable/";
+  heatable *player;
+  const std::string entity_xml_root = "/movers/";
 
   std::vector<hittable *> npe_all;
 

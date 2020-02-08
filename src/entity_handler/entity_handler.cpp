@@ -1,5 +1,6 @@
 #include "entity_handler.h"
 #include "src/environment/map/map_handler.h"
+#include "src/movers/drawable/hittable/heatable/debug_heatable.h"
 #include "src/movers/drawable/hittable/debug_follower.h"
 #include "src/utils/message.h"
 
@@ -42,7 +43,7 @@ void e_handler::add_npe(const std::string type) {
 
   hittable *h = NULL;
 
-  if(!type.compare("debug_follower"))
+  if(!type.compare("hittable/debug_follower"))
     { h = new d_follower(entity_xml_root + type); }
   else {
     msg::print_warn("couldn't find entity \"" + type + "\"");
@@ -55,7 +56,7 @@ void e_handler::add_npe(const std::string type) {
 //==== PLAYER THINGS ==========================================================
 
 void e_handler::create_player(std::string s) {
-  player = new d_hittable(entity_xml_root + s);
+  player = new d_heatable(entity_xml_root + s);
   player->set_pos(map_h::get().get_start_pos());
 }
 
@@ -64,6 +65,18 @@ void e_handler::move_player(unsigned char c) {
   if(c & DN) { player->move_dn(); }
   if(c & LF) { player->move_lf(); }
   if(c & RT) { player->move_rt(); }
+}
+
+void e_handler::boost_player(bool b) {
+  player->boost(b);
+}
+
+float e_handler::get_player_heat_percent() {
+  return player->get_heat_percent();
+}
+
+float e_handler::get_player_overheat_percent() {
+  return player->get_overheat_percent();
 }
 
 void e_handler::teleport_player(const vec2d &p) {

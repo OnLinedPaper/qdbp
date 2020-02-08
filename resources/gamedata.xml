@@ -2,6 +2,53 @@
 <first_map>debug_2</first_map>
 
 <movers>
+  <drawable>
+    <debug_drawable>
+      <movement>
+        <vel_cap>20</vel_cap>
+        <vel_decay>0.1</vel_decay>
+        <vel_accel>1</vel_accel>
+      </movement>
+      <textures>
+        <body>arrow2</body>
+      </textures>
+    </debug_drawable>
+  </drawable>
+
+  <heatable>
+    <debug_heatable>
+      <heat>
+        <max_heat>400</max_heat>
+        <max_overheat>600</max_overheat>
+        <boost_heat_per_tick>3</boost_heat_per_tick>
+        <cool_per_tick>1</cool_per_tick>
+      </heat>
+      <movement>
+        <vel_cap>20</vel_cap>
+        <vel_overcap>27</vel_overcap>
+        <vel_decay>0.1</vel_decay>
+        <vel_accel>1</vel_accel>
+      </movement>
+      <textures>
+        <body>arrow2</body>
+      </textures>
+      <hitboxes>
+        <vacuum>
+          <x_offset>0</x_offset>
+          <y_offset>0</y_offset>
+          <size>48</size>
+          <type>VACUUM</type>
+        </vacuum>
+        <shield>
+          <x_offset>0</x_offset>
+          <y_offset>0</y_offset>
+          <size>30</size>
+          <type>SHIELD</type>
+        </shield>
+      </hitboxes>
+    </debug_heatable>
+  </heatable>
+
   <hittable>
     <debug_follower>
       <movement>
@@ -27,6 +74,7 @@
         </shield>
       </hitboxes>
     </debug_follower>
+
     <debug_hittable>
       <movement>
         <vel_cap>20</vel_cap>
@@ -69,6 +117,7 @@
         </pickup>
       </hitboxes>
     </debug_hittable>
+
     <debug_stationary>
       <movement>
         <vel_cap>0</vel_cap>
@@ -94,18 +143,6 @@
       </hitboxes>
     </debug_stationary>
   </hittable>
-  <drawable>
-    <debug_drawable>
-      <movement>
-        <vel_cap>20</vel_cap>
-        <vel_decay>0.1</vel_decay>
-        <vel_accel>1</vel_accel>
-      </movement>
-      <textures>
-        <body>arrow2</body>
-      </textures>
-    </debug_drawable>
-  </drawable>
 
   <debug_movable>
     <movement>
