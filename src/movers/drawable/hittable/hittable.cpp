@@ -3,7 +3,7 @@
 #include "src/rect2d/hitbox/hitbox.h"
 #include "src/rect2d/hitbox/hitline.h"
 #include "src/movers/drawable/hittable/hittable.h"
-
+#include "src/entity_handler/entity_handler.h"
 
 hittable::hittable(const std::string path) :
   drawable(path)
@@ -119,6 +119,12 @@ void hittable::update_boxes() {
     for(hitbox &h : *v) {
       h.set_box_center(pos, last_angle);
     }
+  }
+}
+
+void hittable::draw() const {
+  if(e_handler::get().get_draw_debug_info()) {
+    draw_boxes();
   }
 }
 

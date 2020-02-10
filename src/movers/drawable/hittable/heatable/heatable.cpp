@@ -66,3 +66,7 @@ void heatable::update() {
   //decay some heat
   cool_dn(cool_per_tick);
 }
+
+void heatable::draw() const {
+  hittable::draw();
+}

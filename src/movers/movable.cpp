@@ -65,3 +65,5 @@ void movable::update() {
   //update position
   last_pos = pos;
 }
+
+void movable::draw() const { }

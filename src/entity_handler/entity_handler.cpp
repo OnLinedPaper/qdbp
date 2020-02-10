@@ -13,7 +13,10 @@ const unsigned char e_handler::RT = 8;
 
 //==== INSTANCE THINGS ========================================================
 
-e_handler::e_handler() { }
+e_handler::e_handler() :
+  draw_debug_info(false)
+{ }
+
 e_handler::~e_handler() {
   delete player;
 

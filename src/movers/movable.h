@@ -29,7 +29,7 @@ public:
   virtual void move_lf() = 0;
   virtual void move_rt() = 0;
 
-  virtual void draw() const = 0;
+  virtual void draw() const;
 
 protected:
   virtual void update();

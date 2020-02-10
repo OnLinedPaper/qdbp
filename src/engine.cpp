@@ -60,8 +60,12 @@ try{
           //pause menu
           if(keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
         }
-        else {
 
+        //draw debug things
+        if(keystate[SDL_SCANCODE_PERIOD]) {
+          e_handler::get().set_draw_debug_info(
+            !e_handler::get().get_draw_debug_info()
+          );
         }
 
       }

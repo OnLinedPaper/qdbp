@@ -33,3 +33,7 @@ void drawable::update() {
     }
     last_angle = int(last_angle) % 360;
 }
+
+void drawable::draw() const {
+  movable::draw();
+}

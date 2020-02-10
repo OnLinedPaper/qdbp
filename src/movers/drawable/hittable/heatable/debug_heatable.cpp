@@ -25,6 +25,7 @@ void d_heatable::update() {
 }
 
 void d_heatable::draw() const {
+
   SDL_Rect dest_r;
 
   dest_r.x = pos[0];
@@ -33,4 +34,7 @@ void d_heatable::draw() const {
   dest_r.h = 128;
 
   image_handler::get().draw_rotate(image_name, dest_r.x, dest_r.y, 0, last_angle);
+
+  
+  heatable::draw();
 }

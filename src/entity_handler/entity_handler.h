@@ -36,6 +36,9 @@ public:
 
 //==== GENERIC THINGS ==========================================================
 
+  void set_draw_debug_info(bool b) { draw_debug_info = b; }
+  bool get_draw_debug_info() const { return draw_debug_info; }
+
   void update_entities();
   void draw_entities();
 
@@ -49,6 +52,7 @@ private:
 
   std::vector<hittable *> npe_all;
 
+  bool draw_debug_info;
 
 };
 

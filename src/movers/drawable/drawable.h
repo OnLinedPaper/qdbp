@@ -18,6 +18,7 @@ public:
 
 protected:
   virtual void update() override;
+  void draw() const override;
   std::string image_name;
 
   //this is so when the image is drawn, each one has a different

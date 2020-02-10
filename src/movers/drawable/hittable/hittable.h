@@ -11,6 +11,7 @@ public:
   hittable(const std::string path);
   virtual ~hittable() = default;
 
+  void draw() const override;
   void draw_boxes() const;
 
   bool collides(const hitbox &h, int type) const;

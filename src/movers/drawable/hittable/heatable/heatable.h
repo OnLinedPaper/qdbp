@@ -18,6 +18,7 @@ public:
 
   virtual void boost(bool);
 
+  void draw() const override;
   virtual void update() override;
 
 private:
