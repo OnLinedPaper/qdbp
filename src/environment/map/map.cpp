@@ -246,7 +246,16 @@ unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) const {
   if(!r) {
     //the new chunk is not blocked by barriers
     //check if it's in bounds
-    if(c_deque[index(new_chunk[0], new_chunk[1])].get_in_bounds() == false) {
+
+    //first, check to see if the "index" is even in the deque: lag spikes
+    //can make entities fly so far past the bounds it will look for a chunk
+    //past the end of the deque
+    //next, once we're sure the chunk exists, check to see if it's "in bounds"
+    if(
+      (index(new_chunk[0], new_chunk[1]) < 0) ||
+      (index(new_chunk[0], new_chunk[1]) > c_deque.size()) ||
+      (c_deque[index(new_chunk[0], new_chunk[1])].get_in_bounds() == false)
+    ) {
       //this is out of bounds - force a rebuff
       r = c_deque[index(
           index_pos[0],
