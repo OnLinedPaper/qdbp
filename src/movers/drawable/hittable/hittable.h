@@ -9,6 +9,7 @@
 class hittable : public drawable {
 public:
   hittable(const std::string path);
+  hittable(const std::string path, const vec2d pos, const vec2d vel);
   virtual ~hittable() = default;
 
   void draw() const override;

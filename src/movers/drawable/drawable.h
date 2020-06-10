@@ -9,7 +9,10 @@
 class drawable : public movable {
 public:
   drawable(const std::string path) :
-    movable(path),
+    drawable(path, vec2d(0,0), vec2d(0,0))
+  { }
+  drawable(const std::string path, const vec2d vel, const vec2d pos) :
+    movable(path, vel, pos),
     image_name("/" + xmlparse::get().get_xml_string(path + "/textures/body")),
     frame_bump(rand()),
     last_angle(0)

@@ -4,7 +4,10 @@
 #include "src/rect2d/hitbox/hitbox.h"
 
 d_heatable::d_heatable(const std::string path) :
-  heatable(path)
+  heatable(path),
+  weapon(
+    "/movers/hittable/" + xmlparse::get().get_xml_string(path + "/first_weapon"
+  ))
 { }
 
 void d_heatable::move_up()
@@ -18,6 +21,10 @@ void d_heatable::move_rt()
 
 void d_heatable::boost(bool b) {
   boosted = b;
+}
+
+void d_heatable::shoot() {
+  return;
 }
 
 void d_heatable::update() {
@@ -35,6 +42,6 @@ void d_heatable::draw() const {
 
   image_handler::get().draw_rotate(image_name, dest_r.x, dest_r.y, 0, last_angle);
 
-  
+
   heatable::draw();
 }

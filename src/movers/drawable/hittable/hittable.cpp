@@ -6,7 +6,11 @@
 #include "src/entity_handler/entity_handler.h"
 
 hittable::hittable(const std::string path) :
-  drawable(path)
+  hittable(path, vec2d(0,0), vec2d(0,0))
+{ }
+
+hittable::hittable(const std::string path, const vec2d p, const vec2d v) :
+  drawable(path, p, v)
 {
   //load all hitboxes
   for(std::string p : xmlparse::get().get_all_child_tags(path + "/hitboxes")) {

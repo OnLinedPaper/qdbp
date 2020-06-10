@@ -17,9 +17,8 @@ heatable::heatable(const std::string path) :
   ))
 { }
 
-void heatable::boost(bool b) {
-  return;
-}
+void heatable::boost(bool b) { return; }
+void heatable::shoot() { return; }
 
 float heatable::get_heat_percent() {
   float retval = 0;

@@ -17,6 +17,7 @@ public:
   bool is_overheat() const { return overheated; };
 
   virtual void boost(bool);
+  virtual void shoot();
 
   void draw() const override;
   virtual void update() override;
