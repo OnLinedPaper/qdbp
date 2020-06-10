@@ -113,7 +113,7 @@ float xmlparse::safe_get_xml_float(const std::string path) {
     return get_xml_float(path);
   }
   catch (std::string e) {
-    msg::print_alert("==== safe mode: returning 0 ====");
+    msg::print_good("==== safe mode: returning 0 ====");
     return 0;
   }
 }
