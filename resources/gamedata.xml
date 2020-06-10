@@ -24,7 +24,7 @@
         <cool_per_tick>1</cool_per_tick>
       </heat>
       <movement>
-        <vel_cap>20</vel_cap>
+        <vel_cap>16</vel_cap>
         <vel_overcap>27</vel_overcap>
         <vel_decay>0.1</vel_decay>
         <vel_accel>1</vel_accel>
@@ -64,6 +64,7 @@
           <type>VACUUM</type>
         </pickup>
       </hitboxes>
+      <first_weapon>debug_weapon</first_weapon>
     </debug_heatable>
   </heatable>
 
@@ -71,6 +72,7 @@
     <debug_follower>
       <movement>
         <vel_cap>22</vel_cap>
+        <vel_overcap>0</vel_overcap>
         <vel_decay>0.04</vel_decay>
         <vel_accel>1.4</vel_accel>
       </movement>
@@ -160,16 +162,32 @@
         </flat>
       </hitboxes>
     </debug_stationary>
-  </hittable>
 
-  <debug_movable>
-    <movement>
-      <vel_cap>20</vel_cap>
-      <vel_decay>0.1</vel_decay>
-      <vel_accel>1</vel_accel>
-    </movement>
-    <textures>
-      <body>arrow</body>
-    </textures>
-  </debug_movable>
+    <debug_weapon>
+      <movement>
+        <vel_cap>-1</vel_cap>
+        <vel_decay>0</vel_decay>
+        <vel_accel>0</vel_accel>
+      </movement>
+      <textures>
+        <body>beam</body>
+      </textures>
+      <shot>
+        <heat_per_shot>8</heat_per_shot>
+        <ms_shot_delay>500</ms_shot_delay>
+        <ms_lifespan>100000</ms_lifespan>
+        <dist_lifespan>10000</dist_lifespan>
+        <inaccuracy>0</inaccuracy>
+        <constant_vel>8</constant_vel>
+      </shot>
+      <hitboxes>
+        <hurty>
+          <x_offset>0</x_offset>
+          <y_offset>0</y_offset>
+          <size>10</size>
+          <type>HURT</type>
+        </hurty>
+      </hitboxes>
+    </debug_weapon>
+  </hittable>
 </movers>

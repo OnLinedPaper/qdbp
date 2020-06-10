@@ -46,6 +46,19 @@
   </dimensions>
 </arrow2>
 
+<beam>
+  <file>resources/images/beam.png</file>
+  <dimensions>
+    <width>23</width>
+    <height>28</height>
+
+    <pivot_x>0</pivot_x>
+    <pivot_y>0</pivot_y>
+    <frames>4</frames>
+    <frame_delay>8</frame_delay>
+  </dimensions>
+</beam>
+
 <boundary_marker>
   <file>resources/images/boundary_marker.png</file>
   <dimensions>
