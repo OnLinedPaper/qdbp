@@ -103,6 +103,11 @@ float vec2d::dot(const vec2d &v) const {
 vec2d vec2d::cap(float scalar_val) const {
   //"cap" a vector's magnitude at a certain value
 
+  //don't "cap" if value is negative
+  if(scalar_val < 0) {
+    return *this;
+  }
+
   if(this->magnitude() > scalar_val) {
     //too big
     return (this->normalize() * scalar_val);
