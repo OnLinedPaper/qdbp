@@ -39,22 +39,30 @@ void e_handler::draw_entities() {
   for(hittable *h : npe_all) { h->draw(); }
 }
 
-void e_handler::add_npe(const std::string type) {
-  //a function to add a hittable to the vector - note that this
-  //shouldn't really be called from the engine, it should be
-  //used "behind the scenes" for loading from a map or the like
-
-  hittable *h = NULL;
-
-  if(!type.compare("hittable/debug_follower"))
-    { h = new d_follower(entity_xml_root + type); }
-  else {
-    msg::print_warn("couldn't find entity \"" + type + "\"");
-    msg::print_alert("tried to check at " + entity_xml_root + type);
-  }
-
-  if(h) { npe_all.push_back(h); }
+void e_handler::add_npe(const std::string name, const std::string type) {
+  //if no position is specified, place this exactly atop the player,
+  //with the player's vel
+  //this is mostly for debugging purposes
+  add_npe(name, type, get_player_pos(), get_player_vel());
 }
+
+void e_handler::add_npe(const std::string name, const std::string type,
+  const vec2d pos, const vec2d vel) {
+    //a function to add a hittable to the vector - note that this
+    //shouldn't really be called from the engine, it should be
+    //used "behind the scenes" for loading from a map or the like
+
+    hittable *h = NULL;
+
+    if(!type.compare("d_follower"))
+      { h = new d_follower(entity_xml_root + name); }
+    else {
+      msg::print_warn("couldn't find entity \"" + name + "\"");
+      msg::print_alert("tried to check at " + entity_xml_root + name);
+    }
+
+    if(h) { npe_all.push_back(h); }
+  }
 
 //==== PLAYER THINGS ==========================================================
 
@@ -72,6 +80,14 @@ void e_handler::move_player(unsigned char c) {
 
 void e_handler::boost_player(bool b) {
   player->boost(b);
+}
+
+void e_handler::player_aim(unsigned char) {
+  return;
+}
+
+void e_handler::player_shoot() {
+  player->shoot();
 }
 
 float e_handler::get_player_heat_percent() {
@@ -92,4 +108,8 @@ void e_handler::teleport_player_new_map() {
 
 const vec2d e_handler::get_player_pos() {
   return player->get_pos();
+}
+
+const vec2d e_handler::get_player_vel() {
+  return player->get_vel();
 }

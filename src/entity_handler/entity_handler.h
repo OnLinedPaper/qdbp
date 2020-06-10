@@ -33,6 +33,9 @@ public:
   void teleport_player(const vec2d &);
   void teleport_player_new_map();
   const vec2d get_player_pos();
+  const vec2d get_player_vel();
+  void player_aim(unsigned char);
+  void player_shoot();
 
 //==== GENERIC THINGS ==========================================================
 
@@ -42,8 +45,9 @@ public:
   void update_entities();
   void draw_entities();
 
-  void add_npe(const std::string type);
-
+  void add_npe(const std::string name, const std::string type);
+  void add_npe(const std::string name, const std::string type,
+    const vec2d pos, const vec2d vel);
 
 private:
   e_handler();
