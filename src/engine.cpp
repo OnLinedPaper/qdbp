@@ -10,6 +10,7 @@
 #include "src/utils/message.h"
 #include "src/entity_handler/entity_handler.h"
 #include "src/text/text_handler.h"
+#include "src/movers/drawable/hittable/weapon.h"
 
 #include <SDL2/SDL_ttf.h>
 #include "src/text/text.h"
@@ -30,64 +31,36 @@ try{
   text t6a("", 280, 30);
   text t7("overheat:", 10, 60);
   text t7a("", 280, 60);
+  text t8("keydown?", 10, 90);
+  text t8a("", 280, 90);
 
 
+  weapon w("/movers/hittable/debug_weapon");
+  vec2d some_pos(600, 600);
+  vec2d some_vel(0, 10);
+  vec2d some_angle(1, 1);
 
-
-  const Uint8* keystate;
+  w.fire(some_pos, some_vel, some_angle, 1, 1, 1, 1, 1);
 
   e_handler::get().create_player("heatable/debug_heatable");
 
   e_handler::get()
-    .add_npe("hittable/debug_follower");
+    .add_npe("hittable/debug_follower", "d_follower");
 
+  const Uint8* keystate = SDL_GetKeyboardState(NULL);
+  
   while(!quit) {
 
 //==== PLAYER INPUT here ======================================================
 
-    //disable warnings for uninitialized use, keystate keeps throwing them
-    #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+    //get the keystate
+    SDL_PumpEvents();
 
-    while(SDL_PollEvent(&e) != 0) {
-      //get an event: protect from keybounce
-      keystate = SDL_GetKeyboardState(NULL);
-      if(e.type == SDL_QUIT) { quit = true; }
-      else if(e.type == SDL_KEYDOWN) {
-
-        //pause unpause
-        if(keystate[SDL_SCANCODE_P]) { pause = !pause; }
-        if(pause || !pause) { //TODO: remove this / update it
-          //pause menu
-          if(keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
-        }
-
-        //draw debug things
-        if(keystate[SDL_SCANCODE_PERIOD]) {
-          e_handler::get().set_draw_debug_info(
-            !e_handler::get().get_draw_debug_info()
-          );
-        }
-
-      }
-    }
-
-
-    if(pause) {
-      //pause menu
-    }
+    if(pause) { /*pause menu*/ }
     else {
-
       //no keybounce protection
 
-      if(keystate[SDL_SCANCODE_J]) {
-        //TODO: make "tryjump" in map handler
-        if(map_h::get().debug_jump(e_handler::get().get_player_pos())) {
-          //jumped
-          e_handler::get().teleport_player_new_map();
-        }
-      }
-
-
+      //handle movement
       if(keystate[SDL_SCANCODE_W])
         { e_handler::get().move_player(e_handler::UP); }
       if(keystate[SDL_SCANCODE_A])
@@ -100,7 +73,19 @@ try{
       if(keystate[SDL_SCANCODE_LSHIFT])
         { e_handler::get().boost_player(true); }
 
-      #pragma GCC diagnostic pop
+
+      //handle shooting
+      if(keystate[SDL_SCANCODE_H])
+        { e_handler::get().player_aim(e_handler::LF); }
+      if(keystate[SDL_SCANCODE_J])
+        { e_handler::get().player_aim(e_handler::DN); }
+      if(keystate[SDL_SCANCODE_K])
+        { e_handler::get().player_aim(e_handler::UP); }
+      if(keystate[SDL_SCANCODE_L])
+        { e_handler::get().player_aim(e_handler::RT); }
+
+      if(keystate[SDL_SCANCODE_SPACE])
+        { e_handler::get().player_shoot(); }
 
       if(controller) {
         //process controller input
@@ -120,6 +105,37 @@ try{
       }
     }
 
+
+    while(SDL_PollEvent(&e) != 0) {
+      //get an event: protect from keybounce
+      if(e.type == SDL_QUIT) { quit = true; }
+      else if(e.type == SDL_KEYDOWN) {
+
+        //pause unpause
+        if(keystate[SDL_SCANCODE_P]) { pause = !pause; }
+        if(pause || !pause) { //TODO: remove this / update it
+          //pause menu
+          if(keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
+        }
+
+        if(keystate[SDL_SCANCODE_O]) {
+          //TODO: make "tryjump" in map handler
+          if(map_h::get().debug_jump(e_handler::get().get_player_pos())) {
+            //jumped
+            e_handler::get().teleport_player_new_map();
+          }
+        }
+
+        //draw debug things
+        if(keystate[SDL_SCANCODE_PERIOD]) {
+          e_handler::get().set_draw_debug_info(
+            !e_handler::get().get_draw_debug_info()
+          );
+        }
+
+      }
+    }
+
 //==== UPDATE stuff here ======================================================
 
     if(pause) {
@@ -127,17 +143,21 @@ try{
     else {
       e_handler::get().update_entities();
       viewport::get().set_pos(e_handler::get().get_player_pos());
+
+w.update();
     }
 
 //==== DISPLAY stuff here =====================================================
 
-    SDL_SetRenderDrawColor(render::get().get_r(), 32, 32, 32, 255);
-    SDL_RenderClear(render::get().get_r());
-    //SDL_RenderCopy(render::get()->get_r(), t->get_texture(), NULL, NULL);s
-    SDL_SetRenderDrawColor(render::get().get_r(), 28, 28, 28, 255);
+//    SDL_SetRenderDrawColor(render::get().get_r(), 32, 32, 32, 255);
+//    SDL_RenderClear(render::get().get_r());
+//    SDL_RenderCopy(render::get()->get_r(), t->get_texture(), NULL, NULL);s
+//    SDL_SetRenderDrawColor(render::get().get_r(), 28, 28, 28, 255);
 
     map_h::get().draw();
     e_handler::get().draw_entities();
+
+w.draw();
 
     if(pause) { render::get().shade_display(0.7); }
 
@@ -151,6 +171,8 @@ try{
     t6a.draw();
     t7.draw();
     t7a.draw();
+    t8.draw();
+    t8a.draw();
 
 //-----------------------------------------------------------------------------
 
@@ -197,15 +219,15 @@ catch(std::string e) { msg::print_error(e); throw; }
 ##########################     #####   ######     #############################
 ###########################     ####   #####     ##############################
 ############################     ###   ####     ###############################
-#############################     ##   ###    #################################
+#############################     ##   ###     ################################
 ##############################     #   ##     #################################
 ###############################        #     ##################################
 ################################            ###################################
 #################################          ####################################
 ##################################        #####################################
 ###################################      ######################################
-####################################   ########################################
-###############################################################################
+####################################    #######################################
+#####################################  ########################################
 #############################################################################*/
 
 
@@ -280,9 +302,6 @@ void engine::next_frame() {
     //took a longtime to compute this round - no delay
     //SDL_Delay(0);
   }
-
-  //get the next millisecond
-  elapsed = t_frame::get().get_ms();
 
   //go to next frame
   t_frame::get().incr_f();
