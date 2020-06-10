@@ -12,10 +12,14 @@ class movable {
 public:
 
   movable(std::string path);
+  movable(std::string path, const vec2d pos, const vec2d vel);
   virtual ~movable() = default;
 
   void set_x(float x) { pos[0] = x; }
   void set_y(float y) { pos[1] = y; }
+  const vec2d get_vel() const { return vel; }
+  void set_vel(vec2d v) { vel = v; }
+  void set_vel(float x, float y) { vel[0] = x; vel[1] = y; }
   const vec2d get_pos() const { return pos; }
   void set_pos(vec2d p) { pos = p; last_pos = p; }
   void set_pos(float x, float y) { pos[0] = x; pos[1] = y; }
@@ -23,6 +27,9 @@ public:
   void stop() { vel[0] = 0; vel[1] = 0; }
 
   void rebuff(unsigned char posi);
+
+  bool is_active() const { return active; }
+  void set_active(bool b) { active = b; }
 
   virtual void move_up() = 0;
   virtual void move_dn() = 0;
@@ -43,6 +50,8 @@ protected:
   float vel_decay;
   bool moved;
   bool boosted;
+
+  bool active;
 
   std::string path;
 

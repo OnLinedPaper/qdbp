@@ -9,8 +9,13 @@ movable::movable(std::string path) :
   vel_overcap(xmlparse::get().safe_get_xml_float(path + "/movement/vel_overcap")),
   vel_decay(xmlparse::get().get_xml_float(path + "/movement/vel_decay") * t_frame::get().f_factor()),
   moved(false),
-  boosted(false)
+  boosted(false),
+  active(true)
 { }
+
+movable::movable(std::string path, const vec2d p, const vec2d v) :
+  movable(path)
+{ pos = p; vel = v; }
 
 void movable::rebuff(unsigned char posi) {
   if(posi) {
@@ -34,7 +39,6 @@ void movable::rebuff(unsigned char posi) {
 }
 
 void movable::update() {
-
   //cap velocity
   if(boosted && (vel_overcap != 0)) {
     vel = vel.cap(vel_overcap);
