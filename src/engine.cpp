@@ -35,12 +35,6 @@ try{
   text t8a("", 280, 90);
 
 
-  weapon w("/movers/hittable/debug_weapon");
-  vec2d some_pos(600, 600);
-  vec2d some_vel(0, 10);
-  vec2d some_angle(1, 1);
-
-  w.fire(some_pos, some_vel, some_angle, 1, 1, 1, 1, 1);
 
   e_handler::get().create_player("heatable/debug_heatable");
 
@@ -73,19 +67,19 @@ try{
       if(keystate[SDL_SCANCODE_LSHIFT])
         { e_handler::get().boost_player(true); }
 
+      if(keystate[SDL_SCANCODE_SLASH]) {
+        static vec2d angle(0, 0);
+        angle[0] = 0;
+        angle[1] = 0;
 
-      //handle shooting
-      if(keystate[SDL_SCANCODE_H])
-        { e_handler::get().player_aim(e_handler::LF); }
-      if(keystate[SDL_SCANCODE_J])
-        { e_handler::get().player_aim(e_handler::DN); }
-      if(keystate[SDL_SCANCODE_K])
-        { e_handler::get().player_aim(e_handler::UP); }
-      if(keystate[SDL_SCANCODE_L])
-        { e_handler::get().player_aim(e_handler::RT); }
-
-      if(keystate[SDL_SCANCODE_SPACE])
-        { e_handler::get().player_shoot(); }
+        //handle shooting
+        if(keystate[SDL_SCANCODE_J]) { angle[0] -= 1; }
+        if(keystate[SDL_SCANCODE_L]) { angle[0] += 1; }
+        if(keystate[SDL_SCANCODE_I]) { angle[1] -= 1; }
+        if(keystate[SDL_SCANCODE_K]) { angle[1] += 1; }
+        
+        if(angle.magnitude() > 0) { e_handler::get().player_shoot(angle); }
+      }
 
       if(controller) {
         //process controller input
@@ -127,7 +121,7 @@ try{
         }
 
         //draw debug things
-        if(keystate[SDL_SCANCODE_PERIOD]) {
+        if(keystate[SDL_SCANCODE_COMMA]) {
           e_handler::get().set_draw_debug_info(
             !e_handler::get().get_draw_debug_info()
           );
@@ -144,7 +138,6 @@ try{
       e_handler::get().update_entities();
       viewport::get().set_pos(e_handler::get().get_player_pos());
 
-w.update();
     }
 
 //==== DISPLAY stuff here =====================================================
@@ -157,7 +150,6 @@ w.update();
     map_h::get().draw();
     e_handler::get().draw_entities();
 
-w.draw();
 
     if(pause) { render::get().shade_display(0.7); }
 
