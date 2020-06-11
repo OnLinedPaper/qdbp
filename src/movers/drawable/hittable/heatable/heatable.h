@@ -18,6 +18,8 @@ public:
 
   virtual void boost(bool);
   virtual void shoot();
+  virtual uint8_t get_weapon_id() const;
+  virtual const std::string get_weapon() const { return ""; }
 
   void draw() const override;
   virtual void update() override;

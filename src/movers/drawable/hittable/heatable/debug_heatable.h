@@ -15,6 +15,8 @@ public:
 
   virtual void boost(bool);
   virtual void shoot();
+  virtual uint8_t get_weapon_id() const override;
+  const std::string get_weapon() const override { return weapon; }
 
   void update() override;
 

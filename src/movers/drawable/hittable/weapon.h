@@ -29,6 +29,10 @@ public:
       float life_dist_mod, float inacc_mod,
       float vel_mod);
 
+  bool is_type(uint8_t type_id) const {
+    return !(type_id ^ this->type_id);
+  }
+
   void move_up() override {}
   void move_dn() override {}
   void move_lf() override {}
@@ -61,6 +65,9 @@ private:
 
   //the constant velocity of this projectile
   float con_vel;
+
+  //this is used to identify the type of projectile
+  uint8_t type_id;
 
   std::string xml_path = "/movers/hittable/";
 };

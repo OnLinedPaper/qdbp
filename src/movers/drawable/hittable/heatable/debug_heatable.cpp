@@ -19,17 +19,14 @@ void d_heatable::move_lf()
 void d_heatable::move_rt()
   { vel[0] += vel_accel * t_frame::get().t_adjust(); moved = true; }
 
-void d_heatable::boost(bool b) {
-  boosted = b;
-}
 
-void d_heatable::shoot() {
-  return;
-}
+void d_heatable::boost(bool b) { boosted = b; }
 
-void d_heatable::update() {
-  heatable::update();
-}
+void d_heatable::shoot() { return; }
+
+uint8_t d_heatable::get_weapon_id() const { return 0; }
+
+void d_heatable::update() { heatable::update(); }
 
 void d_heatable::draw() const {
 

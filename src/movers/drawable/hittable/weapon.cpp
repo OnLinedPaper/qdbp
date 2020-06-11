@@ -20,6 +20,9 @@ weapon::weapon(const std::string path) :
   life_dist_mod(1),
   con_vel(xmlparse::get().get_xml_float(
     path + "/shot/constant_vel"
+  )),
+  type_id(xmlparse::get().get_xml_int(
+    path + "/shot/unique_type_id"
   ))
 { this->set_active(false); }
 
