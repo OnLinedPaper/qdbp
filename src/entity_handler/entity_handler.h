@@ -3,6 +3,7 @@
 
 #include "src/movers/drawable/drawable.h"
 #include "src/movers/drawable/hittable/heatable/heatable.h"
+#include "src/movers/drawable/hittable/weapon.h"
 #include "src/movers/drawable/hittable/debug_hittable.h"
 #include <vector>
 
@@ -34,8 +35,7 @@ public:
   void teleport_player_new_map();
   const vec2d get_player_pos();
   const vec2d get_player_vel();
-  void player_aim(unsigned char);
-  void player_shoot();
+  void player_shoot(const vec2d);
 
 //==== GENERIC THINGS ==========================================================
 
@@ -55,6 +55,7 @@ private:
   const std::string entity_xml_root = "/movers/";
 
   std::vector<hittable *> npe_all;
+  std::vector<weapon *> shot_all;
 
   bool draw_debug_info;
 

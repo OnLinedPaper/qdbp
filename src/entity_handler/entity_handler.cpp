@@ -14,19 +14,24 @@ const unsigned char e_handler::RT = 8;
 //==== INSTANCE THINGS ========================================================
 
 e_handler::e_handler() :
-  draw_debug_info(false)
+  draw_debug_info(xmlparse::get().get_xml_int("/draw_debug_info"))
 { }
 
 e_handler::~e_handler() {
   delete player;
 
   for(hittable *h : npe_all) { delete h; h = NULL; }
+  for(weapon *w : shot_all) { delete w; w = NULL; }
 }
 
 //==== GENERIC THINGS =========================================================
 
 void e_handler::update_entities() {
   player->update();
+
+  for(weapon *w : shot_all) { 
+    if(w->is_active()) { w->update(); }
+  }
 
   //update each entity - do this last in case others need
   //to be updated first
@@ -36,7 +41,16 @@ void e_handler::update_entities() {
 void e_handler::draw_entities() {
   player->draw();
 
+  for(weapon *w : shot_all) { 
+    if(w->is_active()) { w->draw(); }
+  }
   for(hittable *h : npe_all) { h->draw(); }
+
+  if(draw_debug_info) {
+    player->draw_boxes();
+    for(hittable *h : npe_all) { h->draw_boxes(); }
+    for(weapon *w : shot_all) { w->draw_boxes(); }
+  }
 }
 
 void e_handler::add_npe(const std::string name, const std::string type) {
@@ -82,12 +96,25 @@ void e_handler::boost_player(bool b) {
   player->boost(b);
 }
 
-void e_handler::player_aim(unsigned char) {
-  return;
-}
+void e_handler::player_shoot(const vec2d angle) {
+  //first thing to do is get the projectile we're going to shoot
+  uint8_t w_id = player->get_weapon_id();
 
-void e_handler::player_shoot() {
-  player->shoot();
+  weapon *weap = NULL;
+  for(weapon *w : shot_all) {
+    if(w->is_type(w_id) && !w->is_active()) {
+      //we found an inactive projectile tha tmeets our criteria
+      weap = w;
+      break;
+    }
+  }
+  if(weap == NULL) {
+    weap = new weapon(player->get_weapon());
+    shot_all.push_back(weap);
+  }
+ 
+  weap->fire(player->get_pos(), player->get_vel(),
+      angle, 1, 1, 1, 1, 1);
 }
 
 float e_handler::get_player_heat_percent() {
