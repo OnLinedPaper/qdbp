@@ -1,5 +1,5 @@
-#include <chrono>
 #include <random>
+#include <ctime>
 
 #include "engine.h"
 #include "src/renders/render.h"
@@ -25,6 +25,7 @@ try{
   bool pause = false;
   SDL_Event e;
 
+  std::srand(std::time(0));
 
 
   text t6("heat:", 10, 30);
@@ -67,7 +68,7 @@ try{
       if(keystate[SDL_SCANCODE_LSHIFT])
         { e_handler::get().boost_player(true); }
 
-      if(keystate[SDL_SCANCODE_SLASH]) {
+      if(keystate[SDL_SCANCODE_SPACE]) {
         static vec2d angle(0, 0);
         angle[0] = 0;
         angle[1] = 0;
