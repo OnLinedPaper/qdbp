@@ -177,10 +177,10 @@
       <shot>
         <heat_per_shot>8</heat_per_shot>
         <ms_shot_delay>500</ms_shot_delay>
-        <ms_lifespan>10000</ms_lifespan>
+        <ms_lifespan>2500</ms_lifespan>
         <dist_lifespan>1000</dist_lifespan>
-        <inaccuracy>0</inaccuracy>
-        <constant_vel>8</constant_vel>
+        <inaccuracy>0.1</inaccuracy>
+        <constant_vel>12</constant_vel>
         <unique_type_id>0</unique_type_id>
       </shot>
       <hitboxes>
