@@ -1,3 +1,5 @@
+#include <random>
+
 #include "weapon.h"
 #include "src/timeframe/timeframe.h"
 #include "src/image/image_handler.h"
@@ -43,9 +45,18 @@ float weapon::fire(const vec2d start_pos, const vec2d start_vel,
 
   //spawn projectile 
   set_pos(start_pos);
+  
+  std::random_device rd;
+  std::uniform_int_distribution<> distrib(-16, 16);
+
+  //get a random vec
+  vec2d randm(distrib(rd), distrib(rd));
 
   //now, create the additional speed it will use
-  vec2d add_vel = angle.normalize() * (con_vel * vel_mod);
+  vec2d add_vel = (
+      (angle.normalize() * (1 - inaccuracy)) +
+      (randm.normalize() * (inaccuracy))
+  ).normalize() * (con_vel * vel_mod);
 
   set_vel(start_vel + add_vel);
 
