@@ -179,7 +179,7 @@
         <ms_shot_delay>500</ms_shot_delay>
         <ms_lifespan>2500</ms_lifespan>
         <dist_lifespan>1000</dist_lifespan>
-        <inaccuracy>0.1</inaccuracy>
+        <inaccuracy>0.4</inaccuracy>
         <constant_vel>12</constant_vel>
         <unique_type_id>0</unique_type_id>
       </shot>
