@@ -2,9 +2,18 @@
 #define MESSAGES_H_
 
 #include <string>
+#include <fstream>
 
 class msg {
 public:
+  ~msg();
+
+  static msg &get(){
+    static msg instance;
+    return instance;
+  }
+
+
   static const std::string rn;
   static const std::string rb;
   static const std::string yn;
@@ -19,6 +28,13 @@ public:
   static void print_warn(const std::string message);
   static void print_alert(const std::string message);
   static void print_good(const std::string message);
+
+  void init_log(const std::string filename);
+  void close_log();
+
+private:
+  msg();
+  std::ofstream outfile;
 };
 
 #endif
