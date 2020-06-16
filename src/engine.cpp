@@ -184,7 +184,7 @@ try{
   }
   SDL_Quit();
 }
-catch(std::string e) { msg::print_error(e); throw; }
+catch(std::string e) { msg::print_error(e); msg::get().close_log(); throw; }
 }
 
 /*#############################################################################
@@ -237,6 +237,9 @@ try{
   t_frame::get();
   text_h::get();
 
+  msg::get();
+  msg::get().init_log("");
+
   //grab framerate data, can't do this till singletons are created
   t_frame::get().set_delay(xmlparse::get().get_xml_float("/msdelay"));
 
@@ -260,11 +263,12 @@ try{
     msg::print_error("Couldn't init SDL! Error: " + std::string(SDL_GetError()));
     throw("couldn't start SDL!");
   }
-} catch (std::string e) { msg::print_error(e); throw; }
+} catch (std::string e) { msg::print_error(e); msg::get().close_log(); throw; }
 }
 
 engine::~engine() {
   SDL_JoystickClose(controller);
+  msg::get().close_log();
   close_SDL();
 }
 
