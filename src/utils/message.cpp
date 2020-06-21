@@ -14,7 +14,7 @@ const std::string msg::cb = "\033[1;36m";
 const std::string msg::none = "\033[0m";
 
 
-msg::msg() : outfile(NULL) { }
+msg::msg() { }
 
 msg::~msg() {
   close_log();

@@ -182,6 +182,7 @@ try{
 
     next_frame();
   }
+  msg::get().close_log();
   SDL_Quit();
 }
 catch(std::string e) { msg::print_error(e); msg::get().close_log(); return; }
