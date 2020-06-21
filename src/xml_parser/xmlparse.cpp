@@ -66,7 +66,7 @@ std::string xmlparse::get_xml_string(const std::string path) {
   catch (const std::string e) {
     //something went wrong, add some data and throw the exception
     msg::print_alert("bad tag path: " + path);
-    std::string error = e + "bad tag path: " + path;
+    std::string error = e + " bad tag path: " + path;
 
     throw error;
   }

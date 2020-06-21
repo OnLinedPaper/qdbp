@@ -184,7 +184,7 @@ try{
   }
   SDL_Quit();
 }
-catch(std::string e) { msg::print_error(e); msg::get().close_log(); throw; }
+catch(std::string e) { msg::print_error(e); msg::get().close_log(); return; }
 }
 
 /*#############################################################################
@@ -263,7 +263,7 @@ try{
     msg::print_error("Couldn't init SDL! Error: " + std::string(SDL_GetError()));
     throw("couldn't start SDL!");
   }
-} catch (std::string e) { msg::print_error(e); msg::get().close_log(); throw; }
+} catch (std::string e) { msg::print_error(e); msg::get().close_log(); return; }
 }
 
 engine::~engine() {
