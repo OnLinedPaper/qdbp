@@ -12,6 +12,7 @@ build
 bin
 debugging
 win_demo
+log
 
 #object and header files
 *.o
@@ -20,6 +21,9 @@ win_demo
 #krita backup files
 *~
 *-autosave.kra
+
+#vim backup files
+*.swp
 
 #demo files
 win_demo.zip
