@@ -65,6 +65,7 @@
           <type>VACUUM</type>
         </pickup>
       </hitboxes>
+      <team>RED</team>
       <first_weapon>debug_weapon</first_weapon>
     </debug_heatable>
   </heatable>
@@ -94,6 +95,7 @@
           <type>SHIELD</type>
         </shield>
       </hitboxes>
+      <team>BLUE</team>
     </debug_follower>
 
     <debug_hittable>
@@ -179,7 +181,7 @@
         <ms_shot_delay>500</ms_shot_delay>
         <ms_lifespan>2500</ms_lifespan>
         <dist_lifespan>1000</dist_lifespan>
-        <inaccuracy>0.4</inaccuracy>
+        <inaccuracy>0.1</inaccuracy>
         <constant_vel>12</constant_vel>
         <unique_type_id>0</unique_type_id>
       </shot>
@@ -191,6 +193,7 @@
           <type>HURT</type>
         </hurty>
       </hitboxes>
+      <team></team>
     </debug_weapon>
   </hittable>
 </movers>
