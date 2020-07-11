@@ -2,6 +2,7 @@
 #define IMAGE_HANDLER_H_
 #include <unordered_map>
 #include <src/image/image.h>
+#include <random>
 
 class image_handler {
 public:
@@ -13,7 +14,12 @@ public:
   ~image_handler();
 
   void draw_rotate(const std::string name, float x, float y, float frame_bump, float angle);
+  void draw_rotate_color(const std::string name, float x, float y, 
+      float frame_bump, float angle, const SDL_Color &c);
   void draw_tile(const std::string name, float parallax);
+
+  static void get_col_from_team(const std::string, SDL_Color &);
+  static void jitter_col(int, SDL_Color &);
 
 private:
   std::unordered_map<std::string, image> images;

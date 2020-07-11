@@ -131,6 +131,13 @@ void image::fill_t_vec(const std::string &name) {
 }
 
 void image::draw_rotate(float x_pos, float y_pos, float angle, float frame_bump) const {
+  static SDL_Color no_col = {255, 255, 255};
+  draw_rotate_color(x_pos, y_pos, angle, frame_bump, no_col);
+}
+
+void image::draw_rotate_color(float x_pos, float y_pos, float angle, 
+    float frame_bump, const SDL_Color &mod) const 
+{
 
   //check to see if the entity is anywhere on-screen - if it's not,
   //don't draw it, to save time
@@ -172,6 +179,7 @@ void image::draw_rotate(float x_pos, float y_pos, float angle, float frame_bump)
 
   SDL_Texture *t = t_vec[frame_to_render];
 
+  SDL_SetTextureColorMod(t, mod.r, mod.g, mod.b);
   SDL_RenderCopyEx(render::get().get_r(), t, NULL, &dest_r, angle, piv, SDL_FLIP_NONE);
 
   delete piv;
