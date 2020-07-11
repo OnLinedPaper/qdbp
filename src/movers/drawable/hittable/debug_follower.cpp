@@ -42,7 +42,7 @@ void d_follower::draw() const {
   dest_r.w = 128;
   dest_r.h = 128;
 
-  image_handler::get().draw_rotate(image_name, dest_r.x, dest_r.y, 0, last_angle);
+  image_handler::get().draw_rotate_color(image_name, dest_r.x, dest_r.y, 0, last_angle, team_col);
 
   hittable::draw();
 }

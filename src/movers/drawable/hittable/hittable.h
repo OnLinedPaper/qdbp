@@ -35,6 +35,8 @@ protected:
 
 private:
 
+  std::string team;
+  SDL_Color specific_col;
 };
 
 #endif

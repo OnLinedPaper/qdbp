@@ -10,7 +10,8 @@ hittable::hittable(const std::string path) :
 { }
 
 hittable::hittable(const std::string path, const vec2d p, const vec2d v) :
-  drawable(path, p, v)
+  drawable(path, p, v),
+  team(xmlparse::get().get_xml_string(path + "/team"))
 {
   //load all hitboxes
   for(std::string p : xmlparse::get().get_all_child_tags(path + "/hitboxes")) {
