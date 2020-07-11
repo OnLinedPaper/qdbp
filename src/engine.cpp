@@ -27,6 +27,7 @@ try{
 
   std::srand(std::time(0));
 
+//- debug stuff  -    -    -    -    -    -    -    -    -    -    -    -    -        
 
   text t6("heat:", 10, 30);
   text t6a("", 280, 30);
@@ -41,6 +42,8 @@ try{
 
   e_handler::get()
     .add_npe("hittable/debug_follower", "d_follower");
+
+//-    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -        
 
   const Uint8* keystate = SDL_GetKeyboardState(NULL);
   
