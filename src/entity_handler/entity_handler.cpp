@@ -103,7 +103,7 @@ void e_handler::player_shoot(const vec2d angle) {
   weapon *weap = NULL;
   for(weapon *w : shot_all) {
     if(w->is_type(w_id) && !w->is_active()) {
-      //we found an inactive projectile tha tmeets our criteria
+      //we found an inactive projectile that meets our criteria
       weap = w;
       break;
     }
@@ -114,7 +114,7 @@ void e_handler::player_shoot(const vec2d angle) {
   }
  
   weap->fire(player->get_pos(), player->get_vel(),
-      angle, 1, 1, 1, 1, 1);
+      angle, 1, 1, 1, 1, 1, player->get_col());
 }
 
 float e_handler::get_player_heat_percent() {

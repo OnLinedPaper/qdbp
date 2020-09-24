@@ -27,7 +27,7 @@ public:
       const vec2d angle, 
       float heat_mod, float life_ms_mod, 
       float life_dist_mod, float inacc_mod,
-      float vel_mod);
+      float vel_mod, const SDL_Color &);
 
   bool is_type(uint8_t type_id) const {
     return !(type_id ^ this->type_id);

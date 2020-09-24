@@ -32,7 +32,7 @@ weapon::~weapon()
 { }
 
 void weapon::draw() const {
-  image_handler::get().draw_rotate(image_name, pos[0], pos[1], 0, last_angle);
+  image_handler::get().draw_rotate_color(image_name, pos[0], pos[1], 0, last_angle, team_col);
 }
 
 //check to see if the weapon can fire (time based) and then
@@ -41,9 +41,9 @@ float weapon::fire(const vec2d start_pos, const vec2d start_vel,
     const vec2d angle,
     float heat_mod, float life_ms_mod,
     float life_dist_mod, float inacc_mod,
-    float vel_mod) {
+    float vel_mod, const SDL_Color &c) {
 
-  //spawn projectile 
+ //spawn projectile 
   set_pos(start_pos);
   
   std::random_device rd;
@@ -64,7 +64,10 @@ float weapon::fire(const vec2d start_pos, const vec2d start_vel,
   this->life_ms_mod = ms_lifespan * life_ms_mod;
   this->life_dist_mod = dist_lifespan * life_dist_mod;
 
+  //save the color
+  set_col(c);
 
+ 
   //bring this projectile into update and draw cycles
   set_active(true);
 

@@ -16,6 +16,7 @@ public:
     movable(path, vel, pos),
     image_name("/" + xmlparse::get().get_xml_string(path + "/textures/body")),
     team_name(xmlparse::get().get_xml_string(path + "/team")),
+    team_col({255, 255, 255}),
     frame_bump(rand()),
     last_angle(0)
   { 
@@ -23,6 +24,14 @@ public:
     image_handler::jitter_col(20, team_col);
   }
   virtual ~drawable() = default;
+
+  const SDL_Color &get_col() { return team_col; }
+  void set_col(const SDL_Color &c) {
+    team_col.r = c.r;
+    team_col.g = c.g;
+    team_col.b = c.b;
+    team_col.a = c.a;
+  }
 
 protected:
   virtual void update() override;
