@@ -65,7 +65,7 @@
           <type>VACUUM</type>
         </pickup>
       </hitboxes>
-      <team>BLUE</team>
+      <team>RED</team>
       <first_weapon>debug_weapon</first_weapon>
     </debug_heatable>
   </heatable>

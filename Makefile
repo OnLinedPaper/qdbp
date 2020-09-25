@@ -67,7 +67,7 @@ win: $(WOBJS) main_driver_w.cpp
 	@cp win_dll/*.dll $(WDDIR)/
 	@printf "added\nzipping... "
 	@zip -q -r win_demo.zip $(WDDIR)
-	@paplay /usr/share/sounds/ubuntu/notifications/Positive.ogg
+	#@paplay /usr/share/sounds/ubuntu/notifications/Positive.ogg
 	@printf "zipped\ndone\n"
 
 wintest:
@@ -82,10 +82,11 @@ dir:
 debug: $(DOBJS) main_driver.cpp
 	@mkdir -p $(BDIR);
 	@mkdir -p $(DBDIR);
+	@mkdir -p $(DDIR);
 	@printf "final compilation... "
 	@$(CC) $(CFLAGS) $(DFLAGS) -o $(DDIR)/$@ $^ $(LFLAGS);
 	@printf "compiled\ndone\n"
-	@paplay /usr/share/sounds/ubuntu/notifications/Positive.ogg
+	#@paplay /usr/share/sounds/ubuntu/notifications/Positive.ogg
 
 dtest:
 	gdb ./debugging/debug

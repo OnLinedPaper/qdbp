@@ -71,7 +71,7 @@ try{
       if(keystate[SDL_SCANCODE_LSHIFT])
         { e_handler::get().boost_player(true); }
 
-      if(keystate[SDL_SCANCODE_SPACE]) {
+      if(keystate[SDL_SCANCODE_SPACE] || true) { //TODO: reenable?
         static vec2d angle(0, 0);
         angle[0] = 0;
         angle[1] = 0;
