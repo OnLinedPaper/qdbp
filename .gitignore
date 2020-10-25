@@ -28,6 +28,7 @@ log
 #demo files
 win_demo.zip
 
-#...and this thing
+#...and these
 GPUCache
 .atom-dbg.cson
+src/vec2d/a.out
