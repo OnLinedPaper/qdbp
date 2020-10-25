@@ -4,6 +4,7 @@
 #include "src/rect2d/hitbox/hitline.h"
 #include "src/movers/drawable/hittable/hittable.h"
 #include "src/entity_handler/entity_handler.h"
+#include "src/rect2d/hitbox/hybrid_box.h"
 
 hittable::hittable(const std::string path) :
   hittable(path, vec2d(0,0), vec2d(0,0))
@@ -15,7 +16,7 @@ hittable::hittable(const std::string path, const vec2d p, const vec2d v) :
 {
   //load all hitboxes
   for(std::string p : xmlparse::get().get_all_child_tags(path + "/hitboxes")) {
-    hitbox h(path + "/hitboxes/" + p);
+    hy_box h(path + "/hitboxes/" + p);
 
       if(h.get_type() == hitbox::TYPE_HITBOX) {
         hitboxes.push_back(h);
@@ -41,17 +42,20 @@ hittable::hittable(const std::string path, const vec2d p, const vec2d v) :
 
   }
 
-    //push the boxes into one big vector
-    //ordered this way for display
-    boxes.push_back(&vacuumboxes);
-    boxes.push_back(&hurtboxes);
+  //push the boxes into one big vector
+  //ordered this way for display
+  boxes.push_back(&vacuumboxes);
+  boxes.push_back(&hurtboxes);
 
-    boxes.push_back(&weakboxes);
-    boxes.push_back(&hitboxes);
-    boxes.push_back(&armorboxes);
-    boxes.push_back(&shieldboxes);
+  boxes.push_back(&weakboxes);
+  boxes.push_back(&hitboxes);
+  boxes.push_back(&armorboxes);
+  boxes.push_back(&shieldboxes);
 
-    boxes.push_back(&pickupboxes);
+  boxes.push_back(&pickupboxes);
+
+  update_boxes();
+  calibrate_boxes();
 }
 
 void hittable::update() {
@@ -64,25 +68,25 @@ void hittable::update() {
 bool hittable::collides(const hitbox& in_box, int type) const {
   //determine the type of hitbox to check
   if(type == hitbox::TYPE_HITBOX) {
-    for(hitbox h : hitboxes) { if(h.collides(in_box)) { return true; } }
+    for(hy_box h : hitboxes) { if(h.collides(in_box)) { return true; } }
   }
   else if(type == hitbox::TYPE_HURTBOX) {
-    for(hitbox h : hurtboxes) { if(h.collides(in_box)) { return true; } }
+    for(hy_box h : hurtboxes) { if(h.collides(in_box)) { return true; } }
   }
   else if(type == hitbox::TYPE_WEAKBOX) {
-    for(hitbox h : weakboxes) { if(h.collides(in_box)) { return true; } }
+    for(hy_box h : weakboxes) { if(h.collides(in_box)) { return true; } }
   }
   else if(type == hitbox::TYPE_ARMORBOX) {
-    for(hitbox h : armorboxes) { if(h.collides(in_box)) { return true; } }
+    for(hy_box h : armorboxes) { if(h.collides(in_box)) { return true; } }
   }
   else if(type == hitbox::TYPE_SHIELDBOX) {
-    for(hitbox h : shieldboxes) { if(h.collides(in_box)) { return true; } }
+    for(hy_box h : shieldboxes) { if(h.collides(in_box)) { return true; } }
   }
   else if(type == hitbox::TYPE_PICKUPBOX) {
-    for(hitbox h : pickupboxes) { if(h.collides(in_box)) { return true; } }
+    for(hy_box h : pickupboxes) { if(h.collides(in_box)) { return true; } }
   }
   else if(type == hitbox::TYPE_VACUUMBOX) {
-    for(hitbox h : vacuumboxes) { if(h.collides(in_box)) { return true; } }
+    for(hy_box h : vacuumboxes) { if(h.collides(in_box)) { return true; } }
   }
 
   return false;
@@ -91,28 +95,44 @@ bool hittable::collides(const hitbox& in_box, int type) const {
 bool hittable::collides(const hitline& in_line, int type) const {
   //determine the type of hitbox to check
   if(type == hitbox::TYPE_HITBOX) {
-    for(hitbox h : hitboxes) { if(h.collides(in_line)) { return true; } }
+    for(hy_box h : hitboxes) { if(h.collides(in_line)) { return true; } }
   }
   else if(type == hitbox::TYPE_HURTBOX) {
-    for(hitbox h : hurtboxes) { if(h.collides(in_line)) { return true; } }
+    for(hy_box h : hurtboxes) { if(h.collides(in_line)) { return true; } }
   }
   else if(type == hitbox::TYPE_WEAKBOX) {
-    for(hitbox h : weakboxes) { if(h.collides(in_line)) { return true; } }
+    for(hy_box h : weakboxes) { if(h.collides(in_line)) { return true; } }
   }
   else if(type == hitbox::TYPE_ARMORBOX) {
-    for(hitbox h : armorboxes) { if(h.collides(in_line)) { return true; } }
+    for(hy_box h : armorboxes) { if(h.collides(in_line)) { return true; } }
   }
   else if(type == hitbox::TYPE_SHIELDBOX) {
-    for(hitbox h : shieldboxes) { if(h.collides(in_line)) { return true; } }
+    for(hy_box h : shieldboxes) { if(h.collides(in_line)) { return true; } }
   }
   else if(type == hitbox::TYPE_PICKUPBOX) {
-    for(hitbox h : pickupboxes) { if(h.collides(in_line)) { return true; } }
+    for(hy_box h : pickupboxes) { if(h.collides(in_line)) { return true; } }
   }
   else if(type == hitbox::TYPE_VACUUMBOX) {
-    for(hitbox h : vacuumboxes) { if(h.collides(in_line)) { return true; } }
+    for(hy_box h : vacuumboxes) { if(h.collides(in_line)) { return true; } }
   }
 
   return false;
+}
+
+void hittable::set_pos(float x, float y) {
+  movable::set_pos(x, y);
+  update_boxes();
+  calibrate_boxes();
+}
+
+void hittable::calibrate_boxes() {
+  //called AFTER initial creation / recycling of a hittable, in order to reset
+  //the lines on the hybrid boxes
+  for(std::vector<hy_box> *v : boxes) {
+    for(hy_box &h : *v) {
+      h.calibrate();
+    }
+  }
 }
 
 void hittable::update_boxes() {
@@ -120,8 +140,8 @@ void hittable::update_boxes() {
   //hitboxes from lagging behind the model
 
   //update location of the hitboxes, based on their positions
-  for(std::vector<hitbox> *v : boxes) {
-    for(hitbox &h : *v) {
+  for(std::vector<hy_box> *v : boxes) {
+    for(hy_box &h : *v) {
       h.set_box_center(pos, last_angle);
     }
   }
@@ -135,8 +155,8 @@ void hittable::draw() const {
 
 void hittable::draw_boxes() const {
 
-  for(std::vector<hitbox> *v : boxes) {
-    for(hitbox &h : *v) {
+  for(std::vector<hy_box> *v : boxes) {
+    for(hy_box &h : *v) {
       h.draw();
     }
   }

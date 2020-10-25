@@ -21,9 +21,9 @@ public:
   void set_vel(vec2d v) { vel = v; }
   void set_vel(float x, float y) { vel[0] = x; vel[1] = y; }
   const vec2d get_pos() const { return pos; }
-  void set_pos(vec2d p) { pos = p; last_pos = p; }
-  void set_pos(float x, float y) { pos[0] = x; pos[1] = y; }
-  void teleport(vec2d p) { set_pos(p); }
+  virtual void set_pos(const vec2d p) { this->set_pos(p[0], p[1]); }
+  virtual void set_pos(float x, float y) { pos[0] = x; pos[1] = y; last_pos = pos; }
+  void teleport(const vec2d p) { set_pos(p); }
   void stop() { vel[0] = 0; vel[1] = 0; }
 
   void rebuff(unsigned char posi);

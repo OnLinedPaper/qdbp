@@ -3,6 +3,7 @@
 
 #include "src/movers/drawable/drawable.h"
 #include "src/rect2d/hitbox/hitbox.h"
+#include "src/rect2d/hitbox/hybrid_box.h"
 #include "src/xml_parser/xmlparse.h"
 #include <vector>
 
@@ -18,20 +19,25 @@ public:
   bool collides(const hitbox &h, int type) const;
   bool collides(const hitline &l, int type) const;
 
+  void set_pos(const vec2d p) { this->set_pos(p[0], p[1]); }
+  void set_pos(float x, float y);
+
+  void calibrate_boxes();
+
   virtual void update() override;
 
 protected:
   void update_boxes();
 
-  std::vector<std::vector<hitbox> *> boxes;
+  std::vector<std::vector<hy_box> *> boxes;
 
-  std::vector<hitbox> hitboxes;
-  std::vector<hitbox> hurtboxes;
-  std::vector<hitbox> weakboxes;
-  std::vector<hitbox> armorboxes;
-  std::vector<hitbox> shieldboxes;
-  std::vector<hitbox> pickupboxes;
-  std::vector<hitbox> vacuumboxes;
+  std::vector<hy_box> hitboxes;
+  std::vector<hy_box> hurtboxes;
+  std::vector<hy_box> weakboxes;
+  std::vector<hy_box> armorboxes;
+  std::vector<hy_box> shieldboxes;
+  std::vector<hy_box> pickupboxes;
+  std::vector<hy_box> vacuumboxes;
 
 private:
 

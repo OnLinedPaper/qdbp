@@ -38,6 +38,8 @@ public:
   void move_lf() override {}
   void move_rt() override {}
 
+  void set_pos(const vec2d p) { this->set_pos(p[0], p[1]); }
+  void set_pos(float x, float y) { hittable::set_pos(x, y); }
 
 private:
   //the heat generated per shot
