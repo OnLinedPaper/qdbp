@@ -19,9 +19,6 @@ movable::movable(std::string path, const vec2d p, const vec2d v) :
 
 void movable::rebuff(unsigned char posi) {
   
-  //never rebuff an inactive entity
-  if(!active) { return; }
-
   if(posi) {
     //somewhere along the way, we tripped a barrier we shouldn't have
     if(posi & chunk::UP) {
