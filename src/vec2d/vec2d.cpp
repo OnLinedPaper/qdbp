@@ -127,6 +127,14 @@ vec2d vec2d::decay(float scalar_val) const {
   return((this->normalize() * (m - (m * scalar_val))));
 }
 
+float vec2d::dist(const vec2d &v) const {
+  //get the distance between 2 vec2d
+  return sqrt(
+    (v[0] - x) * (v[0] - x) +
+    (v[1] - y) * (v[1] - y)
+  );
+}
+
 
 //------------------------------------------------------------------------------
 //compute angles from the vectors

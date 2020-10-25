@@ -6,5 +6,5 @@ int main(void) {
   vec2d vec(-3, 4);
   vec2d ved(4, .5);
 
-  std::cout << "dot " << vec.dot(ved) << "\n;";
+  std::cout << "dist " << vec.dist(ved) << "\n;";
 }

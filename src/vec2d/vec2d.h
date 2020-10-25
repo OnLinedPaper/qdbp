@@ -52,6 +52,8 @@ public:
   vec2d cap(float scalar_val) const;
   vec2d decay(float scalar_val) const;
 
+  float dist(const vec2d &) const;
+
 
 
   float angle_rad() const;
