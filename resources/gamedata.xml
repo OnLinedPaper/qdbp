@@ -65,7 +65,7 @@
           <type>VACUUM</type>
         </pickup>
       </hitboxes>
-      <team>RED</team>
+      <team>GREEN</team>
       <first_weapon>debug_weapon</first_weapon>
     </debug_heatable>
   </heatable>
@@ -167,34 +167,36 @@
       </hitboxes>
     </debug_stationary>
 
-    <debug_weapon>
-      <movement>
-        <vel_cap>-1</vel_cap>
-        <vel_overcap>-1</vel_overcap>
-        <vel_decay>0</vel_decay>
-        <vel_accel>0</vel_accel>
-      </movement>
-      <textures>
-        <body>beam</body>
-      </textures>
-      <shot>
-        <heat_per_shot>8</heat_per_shot>
-        <ms_shot_delay>500</ms_shot_delay>
-        <ms_lifespan>2500</ms_lifespan>
-        <dist_lifespan>1000</dist_lifespan>
-        <inaccuracy>0.1</inaccuracy>
-        <constant_vel>12</constant_vel>
-        <unique_type_id>0</unique_type_id>
-      </shot>
-      <hitboxes>
-        <hurty>
-          <x_offset>0</x_offset>
-          <y_offset>0</y_offset>
-          <size>10</size>
-          <type>HURT</type>
-        </hurty>
-      </hitboxes>
-      <team></team>
-    </debug_weapon>
+    <weapons>
+      <debug_weapon>
+        <movement>
+          <vel_cap>-1</vel_cap>
+          <vel_overcap>-1</vel_overcap>
+          <vel_decay>0</vel_decay>
+          <vel_accel>0</vel_accel>
+        </movement>
+        <textures>
+          <body>beam</body>
+        </textures>
+        <shot>
+          <heat_per_shot>80</heat_per_shot>
+          <tick_shot_delay>20</tick_shot_delay>
+          <tick_lifespan>50</tick_lifespan>
+          <dist_lifespan>1000</dist_lifespan>
+          <inaccuracy>0.1</inaccuracy>
+          <constant_vel>200</constant_vel>
+          <unique_type_id>0</unique_type_id>
+        </shot>
+        <hitboxes>
+          <hurty>
+            <x_offset>0</x_offset>
+            <y_offset>0</y_offset>
+            <size>70</size>
+            <type>HURT</type>
+          </hurty>
+        </hitboxes>
+        <team></team>
+      </debug_weapon>
+    </weapons>
   </hittable>
 </movers>
