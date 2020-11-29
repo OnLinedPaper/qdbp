@@ -97,7 +97,10 @@ void e_handler::boost_player(bool b) {
 }
 
 void e_handler::player_shoot(const vec2d angle) {
-  //first thing to do is get the projectile we're going to shoot
+  //first thing to do is see if we can shoot at all
+  if(!player->can_fire()) { return; }
+
+  //second thing to do is get the projectile we're going to shoot
   uint8_t w_id = player->get_weapon_id();
 
   weapon *weap = NULL;
@@ -112,9 +115,13 @@ void e_handler::player_shoot(const vec2d angle) {
     weap = new weapon(player->get_weapon());
     shot_all.push_back(weap);
   }
- 
+
+  //third is to spawn / activate the weapon and send it on its way 
   weap->fire(player->get_pos(), player->get_vel(),
       angle, 1, 1, 1, 1, 1, player->get_col());
+
+  //fourth is to add some heat to the player
+  player->heat_up(weapon::get_heat_from_id(w_id)); 
 }
 
 float e_handler::get_player_heat_percent() {
