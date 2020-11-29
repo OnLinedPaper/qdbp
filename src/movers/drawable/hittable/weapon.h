@@ -19,6 +19,10 @@ public:
   weapon(const std::string path);
   ~weapon();
 
+  static float get_heat_from_id(uint8_t);
+  static float get_delay_from_id(uint8_t);
+  static void preload_weapon_data();
+
   void draw() const override;
   virtual void update() override;
 
@@ -42,10 +46,14 @@ public:
   void set_pos(float x, float y) { hittable::set_pos(x, y); }
 
 private:
-  //the heat generated per shot
-  float heat_per_shot;
-  //the delay between shots in ms
-  float ms_lifespan;
+
+  //private maps to let other classes access heat-per-shot and 
+  //delay-per-shot data 
+  static std::map<uint8_t, float> id_to_heat;
+  static std::map<uint8_t, float> id_to_delay;
+
+  //the delay between shots in ticks
+  float tick_lifespan;
   //the distance the projectile can travel before expiring
   float dist_lifespan;
   //the random variance the projectile has on spawn
@@ -59,7 +67,7 @@ private:
   //heat modifier is NOT saved since it's only used on firing
   //float heat_mod;
   //the time it has to live
-  float life_ms_mod;
+  float life_tick_mod;
   //the distance it has to live
   float life_dist_mod;
   //inaccuracy modifier is NOT saved since it's only used on firing

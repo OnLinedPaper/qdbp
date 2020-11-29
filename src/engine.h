@@ -31,7 +31,7 @@ private:
   void load_media();
   void close_SDL();
 
-  void next_frame();
+  void next_tick();
 
   int debug_swirly_int;
   char const debug_swirly();

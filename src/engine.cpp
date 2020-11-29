@@ -77,10 +77,10 @@ try{
         angle[1] = 0;
 
         //handle shooting
-        if(keystate[SDL_SCANCODE_J]) { angle[0] -= 1; }
+        if(keystate[SDL_SCANCODE_H]) { angle[0] -= 1; }
         if(keystate[SDL_SCANCODE_L]) { angle[0] += 1; }
-        if(keystate[SDL_SCANCODE_I]) { angle[1] -= 1; }
-        if(keystate[SDL_SCANCODE_K]) { angle[1] += 1; }
+        if(keystate[SDL_SCANCODE_K]) { angle[1] -= 1; }
+        if(keystate[SDL_SCANCODE_J]) { angle[1] += 1; }
         
         if(angle.magnitude() > 0) { e_handler::get().player_shoot(angle); }
       }
@@ -146,33 +146,33 @@ try{
 
 //==== DISPLAY stuff here =====================================================
 
-//    SDL_SetRenderDrawColor(render::get().get_r(), 32, 32, 32, 255);
-//    SDL_RenderClear(render::get().get_r());
-//    SDL_RenderCopy(render::get()->get_r(), t->get_texture(), NULL, NULL);s
-//    SDL_SetRenderDrawColor(render::get().get_r(), 28, 28, 28, 255);
+    //if the correct amount of time between frames has elapsed, show it
+    //TODO: decide if this is actually necessary given that the program "waits"
+   //between game ticks, resulting in a failure to render
+    if(t_frame::get().incr_f() || true) {
+      map_h::get().draw();
+      e_handler::get().draw_entities();
 
-    map_h::get().draw();
-    e_handler::get().draw_entities();
 
-
-    if(pause) { render::get().shade_display(0.7); }
+      if(pause) { render::get().shade_display(0.7); }
 
 //---- DRAW DEBUG STUFF here --------------------------------------------------
 
 
-    t6a.set_msg(std::to_string(e_handler::get().get_player_heat_percent()));
-    t7a.set_msg(std::to_string(e_handler::get().get_player_overheat_percent()));
+      t6a.set_msg(std::to_string(e_handler::get().get_player_heat_percent()));
+      t7a.set_msg(std::to_string(e_handler::get().get_player_overheat_percent()));
 
-    t6.draw();
-    t6a.draw();
-    t7.draw();
-    t7a.draw();
-    t8.draw();
-    t8a.draw();
+      t6.draw();
+      t6a.draw();
+      t7.draw();
+      t7a.draw();
+      t8.draw();
+      t8a.draw();
 
 //-----------------------------------------------------------------------------
 
-    SDL_RenderPresent(render::get().get_r());
+      SDL_RenderPresent(render::get().get_r());
+    }
 
 //==== DEBUG STUFF here =======================================================
 
@@ -183,7 +183,7 @@ try{
     fprintf(stdout, "%c\r", debug_swirly());
     fflush(stdout);
 
-    next_frame();
+    next_tick();
   }
   msg::get().close_log();
   SDL_Quit();
@@ -245,8 +245,11 @@ try{
   msg::get().init_log("");
 
   //grab framerate data, can't do this till singletons are created
-  t_frame::get().set_delay(xmlparse::get().get_xml_float("/msdelay"));
+  t_frame::get().set_f_delay(xmlparse::get().get_xml_float("/msdelay"));
+  t_frame::get().set_t_delay(t_frame::tickrate);
 
+  //preload weapon data, can't do this till the tree is built
+  weapon::preload_weapon_data();
 
   if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
     msg::print_error("couldn't init joysticks subsystem! SDL_Error: " + std::string(SDL_GetError()));
@@ -276,23 +279,24 @@ engine::~engine() {
   close_SDL();
 }
 
-void engine::next_frame() {
+void engine::next_tick() {
+  //GAME IS SET TO 20 TICKS PER SECOND
 
   //get the desired delay between frames
-  float f_delay = t_frame::get().get_delay();
+  float t_delay = t_frame::get().get_t_delay();
   //get the actual delay
-  float elapsed = t_frame::get().get_elapsed();
+  float elapsed = t_frame::get().get_elapsed_ms();
 
   //delay some ms
-  if(f_delay - elapsed > 0){
+  if(t_delay - elapsed > 0){
     //took some time to compute
-    if(f_delay - elapsed <= f_delay) {
+    if(t_delay - elapsed <= t_delay) {
       //took less than delay to compute
-      SDL_Delay(f_delay - elapsed);
+      SDL_Delay(t_delay - elapsed);
     }
     else {
       //took "no time" - usually happens on startup. delay max time
-      SDL_Delay(f_delay);
+      SDL_Delay(t_delay);
     }
   }
   else {
@@ -300,8 +304,8 @@ void engine::next_frame() {
     //SDL_Delay(0);
   }
 
-  //go to next frame
-  t_frame::get().incr_f();
+  //go to next tick
+  t_frame::get().incr_t();
 
 }
 
