@@ -29,13 +29,13 @@ d_drawable::d_drawable() :
 }
 
 void d_drawable::move_up()
-  { vel[1] -= vel_accel * t_frame::get().d_factor(); moved = true; }
+  { vel[1] -= vel_accel * t_frame::get().t_adjust(); moved = true; }
 void d_drawable::move_dn()
-  { vel[1] += vel_accel * t_frame::get().d_factor(); moved = true; }
+  { vel[1] += vel_accel * t_frame::get().t_adjust(); moved = true; }
 void d_drawable::move_lf()
-  { vel[0] -= vel_accel * t_frame::get().d_factor(); moved = true; }
+  { vel[0] -= vel_accel * t_frame::get().t_adjust(); moved = true; }
 void d_drawable::move_rt()
-  { vel[0] += vel_accel * t_frame::get().d_factor(); moved = true; }
+  { vel[0] += vel_accel * t_frame::get().t_adjust(); moved = true; }
 
 void d_drawable::update() {
   drawable::update();
@@ -45,12 +45,12 @@ void d_drawable::update() {
 
   //move, based on velocity AND time since last frame -
   //this prevents lag spikes from "slowing time"
-  pos[0] += vel[0] * t_frame::get().d_factor();
-  pos[1] += vel[1] * t_frame::get().d_factor();
+  pos[0] += vel[0] * t_frame::get().t_adjust();
+  pos[1] += vel[1] * t_frame::get().t_adjust();
 
   if(moved == false) {
     //decay velocity only when user hasn't moved
-    vel = vel.decay(vel_decay * t_frame::get().d_factor());
+    vel = vel.decay(vel_decay * t_frame::get().t_adjust());
   }
   //reset moved
   moved = false;

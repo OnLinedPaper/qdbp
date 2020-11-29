@@ -19,6 +19,7 @@ heatable::heatable(const std::string path) :
 
 void heatable::boost(bool b) { return; }
 void heatable::shoot() { return; }
+bool heatable::can_fire() { return false; }
 uint8_t heatable::get_weapon_id() const { return 0; }
 
 float heatable::get_heat_percent() {
@@ -51,7 +52,7 @@ float heatable::get_overheat_percent() {
 
 void heatable::update() {
   //check to see if we're overheated
-  if(heat > max_overheat) { overheated = true; }
+  if(heat > max_overheat) { overheated = true; heat = max_overheat; }
   if(heat < max_heat) { overheated = false; }
   if(overheated) { boosted = false; }
 

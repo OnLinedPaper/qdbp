@@ -4,10 +4,10 @@ movable::movable(std::string path) :
   pos(0,0),
   last_pos(0,0),
   vel(0,0),
-  vel_accel(xmlparse::get().get_xml_float(path + "/movement/vel_accel") * t_frame::get().f_factor()),
-  vel_cap(xmlparse::get().get_xml_float(path + "/movement/vel_cap") * t_frame::get().f_factor()),
+  vel_accel(xmlparse::get().get_xml_float(path + "/movement/vel_accel") * t_frame::get().t_factor()),
+  vel_cap(xmlparse::get().get_xml_float(path + "/movement/vel_cap") * t_frame::get().t_factor()),
   vel_overcap(xmlparse::get().safe_get_xml_float(path + "/movement/vel_overcap")),
-  vel_decay(xmlparse::get().get_xml_float(path + "/movement/vel_decay") * t_frame::get().f_factor()),
+  vel_decay(xmlparse::get().get_xml_float(path + "/movement/vel_decay") * t_frame::get().t_factor()),
   moved(false),
   boosted(false),
   active(true)
@@ -53,12 +53,12 @@ void movable::update() {
 
   //move, based on velocity AND time since last frame -
   //this prevents lag spikes from "slowing time"
-  pos[0] += vel[0] * t_frame::get().d_factor();
-  pos[1] += vel[1] * t_frame::get().d_factor();
+  pos[0] += vel[0] * t_frame::get().t_adjust();
+  pos[1] += vel[1] * t_frame::get().t_adjust();
 
   if(moved == false) {
     //decay velocity only when user hasn't moved
-    vel = vel.decay(vel_decay * t_frame::get().d_factor());
+    vel = vel.decay(vel_decay * t_frame::get().t_adjust());
   }
   //reset moved
   moved = false;

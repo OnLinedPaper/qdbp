@@ -6,7 +6,7 @@
 d_heatable::d_heatable(const std::string path) :
   heatable(path),
   weapon(
-    "/movers/hittable/" + xmlparse::get().get_xml_string(path + "/first_weapon"
+    "/movers/hittable/weapons/" + xmlparse::get().get_xml_string(path + "/first_weapon"
   ))
 { }
 
@@ -23,6 +23,23 @@ void d_heatable::move_rt()
 void d_heatable::boost(bool b) { boosted = b; }
 
 void d_heatable::shoot() { return; }
+
+bool d_heatable::can_fire() { 
+  //make sure the player isn't overheated, and the last shot wasn't within
+  //the "cooldown" time
+  
+  if(!is_overheat()) {
+    static float prev_t = 0;
+    float curr_t = t_frame::get().get_t();
+
+    if(weapon::get_delay_from_id(this->get_weapon_id()) < (curr_t - prev_t)) {
+      prev_t = curr_t;
+      return true;
+    }
+  }
+
+  return false; 
+}
 
 uint8_t d_heatable::get_weapon_id() const { return 0; }
 

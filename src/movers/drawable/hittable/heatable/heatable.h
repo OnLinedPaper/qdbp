@@ -18,6 +18,7 @@ public:
 
   virtual void boost(bool);
   virtual void shoot();
+  virtual bool can_fire();
   virtual uint8_t get_weapon_id() const;
   virtual const std::string get_weapon() const { return ""; }
 
