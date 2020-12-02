@@ -31,6 +31,7 @@ public:
   void boost_player(bool);
   float get_player_heat_percent();
   float get_player_overheat_percent();
+  bool get_player_is_overheat();
   void teleport_player(const vec2d &);
   void teleport_player_new_map();
   const vec2d get_player_pos();
@@ -45,9 +46,8 @@ public:
   void update_entities();
   void draw_entities();
 
-  void add_npe(const std::string name, const std::string type);
-  void add_npe(const std::string name, const std::string type,
-    const vec2d pos, const vec2d vel);
+  void add_npe(const std::string name);
+  void add_npe(const std::string name, const vec2d pos, const vec2d vel);
 
 private:
   e_handler();

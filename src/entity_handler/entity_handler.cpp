@@ -53,29 +53,42 @@ void e_handler::draw_entities() {
   }
 }
 
-void e_handler::add_npe(const std::string name, const std::string type) {
+void e_handler::add_npe(const std::string name) {
   //if no position is specified, place this exactly atop the player,
   //with the player's vel
   //this is mostly for debugging purposes
-  add_npe(name, type, get_player_pos(), get_player_vel());
+  add_npe(name, get_player_pos(), get_player_vel());
 }
 
-void e_handler::add_npe(const std::string name, const std::string type,
-  const vec2d pos, const vec2d vel) {
+void e_handler::add_npe(const std::string name,
+    const vec2d pos, const vec2d vel) {
     //a function to add a hittable to the vector - note that this
     //shouldn't really be called from the engine, it should be
     //used "behind the scenes" for loading from a map or the like
 
     hittable *h = NULL;
+    std::string type = xmlparse::get().get_xml_string(
+      entity_xml_root + name + "/entity_type"
+    );
 
     if(!type.compare("d_follower"))
       { h = new d_follower(entity_xml_root + name); }
+    else if(!type.compare("d_hittable"))
+      { h = new d_hittable(entity_xml_root + name); }
     else {
-      msg::print_warn("couldn't find entity \"" + name + "\"");
-      msg::print_alert("tried to check at " + entity_xml_root + name);
+      msg::print_warn("didn't recognize entity type \"" + type + 
+          "\" while trying to spawn entity \"" + name + "\""
+      );
+      msg::print_alert(
+          "tried to check at " + entity_xml_root + name + "/entity_type"
+      );
     }
 
-    if(h) { npe_all.push_back(h); }
+    if(h) { 
+      h->set_pos(pos);
+      h->set_vel(vel);
+      npe_all.push_back(h); 
+    }
   }
 
 //==== PLAYER THINGS ==========================================================
@@ -130,6 +143,10 @@ float e_handler::get_player_heat_percent() {
 
 float e_handler::get_player_overheat_percent() {
   return player->get_overheat_percent();
+}
+
+bool e_handler::get_player_is_overheat() {
+  return player->is_overheat();
 }
 
 void e_handler::teleport_player(const vec2d &p) {
