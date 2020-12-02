@@ -33,7 +33,7 @@ try{
   text t6a("", 280, 30);
   text t7("overheat:", 10, 60);
   text t7a("", 280, 60);
-  text t8("keydown?", 10, 90);
+  text t8("overheated?", 10, 90);
   text t8a("", 280, 90);
 
 
@@ -41,7 +41,13 @@ try{
   e_handler::get().create_player("heatable/debug_heatable");
 
   e_handler::get()
-    .add_npe("hittable/debug_follower", "d_follower");
+      .add_npe("hittable/debug_follower");
+
+  e_handler::get()
+      .add_npe("hittable/debug_stationary", {1500, 500}, {0, 25});
+
+  e_handler::get()
+      .add_npe("hittable/debug_stationary", {2500, 500}, {0, 125});
 
 //-    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -        
 
@@ -161,6 +167,7 @@ try{
 
       t6a.set_msg(std::to_string(e_handler::get().get_player_heat_percent()));
       t7a.set_msg(std::to_string(e_handler::get().get_player_overheat_percent()));
+      t8a.set_msg(std::to_string(e_handler::get().get_player_is_overheat()));
 
       t6.draw();
       t6a.draw();

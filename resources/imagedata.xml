@@ -154,6 +154,18 @@
   </dimensions>
 </fork_ship>
 
+<four_ball>
+  <file>resources/images/fourball.png</file>
+  <dimensions>
+    <width>60</width>
+    <height>60</height>
+    <pivot_x>30</pivot_x>
+    <pivot_y>30</pivot_y>
+    <frames>1</frames>
+    <frame_delay>1</frame_delay>
+  </dimensions>
+</four_ball>
+
 <glow_ship>
   <file>resources/images/glow_ship.png</file>
   <dimensions>
