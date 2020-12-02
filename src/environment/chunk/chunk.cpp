@@ -123,19 +123,19 @@ unsigned char chunk::chunk_pos(float x_coord, float y_coord) const {
   //return 0 if it's in this chunk - otherwise, use bitwise
   //OR to add the location qualifiers
 
-  if(x_coord < tlc[0]) {
+  if(x_coord <= tlc[0]) {
     //it's to the left
     retval = retval|LF;
   }
-  if(x_coord > tlc[0] + length) {
+  if(x_coord >= tlc[0] + length) {
     //to the right
     retval = retval|RT;
   }
-  if(y_coord < tlc[1]) {
+  if(y_coord <= tlc[1]) {
     //above
     retval = retval|UP;
   }
-  if(y_coord > tlc[1] + length) {
+  if(y_coord >= tlc[1] + length) {
     //below
     retval = retval|DN;
   }
