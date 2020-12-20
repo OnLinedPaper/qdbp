@@ -281,7 +281,6 @@ try{
 }
 
 engine::~engine() {
-  SDL_JoystickClose(controller);
   msg::get().close_log();
   close_SDL();
 }
