@@ -13,6 +13,7 @@ bin
 debugging
 win_demo
 log
+.vs
 
 #object and header files
 *.o
