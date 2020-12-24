@@ -1,2 +1,4 @@
+#nmake -f Makefile.win
+
 make:
-	cl /EHsc src/main_driver.cpp
+	cl -EHsc -Wall src/main_driver.cpp -link "./win_dll" -out:winrun.exe

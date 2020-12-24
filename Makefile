@@ -41,8 +41,8 @@ $(BDIR)/%.o: %.cpp %.h
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
 $(WBDIR)/%.o: %.cpp %.h
-	@mkdir -p $(BDIR)
-	@mkdir -p $(WBDIR)
+	@mkdir $(BDIR) -ea 0
+	@mkdir $(WBDIR) -ea 0
 	@printf "building winobj %s\n" $@
 	@$(WC) $(CFLAGS) $(WFLAGS) -c -o $@ $<
 
@@ -59,9 +59,10 @@ run: $(OBJS) main_driver.cpp
 	@printf "compiled\ndone\n"
 
 win: $(WOBJS) main_driver_w.cpp
-	@mkdir -p $(WDDIR)
+	@mkdir $(WDDIR) -ea 0
 	@printf "final win compilation... "
 	@$(WC) $(CFLAGS) $^ $(WFLAGS) $(LFLAGS) $(SPECIAL_LFLAGS) -o $(WDDIR)/$(WEXE)
+	exit
 	@printf "compiled\nadding resources... "
 	@cp -r resources/ $(WDDIR)/
 	@cp win_dll/*.dll $(WDDIR)/
