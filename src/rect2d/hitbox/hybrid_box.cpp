@@ -1,7 +1,7 @@
 #include "hybrid_box.h"
 #include "src/xml_parser/xmlparse.h"
 
-hy_box::hy_box(float s, vec2d &offs, int t) :
+hy_box::hy_box(float s, const vec2d &offs, int t) :
   size(s),
   b(s, offs, t),
   l({0, 0}, {0, 0}),
@@ -22,7 +22,7 @@ void hy_box::calibrate() {
     l.set_end(((b.get_tlc() + b.get_brc()) / 2));  
 }
 
-void hy_box::set_box_center(vec2d &pos, float last_angle) {
+void hy_box::set_box_center(const vec2d &pos, float last_angle) {
   //check to see if the hitbox has moved more than its size, and trail a
   //line if it has
 
@@ -46,9 +46,24 @@ void hy_box::set_box_center(vec2d &pos, float last_angle) {
 }
 
 //TODO
-bool hy_box::collides(const hy_box &hy) const { return false; }
-bool hy_box::collides(const hitbox &hi) const { return false; }
-bool hy_box::collides(const hitline &li) const { return false; }
+bool hy_box::collides(const hy_box &hy) const { 
+  if(hy.collides(b)) { return true; }
+  if(line_active && hy.collides(l)) { return true; }
+  
+  return false; 
+}
+bool hy_box::collides(const hitbox &hi) const { 
+  if(hi.collides(b)) { return true; }
+  if(line_active && hi.collides(l)) { return true; }  
+
+  return false; 
+}
+bool hy_box::collides(const hitline &li) const { 
+  if(b.collides(li)) { return true; }
+  if(line_active && li.collides(l)) { return true; }
+
+  return false; 
+}
 
 void hy_box::draw() const {
   b.draw();

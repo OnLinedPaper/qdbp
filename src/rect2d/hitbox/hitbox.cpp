@@ -11,7 +11,7 @@ const int hitbox::TYPE_SHIELDBOX = 4;
 const int hitbox::TYPE_PICKUPBOX = 5;
 const int hitbox::TYPE_VACUUMBOX = 6;
 
-hitbox::hitbox(float size, vec2d &offs, int t) :
+hitbox::hitbox(float size, const vec2d &offs, int t) :
   rect2d(0, 0, size, size),
   offset(offs),
   type(t)
@@ -33,7 +33,7 @@ hitbox::hitbox(std::string path) :
   )
 { }
 
-void hitbox::set_box_center(vec2d &pos, float last_angle) {
+void hitbox::set_box_center(const vec2d &pos, float last_angle) {
   //adjust rectangle's position based on last angle and offset
   float PI = 3.141592653589793238462643383279502884;
   float angle = (last_angle * PI) / 180;
@@ -86,8 +86,8 @@ std::string hitbox::type_to_str(int type) const {
 
 void hitbox::draw() const {
   //color the boxes based on their type
-  if(type == TYPE_HITBOX) { rect2d::draw(0, 200, 0); }
-  if(type == TYPE_HURTBOX) { rect2d::draw(255, 0, 0); }
+  if(type == TYPE_HURTBOX) { rect2d::draw(0, 200, 0); }
+  if(type == TYPE_HITBOX) { rect2d::draw(255, 0, 0); }
   if(type == TYPE_WEAKBOX) { rect2d::draw(255, 255, 0); }
   if(type == TYPE_ARMORBOX) { rect2d::draw(255, 128, 0); }
   if(type == TYPE_SHIELDBOX) { rect2d::draw(0, 255, 255); }

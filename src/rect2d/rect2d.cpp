@@ -60,7 +60,8 @@ void rect2d::draw(int red, int green, int blue) const {
 bool rect2d::overlap(const hitline &l) const {
 
   //first, make a "box" of the rect and check it - this is about
-  //3x faster than the next part of the algorithm
+  //3x faster than the next part of the algorithm, and can detect 
+  //when the line is completely enclosed in the box
   rect2d line_rect(
     std::min(l.get_start()[0], l.get_end()[0]),
     std::min(l.get_start()[1], l.get_end()[1]),
@@ -68,23 +69,16 @@ bool rect2d::overlap(const hitline &l) const {
     std::abs(l.get_start()[0] - l.get_end()[0])
   );
 
-  if(this->overlap(line_rect)) {
-    //check the four corners of the rectangle - if they're all on the same
-    //"side" of the rectangle, there's no collision
-
+  if(this->overlap(line_rect)) { return true; }
     vec2d trc(get_brc()[0], get_tlc()[1]);
     vec2d blc(get_tlc()[0], get_brc()[1]);
 
-    //result is 0 if it's above, 1 if it's below
-    //doing this because mingw doesn't like std::signbit
-    int sum = (check_point_side(get_tlc(), l) < 0 ? 1 : 0) +
-              (check_point_side(trc, l) < 0 ? 1 : 0) +
-              (check_point_side(get_brc(), l) < 0 ? 1 : 0) +
-              (check_point_side(blc, l) < 0 ? 1 : 0);
-
-    //if sum is 0 or 4, all on the same side; else, collision
-    return(sum % 4 != 0);
-  }
+  return(
+    l.collides({get_tlc(), trc}) ||
+    l.collides({get_tlc(), blc}) ||
+    l.collides({get_brc(), trc}) ||
+    l.collides({get_brc(), blc})
+  );
 
   return false;
 }
@@ -159,7 +153,7 @@ bool rect2d::overlap(const rect2d &r) const {
    *
    *                        #---------#                         #---------#
    *                   %---------%                %---------%
-   *                                       tlc[0] ^  brc[0] ^
+   *            tlc[0] ^  brc[0] ^         tlc[0] ^  brc[0] ^
   */
 
 

@@ -7,14 +7,14 @@
 class hy_box {
 public:
 
-  hy_box(float size, vec2d &offset, int type);
+  hy_box(float size, const vec2d &offset, int type);
   hy_box(std::string path);
 
   int str_to_type(std::string) const;
   std::string type_to_str(int) const;
 
   void calibrate();
-  void set_box_center(vec2d &pos, float last_angle);
+  void set_box_center(const vec2d &pos, float last_angle);
 
   bool collides(const hy_box &hy) const;
   bool collides(const hitbox &hi) const;

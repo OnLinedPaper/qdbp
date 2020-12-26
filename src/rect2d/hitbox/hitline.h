@@ -14,6 +14,8 @@ public:
   //constructor with start point, angle, and length
   hitline(const vec2d &s, float length, float in_angle);
 
+  bool collides(const hitline &) const;
+
   const vec2d get_start() const { return start; }
   void set_start(const vec2d &v) { start = v; }
   const vec2d get_end() const { return end; }

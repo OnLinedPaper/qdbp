@@ -76,6 +76,11 @@ void vec2d::operator-=(const vec2d &v) {
   x -= v[0]; y -= v[1];
 }
 
+
+bool vec2d::operator==(const vec2d &v) const {
+  return (x == v[0] && y == v[1]);
+}
+
 //-----------------------------------------------------------------------------
 //related to vector properties
 
@@ -98,6 +103,10 @@ vec2d vec2d::normalize() const {
 
 float vec2d::dot(const vec2d &v) const {
   return ((x * v[0]) + (y * v[1]));
+}
+
+float vec2d::cross(const vec2d &v) const {
+  return ((x * v[1]) - (y * v[0]));
 }
 
 vec2d vec2d::cap(float scalar_val) const {

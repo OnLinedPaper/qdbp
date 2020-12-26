@@ -39,6 +39,8 @@ public:
   //not implementing divide, no way to do that safely since
   //x or y could be 0
 
+  bool operator==(const vec2d &v) const;
+
   //these modify the vector in question itself in a scalar way
   //TODO: +=, -=, *=? may not even need these
 
@@ -47,7 +49,7 @@ public:
   vec2d normalize() const; //NOTE: will not normalize beyond .001, returns this
 
   float dot(const vec2d &v) const;
-  //vec2d cross(const vec2d &v) const; //it's a 2d game, this isn't implemented
+  float cross(const vec2d &v) const;
 
   vec2d cap(float scalar_val) const;
   vec2d decay(float scalar_val) const;
