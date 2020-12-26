@@ -44,6 +44,7 @@ public:
   bool get_draw_debug_info() const { return draw_debug_info; }
 
   void update_entities();
+  void check_entity_collision();
   void draw_entities();
 
   void add_npe(const std::string name);

@@ -36,6 +36,29 @@ void e_handler::update_entities() {
   //update each entity - do this last in case others need
   //to be updated first
   for(hittable *h : npe_all) { h->update(); }
+
+  //check collision
+  check_entity_collision();
+}
+
+//check entity collision - note that this may change
+//dramatically in the future, as it currently runs in O(n*m) time
+//where n is (player) projectiles and m is (hostile) entities
+//collision also does not currently differentiate based on team, and
+//only checks hitboxes vs hurtboxes
+//it also doesn't check for multiple collisions from the same box
+void e_handler::check_entity_collision() {
+  for(weapon *w : shot_all) {
+    for(hittable *h : npe_all) {
+      if(h->collides(
+        w, 
+        hitbox::TYPE_HURTBOX,
+        hitbox::TYPE_HITBOX
+      )) { std::cout << "BONK" << std::endl; }
+    }
+  }
+
+  return;
 }
 
 void e_handler::draw_entities() {

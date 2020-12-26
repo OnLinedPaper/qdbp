@@ -38,7 +38,7 @@
           <x_offset>0</x_offset>
           <y_offset>10</y_offset>
           <size>20</size>
-          <type>HIT</type>
+          <type>HURT</type>
         </top>
         <bottom>
           <x_offset>0</x_offset>
@@ -50,13 +50,13 @@
           <x_offset>20</x_offset>
           <y_offset>-8</y_offset>
           <size>20</size>
-          <type>HIT</type>
+          <type>HURT</type>
         </left>
         <right>
           <x_offset>-20</x_offset>
           <y_offset>-8</y_offset>
           <size>20</size>
-          <type>HIT</type>
+          <type>HURT</type>
         </right>
         <pickup>
           <x_offset>0</x_offset>
@@ -113,7 +113,7 @@
           <x_offset>0</x_offset>
           <y_offset>10</y_offset>
           <size>20</size>
-          <type>HIT</type>
+          <type>HURT</type>
         </top>
         <bottom>
           <x_offset>0</x_offset>
@@ -125,13 +125,13 @@
           <x_offset>20</x_offset>
           <y_offset>-8</y_offset>
           <size>20</size>
-          <type>HIT</type>
+          <type>HURT</type>
         </left>
         <right>
           <x_offset>-20</x_offset>
           <y_offset>-8</y_offset>
           <size>20</size>
-          <type>HIT</type>
+          <type>HURT</type>
         </right>
         <pickup>
           <x_offset>0</x_offset>
@@ -208,7 +208,7 @@
             <x_offset>0</x_offset>
             <y_offset>0</y_offset>
             <size>70</size>
-            <type>HURT</type>
+            <type>HIT</type>
           </hurty>
         </hitboxes>
         <team></team>

@@ -18,6 +18,8 @@ public:
 
   bool collides(const hitbox &h, int type) const;
   bool collides(const hitline &l, int type) const;
+  bool collides(const hy_box &hy, int type) const;
+  bool collides(const hittable *other, int other_type, int this_type) const;
 
   void set_pos(const vec2d p) { this->set_pos(p[0], p[1]); }
   void set_pos(float x, float y);
@@ -27,6 +29,8 @@ public:
   virtual void update() override;
 
 protected:
+  std::vector<hy_box> const &get_box_ref(int type) const;
+ 
   void update_boxes();
 
   std::vector<std::vector<hy_box> *> boxes;

@@ -5,6 +5,7 @@
 #include "src/movers/drawable/hittable/hittable.h"
 #include "src/entity_handler/entity_handler.h"
 #include "src/rect2d/hitbox/hybrid_box.h"
+#include "src/utils/message.h"
 
 hittable::hittable(const std::string path) :
   hittable(path, vec2d(0,0), vec2d(0,0))
@@ -67,56 +68,41 @@ void hittable::update() {
 
 bool hittable::collides(const hitbox& in_box, int type) const {
   //determine the type of hitbox to check
-  if(type == hitbox::TYPE_HITBOX) {
-    for(hy_box h : hitboxes) { if(h.collides(in_box)) { return true; } }
-  }
-  else if(type == hitbox::TYPE_HURTBOX) {
-    for(hy_box h : hurtboxes) { if(h.collides(in_box)) { return true; } }
-  }
-  else if(type == hitbox::TYPE_WEAKBOX) {
-    for(hy_box h : weakboxes) { if(h.collides(in_box)) { return true; } }
-  }
-  else if(type == hitbox::TYPE_ARMORBOX) {
-    for(hy_box h : armorboxes) { if(h.collides(in_box)) { return true; } }
-  }
-  else if(type == hitbox::TYPE_SHIELDBOX) {
-    for(hy_box h : shieldboxes) { if(h.collides(in_box)) { return true; } }
-  }
-  else if(type == hitbox::TYPE_PICKUPBOX) {
-    for(hy_box h : pickupboxes) { if(h.collides(in_box)) { return true; } }
-  }
-  else if(type == hitbox::TYPE_VACUUMBOX) {
-    for(hy_box h : vacuumboxes) { if(h.collides(in_box)) { return true; } }
-  }
+  std::vector<hy_box> boxes = get_box_ref(type);
+  for(hy_box h : boxes) { if(h.collides(in_box)) { return true; } }
 
   return false;
 }
 
 bool hittable::collides(const hitline& in_line, int type) const {
   //determine the type of hitbox to check
-  if(type == hitbox::TYPE_HITBOX) {
-    for(hy_box h : hitboxes) { if(h.collides(in_line)) { return true; } }
-  }
-  else if(type == hitbox::TYPE_HURTBOX) {
-    for(hy_box h : hurtboxes) { if(h.collides(in_line)) { return true; } }
-  }
-  else if(type == hitbox::TYPE_WEAKBOX) {
-    for(hy_box h : weakboxes) { if(h.collides(in_line)) { return true; } }
-  }
-  else if(type == hitbox::TYPE_ARMORBOX) {
-    for(hy_box h : armorboxes) { if(h.collides(in_line)) { return true; } }
-  }
-  else if(type == hitbox::TYPE_SHIELDBOX) {
-    for(hy_box h : shieldboxes) { if(h.collides(in_line)) { return true; } }
-  }
-  else if(type == hitbox::TYPE_PICKUPBOX) {
-    for(hy_box h : pickupboxes) { if(h.collides(in_line)) { return true; } }
-  }
-  else if(type == hitbox::TYPE_VACUUMBOX) {
-    for(hy_box h : vacuumboxes) { if(h.collides(in_line)) { return true; } }
-  }
+  std::vector<hy_box> boxes = get_box_ref(type);
+  for(hy_box h : boxes) { if(h.collides(in_line)) { return true; } }
 
   return false;
+}
+
+bool hittable::collides(const hy_box& in_box, int type) const {
+  //determine the type of hitbox to check
+  std::vector<hy_box> boxes = get_box_ref(type);
+  for(hy_box h : boxes) { if(h.collides(in_box)) { return true; } }
+
+  return false;
+}
+
+
+bool hittable::collides(
+  const hittable *other, 
+  int other_type, 
+  int this_type
+) const {
+
+  std::vector<hy_box> boxes = get_box_ref(this_type);
+  for(hy_box h : boxes) {
+    if(other->collides(h, other_type)) { return true; }
+  }
+  
+  return(false);  
 }
 
 void hittable::set_pos(float x, float y) {
@@ -133,6 +119,36 @@ void hittable::calibrate_boxes() {
       h.calibrate();
     }
   }
+}
+
+//given an int representing a hitbox type, return a ref to the vector
+//containing said hitbox type
+std::vector<hy_box> const &hittable::get_box_ref(int type) const {
+  if(type == hitbox::TYPE_HITBOX) {
+    return(hitboxes);
+  }
+  else if(type == hitbox::TYPE_HURTBOX) {
+    return(hurtboxes);
+  }
+  else if(type == hitbox::TYPE_WEAKBOX) {
+    return(weakboxes);
+  }
+  else if(type == hitbox::TYPE_ARMORBOX) {
+    return(armorboxes);
+  }
+  else if(type == hitbox::TYPE_SHIELDBOX) {
+    return(shieldboxes);
+  }
+  else if(type == hitbox::TYPE_PICKUPBOX) {
+    return(pickupboxes);
+  }
+  else if(type == hitbox::TYPE_VACUUMBOX) {
+    return(vacuumboxes);
+  }
+  else {
+    msg::print_error("requested invalid hitbox type!");
+    throw("bad box type");
+  } 
 }
 
 void hittable::update_boxes() {
