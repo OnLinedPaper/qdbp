@@ -49,12 +49,14 @@ void e_handler::update_entities() {
 //it also doesn't check for multiple collisions from the same box
 void e_handler::check_entity_collision() {
   for(weapon *w : shot_all) {
-    for(hittable *h : npe_all) {
-      if(h->collides(
-        w, 
-        hitbox::TYPE_HURTBOX,
-        hitbox::TYPE_HITBOX
-      )) { std::cout << "BONK" << std::endl; }
+    if(w->is_active()) {
+      for(hittable *h : npe_all) {
+        if(h->is_active() && h->collides(
+          w, 
+          hitbox::TYPE_HITBOX,
+          hitbox::TYPE_HURTBOX
+        )) { w->set_active(false); }
+      }
     }
   }
 
