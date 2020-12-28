@@ -45,7 +45,6 @@ void hy_box::set_box_center(const vec2d &pos, float last_angle) {
 
 }
 
-//TODO
 bool hy_box::collides(const hy_box &hy) const { 
   if(hy.collides(b)) { return true; }
   if(line_active && hy.collides(l)) { return true; }
