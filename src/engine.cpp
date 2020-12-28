@@ -38,12 +38,7 @@ try{
   text t9("collision?", 10, 120);
   text t9a("", 280, 120);
 
-  hy_box h1(100, {0, 0}, 0);
-  h1.set_box_center({400, 400}, 0);
 
-  hitline l1({200, 200}, {210, 210});
-
-  
 
   e_handler::get().create_player("heatable/debug_heatable");
 
@@ -51,7 +46,7 @@ try{
       .add_npe("hittable/debug_follower");
 
   e_handler::get()
-      .add_npe("hittable/debug_stationary", {1500, 500}, {0, 25});
+      .add_npe("hittable/debug_stationary", {1500, 500}, {0, 10});
 
   e_handler::get()
       .add_npe("hittable/debug_stationary", {2500, 500}, {0, 125});
@@ -175,7 +170,6 @@ try{
       t6a.set_msg(std::to_string(e_handler::get().get_player_heat_percent()));
       t7a.set_msg(std::to_string(e_handler::get().get_player_overheat_percent()));
       t8a.set_msg(std::to_string(e_handler::get().get_player_is_overheat()));
-      t9a.set_msg(std::to_string(h1.collides(l1)));
 
       t6.draw();
       t6a.draw();
@@ -186,8 +180,6 @@ try{
       t9.draw();
       t9a.draw();
 
-      h1.draw();
-      l1.draw();
 
       //l1.set_start(l1.get_start() + vec2d(0, .4));
       //l1.set_end(l1.get_end() + vec2d(0, .4));

@@ -195,12 +195,12 @@
           <body>beam</body>
         </textures>
         <shot>
-          <heat_per_shot>80</heat_per_shot>
-          <tick_shot_delay>20</tick_shot_delay>
+          <heat_per_shot>1</heat_per_shot>
+          <tick_shot_delay>4</tick_shot_delay>
           <tick_lifespan>50</tick_lifespan>
           <dist_lifespan>1000</dist_lifespan>
           <inaccuracy>0.1</inaccuracy>
-          <constant_vel>200</constant_vel>
+          <constant_vel>20</constant_vel>
           <unique_type_id>0</unique_type_id>
         </shot>
         <hitboxes>
