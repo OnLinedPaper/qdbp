@@ -33,7 +33,6 @@ public:
 private:
   vec2d offset;
   int type;
-
 };
 
 std::ostream &operator<<(std::ostream &output, const hitbox &h);

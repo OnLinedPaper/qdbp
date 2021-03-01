@@ -32,6 +32,7 @@ hitbox::hitbox(std::string path) :
     str_to_type(xmlparse::get().get_xml_string(path + "/type"))
   )
 { }
+ 
 
 void hitbox::set_box_center(const vec2d &pos, float last_angle) {
   //adjust rectangle's position based on last angle and offset
