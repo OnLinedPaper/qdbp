@@ -26,7 +26,15 @@ weapon::weapon(const std::string path) :
   )),
   type_id(xmlparse::get().get_xml_int(
     path + "/shot/unique_type_id"
-  ))
+  )),
+  impact_damage(xmlparse::get().get_xml_float(
+    path + "/damage/impact_damage"
+  )),
+  impact_mod(1),
+  armor_piercing(xmlparse::get().get_xml_int(
+    path + "/damage/armor_penetration"
+  )),
+  remaining_pierce(armor_piercing)
 { 
   this->set_active(false); 
 
@@ -116,7 +124,8 @@ float weapon::fire(const vec2d start_pos, const vec2d start_vel,
     const vec2d angle,
     float heat_mod, float life_tick_mod,
     float life_dist_mod, float inacc_mod,
-    float vel_mod, const SDL_Color &c) {
+    float vel_mod, int pierce_mod, 
+    float damage_mod, const SDL_Color &c) {
 
  //spawn projectile 
   set_pos(start_pos);
@@ -142,6 +151,8 @@ float weapon::fire(const vec2d start_pos, const vec2d start_vel,
   //save the color
   set_col(c);
 
+  //reset its armor piercing
+  remaining_pierce = armor_piercing * pierce_mod;
  
   //bring this projectile into update and draw cycles
   set_active(true);

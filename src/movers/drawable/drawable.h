@@ -35,6 +35,7 @@ public:
 
 protected:
   virtual void update() override;
+  virtual void destroy() override { movable::destroy(); };
   void draw() const override;
   std::string image_name;
 

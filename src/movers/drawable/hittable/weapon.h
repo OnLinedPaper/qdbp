@@ -31,7 +31,8 @@ public:
       const vec2d angle, 
       float heat_mod, float life_ms_mod, 
       float life_dist_mod, float inacc_mod,
-      float vel_mod, const SDL_Color &);
+      float vel_mod, int pierce_mod, 
+      float damage_mod, const SDL_Color &);
 
   bool is_type(uint8_t type_id) const {
     return !(type_id ^ this->type_id);
@@ -78,6 +79,15 @@ private:
 
   //this is used to identify the type of projectile
   uint8_t type_id;
+
+  //how much it hurts on hit
+  float impact_damage;
+  //modifier to damage
+  float impact_mod;
+  //how many impacts it can make
+  int armor_piercing;
+  //remaining pierces
+  int remaining_pierce;
 
   std::string xml_path = "/movers/hittable/";
 };

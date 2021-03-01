@@ -16,16 +16,19 @@ public:
   void draw() const override;
   void draw_boxes() const;
 
-  bool collides(const hitbox &h, int type) const;
-  bool collides(const hitline &l, int type) const;
-  bool collides(const hy_box &hy, int type) const;
-  bool collides(const hittable *other, int other_type, int this_type) const;
+  virtual bool collides(const hitbox &h, int type) const;
+  virtual bool collides(const hitline &l, int type) const;
+  virtual bool collides(const hy_box &hy, int type) const;
+  virtual bool collides(const hittable *other, int other_type, int this_type) const;
 
   void set_pos(const vec2d p) { this->set_pos(p[0], p[1]); }
   void set_pos(float x, float y);
 
   void calibrate_boxes();
 
+  virtual bool take_damage(float damage) { return false; }
+
+  virtual void destroy() override { drawable::destroy(); }
   virtual void update() override;
 
 protected:

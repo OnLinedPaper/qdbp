@@ -22,7 +22,6 @@ void d_heatable::move_rt()
 
 void d_heatable::boost(bool b) { boosted = b; }
 
-void d_heatable::shoot() { return; }
 
 bool d_heatable::can_fire() { 
   //make sure the player isn't overheated, and the last shot wasn't within

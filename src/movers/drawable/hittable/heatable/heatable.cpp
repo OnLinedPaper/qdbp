@@ -14,11 +14,11 @@ heatable::heatable(const std::string path) :
   )),
   cool_per_tick(xmlparse::get().get_xml_float(
     path + "/heat/cool_per_tick"
-  ))
+  )),
+  overheated(false)
 { }
 
 void heatable::boost(bool b) { return; }
-void heatable::shoot() { return; }
 bool heatable::can_fire() { return false; }
 uint8_t heatable::get_weapon_id() const { return 0; }
 
@@ -50,6 +50,8 @@ float heatable::get_overheat_percent() {
   return retval;
 }
 
+
+
 void heatable::update() {
   //check to see if we're overheated
   if(heat > max_overheat) { overheated = true; heat = max_overheat; }
@@ -59,7 +61,7 @@ void heatable::update() {
   //call this first since boost is switched off
   //in parent update call
   if(boosted) {
-    heat += boost_heat_per_tick;
+    heat_up(boost_heat_per_tick);
   }
 
   hittable::update();

@@ -36,6 +36,7 @@ public:
   virtual void move_lf() = 0;
   virtual void move_rt() = 0;
 
+  virtual void destroy() { set_active(false); };
   virtual void draw() const;
 
 protected:
