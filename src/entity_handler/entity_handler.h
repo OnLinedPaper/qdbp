@@ -3,6 +3,7 @@
 
 #include "src/movers/drawable/drawable.h"
 #include "src/movers/drawable/hittable/heatable/heatable.h"
+#include "src/movers/drawable/hittable/heatable/killable/killable.h"
 #include "src/movers/drawable/hittable/weapon.h"
 #include "src/movers/drawable/hittable/debug_hittable.h"
 #include <vector>
@@ -29,14 +30,23 @@ public:
   void create_player(std::string);
   void move_player(unsigned char);
   void boost_player(bool);
-  float get_player_heat_percent();
-  float get_player_overheat_percent();
-  bool get_player_is_overheat();
+  void toggle_player_regen();
   void teleport_player(const vec2d &);
   void teleport_player_new_map();
-  const vec2d get_player_pos();
-  const vec2d get_player_vel();
   void player_shoot(const vec2d);
+
+  float 	get_player_heat_percent();
+  float 	get_player_overheat_percent();
+  bool 		get_player_is_overheat();
+  float 	get_player_health_percent();
+  bool 		get_player_is_regenerating();
+  int 		get_player_shield_segs();
+  float 	get_player_shield_percent();
+  const vec2d 	get_player_pos();
+  const vec2d 	get_player_vel();
+
+  //TODO: this is for debugging ONLY, do NOT use it in final code
+  killable *	DEBUG_get_player() { return player; }
 
 //==== GENERIC THINGS ==========================================================
 
@@ -52,7 +62,7 @@ public:
 
 private:
   e_handler();
-  heatable *player;
+  killable *player;
   const std::string entity_xml_root = "/movers/";
 
   std::vector<hittable *> npe_all;

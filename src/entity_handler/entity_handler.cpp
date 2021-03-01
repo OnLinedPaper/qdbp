@@ -1,5 +1,6 @@
 #include "entity_handler.h"
 #include "src/environment/map/map_handler.h"
+#include "src/movers/drawable/hittable/heatable/killable/debug_killable.h"
 #include "src/movers/drawable/hittable/heatable/debug_heatable.h"
 #include "src/movers/drawable/hittable/debug_follower.h"
 #include "src/utils/message.h"
@@ -55,7 +56,7 @@ void e_handler::check_entity_collision() {
           w, 
           hitbox::TYPE_HITBOX,
           hitbox::TYPE_HURTBOX
-        )) { w->set_active(false); }
+        )) { w->destroy(); }
       }
     }
   }
@@ -119,7 +120,7 @@ void e_handler::add_npe(const std::string name,
 //==== PLAYER THINGS ==========================================================
 
 void e_handler::create_player(std::string s) {
-  player = new d_heatable(entity_xml_root + s);
+  player = new d_killable(entity_xml_root + s);
   player->set_pos(map_h::get().get_start_pos());
 }
 
@@ -132,6 +133,10 @@ void e_handler::move_player(unsigned char c) {
 
 void e_handler::boost_player(bool b) {
   player->boost(b);
+}
+
+void e_handler::toggle_player_regen() {
+  player->toggle_regen();
 }
 
 void e_handler::player_shoot(const vec2d angle) {
@@ -156,7 +161,7 @@ void e_handler::player_shoot(const vec2d angle) {
 
   //third is to spawn / activate the weapon and send it on its way 
   weap->fire(player->get_pos(), player->get_vel(),
-      angle, 1, 1, 1, 1, 1, player->get_col());
+      angle, 1, 1, 1, 1, 1, 1, 1, player->get_col());
 
   //fourth is to add some heat to the player
   player->heat_up(weapon::get_heat_from_id(w_id)); 
@@ -172,6 +177,22 @@ float e_handler::get_player_overheat_percent() {
 
 bool e_handler::get_player_is_overheat() {
   return player->is_overheat();
+}
+
+float e_handler::get_player_health_percent() {
+  return player->get_health_percent();
+}
+
+bool e_handler::get_player_is_regenerating() {
+  return player->is_regen();
+}
+
+int e_handler::get_player_shield_segs() {
+  return player->get_shields();
+}
+
+float e_handler::get_player_shield_percent() {
+  return player->get_shield_percent();
 }
 
 void e_handler::teleport_player(const vec2d &p) {

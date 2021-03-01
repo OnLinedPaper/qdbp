@@ -23,6 +23,7 @@ void engine::play() {
 try{
   bool quit = false;
   bool pause = false;
+  bool debug_mode = false;
   SDL_Event e;
 
   std::srand(std::time(0));
@@ -35,12 +36,18 @@ try{
   text t7a("", 280, 60);
   text t8("overheated?", 10, 90);
   text t8a("", 280, 90);
-  text t9("collision?", 10, 120);
+  text t9("health:", 10, 120);
   text t9a("", 280, 120);
+  text t10("regenerating?", 10, 150);
+  text t10a("", 280, 150);
+  text t11("shields:", 10, 180);
+  text t11a("", 280, 180);
+  text t12("shield %:", 10, 210);
+  text t12a("", 280, 210);
 
 
 
-  e_handler::get().create_player("heatable/debug_heatable");
+  e_handler::get().create_player("heatable/killable/debug_killable");
 
   e_handler::get()
       .add_npe("hittable/debug_follower");
@@ -119,9 +126,9 @@ try{
 
         //pause unpause
         if(keystate[SDL_SCANCODE_P]) { pause = !pause; }
-        if(pause || !pause) { //TODO: remove this / update it
-          //pause menu
-          if(keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
+          if(pause || !pause) { //TODO: remove this / update it
+            //pause menu
+            if(keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
         }
 
         if(keystate[SDL_SCANCODE_O]) {
@@ -132,11 +139,25 @@ try{
           }
         }
 
+        if(keystate[SDL_SCANCODE_R]) {
+          e_handler::get().toggle_player_regen();
+        }
+
         //draw debug things
         if(keystate[SDL_SCANCODE_COMMA]) {
           e_handler::get().set_draw_debug_info(
             !e_handler::get().get_draw_debug_info()
           );
+          
+          debug_mode = !debug_mode;
+        }
+
+ 
+        //debugging section
+        if(debug_mode) {
+          if(keystate[SDL_SCANCODE_X]) {
+            e_handler::get().DEBUG_get_player()->take_damage(20);
+          }
         }
 
       }
@@ -170,6 +191,10 @@ try{
       t6a.set_msg(std::to_string(e_handler::get().get_player_heat_percent()));
       t7a.set_msg(std::to_string(e_handler::get().get_player_overheat_percent()));
       t8a.set_msg(std::to_string(e_handler::get().get_player_is_overheat()));
+      t9a.set_msg(std::to_string(e_handler::get().get_player_health_percent()));
+      t10a.set_msg(std::to_string(e_handler::get().get_player_is_regenerating()));
+      t11a.set_msg(std::to_string(e_handler::get().get_player_shield_segs()));
+      t12a.set_msg(std::to_string(e_handler::get().get_player_shield_percent()));
 
       t6.draw();
       t6a.draw();
@@ -179,6 +204,13 @@ try{
       t8a.draw();
       t9.draw();
       t9a.draw();
+      t10.draw();
+      t10a.draw();
+      t11.draw();
+      t11a.draw();
+      t12.draw();
+      t12a.draw();
+
 
 
       //l1.set_start(l1.get_start() + vec2d(0, .4));
@@ -250,10 +282,12 @@ try{
   xmlparse::get().build_tree("resources/chunkdata.xml");
 
 
-  map_h::get().set_map("/" + xmlparse::get().get_xml_string("/first_map"));
   render::get().get_r();
   viewport::get();
+  image_handler::get();
   t_frame::get();
+  map_h::get().set_map("/" + xmlparse::get().get_xml_string("/first_map"));
+  e_handler::get();
   text_h::get();
 
   msg::get();

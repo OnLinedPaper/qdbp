@@ -17,6 +17,70 @@
   </drawable>
 
   <heatable>
+    <killable>
+      <debug_killable>
+        <health>
+          <health_max>100</health_max>
+          <health_segments>4</health_segments>
+          <health_regen_rate>.1</health_regen_rate>
+          <health_regen_heat>3</health_regen_heat>
+
+          <shield_segments>4</shield_segments>
+          <shield_regen_rate>.1</shield_regen_rate>
+          <shield_first_seg_size>0.4</shield_first_seg_size>
+        </health>
+        <heat>
+          <max_heat>400</max_heat>
+          <max_overheat>600</max_overheat>
+          <boost_heat_per_tick>3</boost_heat_per_tick>
+          <cool_per_tick>1</cool_per_tick>
+        </heat>
+        <movement>
+          <vel_cap>16</vel_cap>
+          <vel_overcap>27</vel_overcap>
+          <vel_decay>0.1</vel_decay>
+          <vel_accel>1</vel_accel>
+        </movement>
+        <textures>
+          <body>arrow2</body>
+        </textures>
+        <hitboxes>
+          <top>
+            <x_offset>0</x_offset>
+            <y_offset>10</y_offset>
+            <size>20</size>
+            <type>HURT</type>
+          </top>
+          <bottom>
+            <x_offset>0</x_offset>
+            <y_offset>-10</y_offset>
+            <size>20</size>
+            <type>WEAK</type>
+          </bottom>
+          <left>
+            <x_offset>20</x_offset>
+            <y_offset>-8</y_offset>
+            <size>20</size>
+            <type>HURT</type>
+          </left>
+          <right>
+            <x_offset>-20</x_offset>
+            <y_offset>-8</y_offset>
+            <size>20</size>
+            <type>HURT</type>
+          </right>
+          <pickup>
+            <x_offset>0</x_offset>
+            <y_offset>0</y_offset>
+            <size>60</size>
+            <type>VACUUM</type>
+          </pickup>
+        </hitboxes>
+        <team>GREEN</team>
+        <first_weapon>debug_weapon</first_weapon>
+      </debug_killable>
+    </killable>
+
     <debug_heatable>
       <heat>
         <max_heat>400</max_heat>
@@ -159,7 +223,7 @@
           <x_offset>17</x_offset>
           <y_offset>17</y_offset>
           <size>26</size>
-          <type>HIT</type>
+          <type>ARMOR</type>
         </tl>
         <tr>
           <x_offset>-17</x_offset>
@@ -195,7 +259,7 @@
           <body>beam</body>
         </textures>
         <shot>
-          <heat_per_shot>1</heat_per_shot>
+          <heat_per_shot>8</heat_per_shot>
           <tick_shot_delay>4</tick_shot_delay>
           <tick_lifespan>50</tick_lifespan>
           <dist_lifespan>1000</dist_lifespan>
@@ -203,6 +267,10 @@
           <constant_vel>20</constant_vel>
           <unique_type_id>0</unique_type_id>
         </shot>
+        <damage>
+          <impact_damage>4</impact_damage>
+          <armor_penetration>0</armor_penetration>
+        </damage>
         <hitboxes>
           <hurty>
             <x_offset>0</x_offset>
@@ -211,7 +279,7 @@
             <type>HIT</type>
           </hurty>
         </hitboxes>
-        <team></team>
+        <team>WHITE</team>
       </debug_weapon>
     </weapons>
   </hittable>
