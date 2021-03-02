@@ -9,20 +9,8 @@
 
 class drawable : public movable {
 public:
-  drawable(const std::string path) :
-    drawable(path, vec2d(0,0), vec2d(0,0))
-  { }
-  drawable(const std::string path, const vec2d vel, const vec2d pos) :
-    movable(path, vel, pos),
-    image_name("/" + xmlparse::get().get_xml_string(path + "/textures/body")),
-    team_name(xmlparse::get().get_xml_string(path + "/team")),
-    team_col({255, 255, 255}),
-    frame_bump(rand()),
-    last_angle(0)
-  { 
-    image_handler::get_col_from_team(team_name, team_col); 
-    image_handler::jitter_col(20, team_col);
-  }
+  drawable(const std::string path);
+  drawable(const std::string path, const vec2d vel, const vec2d pos);
   virtual ~drawable() = default;
 
   const SDL_Color &get_col() { return team_col; }
