@@ -50,7 +50,9 @@ void d_killable::draw() const {
   dest_r.w = 128;
   dest_r.h = 128;
 
-  image_handler::get().draw_rotate_color(image_name, dest_r.x, dest_r.y, 0, last_angle, team_col);
+  image_handler::get().draw_rotate_color_outline(
+    image_name, dest_r.x, dest_r.y, 0, last_angle, team_col, true, get_health_percent() 
+  );
 
 
   killable::draw();

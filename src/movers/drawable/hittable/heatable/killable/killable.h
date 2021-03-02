@@ -8,12 +8,12 @@ public:
   killable(const std::string path);
   virtual ~killable() = default;
 
-  float get_health() { return curr_health; }
-  float get_health_percent() { return curr_health / max_health; }
-  int get_shields() { return curr_shield_segments; }
-  float get_shield_percent() { return curr_shields / max_shields; }
+  float get_health() const { return curr_health; }
+  float get_health_percent() const { return curr_health / max_health; }
+  int get_shields() const { return curr_shield_segments; }
+  float get_shield_percent() const { return curr_shields / max_shields; }
 
-  bool is_regen() { return is_regenerating; }
+  bool is_regen() const { return is_regenerating; }
   void toggle_regen() { is_regenerating = !is_regenerating; }
 
   bool take_damage(float dmg);
