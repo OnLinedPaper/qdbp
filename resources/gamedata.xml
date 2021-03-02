@@ -21,7 +21,7 @@
       <debug_killable>
         <health>
           <health_max>100</health_max>
-          <health_segments>4</health_segments>
+          <health_segments>1</health_segments>
           <health_regen_rate>.1</health_regen_rate>
           <health_regen_heat>3</health_regen_heat>
 
@@ -61,13 +61,13 @@
             <x_offset>20</x_offset>
             <y_offset>-8</y_offset>
             <size>20</size>
-            <type>HURT</type>
+            <type>ARMOR</type>
           </left>
           <right>
             <x_offset>-20</x_offset>
             <y_offset>-8</y_offset>
             <size>20</size>
-            <type>HURT</type>
+            <type>ARMOR</type>
           </right>
           <pickup>
             <x_offset>0</x_offset>

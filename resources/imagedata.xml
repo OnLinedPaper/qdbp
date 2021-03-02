@@ -46,6 +46,21 @@
   </dimensions>
 </arrow2>
 
+<arrow2_outline>
+  <file>resources/images/arrow2_outline.png</file>
+  <dimensions>
+    <width>84</width>
+    <height>72</height>
+
+    <pivot_x>0</pivot_x>
+    <pivot_y>0</pivot_y>
+
+    <frames>4</frames>
+    <frame_delay>24</frame_delay>
+  </dimensions>
+</arrow2_outline>
+
+
 <beam>
   <file>resources/images/beam.png</file>
   <dimensions>
