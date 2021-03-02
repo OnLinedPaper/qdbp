@@ -138,6 +138,12 @@ void image::draw_rotate(float x_pos, float y_pos, float angle, float frame_bump)
 void image::draw_rotate_color(float x_pos, float y_pos, float angle, 
     float frame_bump, const SDL_Color &mod) const 
 {
+  draw_rotate_color_opacity(x_pos, y_pos, angle, frame_bump, mod, 1);
+}
+
+void image::draw_rotate_color_opacity(float x_pos, float y_pos, float angle, 
+    float frame_bump, const SDL_Color &mod, float opacity) const 
+{
 
   //check to see if the entity is anywhere on-screen - if it's not,
   //don't draw it, to save time
@@ -180,6 +186,7 @@ void image::draw_rotate_color(float x_pos, float y_pos, float angle,
   SDL_Texture *t = t_vec[frame_to_render];
 
   SDL_SetTextureColorMod(t, mod.r, mod.g, mod.b);
+  SDL_SetTextureAlphaMod(t, opacity * 255);
   SDL_RenderCopyEx(render::get().get_r(), t, NULL, &dest_r, angle, piv, SDL_FLIP_NONE);
 
   delete piv;

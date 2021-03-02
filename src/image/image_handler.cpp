@@ -13,11 +13,27 @@ image_handler::~image_handler() {
 void image_handler::draw_rotate_color(const std::string name, float x, float y,
     float frame_bump, float angle, const SDL_Color &c) 
 {
+  draw_rotate_color_opacity(name, x, y, frame_bump, angle, c, 1);
+}
+ 
+void image_handler::draw_rotate_color_opacity(const std::string name, float x, float y,
+    float frame_bump, float angle, const SDL_Color &c, float opacity) 
+{
   if(images.find(name) == images.end()) {
     //lazy initialization
     add_image(name);
   }
-  images.at(name).draw_rotate_color(x, y, angle, frame_bump, c);
+  images.at(name).draw_rotate_color_opacity(x, y, angle, frame_bump, c, opacity);
+}
+
+void image_handler::draw_rotate_color_outline(const std::string name, 
+    float x, float y, float frame_bump, float angle, 
+    const SDL_Color &c, bool outline_color, float opacity)
+{
+  SDL_Color nc = {255, 255, 255};
+  if(outline_color) { nc = c; }
+  draw_rotate_color_opacity(name + "_outline", x, y, frame_bump, angle, nc, opacity);
+  draw_rotate_color(name, x, y, frame_bump, angle, c);
 }
 
 void image_handler::draw_rotate(const std::string name, float x, float y, 

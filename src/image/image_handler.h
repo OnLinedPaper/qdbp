@@ -16,6 +16,10 @@ public:
   void draw_rotate(const std::string name, float x, float y, float frame_bump, float angle);
   void draw_rotate_color(const std::string name, float x, float y, 
       float frame_bump, float angle, const SDL_Color &c);
+  void draw_rotate_color_opacity(const std::string name, float x, float y, 
+      float frame_bump, float angle, const SDL_Color &c, float opacity);
+  void draw_rotate_color_outline(const std::string name, float x, float y,
+      float frame_bump, float angle, const SDL_Color &c, bool outline_color, float opacity);
   void draw_tile(const std::string name, float parallax);
 
   static void get_col_from_team(const std::string, SDL_Color &);
