@@ -80,6 +80,7 @@ void image::fill_t_vec(const std::string &name) {
 
   if(full_surf == NULL) {
     msg::print_warn("couldn't open image file \"" + xmlp::get().get_xml_string(name + "/file") + "\"!");
+    msg::print_alert("SDL_error: " + std::string(SDL_GetError()));
     msg::print_alert("(check imagedata.xml <" + name + "> - is the <file> path spelled right?)");
     msg::print_alert("(does " + xmlp::get().get_xml_string(name + "/file") + " exist?)");
 

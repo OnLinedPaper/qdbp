@@ -17,7 +17,7 @@
 <arrow>
   <file>resources/images/arrow.png</file>
   <dimensions>
-    <!--height of ONE SPRITE, not hte whole sheet-->
+    <!--height of ONE SPRITE, not the whole sheet-->
     <width>72</width>
     <height>72</height>
 
@@ -155,6 +155,45 @@
     <frame_delay>1</frame_delay>
   </dimensions>
 </debug_heart_fg>
+
+<debug_target>
+  <file>resources/images/debug_target.png</file>
+  <dimensions>
+    <width>256</width>
+    <height>256</height>
+
+    <pivot_x>0</pivot_x>
+    <pivot_y>0</pivot_y>
+    <frames>1</frames>
+    <frame_delay>1</frame_delay>
+  </dimensions>
+</debug_target>
+
+<fishbone>
+  <file>resources/images/fishbone.png</file>
+  <dimensions>
+    <width>128</width>
+    <height>256</height>
+
+    <pivot_x>0</pivot_x>
+    <pivot_y>0</pivot_y>
+    <frames>1</frames>
+    <frame_delay>1</frame_delay>
+  </dimensions>
+</fishbone>
+
+<fishbone_outline>
+  <file>resources/images/fishbone_outline.png</file>
+  <dimensions>
+    <width>128</width>
+    <height>256</height>
+
+    <pivot_x>0</pivot_x>
+    <pivot_y>0</pivot_y>
+    <frames>1</frames>
+    <frame_delay>1</frame_delay>
+  </dimensions>
+</fishbone_outline>
 
 <fork_ship>
   <file>resources/images/fork_ship.png</file>

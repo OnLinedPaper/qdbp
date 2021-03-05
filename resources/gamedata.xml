@@ -79,6 +79,128 @@
         <team>GREEN</team>
         <first_weapon>debug_weapon</first_weapon>
       </debug_killable>
+
+      <fishbone>
+        <health>
+          <health_max>350</health_max>
+          <health_segments>1</health_segments>
+          <health_regen_rate>.1</health_regen_rate>
+          <health_regen_heat>1</health_regen_heat>
+
+          <shield_segments>7</shield_segments>
+          <shield_regen_rate>.1</shield_regen_rate>
+          <shield_first_seg_size>0.6</shield_first_seg_size>
+        </health>
+        <heat>
+          <max_heat>400</max_heat>
+          <max_overheat>600</max_overheat>
+          <boost_heat_per_tick>3</boost_heat_per_tick>
+          <cool_per_tick>1</cool_per_tick>
+        </heat>
+        <movement>
+          <vel_cap>16</vel_cap>
+          <vel_overcap>27</vel_overcap>
+          <vel_decay>0.1</vel_decay>
+          <vel_accel>1</vel_accel>
+        </movement>
+        <textures>
+          <body>fishbone</body>
+        </textures>
+        <hitboxes>
+          <head_pickup>
+            <x_offset>0</x_offset>
+            <y_offset>75</y_offset>
+            <size>120</size>
+            <type>VACUUM</type>
+          </head_pickup>
+          <head_m_shield>
+            <x_offset>0</x_offset>
+            <y_offset>75</y_offset>
+            <size>60</size>
+            <type>SHIELD</type>
+          </head_m_shield>
+          <head_l_shield>
+            <x_offset>20</x_offset>
+            <y_offset>50</y_offset>
+            <size>30</size>
+            <type>SHIELD</type>
+          </head_l_shield>
+          <head_r_shield>
+            <x_offset>-20</x_offset>
+            <y_offset>50</y_offset>
+            <size>30</size>
+            <type>SHIELD</type>
+          </head_r_shield>
+          <core>
+            <x_offset>0</x_offset>
+            <y_offset>30</y_offset>
+            <size>30</size>
+            <type>WEAK</type>
+          </core>
+          <l_flank>
+            <x_offset>20</x_offset>
+            <y_offset>10</y_offset>
+            <size>30</size>
+            <type>HURT</type>
+          </l_flank>
+          <r_flank>
+            <x_offset>-20</x_offset>
+            <y_offset>10</y_offset>
+            <size>30</size>
+            <type>HURT</type>
+          </r_flank>
+          <gut>
+            <x_offset>0</x_offset>
+            <y_offset>-15</y_offset>
+            <size>40</size>
+            <type>HURT</type>
+          </gut>
+          <butt>
+            <x_offset>0</x_offset>
+            <y_offset>-50</y_offset>
+            <size>30</size>
+            <type>HURT</type>
+          </butt>
+          <l_m_tail>
+            <x_offset>20</x_offset>
+            <y_offset>-75</y_offset>
+            <size>35</size>
+            <type>ARMOR</type>
+          </l_m_tail>
+          <l_u_tail>
+            <x_offset>23</x_offset>
+            <y_offset>-50</y_offset>
+            <size>15</size>
+            <type>ARMOR</type>
+          </l_u_tail>
+          <l_d_tail>
+            <x_offset>24</x_offset>
+            <y_offset>-98</y_offset>
+            <size>20</size>
+            <type>ARMOR</type>
+          </l_d_tail>
+          <r_m_tail>
+            <x_offset>-20</x_offset>
+            <y_offset>-75</y_offset>
+            <size>35</size>
+            <type>ARMOR</type>
+          </r_m_tail>
+          <r_u_tail>
+            <x_offset>-23</x_offset>
+            <y_offset>-50</y_offset>
+            <size>15</size>
+            <type>ARMOR</type>
+          </r_u_tail>
+          <r_d_tail>
+            <x_offset>-24</x_offset>
+            <y_offset>-98</y_offset>
+            <size>20</size>
+            <type>ARMOR</type>
+          </r_d_tail>
+        </hitboxes>
+        <team>WHITE</team>
+       <first_weapon>debug_weapon</first_weapon>
+      </fishbone>
     </killable>
 
     <debug_heatable>
@@ -247,6 +369,10 @@
       <team>BROWN</team>
     </debug_stationary>
 
+    <debug_target>
+      
+    </debug_target>
+
     <weapons>
       <debug_weapon>
         <movement>
@@ -264,7 +390,7 @@
           <tick_lifespan>50</tick_lifespan>
           <dist_lifespan>1000</dist_lifespan>
           <inaccuracy>0.1</inaccuracy>
-          <constant_vel>20</constant_vel>
+          <constant_vel>200</constant_vel>
           <unique_type_id>0</unique_type_id>
         </shot>
         <damage>

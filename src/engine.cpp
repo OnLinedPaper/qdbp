@@ -47,7 +47,7 @@ try{
 
 
 
-  e_handler::get().create_player("heatable/killable/debug_killable");
+  e_handler::get().create_player("heatable/killable/fishbone");
 
   e_handler::get()
       .add_npe("hittable/debug_follower");
