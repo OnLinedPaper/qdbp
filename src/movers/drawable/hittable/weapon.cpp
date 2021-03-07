@@ -73,6 +73,13 @@ float weapon::get_delay_from_id(uint8_t id) {
   return(id_to_delay[id]);
 }
 
+void weapon::strike_target() {
+  remaining_pierce -= 1;
+  if(remaining_pierce < 0) {
+    destroy();
+  }
+}
+
 void weapon::preload_weapon_data() {
   std::string path = "/movers/hittable/weapons";
 
@@ -154,7 +161,8 @@ float weapon::fire(const vec2d start_pos, const vec2d start_vel,
   //reset its armor piercing
   remaining_pierce = armor_piercing * pierce_mod;
  
-  //bring this projectile into update and draw cycles
+  //bring this projectile into collision, update, and draw cycles
+  set_tangible(true);
   set_active(true);
 
   return id_to_heat[type_id] * heat_mod;

@@ -38,6 +38,9 @@ public:
     return !(type_id ^ this->type_id);
   }
 
+  void strike_target();
+  float get_damage() { return impact_damage * impact_mod; }
+
   void move_up() override {}
   void move_dn() override {}
   void move_lf() override {}

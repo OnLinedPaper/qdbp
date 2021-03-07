@@ -26,9 +26,12 @@ public:
 
   void calibrate_boxes();
 
+  bool is_tangible() const { return active && tangible; }
+  void set_tangible(bool b) { tangible = b; }
+
   virtual bool take_damage(float damage) { return false; }
 
-  virtual void destroy() override { drawable::destroy(); }
+  virtual void destroy() override { tangible = false; drawable::destroy(); }
   virtual void update() override;
 
 protected:
@@ -45,6 +48,8 @@ protected:
   std::vector<hy_box> shieldboxes;
   std::vector<hy_box> pickupboxes;
   std::vector<hy_box> vacuumboxes;
+
+  bool tangible;
 
 private:
 
