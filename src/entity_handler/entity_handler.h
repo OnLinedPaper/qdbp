@@ -62,6 +62,10 @@ public:
 
 private:
   e_handler();
+
+  bool check_category_collision(weapon *w, hittable *h, int type);
+
+
   killable *player;
   const std::string entity_xml_root = "/movers/";
 

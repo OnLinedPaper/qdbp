@@ -36,7 +36,9 @@ void e_handler::update_entities() {
 
   //update each entity - do this last in case others need
   //to be updated first
-  for(hittable *h : npe_all) { h->update(); }
+  for(hittable *h : npe_all) {
+    if(h->is_active()) { h->update(); }
+  }
 
   //check collision
   check_entity_collision();
@@ -45,23 +47,57 @@ void e_handler::update_entities() {
 //check entity collision - note that this may change
 //dramatically in the future, as it currently runs in O(n*m) time
 //where n is (player) projectiles and m is (hostile) entities
-//collision also does not currently differentiate based on team, and
-//only checks hitboxes vs hurtboxes
+
+//when checking for collision, check shields, then armor, then hit, then weak
+//SHIELD boxes (different from health-related shields) take 0 damage, ARMOR
+//takes 1/4 damage, HURT takes normal damage, WEAK takes 4x (values may change)
+
+//if a projectile has armor penetration, as soon as it collides with a type of
+//box, it immediately deals damage and checks the next weakest queue, bypassing
+//all remaining boxes in that queue. striking ARMOR will immediately also check
+//collision with HURT and then WEAK. each count of penetration punches deeper 
+//into the ship. 
+//(note: this usually is only noticable if the projectile is moving very fast)
+
+//collision also does not currently differentiate based on team
 //it also doesn't check for multiple collisions from the same box
 void e_handler::check_entity_collision() {
-  for(weapon *w : shot_all) {
-    if(w->is_active()) {
-      for(hittable *h : npe_all) {
-        if(h->is_active() && h->collides(
-          w, 
-          hitbox::TYPE_HITBOX,
-          hitbox::TYPE_HURTBOX
-        )) { w->destroy(); }
+  for(hittable *h : npe_all) {
+    if(h->is_tangible()) {
+      for(weapon *w : shot_all) {
+        //check SHIELD boxes
+        if(w->is_tangible() && check_category_collision(w, h, hitbox::TYPE_SHIELDBOX)) {
+            w->strike_target();
+            h->take_damage(0);  //still depletes shields
+        }
+        
+        //check ARMOR boxes
+        if(w->is_tangible() && check_category_collision(w, h, hitbox::TYPE_ARMORBOX)) {
+          w->strike_target();
+          h->take_damage(w->get_damage() * 0.25);  //1/4 damage on armor
+        }
+
+        //check HURT boxes
+        if(w->is_tangible() && check_category_collision(w, h, hitbox::TYPE_HURTBOX)) {
+          w->strike_target();
+          h->take_damage(w->get_damage());  //normal damage on hurt
+        }
+
+        //check WEAK boxes
+        if(w->is_tangible() && check_category_collision(w, h, hitbox::TYPE_WEAKBOX)) {
+          w->strike_target();
+          h->take_damage(w->get_damage() * 4);  //4x damage on armor
+        }
       }
     }
   }
 
   return;
+}
+
+bool e_handler::check_category_collision(weapon *w, hittable *h, int type) {
+  //check collision of a specific type of box
+  return(h->collides(w, hitbox::TYPE_HITBOX, type));
 }
 
 void e_handler::draw_entities() {
@@ -70,7 +106,9 @@ void e_handler::draw_entities() {
   for(weapon *w : shot_all) { 
     if(w->is_active()) { w->draw(); }
   }
-  for(hittable *h : npe_all) { h->draw(); }
+  for(hittable *h : npe_all) { 
+    if(h->is_active()) { h->draw(); }
+  }
 
   if(draw_debug_info) {
     player->draw_boxes();
@@ -101,6 +139,8 @@ void e_handler::add_npe(const std::string name,
       { h = new d_follower(entity_xml_root + name); }
     else if(!type.compare("d_hittable"))
       { h = new d_hittable(entity_xml_root + name); }
+    else if(!type.compare("d_killable"))
+      { h = new d_killable(entity_xml_root + name); }
     else {
       msg::print_warn("didn't recognize entity type \"" + type + 
           "\" while trying to spawn entity \"" + name + "\""
