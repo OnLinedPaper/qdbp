@@ -81,6 +81,7 @@
       </debug_killable>
 
       <fishbone>
+        <entity_type>d_killable</entity_type>
         <health>
           <health_max>350</health_max>
           <health_segments>1</health_segments>
@@ -386,16 +387,16 @@
         </textures>
         <shot>
           <heat_per_shot>8</heat_per_shot>
-          <tick_shot_delay>4</tick_shot_delay>
+          <tick_shot_delay>40</tick_shot_delay>
           <tick_lifespan>50</tick_lifespan>
-          <dist_lifespan>1000</dist_lifespan>
-          <inaccuracy>0.1</inaccuracy>
-          <constant_vel>200</constant_vel>
+          <dist_lifespan>400</dist_lifespan>
+          <inaccuracy>0.00</inaccuracy>
+          <constant_vel>300</constant_vel>
           <unique_type_id>0</unique_type_id>
         </shot>
         <damage>
           <impact_damage>4</impact_damage>
-          <armor_penetration>0</armor_penetration>
+          <armor_penetration>1</armor_penetration>
         </damage>
         <hitboxes>
           <hurty>
