@@ -74,7 +74,7 @@ void e_handler::check_entity_collision() {
         //check ARMOR boxes
         if(w->is_tangible() && check_category_collision(w, h, hitbox::TYPE_ARMORBOX)) {
           w->strike_target();
-          h->take_damage(w->get_damage() * 0.25);  //1/4 damage on armor
+          h->take_damage(w->get_damage() * 0.25);  //0.25x damage on armor
         }
 
         //check HURT boxes
@@ -86,7 +86,7 @@ void e_handler::check_entity_collision() {
         //check WEAK boxes
         if(w->is_tangible() && check_category_collision(w, h, hitbox::TYPE_WEAKBOX)) {
           w->strike_target();
-          h->take_damage(w->get_damage() * 4);  //4x damage on armor
+          h->take_damage(w->get_damage() * 4);  //4x damage on weak
         }
       }
     }
