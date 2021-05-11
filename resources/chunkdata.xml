@@ -1,11 +1,23 @@
 <chunk_types>
   <default>
     <in_bounds>true</in_bounds>
+    <spawns></spawns>
   </default>
 
   <default_impassible>
     <in_bounds>false</in_bounds>
+    <spawns></spawns>
   </default_impassible>
 
+  <debug_monster_closet>
+    <in_bounds>true</in_bounds>
+    <spawns>
+      <fishbone_spawn>
+        <name>fishbone</name>
+        <total_count>INF</total_count>
+        <alive_limit>1</alive_limit>
+      </fishbone_spawn>
+    </spawns>
+  </debug_monster_closet>
 
 </chunk_types>

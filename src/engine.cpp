@@ -47,7 +47,7 @@ try{
 
 
 
-  e_handler::get().create_player("heatable/killable/debug_killable");
+  e_handler::get().create_player("killable/debug_killable");
 
   e_handler::get()
       .add_npe("hittable/debug_follower");
@@ -58,7 +58,7 @@ try{
   e_handler::get()
       .add_npe("hittable/debug_stationary", {2500, 500}, {0, 125});
 
-  e_handler::get().add_npe("heatable/killable/fishbone", {500, 2500}, {0, 0});
+  e_handler::get().add_npe("killable/fishbone", {500, 2500}, {0, 0});
 
 //-    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -        
 
@@ -225,6 +225,9 @@ try{
 
 //==== DEBUG STUFF here =======================================================
 
+  if(e_handler::get().get_entity_count_by_name("fishbone") == 0) {
+    e_handler::get().add_npe("killable/fishbone", {500, 2300}, {0, 0});
+  }
 
 //==== GAME TICK here =========================================================
 
@@ -301,6 +304,9 @@ try{
 
   //preload weapon data, can't do this till the tree is built
   weapon::preload_weapon_data();
+
+  //prelaod entity ids and names, can't do this till the tree is built
+  e_handler::get().preload_entity_data();
 
   if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
     msg::print_error("couldn't init joysticks subsystem! SDL_Error: " + std::string(SDL_GetError()));
