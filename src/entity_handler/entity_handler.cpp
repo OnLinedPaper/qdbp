@@ -27,6 +27,55 @@ e_handler::~e_handler() {
 
 //==== GENERIC THINGS =========================================================
 
+void e_handler::preload_entity_data() {
+  std::string path = "";
+  std::vector<std::string> e_names;
+
+  //preload killables
+  path = "/movers/killable";
+  e_names = xmlparse::get().get_all_child_tags(path);
+  preload_specific_entities(path, e_names);
+
+  //preload heatables
+  path = "/movers/heatable";
+  e_names = xmlparse::get().get_all_child_tags(path);
+  preload_specific_entities(path, e_names);
+
+
+  //preload hittables
+  path = "/movers/hittable";
+  e_names = xmlparse::get().get_all_child_tags(path);
+  preload_specific_entities(path, e_names);
+
+  
+}
+
+void e_handler::preload_specific_entities(
+    const std::string &path, const std::vector<std::string> &e_names
+) {
+  for(std::string s : e_names) {
+    entity_name_and_id.insert(
+      {s, xmlparse::get().get_xml_string(
+        path + "/" + s + "/id"
+      )}
+    );
+  }
+}
+
+int e_handler::get_entity_count_by_name(const std::string &name) {
+  if(entity_count_by_name.find(entity_name_to_id(name)) 
+      == entity_count_by_name.end()) {
+    return 0;
+  }
+  else {
+    return(entity_count_by_name[name]);
+  }
+}
+
+const std::string &e_handler::entity_name_to_id(const std::string &name) {
+  return entity_name_and_id[name];
+}
+
 void e_handler::update_entities() {
   player->update();
 
@@ -37,7 +86,13 @@ void e_handler::update_entities() {
   //update each entity - do this last in case others need
   //to be updated first
   for(hittable *h : npe_all) {
-    if(h->is_active()) { h->update(); }
+    if(h->is_active()) { 
+      h->update(); 
+      if(!h->is_active()) {
+      //entity just died, remove it from counter
+      entity_count_by_name[h->get_id()] -= 1;
+      }
+    }
   }
 
   //check collision
@@ -153,7 +208,15 @@ void e_handler::add_npe(const std::string name,
     if(h) { 
       h->set_pos(pos);
       h->set_vel(vel);
-      npe_all.push_back(h); 
+      npe_all.push_back(h);
+
+      //increment entity count for tracking spawn limits
+      if(entity_count_by_name.find(h->get_id()) == entity_count_by_name.end()) {
+        entity_count_by_name.insert({h->get_id(), 1});
+      } 
+      else {
+        entity_count_by_name[h->get_id()] += 1;
+      }
     }
   }
 
