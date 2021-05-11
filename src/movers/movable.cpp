@@ -1,6 +1,7 @@
 #include "movable.h"
 
 movable::movable(std::string path) :
+  id(xmlparse::get().get_xml_string(path + "/id")),
   pos(0,0),
   last_pos(0,0),
   vel(0,0),

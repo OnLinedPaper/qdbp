@@ -15,6 +15,8 @@ public:
   movable(std::string path, const vec2d pos, const vec2d vel);
   virtual ~movable() = default;
 
+  const std::string &get_id() { return id; }
+
   void set_x(float x) { pos[0] = x; }
   void set_y(float y) { pos[1] = y; }
   const vec2d get_vel() const { return vel; }
@@ -41,6 +43,8 @@ public:
 
 protected:
   virtual void update();
+
+  std::string id;
 
   vec2d pos;
   vec2d last_pos;
