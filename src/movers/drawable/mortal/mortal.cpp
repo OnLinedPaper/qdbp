@@ -6,7 +6,11 @@
 //==== CONSTRUCTORS ===========================================================
 
 mortal::mortal(const std::string path) :
-  drawable(path, vec2d(0,0), vec2d(0,0)),
+  mortal(path, vec2d(0, 0), vec2d(0, 0)
+{ }
+
+mortal::mortal(const std::string path, const vec2d &p, const vec2d &v) :
+  drawable(path, p, v),
 
   tangible(true),
 
@@ -40,17 +44,29 @@ mortal::mortal(const std::string path) :
 
   //get regen rate - default to 0, meaning no shield regen
   s_regen_rate(xmlparse::get().safe_get_xml_float(
-    path + "/health/shield_regen_rate"
+    path + "/health/shield_regen_rate", 0
   )),
 
   //get first shield size - arbitrarily make first size 0.5?
+  //that'll make the first shield seg take half the bar
   first_s_size(xmlparse::get().safe_get_xml_float(
-    path + "/health/shield_first_seg_size"
-  )) 
-{ }
+    path + "/health/shield_first_seg_size", 0.5
+  )),
 
-mortal::mortal(const std::string path, const vec2d &p, const vec2d &v) :
-  drawable(path, p, v)
+  //weak boxes take 4x damage by default
+  weakbox_scale(xmlparse::get().safe_get_xml_float(
+    path + "/health/scaling/weak", 4
+  )),
+
+  //hurtboxes take 1x damage by default
+  hurtbox_scale(xmlparse::get().safe_get_xml_float(
+    path + "/health/scaling/hurt", 1
+  )),
+
+  //armor takes 1/4x damage by default
+  armorbox_scale(xmlparse::get().safe_get_xml_float(
+    path + "/health/scaling/hurt", 1
+  ))
 {
   //load all hitboxes into their vectors
   for(std::string p : xmlparse::get().get_all_child_tags(path + "/hitboxes")) {
