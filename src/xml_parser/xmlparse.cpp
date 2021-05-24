@@ -72,6 +72,19 @@ std::string xmlparse::get_xml_string(const std::string path) {
   }
 }
 
+//-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   - 
+
+std::string xmlparse::safe_get_xml_string(const std::string path, std::string def) {
+  try {
+    return get_xml_string(path);
+  }
+  catch (std::string e) {
+    msg::print_good("==== safe mode: returning \"" + def + "\" ====");
+    return def;
+  }
+}
+
+
 //============================================================================
 
 int xmlparse::get_xml_int(const std::string path) {
@@ -86,6 +99,18 @@ int xmlparse::get_xml_int(const std::string path) {
     msg::print_alert("value: " + retval);
     msg::print_alert("bad tag path: " + path);
     throw error;
+  }
+}
+
+//-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   - 
+
+int xmlparse::safe_get_xml_int(const std::string path, int def) {
+  try {
+    return get_xml_int(path);
+  }
+  catch (std::string e) {
+    msg::print_good("==== safe mode: returning " + std::to_string(def) + " ====");
+    return def;
   }
 }
 
@@ -106,15 +131,15 @@ float xmlparse::get_xml_float(const std::string path) {
   }
 }
 
-//============================================================================
+//-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   - 
 
-float xmlparse::safe_get_xml_float(const std::string path) {
+float xmlparse::safe_get_xml_float(const std::string path, float def) {
   try {
     return get_xml_float(path);
   }
   catch (std::string e) {
-    msg::print_good("==== safe mode: returning 0 ====");
-    return 0;
+    msg::print_good("==== safe mode: returning " + std::to_string(def) + " ====");
+    return def;
   }
 }
 
@@ -140,6 +165,21 @@ bool xmlparse::get_xml_bool(const std::string path) {
     throw error;
   }
 }
+
+//-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   - 
+
+bool xmlparse::safe_get_xml_bool(const std::string path, bool def) {
+  try {
+    return get_xml_bool(path);
+  }
+  catch (std::string e) {
+    msg::print_good("==== safe mode: returning " + std::to_string(def) + " ====");
+    return def;
+  }
+}
+
+
+//============================================================================
 
 bool xmlparse::check_path(const std::string path, bool send_alert) const {
   return(root->recursive_check_path(path, send_alert));

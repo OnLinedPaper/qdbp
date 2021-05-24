@@ -21,11 +21,18 @@ public:
   std::vector<std::string> get_all_child_tags(const std::string path) const;
   bool check_path(const std::string path, bool send_alert) const;
 
+
   std::string get_xml_string(const std::string path);
+  std::string safe_get_xml_string(const std::string path, std::string def = "");
+
   int get_xml_int(const std::string path);
+  int safe_get_xml_int(const std::string path, int def = 0);
+
   float get_xml_float(const std::string path);
-  float safe_get_xml_float(const std::string path);
+  float safe_get_xml_float(const std::string path, float def = 0);
+
   bool get_xml_bool(const std::string path);
+  bool safe_get_xml_bool(const std::string path, bool def = false);
 
 private:
   //singleton
