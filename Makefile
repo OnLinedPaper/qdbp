@@ -17,16 +17,16 @@ WEXE= qdbp.exe
 SPECIAL_LFLAGS = #-I$(DIR)/lib -L$(DIR)/lib -Wl,-R,$(DIR)/lib -Wl,--verbose
 
 
-DEPS = background.h chunk.h debug_drawable.h debug_follower.h debug_heatable.h debug_hittable.h debug_killable.h drawable.h engine.h entity_handler.h heatable.h hitbox.h hitline.h hittable.h hybrid_box.h image.h image_handler.h killable.h map.h map_handler.h message.h movable.h rect2d.h render.h text.h text_handler.h timeframe.h vec2d.h viewport.h weapon.h xmlnode.h xmlparse.h 
+DEPS = background.h chunk.h debug_drawable.h debug_follower.h debug_heatable.h debug_hittable.h debug_killable.h drawable.h engine.h entity_handler.h heatable.h hitbox.h hitline.h hittable.h hybrid_box.h image.h image_handler.h killable.h map.h map_handler.h message.h mortal.h movable.h rect2d.h render.h text.h text_handler.h timeframe.h vec2d.h viewport.h weapon.h xmlnode.h xmlparse.h 
 
-OBJS:= engine.o render.o movable.o xmlparse.o xmlnode.o vec2d.o debug_drawable.o viewport.o image.o timeframe.o chunk.o map.o message.o image_handler.o background.o rect2d.o debug_hittable.o drawable.o hittable.o hitbox.o hitline.o hybrid_box.o map_handler.o debug_follower.o entity_handler.o text_handler.o text.o heatable.o debug_heatable.o weapon.o killable.o debug_killable.o
+OBJS:= engine.o render.o movable.o xmlparse.o xmlnode.o vec2d.o debug_drawable.o viewport.o image.o timeframe.o chunk.o map.o message.o image_handler.o background.o rect2d.o debug_hittable.o drawable.o hittable.o hitbox.o hitline.o hybrid_box.o map_handler.o debug_follower.o entity_handler.o text_handler.o text.o heatable.o debug_heatable.o weapon.o killable.o debug_killable.o mortal.o
 WOBJS:= $(addprefix $(WBDIR)/,$(OBJS))
 DOBJS:= $(addprefix $(DBDIR)/,$(OBJS))
 OBJS:= $(addprefix $(BDIR)/,$(OBJS))
 
-SRCS = engine.cpp render.cpp movable.cpp xmlparse.cpp xmlnode.cpp vec2d.cpp debug_drawable.cpp viewport.cpp image.cpp timeframe.cpp chunk.cpp map.cpp message.cpp image_handler.cpp background.cpp rect2d.cpp debug_hittable.cpp drawable.cpp hittable.cpp hitbox.cpp hitline.cpp hybrid_box.cpp map_handler.cpp debug_follower.cpp entity_handler.cpp text_handler.cpp text.cpp heatable.cpp debug_heatable.cpp weapon.cpp killable.cpp debug_killable.cpp
+SRCS = engine.cpp render.cpp movable.cpp xmlparse.cpp xmlnode.cpp vec2d.cpp debug_drawable.cpp viewport.cpp image.cpp timeframe.cpp chunk.cpp map.cpp message.cpp image_handler.cpp background.cpp rect2d.cpp debug_hittable.cpp drawable.cpp hittable.cpp hitbox.cpp hitline.cpp hybrid_box.cpp map_handler.cpp debug_follower.cpp entity_handler.cpp text_handler.cpp text.cpp heatable.cpp debug_heatable.cpp weapon.cpp killable.cpp debug_killable.cpp mortal.cpp
 
-PATHS = . movers renders vec2d xml_parser movers/drawable viewport image timeframe environment/chunk environment/map utils environment/background rect2d movers/drawable/hittable rect2d/hitbox entity_handler text movers/drawable/hittable/heatable movers/drawable/hittable/heatable/killable
+PATHS = . movers renders vec2d xml_parser movers/drawable viewport image timeframe environment/chunk environment/map utils environment/background rect2d movers/drawable/hittable rect2d/hitbox entity_handler text movers/drawable/hittable/heatable movers/drawable/hittable/heatable/killable movers/drawable/mortal movers/drawable/mortal/debug_entities
 VPATH = $(addprefix src/,$(PATHS))
 
 
