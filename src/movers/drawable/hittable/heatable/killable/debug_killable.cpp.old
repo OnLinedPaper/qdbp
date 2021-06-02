@@ -3,7 +3,7 @@
 d_killable::d_killable(const std::string path) :
   killable(path),
   weapon(
-    "/movers/hittable/weapons/" + xmlparse::get().get_xml_string(path + "/first_weapon"
+    "/movers/weapons/" + xmlparse::get().get_xml_string(path + "/first_weapon"
   ))
 
 { }

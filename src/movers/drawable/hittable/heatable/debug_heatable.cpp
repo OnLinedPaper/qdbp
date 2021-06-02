@@ -6,7 +6,7 @@
 d_heatable::d_heatable(const std::string path) :
   heatable(path),
   weapon(
-    "/movers/hittable/weapons/" + xmlparse::get().get_xml_string(path + "/first_weapon"
+    "/movers/weapons/" + xmlparse::get().get_xml_string(path + "/first_weapon"
   ))
 { }
 

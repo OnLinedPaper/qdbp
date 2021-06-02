@@ -81,7 +81,7 @@ void weapon::strike_target() {
 }
 
 void weapon::preload_weapon_data() {
-  std::string path = "/movers/hittable/weapons";
+  std::string path = "/movers/weapons";
 
   //get all weapon names
   std::vector<std::string> weap_names = xmlparse::get().get_all_child_tags(path);
