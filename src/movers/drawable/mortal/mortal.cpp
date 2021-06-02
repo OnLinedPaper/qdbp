@@ -5,11 +5,11 @@
 
 //==== CONSTRUCTORS ===========================================================
 
-mortal::mortal(const std::string path) :
-  mortal(path, vec2d(0, 0), vec2d(0, 0)
+mortal::mortal(const std::string &path) :
+  mortal(path, vec2d(0, 0), vec2d(0, 0))
 { }
 
-mortal::mortal(const std::string path, const vec2d &p, const vec2d &v) :
+mortal::mortal(const std::string &path, const vec2d &p, const vec2d &v) :
   drawable(path, p, v),
 
   tangible(true),
@@ -114,11 +114,13 @@ mortal::mortal(const std::string path, const vec2d &p, const vec2d &v) :
 
 //==== GENERAL TRAITS =========================================================
 
-void mortal::update() {
-  drawable::update();
-
-  //update the hitboxes
-  mortal::update_boxes();
+//hotboxes requrie recalibration if an entity moves to a new position, due to
+//their trailing "lines". (if a box moves too fast, it trails a line behind it
+//to aid collision; the recalibration prevents this line from causing issues)
+void mortal::set_pos(float x, float y) {
+  movable::set_pos(x, y);
+  update_boxes();
+  calibrate_boxes();
 }
 
 void mortal::draw() const {
@@ -129,12 +131,86 @@ void mortal::draw() const {
 }
 
 void mortal::draw_boxes() const {
-  for(std::vector<hy_box> &h : *v) {
-    h.draw();
+  for(std::vector<hy_box> *v : boxes) {
+    for(hy_box h : *v) {
+      h.draw();
+    }
   }
 }
 
+void mortal::update() {
+  drawable::update();
+
+  //update the hitboxes
+  mortal::update_boxes();
+}
+
 //==== HITBOX AND COLLISION ===================================================
+
+//each of these collision functions checks one incoming collision-capable 
+//object against all of this entity's collision-capable objects of a specific
+//type, where "type" means a type of hitbox, i.e. hurtbox, armorbox, etc
+
+//check this entity against a single box
+bool mortal::collides(const hitbox &in_box, int type) const {
+  std::vector<hy_box> boxes = get_box_ref(type);
+  for(hy_box h : boxes) { if(h.collides(in_box)) { return true; } }
+  
+  return false;
+}
+
+//check this entity against a single line
+bool mortal::collides(const hitline &in_line, int type) const {
+  std::vector<hy_box> boxes = get_box_ref(type);
+  for(hy_box h : boxes) { if(h.collides(in_line)) { return true; } }
+  
+  return false;
+}
+
+//check this entity against a single box and possibly also a single line
+bool mortal::collides(const hy_box &in_hybox, int type) const {
+  std::vector<hy_box> boxes = get_box_ref(type);
+  for(hy_box h : boxes) { if(h.collides(in_hybox)) { return true; } }
+
+  return false;
+}
+
+//check all collision-capable objects of one type of entity with all
+//collision-capable objects of this entity, specifying the type of both
+bool mortal::collides(const mortal *other, int other_type, int type) const {
+  std::vector<hy_box> boxes = get_box_ref(type);
+  for(hy_box h : boxes) { if(other->collides(h, other_type)) { return true; } }
+
+  return false;
+}
+
+std::vector<hy_box> const &mortal::get_box_ref(int type) const {
+  if(type == hitbox::TYPE_HITBOX) {
+    return(hitboxes);
+  }
+  else if(type == hitbox::TYPE_HURTBOX) {
+    return(hurtboxes);
+  }
+  else if(type == hitbox::TYPE_WEAKBOX) {
+    return(weakboxes);
+  }
+  else if(type == hitbox::TYPE_ARMORBOX) {
+    return(armorboxes);
+  }
+  else if(type == hitbox::TYPE_SHIELDBOX) {
+    return(shieldboxes);
+  }
+  else if(type == hitbox::TYPE_PICKUPBOX) {
+    return(pickupboxes);
+  }
+  else if(type == hitbox::TYPE_VACUUMBOX) {
+    return(vacuumboxes);
+  }
+  else {
+    msg::print_error("requested invalid hitbox type!");
+    throw("bad box type");
+  } 
+}
 
 void mortal::calibrate_boxes() {
   //after creating / recycling a hittable, the boxes are recalibrated to 
@@ -161,3 +237,30 @@ void mortal::update_boxes() {
 }
 
 //==== DAMAGE AND HEALTH ======================================================
+
+bool mortal::take_damage(float damage, int box_type_hit) {
+  if(damage < 0 || tangible == false) { return false; }
+
+  if(box_type_hit == hitbox::TYPE_SHIELDBOX) {
+    return false;
+  }  
+  else if(box_type_hit == hitbox::TYPE_WEAKBOX) {
+    curr_health -= damage * weakbox_scale;
+    return true;
+  }
+  else if(box_type_hit == hitbox::TYPE_HURTBOX) {
+    curr_health -= damage * hurtbox_scale;
+    return true;
+  }
+  else if(box_type_hit == hitbox::TYPE_ARMORBOX) {
+    curr_health -= damage * armorbox_scale;
+    return true;
+  }
+
+  return true;
+}
+
+void mortal::perish() {
+  tangible = false;
+  active = false;
+}

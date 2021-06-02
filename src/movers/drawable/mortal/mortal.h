@@ -38,7 +38,7 @@ public:
   //takes an incoming box, line, hybrid, or even mortal, and checks for a 
   //collision with a specific type of hitbox
   virtual bool collides(const hitbox &h, int type) const;
-  virtual bool collides(const hitline &l, type) const;
+  virtual bool collides(const hitline &l, int type) const;
   virtual bool collides(const hy_box &hy, int type) const;
   virtual bool collides(const mortal *other, int other_type, int this_type) const;
 
@@ -142,6 +142,8 @@ protected:
   //initial spawn and later on during gameplay. in practice this means the 
   //player and some enemies can adjust how resistant they are to damage, and
   //more powerful enemies can scale their damage resistance based on the player
+
+  //TODO: add these to an array for reduced code in take_damage?
   float weakbox_scale = 4;  //usually 4x damage in a weak box
   float hurtbox_scale = 1;  //usually 1x damage in a hurt box
   float armorbox_scale = .25;  //usually 1/4x damage in an armor box
