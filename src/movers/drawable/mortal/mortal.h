@@ -43,6 +43,7 @@ public:
   virtual bool collides(const mortal *other, int other_type, int this_type) const;
 
   bool is_tangible() const { return active && tangible; }
+  void set_tangible(bool b) { tangible = b; }
 
   void calibrate_boxes();
 
