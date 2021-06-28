@@ -2,10 +2,8 @@
 #define ENTITY_HANDLER_H_
 
 #include "src/movers/drawable/drawable.h"
-#include "src/movers/drawable/hittable/heatable/heatable.h"
-#include "src/movers/drawable/hittable/heatable/killable/killable.h"
-#include "src/movers/drawable/hittable/weapon.h"
-#include "src/movers/drawable/hittable/debug_hittable.h"
+#include "src/movers/drawable/mortal/mortal.h"
+#include "src/movers/drawable/mortal/weapon.h"
 #include <vector>
 #include <unordered_map>
 
@@ -46,15 +44,13 @@ public:
   const vec2d 	get_player_pos();
   const vec2d 	get_player_vel();
 
-  //TODO: this is for debugging ONLY, do NOT use it in final code
-  killable *	DEBUG_get_player() { return player; }
-
 //==== GENERIC THINGS ==========================================================
 
   void set_draw_debug_info(bool b) { draw_debug_info = b; }
   bool get_draw_debug_info() const { return draw_debug_info; }
 
   void preload_entity_data();
+  int get_entity_count_by_id(const std::string &);
   int get_entity_count_by_name(const std::string &);
   const std::string &entity_name_to_id(const std::string &);
 
@@ -68,16 +64,16 @@ public:
 private:
   e_handler();
 
-  bool check_category_collision(weapon *w, hittable *h, int type);
+  bool check_category_collision(weapon *w, mortal *h, int type);
   void preload_specific_entities(const std::string &, const std::vector<std::string> &);
 
-  killable *player;
+  mortal *player;
   const std::string entity_xml_root = "/movers/";
 
-  std::vector<hittable *> npe_all;
+  std::vector<mortal *> npe_all;
   std::vector<weapon *> shot_all;
 
-  std::unordered_map<std::string, int> entity_count_by_name;
+  std::unordered_map<std::string, int> entity_count_by_id;
   std::unordered_map<std::string, std::string> entity_name_and_id;
 
   bool draw_debug_info;

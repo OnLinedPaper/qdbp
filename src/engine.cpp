@@ -10,7 +10,7 @@
 #include "src/utils/message.h"
 #include "src/entity_handler/entity_handler.h"
 #include "src/text/text_handler.h"
-#include "src/movers/drawable/hittable/weapon.h"
+#include "src/movers/drawable/mortal/weapon.h"
 
 #include <SDL2/SDL_ttf.h>
 #include "src/text/text.h"
@@ -158,7 +158,7 @@ try{
         //debugging section
         if(debug_mode) {
           if(keystate[SDL_SCANCODE_X]) {
-            e_handler::get().DEBUG_get_player()->take_damage(20);
+            //e_handler::get().DEBUG_get_player()->take_damage(20);
           }
         }
 
@@ -225,8 +225,10 @@ try{
 
 //==== DEBUG STUFF here =======================================================
 
-  if(e_handler::get().get_entity_count_by_name("fishbone") == 0) {
-    e_handler::get().add_npe("killable/fishbone", {500, 2300}, {0, 0});
+//  std::cout << e_handler::get().get_entity_count_by_name("fishbone") << std::endl;
+  int d_i = 1;
+  if(e_handler::get().get_entity_count_by_name("fishbone") < 1) {
+    e_handler::get().add_npe("killable/fishbone", {500, 2500 - 250 * d_i}, {0, 0});
   }
 
 //==== GAME TICK here =========================================================

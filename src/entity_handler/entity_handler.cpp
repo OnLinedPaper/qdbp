@@ -1,8 +1,8 @@
 #include "entity_handler.h"
 #include "src/environment/map/map_handler.h"
-#include "src/movers/drawable/hittable/heatable/killable/debug_killable.h"
-#include "src/movers/drawable/hittable/heatable/debug_heatable.h"
-#include "src/movers/drawable/hittable/debug_follower.h"
+#include "src/movers/drawable/mortal/debug_entities/debug_killable.h"
+#include "src/movers/drawable/mortal/debug_entities/debug_follower.h"
+#include "src/movers/drawable/mortal/debug_entities/debug_hittable.h"
 #include "src/utils/message.h"
 
 //==== CONSTANT THINGS ========================================================
@@ -21,7 +21,7 @@ e_handler::e_handler() :
 e_handler::~e_handler() {
   delete player;
 
-  for(hittable *h : npe_all) { delete h; h = NULL; }
+  for(mortal *h : npe_all) { delete h; h = NULL; }
   for(weapon *w : shot_all) { delete w; w = NULL; }
 }
 
@@ -47,7 +47,10 @@ void e_handler::preload_entity_data() {
   e_names = xmlparse::get().get_all_child_tags(path);
   preload_specific_entities(path, e_names);
 
-  
+ 
+  for(const auto & [key, value] : entity_name_and_id) {
+    std::cout << key << " " << value << std::endl;
+  } 
 }
 
 void e_handler::preload_specific_entities(
@@ -63,17 +66,27 @@ void e_handler::preload_specific_entities(
 }
 
 int e_handler::get_entity_count_by_name(const std::string &name) {
-  if(entity_count_by_name.find(entity_name_to_id(name)) 
-      == entity_count_by_name.end()) {
+  return get_entity_count_by_id(entity_name_to_id(name));
+}
+
+int e_handler::get_entity_count_by_id(const std::string &id) {
+  if(entity_count_by_id.find(id) 
+      == entity_count_by_id.end()) {
     return 0;
   }
   else {
-    return(entity_count_by_name[name]);
+    return(entity_count_by_id[id]);
   }
 }
 
 const std::string &e_handler::entity_name_to_id(const std::string &name) {
-  return entity_name_and_id[name];
+  if(entity_name_and_id.find(name) != entity_name_and_id.end()) {
+    return entity_name_and_id[name];
+  }
+  else {
+    //TODO: proper error handling here for bad data
+    throw("S-H-I-T!");
+  }
 }
 
 void e_handler::update_entities() {
@@ -85,12 +98,12 @@ void e_handler::update_entities() {
 
   //update each entity - do this last in case others need
   //to be updated first
-  for(hittable *h : npe_all) {
+  for(mortal *h : npe_all) {
     if(h->is_active()) { 
       h->update(); 
       if(!h->is_active()) {
       //entity just died, remove it from counter
-      entity_count_by_name[h->get_id()] -= 1;
+      entity_count_by_id[h->get_id()] -= 1;
       }
     }
   }
@@ -116,32 +129,33 @@ void e_handler::update_entities() {
 
 //collision also does not currently differentiate based on team
 //it also doesn't check for multiple collisions from the same box
+
+//note that the EFFECT of the collision is left up to the weapon itself, to
+//accommodate a wider variety of effects than just "oh it takes damage now".
+//this may break encapsulation a bit, but i currently believe the benefits 
+//will in the long run outweigh the risks.
 void e_handler::check_entity_collision() {
-  for(hittable *h : npe_all) {
+  for(mortal *h : npe_all) {
     if(h->is_tangible()) {
       for(weapon *w : shot_all) {
         //check SHIELD boxes
         if(w->is_tangible() && check_category_collision(w, h, hitbox::TYPE_SHIELDBOX)) {
-            w->strike_target();
-            h->take_damage(0);  //still depletes shields
+            w->strike_target(*h, hitbox::TYPE_SHIELDBOX);
         }
         
         //check ARMOR boxes
         if(w->is_tangible() && check_category_collision(w, h, hitbox::TYPE_ARMORBOX)) {
-          w->strike_target();
-          h->take_damage(w->get_damage() * 0.25);  //0.25x damage on armor
+          w->strike_target(*h, hitbox::TYPE_ARMORBOX);
         }
 
         //check HURT boxes
         if(w->is_tangible() && check_category_collision(w, h, hitbox::TYPE_HURTBOX)) {
-          w->strike_target();
-          h->take_damage(w->get_damage());  //normal damage on hurt
+          w->strike_target(*h, hitbox::TYPE_HURTBOX);
         }
 
         //check WEAK boxes
         if(w->is_tangible() && check_category_collision(w, h, hitbox::TYPE_WEAKBOX)) {
-          w->strike_target();
-          h->take_damage(w->get_damage() * 4);  //4x damage on weak
+          w->strike_target(*h, hitbox::TYPE_WEAKBOX);
         }
       }
     }
@@ -150,7 +164,7 @@ void e_handler::check_entity_collision() {
   return;
 }
 
-bool e_handler::check_category_collision(weapon *w, hittable *h, int type) {
+bool e_handler::check_category_collision(weapon *w, mortal *h, int type) {
   //check collision of a specific type of box
   return(h->collides(w, hitbox::TYPE_HITBOX, type));
 }
@@ -161,13 +175,13 @@ void e_handler::draw_entities() {
   for(weapon *w : shot_all) { 
     if(w->is_active()) { w->draw(); }
   }
-  for(hittable *h : npe_all) { 
+  for(mortal *h : npe_all) { 
     if(h->is_active()) { h->draw(); }
   }
 
   if(draw_debug_info) {
     player->draw_boxes();
-    for(hittable *h : npe_all) { h->draw_boxes(); }
+    for(mortal *h : npe_all) { h->draw_boxes(); }
     for(weapon *w : shot_all) { w->draw_boxes(); }
   }
 }
@@ -185,24 +199,36 @@ void e_handler::add_npe(const std::string name,
     //shouldn't really be called from the engine, it should be
     //used "behind the scenes" for loading from a map or the like
 
-    hittable *h = NULL;
+    mortal *h = NULL;
     std::string type = xmlparse::get().get_xml_string(
       entity_xml_root + name + "/entity_type"
     );
 
-    if(!type.compare("d_follower"))
-      { h = new d_follower(entity_xml_root + name); }
-    else if(!type.compare("d_hittable"))
-      { h = new d_hittable(entity_xml_root + name); }
-    else if(!type.compare("d_killable"))
-      { h = new d_killable(entity_xml_root + name); }
-    else {
-      msg::print_warn("didn't recognize entity type \"" + type + 
-          "\" while trying to spawn entity \"" + name + "\""
-      );
-      msg::print_alert(
-          "tried to check at " + entity_xml_root + name + "/entity_type"
-      );
+    for(mortal *hi : npe_all) {
+      if(type.compare(hi->get_type()) && !hi->is_active()) {
+        //found an inactive instance of the entity type we want
+        h = hi;
+        break;
+      }
+    }
+
+    if(!h) {
+      //couldn't find an instance of this hittable that exists already
+
+      if(!type.compare("d_follower"))
+        { h = new d_follower(entity_xml_root + name); }
+      else if(!type.compare("d_hittable"))
+        { h = new d_hittable(entity_xml_root + name); }
+      else if(!type.compare("d_killable"))
+        { h = new d_killable(entity_xml_root + name); }
+      else {
+        msg::print_warn("didn't recognize entity type \"" + type + 
+            "\" while trying to spawn entity \"" + name + "\""
+        );
+        msg::print_alert(
+            "tried to check at " + entity_xml_root + name + "/entity_type"
+        );
+      }
     }
 
     if(h) { 
@@ -211,11 +237,11 @@ void e_handler::add_npe(const std::string name,
       npe_all.push_back(h);
 
       //increment entity count for tracking spawn limits
-      if(entity_count_by_name.find(h->get_id()) == entity_count_by_name.end()) {
-        entity_count_by_name.insert({h->get_id(), 1});
+      if(entity_count_by_id.find(h->get_id()) == entity_count_by_id.end()) {
+        entity_count_by_id.insert({h->get_id(), 1});
       } 
       else {
-        entity_count_by_name[h->get_id()] += 1;
+        entity_count_by_id[h->get_id()] += 1;
       }
     }
   }
