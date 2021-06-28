@@ -16,6 +16,7 @@ public:
   virtual ~movable() = default;
 
   const std::string &get_id() { return id; }
+  const std::string &get_type() { return entity_type; }
 
   void set_x(float x) { pos[0] = x; }
   void set_y(float y) { pos[1] = y; }
@@ -33,11 +34,6 @@ public:
   bool is_active() const { return active; }
   void set_active(bool b) { active = b; }
 
-  virtual void move_up() = 0;
-  virtual void move_dn() = 0;
-  virtual void move_lf() = 0;
-  virtual void move_rt() = 0;
-
   virtual void destroy() { set_active(false); };
   virtual void draw() const;
 
@@ -45,6 +41,7 @@ protected:
   virtual void update();
 
   std::string id;
+  std::string entity_type;
 
   vec2d pos;
   vec2d last_pos;

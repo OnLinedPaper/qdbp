@@ -2,6 +2,7 @@
 
 movable::movable(std::string path) :
   id(xmlparse::get().get_xml_string(path + "/id")),
+  entity_type(xmlparse::get().get_xml_string(path + "/entity_type")),
   pos(0,0),
   last_pos(0,0),
   vel(0,0),
