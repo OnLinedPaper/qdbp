@@ -1,5 +1,6 @@
 #include "entity_handler.h"
 #include "src/environment/map/map_handler.h"
+#include "src/movers/drawable/mortal/debug_entities/debug_player.h"
 #include "src/movers/drawable/mortal/debug_entities/debug_killable.h"
 #include "src/movers/drawable/mortal/debug_entities/debug_follower.h"
 #include "src/movers/drawable/mortal/debug_entities/debug_hittable.h"
@@ -249,7 +250,7 @@ void e_handler::add_npe(const std::string name,
 //==== PLAYER THINGS ==========================================================
 
 void e_handler::create_player(std::string s) {
-  player = new d_killable(entity_xml_root + s);
+  player = new d_player(entity_xml_root + s);
   player->set_pos(map_h::get().get_start_pos());
 }
 
