@@ -23,8 +23,8 @@ public:
   void draw() const override;
   virtual void update() override;
 
-  void fire(const vec2d start_pos, const vec2d start_vel,
-    const vec2d angle,
+  void fire(const vec2d &start_pos, const vec2d &start_vel,
+    const vec2d &angle,
     float heat_mod, float life_ms_mod,
     float life_dist_mod, float inacc_mod,
     float vel_mod, int pierce_mod,

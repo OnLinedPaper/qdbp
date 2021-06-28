@@ -22,19 +22,20 @@ weapon::weapon(const std::string path) :
   inaccuracy(xmlparse::get().get_xml_float(
     path + "/shot/inaccuracy"
   )),
-  life_tick_mod(1),
-  life_dist_mod(1),
   con_vel(xmlparse::get().get_xml_float(
     path + "/shot/constant_vel"
   )),
   impact_damage(xmlparse::get().get_xml_float(
     path + "/damage/impact_damage"
   )),
-  impact_mod(1),
-  armor_piercing(xmlparse::get().get_xml_int(
+  armor_pierce(xmlparse::get().get_xml_int(
     path + "/damage/armor_penetration"
   )),
-  armor_pierce_mod(armor_piercing)
+  life_tick_mod(1),
+  dist_tick_mod(1),
+  impact_damage_mod(1),
+  armor_pierce_mod(armor_pierce)
+{ }
 
 weapon::~weapon()
 { }
@@ -63,13 +64,15 @@ float weapon::get_delay_from_id(uint8_t id) {
         ("weapon with id " + std::to_string(id) + " has no delay value assigned to it")
     );
   }
+
+  return(id_to_delay[id]);
 }
 
 void weapon::strike_target(mortal &target, int box_type) {
   //depends on weapon - the vast majority will just do damage, but more exotic
   //effects like healing or slowdowns may apply
 
-  target->take_damage(damage * damage_mod, box_type);
+  target.take_damage(impact_damage * impact_damage_mod, box_type);
   armor_pierce_mod -= 1;
   if(armor_pierce_mod < 0) {
     this->perish();
@@ -148,14 +151,14 @@ void weapon::fire(
   set_vel(start_vel + add_vel);
 
   //save these for updating projectile
-  this->life_tick_mod = tick_lifespan * life_tick_mod;
-  this->life_dist_mod = dist_lifespan * life_dist_mod;
+  this->life_tick_mod = life_tick * life_tick_mod;
+  this->dist_tick_mod = life_dist * life_dist_mod;
 
   //save the color
   set_col(c);
 
   //reset armor piercing
-  armor_pierce_mod = armor_piercing + pierce_mod;
+  armor_pierce_mod = armor_pierce + pierce_mod;
 
   //bring projectile into collision, update, and draw cycles
   set_tangible(true);
@@ -166,7 +169,7 @@ void weapon::fire(
 
 void weapon::update() {
   //check to see if projectile went too far or lived too long
-  if(life_tick_mod <= 0 || life_dist_mod <= 0) {
+  if(life_tick_mod <= 0 || dist_tick_mod <= 0) {
     this->perish();
   }
   else {
@@ -178,6 +181,6 @@ void weapon::update() {
         t_frame::get().get_elapsed_t() * t_frame::get().t_adjust();
 
     //subtract distance, which has already had any lag factored in
-    life_dist_mod -= vel.magnitude();
+    dist_tick_mod -= vel.magnitude();
   }
 }
