@@ -18,6 +18,7 @@
 
   <heatable>
     <debug_heatable>
+      <id>d_0006</id>
       <heat>
         <max_heat>400</max_heat>
         <max_overheat>600</max_overheat>
@@ -101,6 +102,7 @@
     </debug_follower>
 
     <debug_hittable>
+      <id>d_0007</id>
       <movement>
         <vel_cap>20</vel_cap>
         <vel_decay>0.1</vel_decay>
@@ -185,51 +187,12 @@
       <team>BROWN</team>
     </debug_stationary>
 
-    <debug_target>
-      
-    </debug_target>
-
-    <weapons>
-      <debug_weapon>
-        <id>d_0005</id>
-        <movement>
-          <vel_cap>-1</vel_cap>
-          <vel_overcap>-1</vel_overcap>
-          <vel_decay>0</vel_decay>
-          <vel_accel>0</vel_accel>
-        </movement>
-        <textures>
-          <body>beam</body>
-        </textures>
-        <shot>
-          <heat_per_shot>8</heat_per_shot>
-          <tick_shot_delay>40</tick_shot_delay>
-          <tick_lifespan>50</tick_lifespan>
-          <dist_lifespan>400</dist_lifespan>
-          <inaccuracy>0.00</inaccuracy>
-          <constant_vel>300</constant_vel>
-          <unique_type_id>0</unique_type_id>
-        </shot>
-        <damage>
-          <impact_damage>4</impact_damage>
-          <armor_penetration>1</armor_penetration>
-        </damage>
-        <hitboxes>
-          <hurty>
-            <x_offset>0</x_offset>
-            <y_offset>0</y_offset>
-            <size>70</size>
-            <type>HIT</type>
-          </hurty>
-        </hitboxes>
-        <team>WHITE</team>
-      </debug_weapon>
-    </weapons>
-  </hittable>
+ </hittable>
 
   <killable>
     <debug_killable>
       <id>d_0001</id>
+      <entity_type>debug_killable</entity_type>
       <health>
         <health_max>100</health_max>
         <health_segments>1</health_segments>
@@ -416,4 +379,42 @@
     </fishbone>
   </killable>
 
+  <weapons>
+    <debug_weapon>
+      <id>d_0005</id>
+      <entity_type>debug_weapon</entity_type>
+      <movement>
+        <vel_cap>-1</vel_cap>
+        <vel_overcap>-1</vel_overcap>
+        <vel_decay>0</vel_decay>
+        <vel_accel>0</vel_accel>
+      </movement>
+      <textures>
+        <body>beam</body>
+      </textures>
+      <shot>
+        <heat_per_shot>2</heat_per_shot>
+        <tick_shot_delay>4</tick_shot_delay>
+        <tick_lifespan>50</tick_lifespan>
+        <dist_lifespan>400</dist_lifespan>
+        <inaccuracy>0.1</inaccuracy>
+        <constant_vel>30</constant_vel>
+        <unique_type_id>0</unique_type_id>
+      </shot>
+      <damage>
+        <impact_damage>12</impact_damage>
+        <armor_penetration>4</armor_penetration>
+      </damage>
+      <hitboxes>
+        <hurty>
+          <x_offset>0</x_offset>
+          <y_offset>0</y_offset>
+          <size>70</size>
+          <type>HIT</type>
+        </hurty>
+      </hitboxes>
+      <team>WHITE</team>
+    </debug_weapon>
+  </weapons>
+ 
 </movers>

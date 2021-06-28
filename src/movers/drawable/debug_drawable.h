@@ -11,11 +11,6 @@ public:
 
   d_drawable();
 
-  void move_up() override;
-  void move_dn() override;
-  void move_lf() override;
-  void move_rt() override;
-
   void update() override;
 
   void draw() const override;
