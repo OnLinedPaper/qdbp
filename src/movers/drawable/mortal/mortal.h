@@ -5,8 +5,6 @@
 //classes. it contains hybrid boxes that can register hits, and tracks data 
 //for health and shielding, as well. this is likely going to encompass every
 //entity the player is designed to interact with. 
-//TODO: it may also become the parent class of weapons for ease of use, but 
-//this is yet to be determined
 
 #include "src/movers/drawable/drawable.h"
 #include "src/rect2d/hitbox/hitbox.h"
@@ -54,8 +52,10 @@ public:
   float get_shields() const { return curr_shield_segments; }
   float get_shield_percent() const { return curr_shields / max_shields; }
 
-  bool is_regen() const { return is_regenerating; }
-  void toggle_regen() { is_regenerating = !is_regenerating; }
+  bool is_regen_h() const { return h_is_regenerating; }
+  void toggle_regen_h() { h_is_regenerating = !h_is_regenerating; }
+  bool is_regen_s() const { return s_is_regenerating; }
+  void toggle_regen_s() { s_is_regenerating = !s_is_regenerating; }
 
   //damage scales depending on which box was struck
   virtual bool take_damage(float damage, int box_type_hit);
@@ -115,13 +115,14 @@ protected:
   //however, players can only lose up to two bars at a time - massive damage
   //can remove the current bar and the next one, but no more than that. more 
   //bars means less passive regen but also less damage from massive attacks.
-  //passive healing is toggled, and generates heat.
+  //passive healing is toggled, and will, for players, generate "heat".
   float max_health;
   float curr_health;
   int health_segments;
-  bool is_regenerating;
+  bool h_is_regenerating;
   float h_regen_rate;
-  float h_regen_heat_gen;
+
+  void do_health_regen();
 
   //shields operate on a similar "bars" principle, with a slight tweak.
   //ANY damage destroys 1 and only 1 bar of shield, be it small or massive.
@@ -130,12 +131,14 @@ protected:
   //they take much longer to recharge, but as long as at least 1 bar remains,
   //the remainder will return quickly.
   float max_shields = 100;  //always locked at 100 since shields are bar based
-  float curr_shields = 100;  
+  float curr_shields = 100;  //percent based value for "recharging" behavior
   int max_shield_segments;  //total number of segments, can be 0
   int curr_shield_segments;  //current number of segments, can be 0
+  bool s_is_regenerating;
   float s_regen_rate;  //how quick shields restore themselves
   float first_s_size;  //a number from 0 to 1 representing how much of the
                        //shield bar is taken up by the first segment 
+  void do_shield_regen();
 
   //damage being dealt can be scaled depending on what box is hit. as a general
   //rule, weakboxes take extra damage and armorboxes take reduced damage. 

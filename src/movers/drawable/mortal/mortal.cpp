@@ -25,15 +25,10 @@ mortal::mortal(const std::string &path, const vec2d &p, const vec2d &v) :
     path + "/health/health_segments", 1
   )),
 
-  is_regenerating(false),
+  h_is_regenerating(false),
   //get regen rate - default to 0, meaning no regen
   h_regen_rate(xmlparse::get().safe_get_xml_float(
     path + "/health/health_regen_rate", 0
-  )),
-
-  //get regen heat gen - default to 0, making regen free with no heat cost
-  h_regen_heat_gen(xmlparse::get().safe_get_xml_float(
-    path + "/health/health_regen_heat", 0
   )),
 
   //get max shield segments - default to 0, meaning no shields
@@ -42,6 +37,7 @@ mortal::mortal(const std::string &path, const vec2d &p, const vec2d &v) :
   )),
   curr_shield_segments(max_shield_segments),
 
+  s_is_regenerating(true),
   //get regen rate - default to 0, meaning no shield regen
   s_regen_rate(xmlparse::get().safe_get_xml_float(
     path + "/health/shield_regen_rate", 0
@@ -143,6 +139,13 @@ void mortal::update() {
 
   //update the hitboxes
   mortal::update_boxes();
+
+  if(curr_health <= 0) {
+    perish();
+  }
+
+  do_health_regen();
+  do_shield_regen();
 }
 
 //==== HITBOX AND COLLISION ===================================================
@@ -238,24 +241,55 @@ void mortal::update_boxes() {
 
 //==== DAMAGE AND HEALTH ======================================================
 
+//returns true if ship took actual damage
 bool mortal::take_damage(float damage, int box_type_hit) {
   if(damage < 0 || tangible == false) { return false; }
+
+  if(curr_shield_segments > 0) {
+    if(curr_shield_segments == 1) {
+      //remove all shields on the last segment
+      curr_shields = 0;
+    }
+    else {
+      curr_shields -= 
+          (max_shields - (max_shields * first_s_size)) 
+          / (max_shield_segments - 1);
+    }
+    curr_shield_segments -= 1;
+
+    return false;
+  }
+
+  int total_damage = 0;
 
   if(box_type_hit == hitbox::TYPE_SHIELDBOX) {
     return false;
   }  
   else if(box_type_hit == hitbox::TYPE_WEAKBOX) {
-    curr_health -= damage * weakbox_scale;
-    return true;
+    total_damage = damage * weakbox_scale;
   }
   else if(box_type_hit == hitbox::TYPE_HURTBOX) {
-    curr_health -= damage * hurtbox_scale;
-    return true;
+    total_damage = damage * hurtbox_scale;
   }
   else if(box_type_hit == hitbox::TYPE_ARMORBOX) {
-    curr_health -= damage * armorbox_scale;
-    return true;
+    total_damage = damage * armorbox_scale;
   }
+
+  //remove up to two health segments - this one and the next
+  float seg_each = max_health / health_segments;
+  float seg_min = max_health;
+
+  //get the segment we're on now
+  while(seg_min > curr_health) { seg_min -= seg_each; }
+  //go to the next segment - health can drop no lower than there
+  seg_min -= seg_each;
+  
+  //now take damage, clamping at seg_min
+  curr_health = (
+      curr_health - total_damage >= seg_min 
+        ? curr_health - total_damage 
+        : seg_min
+  );
 
   return true;
 }
@@ -263,4 +297,52 @@ bool mortal::take_damage(float damage, int box_type_hit) {
 void mortal::perish() {
   tangible = false;
   active = false;
+}
+
+//regenerates ship health up to nearest segment - note that by default, mortals
+//NEVER regenerate health and ALWAYS stop regenerating at full
+void mortal::do_health_regen() {
+  if(!h_is_regenerating) { return; }
+
+  //check to see if health can go any higher
+  float seg_each = max_health / health_segments;
+  float seg_max = max_health;
+
+  //get the max we can generate to based on lsot segments
+  while(seg_max - seg_each >= curr_health) { seg_max -= seg_each; }
+
+  if(curr_health < seg_max) {
+    //add health
+    curr_health += h_regen_rate * t_frame::get().t_adjust();
+    //clamp at segment max
+    curr_health = (curr_health > seg_max ? seg_max : curr_health);
+  }
+  else {
+    //regen stops automatically when health is maxed
+    h_is_regenerating = false;
+  }
+}
+
+//regenerates shields up to full strength - note that by default, mortals
+//ALWAYS regenerate shields, and NEVER stop regenerating at full
+void mortal::do_shield_regen() {
+  if(curr_shield_segments < max_shield_segments && s_is_regenerating) {
+    //regen shields
+    curr_shields += s_regen_rate * t_frame::get().t_adjust();
+    //clamp at max shields
+    curr_shields = (curr_shields > max_shields ? max_shields : curr_shields);
+
+    //if there's no shields, see if we overcame the first barrier
+    if(curr_shield_segments == 0 
+        && curr_shields >= (max_shields * first_s_size)) {
+      curr_shield_segments += 1;
+    }
+    //if there's 1 or more shields, see if we met the threshold to add another
+    else if((curr_shields - (max_shields * first_s_size)) 
+        >= ((max_shields - (max_shields * first_s_size)) 
+            / (max_shield_segments - 1)) * (curr_shield_segments)) {
+
+      curr_shield_segments += 1;
+    }
+  }
 }
