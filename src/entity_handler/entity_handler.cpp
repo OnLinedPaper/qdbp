@@ -283,12 +283,12 @@ void e_handler::boost_plr(bool b) {
 }
 
 void e_handler::toggle_plr_regen() {
-  plr->toggle_regen();
+  plr->toggle_regen_h();
 }
 
 void e_handler::plr_shoot(const vec2d angle) {
   //first thing to do is see if we can shoot at all
-  if(!plr->can_fire()) { return; }
+  if(!plr->can_shoot()) { return; }
 
   //second thing to do is get the projectile we're going to shoot
   uint8_t w_id = plr->get_weapon_id();
@@ -302,7 +302,7 @@ void e_handler::plr_shoot(const vec2d angle) {
     }
   }
   if(weap == NULL) {
-    weap = new weapon(plr->get_weapon());
+    weap = new weapon(plr->get_weapon_id());
     shot_all.push_back(weap);
   }
 
@@ -323,7 +323,7 @@ float e_handler::get_plr_overheat_percent() {
 }
 
 bool e_handler::get_plr_is_overheat() {
-  return plr->is_overheat();
+  return plr->is_overheated();
 }
 
 float e_handler::get_plr_health_percent() {
@@ -331,7 +331,7 @@ float e_handler::get_plr_health_percent() {
 }
 
 bool e_handler::get_plr_is_regenerating() {
-  return plr->is_regen();
+  return plr->is_regen_h();
 }
 
 int e_handler::get_plr_shield_segs() {
