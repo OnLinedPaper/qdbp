@@ -12,16 +12,11 @@ public:
   void move_lf();
   void move_rt();
 
-  void boost(bool);
-  uint8_t get_weapon_id() const;
-  bool can_fire();
-  const std::string get_weapon() const { return weapon; }
 
   void update() override;
   void draw() const override;
 
 private:
-  std::string weapon;
 };
 
 #endif
