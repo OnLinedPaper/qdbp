@@ -2,7 +2,7 @@
 #include "src/movers/drawable/mortal/weapon.h"
 
 d_player::d_player(const std::string path) :
-  mortal(path),
+  player(path),
   weapon(
       "/movers/weapons/" + xmlparse::get().get_xml_string(
           path + "/first_weapon"
