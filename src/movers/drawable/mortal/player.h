@@ -5,9 +5,9 @@
 //completely encapsulate the player's behaviors without leaking them into 
 //other classes. 
 
-#include "src/movers/drawable/mortal/mortal.h"
+#include "src/movers/drawable/mortal/gunner.h"
 
-class player : public mortal {
+class player : public gunner {
 public:
   player(const std::string &path);
   player(const std::string &path, const vec2d &pos, const vec2d &vel);
@@ -20,6 +20,9 @@ public:
 
   void draw() const override;
   virtual void update() override;
+
+  //TODO: implement later
+  bool is_overheat() { return false; }
 
 protected:
   

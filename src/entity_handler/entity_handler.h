@@ -4,6 +4,7 @@
 #include "src/movers/drawable/drawable.h"
 #include "src/movers/drawable/mortal/mortal.h"
 #include "src/movers/drawable/mortal/weapon.h"
+#include "src/movers/drawable/mortal/player.h"
 #include <vector>
 #include <unordered_map>
 
@@ -26,23 +27,23 @@ public:
 
 //==== PLAYER THINGS ==========================================================
 
-  void create_player(std::string);
-  void move_player(unsigned char);
-  void boost_player(bool);
-  void toggle_player_regen();
-  void teleport_player(const vec2d &);
-  void teleport_player_new_map();
-  void player_shoot(const vec2d);
+  void create_plr(std::string);
+  void move_plr(unsigned char);
+  void boost_plr(bool);
+  void toggle_plr_regen();
+  void teleport_plr(const vec2d &);
+  void teleport_plr_new_map();
+  void plr_shoot(const vec2d);
 
-  float 	get_player_heat_percent();
-  float 	get_player_overheat_percent();
-  bool 		get_player_is_overheat();
-  float 	get_player_health_percent();
-  bool 		get_player_is_regenerating();
-  int 		get_player_shield_segs();
-  float 	get_player_shield_percent();
-  const vec2d 	get_player_pos();
-  const vec2d 	get_player_vel();
+  float 	get_plr_heat_percent();
+  float 	get_plr_overheat_percent();
+  bool 		get_plr_is_overheat();
+  float 	get_plr_health_percent();
+  bool 		get_plr_is_regenerating();
+  int 		get_plr_shield_segs();
+  float 	get_plr_shield_percent();
+  const vec2d 	get_plr_pos();
+  const vec2d 	get_plr_vel();
 
 //==== GENERIC THINGS ==========================================================
 
@@ -61,13 +62,24 @@ public:
   void add_npe(const std::string name);
   void add_npe(const std::string name, const vec2d pos, const vec2d vel);
 
+  //called by a gunner (or child) who would like a shot to be fired
+  void request_shot(
+    uint8_t w_id,
+    const vec2d &w_pos, const vec2d &w_vel, const vec2d &w_ang, 
+    float delay_factor,
+    float w_life_ms_mod, float w_life_dist_mod, 
+    float w_inacc_mod, float w_vel_mod,
+    int w_pierce_mod, float w_damage_mod,
+    const SDL_Color &c
+  );
+
 private:
   e_handler();
 
   bool check_category_collision(weapon *w, mortal *h, int type);
   void preload_specific_entities(const std::string &, const std::vector<std::string> &);
 
-  mortal *player;
+  player *plr;
   const std::string entity_xml_root = "/movers/";
 
   std::vector<mortal *> npe_all;
