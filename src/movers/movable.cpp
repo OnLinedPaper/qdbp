@@ -7,11 +7,12 @@ movable::movable(std::string path) :
   last_pos(0,0),
   vel(0,0),
   vel_accel(xmlparse::get().get_xml_float(path + "/movement/vel_accel") * t_frame::get().t_factor()),
+  vel_accel_mod(1),
   vel_cap(xmlparse::get().get_xml_float(path + "/movement/vel_cap") * t_frame::get().t_factor()),
-  vel_overcap(xmlparse::get().safe_get_xml_float(path + "/movement/vel_overcap")),
+  vel_cap_mod(1),
+//  vel_overcap(xmlparse::get().safe_get_xml_float(path + "/movement/vel_overcap")),
   vel_decay(xmlparse::get().get_xml_float(path + "/movement/vel_decay") * t_frame::get().t_factor()),
   moved(false),
-  boosted(false),
   active(true)
 { }
 
@@ -43,15 +44,7 @@ void movable::rebuff(unsigned char posi) {
 
 void movable::update() {
   //cap velocity
-  if(boosted && (vel_overcap != 0)) {
-    vel = vel.cap(vel_overcap);
-  }
-  else {
-    vel = vel.cap(vel_cap);
-  }
-
-  //turn boost off, it must be re-enabled each time
-  boosted = false;
+  vel = vel.cap(vel_cap * vel_cap_mod);
 
   //move, based on velocity AND time since last frame -
   //this prevents lag spikes from "slowing time"

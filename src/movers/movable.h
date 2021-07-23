@@ -32,7 +32,7 @@ public:
   void rebuff(unsigned char posi);
 
   bool is_active() const { return active; }
-  void set_active(bool b) { active = b; }
+  void set_active(bool b) { active = b; vel_accel_mod = 1; vel_cap_mod = 1; }
 
   virtual void destroy() { set_active(false); };
   virtual void draw() const;
@@ -47,11 +47,12 @@ protected:
   vec2d last_pos;
   vec2d vel;
   float vel_accel;
+  float vel_accel_mod;
   float vel_cap;
-  float vel_overcap;
+  float vel_cap_mod;
+  //float vel_overcap;
   float vel_decay;
   bool moved;
-  bool boosted;
 
   bool active;
 
