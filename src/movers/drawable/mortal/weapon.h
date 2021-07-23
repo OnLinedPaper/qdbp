@@ -13,11 +13,13 @@ removed from update and draw queues, and upon "creation" is given new data
 class weapon : public mortal {
 public:
   weapon(const std::string path);
+  weapon(uint8_t id);
   ~weapon();
 
   //these are universally accessible tables of basic weapon data
   static float get_heat_from_id(uint8_t);
   static float get_delay_from_id(uint8_t);
+  static const std::string get_path_from_id(uint8_t);
   static void preload_weapon_data();
 
   void draw() const override;
@@ -25,7 +27,7 @@ public:
 
   void fire(const vec2d &start_pos, const vec2d &start_vel,
     const vec2d &angle,
-    float life_ms_mod,
+    float heat_mod, float life_tick_mod,
     float life_dist_mod, float inacc_mod,
     float vel_mod, int pierce_mod,
     float damage_mod, const SDL_Color &);
@@ -46,6 +48,7 @@ private:
   //delay-per-shot data
   static std::map<uint8_t, float> id_to_heat;
   static std::map<uint8_t, float> id_to_delay;
+  static std::map<uint8_t, std::string> id_to_path;
 
   //the unique id of this weapon
   uint8_t type_id;

@@ -37,6 +37,10 @@ weapon::weapon(const std::string path) :
   armor_pierce_mod(armor_pierce)
 { }
 
+weapon::weapon(uint8_t id) :
+  weapon(get_path_from_id(id))
+{ }
+
 weapon::~weapon()
 { }
 
@@ -66,6 +70,20 @@ float weapon::get_delay_from_id(uint8_t id) {
   }
 
   return(id_to_delay[id]);
+}
+
+const std::string weapon::get_path_from_id(uint8_t id) {
+  if(id_to_path.find(id) == id_to_path.end()) {
+    //id wasn't found - make entry to prevent errors
+    id_to_path.insert({id, "BAD WEAPON ID"});
+
+    //send message to prevent silent failure
+    msg::print_warn(
+      ("weapon with id " + std::to_string(id) + " has no path value assigned to it")
+    );
+  }
+
+  return(id_to_path[id]);
 }
 
 void weapon::strike_target(mortal &target, int box_type) {
@@ -113,6 +131,7 @@ void weapon::preload_weapon_data() {
     //load the values
     id_to_heat.insert({id, heat});
     id_to_delay.insert({id, delay});
+    id_to_path.insert({id, path + "/" + s});
   }
 
   return;
