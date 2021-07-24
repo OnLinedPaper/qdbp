@@ -47,7 +47,7 @@ try{
 
 
 
-  e_handler::get().create_player("killable/debug_killable");
+  e_handler::get().create_plr("killable/debug_killable");
 
   e_handler::get()
       .add_npe("hittable/debug_follower");
@@ -77,16 +77,16 @@ try{
 
       //handle movement
       if(keystate[SDL_SCANCODE_W])
-        { e_handler::get().move_player(e_handler::UP); }
+        { e_handler::get().move_plr(e_handler::UP); }
       if(keystate[SDL_SCANCODE_A])
-        { e_handler::get().move_player(e_handler::LF); }
+        { e_handler::get().move_plr(e_handler::LF); }
       if(keystate[SDL_SCANCODE_S])
-        { e_handler::get().move_player(e_handler::DN); }
+        { e_handler::get().move_plr(e_handler::DN); }
       if(keystate[SDL_SCANCODE_D])
-        { e_handler::get().move_player(e_handler::RT); }
+        { e_handler::get().move_plr(e_handler::RT); }
 
       if(keystate[SDL_SCANCODE_LSHIFT])
-        { e_handler::get().boost_player(true); }
+        { e_handler::get().boost_plr(true); }
 
       if(keystate[SDL_SCANCODE_SPACE] || true) { //TODO: reenable?
         static vec2d angle(0, 0);
@@ -99,7 +99,7 @@ try{
         if(keystate[SDL_SCANCODE_K]) { angle[1] -= 1; }
         if(keystate[SDL_SCANCODE_J]) { angle[1] += 1; }
         
-        if(angle.magnitude() > 0) { e_handler::get().player_shoot(angle); }
+        if(angle.magnitude() > 0) { e_handler::get().plr_shoot(angle); }
       }
 
       if(controller) {
@@ -110,12 +110,12 @@ try{
         );
 
         if(abs(lrud[0]) > CONTROLLER_DEADZONE) {
-          if(lrud[0] < 0) { e_handler::get().move_player(e_handler::LF); }
-          else { e_handler::get().move_player(e_handler::RT); }
+          if(lrud[0] < 0) { e_handler::get().move_plr(e_handler::LF); }
+          else { e_handler::get().move_plr(e_handler::RT); }
         }
         if(abs(lrud[1]) > CONTROLLER_DEADZONE) {
-          if(lrud[1] < 0) { e_handler::get().move_player(e_handler::UP); }
-          else { e_handler::get().move_player(e_handler::DN); }
+          if(lrud[1] < 0) { e_handler::get().move_plr(e_handler::UP); }
+          else { e_handler::get().move_plr(e_handler::DN); }
         }
       }
     }
@@ -135,14 +135,14 @@ try{
 
         if(keystate[SDL_SCANCODE_O]) {
           //TODO: make "tryjump" in map handler
-          if(map_h::get().debug_jump(e_handler::get().get_player_pos())) {
+          if(map_h::get().debug_jump(e_handler::get().get_plr_pos())) {
             //jumped
-            e_handler::get().teleport_player_new_map();
+            e_handler::get().teleport_plr_new_map();
           }
         }
 
         if(keystate[SDL_SCANCODE_R]) {
-          e_handler::get().toggle_player_regen();
+          e_handler::get().toggle_plr_regen();
         }
 
         //draw debug things
@@ -158,7 +158,7 @@ try{
         //debugging section
         if(debug_mode) {
           if(keystate[SDL_SCANCODE_X]) {
-            //e_handler::get().DEBUG_get_player()->take_damage(20);
+            //e_handler::get().DEBUG_get_plr()->take_damage(20);
           }
         }
 
@@ -171,7 +171,7 @@ try{
     }
     else {
       e_handler::get().update_entities();
-      viewport::get().set_pos(e_handler::get().get_player_pos());
+      viewport::get().set_pos(e_handler::get().get_plr_pos());
 
     }
 
@@ -190,13 +190,13 @@ try{
 //---- DRAW DEBUG STUFF here --------------------------------------------------
 
 
-      t6a.set_msg(std::to_string(e_handler::get().get_player_heat_percent()));
-      t7a.set_msg(std::to_string(e_handler::get().get_player_overheat_percent()));
-      t8a.set_msg(std::to_string(e_handler::get().get_player_is_overheat()));
-      t9a.set_msg(std::to_string(e_handler::get().get_player_health_percent()));
-      t10a.set_msg(std::to_string(e_handler::get().get_player_is_regenerating()));
-      t11a.set_msg(std::to_string(e_handler::get().get_player_shield_segs()));
-      t12a.set_msg(std::to_string(e_handler::get().get_player_shield_percent()));
+      t6a.set_msg(std::to_string(e_handler::get().get_plr_heat_frac()));
+      t7a.set_msg(std::to_string(e_handler::get().get_plr_overheat_frac()));
+      t8a.set_msg(std::to_string(e_handler::get().get_plr_is_overheat()));
+      t9a.set_msg(std::to_string(e_handler::get().get_plr_health_frac()));
+      t10a.set_msg(std::to_string(e_handler::get().get_plr_is_regenerating()));
+      t11a.set_msg(std::to_string(e_handler::get().get_plr_shield_segs()));
+      t12a.set_msg(std::to_string(e_handler::get().get_plr_shield_frac()));
 
       t6.draw();
       t6a.draw();
