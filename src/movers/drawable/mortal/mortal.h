@@ -48,9 +48,9 @@ public:
 //==== DAMAGE AND HEALTH ======================================================
   
   float get_health() const { return curr_health; }
-  float get_health_percent() const { return curr_health / max_health; }
+  float get_health_frac() const { return curr_health / max_health; }
   float get_shields() const { return curr_shield_segments; }
-  float get_shield_percent() const { return curr_shields / max_shields; }
+  float get_shield_frac() const { return curr_shields / max_shields; }
 
   bool is_regen_h() const { return h_is_regenerating; }
   void toggle_regen_h() { h_is_regenerating = !h_is_regenerating; }
@@ -116,6 +116,7 @@ protected:
   //can remove the current bar and the next one, but no more than that. more 
   //bars means less passive regen but also less damage from massive attacks.
   //passive healing is toggled, and will, for players, generate "heat".
+  //TODO: modifiers for health and shields
   float max_health;
   float curr_health;
   int health_segments;

@@ -274,6 +274,10 @@ bool mortal::take_damage(float damage, int box_type_hit) {
   else if(box_type_hit == hitbox::TYPE_ARMORBOX) {
     total_damage = damage * armorbox_scale;
   }
+  else if(box_type_hit == -1) {
+    //"true" damage
+    total_damage = damage;
+  }
 
   //remove up to two health segments - this one and the next
   float seg_each = max_health / health_segments;
