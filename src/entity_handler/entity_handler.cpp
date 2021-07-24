@@ -274,6 +274,7 @@ void e_handler::request_shot (
   float w_life_tick_mod, float w_life_dist_mod, float w_inacc_mod,
   float w_vel_mod, int w_pierce_mod, float w_damage_mod, const SDL_Color &c
 ) {
+  //TODO: lag compensation
   weapon *weap = NULL; 
   for(weapon *w : shot_all) {
     if(w->is_type(w_id) && !w->is_active()) {
