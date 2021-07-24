@@ -187,20 +187,48 @@ void e_handler::draw_entities() {
   }
 }
 
-void e_handler::add_npe(const std::string name) {
+void e_handler::add_npe(const std::string &name) {
   //if no position is specified, place this exactly atop the player,
   //with the player's vel
   //this is mostly for debugging purposes
   add_npe(name, get_plr_pos(), get_plr_vel());
 }
 
-void e_handler::add_npe(const std::string name,
-    const vec2d pos, const vec2d vel) {
+void e_handler::add_npe(const std::string &name,
+    const vec2d &pos, const vec2d &vel) {
+
+  mortal *h = NULL;
+  find_or_create_npe(name, h);
+  add_npe(h, pos, vel);
+
+}
+
+void e_handler::add_npe(mortal *h, 
+    const vec2d &pos, const vec2d &vel) {
   //a function to add a hittable to the vector - note that this
   //shouldn't really be called from the engine, it should be
   //used "behind the scenes" for loading from a map or the like
 
-  mortal *h = NULL;
+  if(h) { 
+    h->set_pos(pos);
+    h->set_vel(vel);
+    npe_all.push_back(h);
+
+    //increment entity count for tracking spawn limits
+    if(entity_count_by_id.find(h->get_id()) == entity_count_by_id.end()) {
+      entity_count_by_id.insert({h->get_id(), 1});
+    } 
+    else {
+      entity_count_by_id[h->get_id()] += 1;
+    }
+  }
+}
+
+void e_handler::find_or_create_npe(const std::string &name,
+    mortal *h) {
+  if(h) {
+    delete(h);
+  }
   std::string type = xmlparse::get().get_xml_string(
     entity_xml_root + name + "/entity_type"
   );
@@ -229,20 +257,6 @@ void e_handler::add_npe(const std::string name,
       msg::print_alert(
           "tried to check at " + entity_xml_root + name + "/entity_type"
       );
-    }
-  }
-
-  if(h) { 
-    h->set_pos(pos);
-    h->set_vel(vel);
-    npe_all.push_back(h);
-
-    //increment entity count for tracking spawn limits
-    if(entity_count_by_id.find(h->get_id()) == entity_count_by_id.end()) {
-      entity_count_by_id.insert({h->get_id(), 1});
-    } 
-    else {
-      entity_count_by_id[h->get_id()] += 1;
     }
   }
 }
@@ -314,20 +328,20 @@ void e_handler::plr_shoot(const vec2d angle) {
   plr->heat_up(weapon::get_heat_from_id(w_id)); 
 }
 
-float e_handler::get_plr_heat_percent() {
-  return plr->get_heat_percent();
+float e_handler::get_plr_heat_frac() {
+  return plr->get_heat_frac();
 }
 
-float e_handler::get_plr_overheat_percent() {
-  return plr->get_overheat_percent();
+float e_handler::get_plr_overheat_frac() {
+  return plr->get_overheat_frac();
 }
 
 bool e_handler::get_plr_is_overheat() {
   return plr->is_overheated();
 }
 
-float e_handler::get_plr_health_percent() {
-  return plr->get_health_percent();
+float e_handler::get_plr_health_frac() {
+  return plr->get_health_frac();
 }
 
 bool e_handler::get_plr_is_regenerating() {
@@ -338,8 +352,8 @@ int e_handler::get_plr_shield_segs() {
   return plr->get_shields();
 }
 
-float e_handler::get_plr_shield_percent() {
-  return plr->get_shield_percent();
+float e_handler::get_plr_shield_frac() {
+  return plr->get_shield_frac();
 }
 
 void e_handler::teleport_plr(const vec2d &p) {

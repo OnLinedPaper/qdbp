@@ -35,13 +35,13 @@ public:
   void teleport_plr_new_map();
   void plr_shoot(const vec2d);
 
-  float 	get_plr_heat_percent();
-  float 	get_plr_overheat_percent();
+  float 	get_plr_heat_frac();
+  float 	get_plr_overheat_frac();
   bool 		get_plr_is_overheat();
-  float 	get_plr_health_percent();
+  float 	get_plr_health_frac();
   bool 		get_plr_is_regenerating();
   int 		get_plr_shield_segs();
-  float 	get_plr_shield_percent();
+  float 	get_plr_shield_frac();
   const vec2d 	get_plr_pos();
   const vec2d 	get_plr_vel();
 
@@ -59,8 +59,10 @@ public:
   void check_entity_collision();
   void draw_entities();
 
-  void add_npe(const std::string name);
-  void add_npe(const std::string name, const vec2d pos, const vec2d vel);
+  void add_npe(const std::string &name);
+  void add_npe(const std::string &name, const vec2d &pos, const vec2d &vel);
+  void add_npe(mortal *h, const vec2d &pos, const vec2d &vel);
+  void find_or_create_npe(const std::string &name, mortal *h);
 
   //called by a gunner (or child) who would like a shot to be fired
   void request_shot(
