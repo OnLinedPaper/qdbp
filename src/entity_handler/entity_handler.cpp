@@ -268,14 +268,26 @@ void e_handler::find_or_create_npe(const std::string &name,
 //if the game is lagging significantly, request_shot adjusts itself to fire 
 //multiple projectiles as a factor of how hard the game has lagged since the
 //last shot. 
-void request_shot (
+void e_handler::request_shot (
   uint8_t w_id, const vec2d &w_pos, const vec2d &w_vel, const vec2d &w_ang, 
   float delay_factor, 
-  float w_life_ms_mod, float w_life_dist_mod, float w_inacc_mod,
+  float w_life_tick_mod, float w_life_dist_mod, float w_inacc_mod,
   float w_vel_mod, int w_pierce_mod, float w_damage_mod, const SDL_Color &c
 ) {
+  weapon *weap = NULL; 
+  for(weapon *w : shot_all) {
+    if(w->is_type(w_id) && !w->is_active()) {
+      weap = w;
+      break;
+    }
+  }
+  if(weap == NULL) {
+    weap = new weapon(w_id);
+    shot_all.push_back(weap);
+  }
 
-
+  weap->fire(w_pos, w_vel, w_ang, w_life_tick_mod, w_life_dist_mod, w_inacc_mod, w_vel_mod, w_pierce_mod, w_damage_mod, c);
+  //TODO: add to npe_all as well? weapons can be shot down now
 }
 
 //==== PLAYER THINGS ==========================================================
@@ -322,7 +334,7 @@ void e_handler::plr_shoot(const vec2d angle) {
 
   //third is to spawn / activate the weapon and send it on its way 
   weap->fire(plr->get_pos(), plr->get_vel(),
-      angle, 1, 1, 1, 1, 1, 1, 1, plr->get_col());
+      angle, 1, 1, 1, 1, 1, 1, plr->get_col());
 
   //fourth is to add some heat to the player
   plr->heat_up(weapon::get_heat_from_id(w_id)); 
