@@ -15,10 +15,8 @@ public:
   gunner(const std::string &path, const vec2d &pos, const vec2d &vel);
   virtual ~gunner() = default;
 
-  //TODO: request that the entity handler fire a weapon from this position
   void shoot(); 
 
-  //TODO: check if shooting is allowed, based on time since last shot
   //other children may check different factors (heat for player)
   bool can_shoot();
 
