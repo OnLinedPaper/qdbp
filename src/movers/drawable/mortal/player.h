@@ -18,9 +18,16 @@ public:
   virtual void move_lf() = 0;
   virtual void move_rt() = 0;
 
-  void boost(bool b);
+  void boost(bool b) { is_boost = b; }
+  void heat_up(float h) { heat += h; }
+  float get_heat_frac() { return heat / (max_heat * max_heat_mod); }
+  float get_overheat_frac() { 
+    return (heat - (max_heat * max_heat_mod)) 
+        / (max_overheat * max_overheat_mod);
+  }
 
   bool is_overheated() { return is_overheat; }
+  bool is_burntout() { return is_burnout; }
 
   void draw() const override;
   virtual void update() override;
