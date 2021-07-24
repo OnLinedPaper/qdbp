@@ -26,7 +26,7 @@ void d_player::draw() const {
   dest_r.h = 128;
 
   image_handler::get().draw_rotate_color_outline(
-    image_name, dest_r.x, dest_r.y, 0, last_angle, team_col, true, get_health_percent() 
+    image_name, dest_r.x, dest_r.y, 0, last_angle, team_col, true, get_health_frac() 
   );
 
 

@@ -11,7 +11,7 @@ void d_follower::update() {
   mortal::update();
 
   //update player's position
-  set_player_pos(e_handler::get().get_player_pos());
+  set_player_pos(e_handler::get().get_plr_pos());
 
   //check how far we are
   float distance = (this->get_pos() - player_pos).magnitude();
