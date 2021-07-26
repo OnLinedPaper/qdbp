@@ -15,7 +15,7 @@ gunner::gunner(const std::string &path, const vec2d &p, const vec2d &v) :
   //ms multiplier, makes projectile live longer at higher numbers
   //TODO: add addition alongside the multiplier? same for below
   w_life_ms_mod(xmlparse::get().safe_get_xml_float(
-    path + "/gunning/life_ms_multi", 1
+    path + "/gunning/life_tick_multi", 1
   )),
 
   //distance multiplier, make projectile go farther at higher numbers
@@ -26,7 +26,7 @@ gunner::gunner(const std::string &path, const vec2d &p, const vec2d &v) :
   //inaccuracy multiplier, make projectile LESS accurate at higher numbers
   //("0" makes the projectile perfectly accurate)
   w_inacc_mod(xmlparse::get().safe_get_xml_float(
-    path + "/gunning/life_dist_multi", 1
+    path + "/gunning/inacc_multi", 1
   )),
 
   //velocity multiplier, makes projectile faster at higher numbers
