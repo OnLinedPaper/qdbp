@@ -45,6 +45,8 @@ public:
   const vec2d 	get_plr_pos();
   const vec2d 	get_plr_vel();
 
+  mortal *DEBUG_get_plr(){return plr;}
+
 //==== GENERIC THINGS ==========================================================
 
   void set_draw_debug_info(bool b) { draw_debug_info = b; }
