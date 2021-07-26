@@ -7,6 +7,7 @@
 
   std::map<uint8_t, float> weapon::id_to_heat;
   std::map<uint8_t, float> weapon::id_to_delay;
+  std::map<uint8_t, std::string> weapon::id_to_path;
 
 weapon::weapon(const std::string path) :
   mortal(path),
