@@ -153,6 +153,15 @@ protected:
   float hurtbox_scale = 1;  //usually 1x damage in a hurt box
   float armorbox_scale = .25;  //usually 1/4x damage in an armor box
 
+  //max health, health segment count, regen rate, shield segment count, first
+  //shield size, and shield regen rate can all be modified ingame
+  float max_health_mod;           //multiplier; larger nums, more health
+  int health_segment_mod;         //additive; pos or neg, adjust seg count
+  float h_regen_rate_mod;         //multiplier; larger nums, more regen
+  int max_shield_segments_mod;    //additive; pos or neg, adjust seg count
+  float s_regen_rate_mod;         //multiplier; larger nums, faster regen
+  float first_s_size_mod;         //multiplier; larger nums, slower first regen
+
 private: 
 
 };
