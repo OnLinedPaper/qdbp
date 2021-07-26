@@ -47,8 +47,8 @@ try{
 
 
 
-  e_handler::get().create_plr("killable/debug_killable");
-
+  e_handler::get().create_plr("mortal/gunner/player/debug_player");
+/*
   e_handler::get()
       .add_npe("hittable/debug_follower");
 
@@ -59,7 +59,7 @@ try{
       .add_npe("hittable/debug_stationary", {2500, 500}, {0, 125});
 
   e_handler::get().add_npe("killable/fishbone", {500, 2500}, {0, 0});
-
+*/
 //-    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -        
 
   const Uint8* keystate = SDL_GetKeyboardState(NULL);
@@ -76,13 +76,13 @@ try{
       //no keybounce protection
 
       //handle movement
-      if(keystate[SDL_SCANCODE_W])
+      if(keystate[SDL_SCANCODE_D])
         { e_handler::get().move_plr(e_handler::UP); }
       if(keystate[SDL_SCANCODE_A])
         { e_handler::get().move_plr(e_handler::LF); }
       if(keystate[SDL_SCANCODE_S])
         { e_handler::get().move_plr(e_handler::DN); }
-      if(keystate[SDL_SCANCODE_D])
+      if(keystate[SDL_SCANCODE_F])
         { e_handler::get().move_plr(e_handler::RT); }
 
       if(keystate[SDL_SCANCODE_LSHIFT])
@@ -158,7 +158,7 @@ try{
         //debugging section
         if(debug_mode) {
           if(keystate[SDL_SCANCODE_X]) {
-            //e_handler::get().DEBUG_get_plr()->take_damage(20);
+            e_handler::get().DEBUG_get_plr()->take_damage(20, -1);
           }
         }
 
@@ -226,10 +226,12 @@ try{
 //==== DEBUG STUFF here =======================================================
 
 //  std::cout << e_handler::get().get_entity_count_by_name("fishbone") << std::endl;
+/*
   int d_i = 1;
   if(e_handler::get().get_entity_count_by_name("fishbone") < 1) {
     e_handler::get().add_npe("killable/fishbone", {500, 2500 - 250 * d_i}, {0, 0});
   }
+*/
 
 //==== GAME TICK here =========================================================
 
