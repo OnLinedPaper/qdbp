@@ -13,7 +13,7 @@
 
           <health>
             <health_max>100</health_max>
-            <health_segments>1</health_segments>
+            <health_segments>4</health_segments>
             <health_regen_rate>.1</health_regen_rate>
             <health_regen_heat>3</health_regen_heat>
 
@@ -99,6 +99,19 @@
     <debug_weapon>
       <id>d_0005</id>
       <entity_type>debug_weapon</entity_type>
+      <health>
+        <health_max>1</health_max>
+        <health_segments>1</health_segments>
+        <health_regen_rate>0</health_regen_rate>
+        <shield_segments>0</shield_segments>
+        <shield_regen_rate>0</shield_regen_rate>
+        <shield_first_seg_size>1</shield_first_seg_size>
+        <scaling>
+          <weak>1</weak>
+          <hurt>1</hurt>
+          <armor>1</armor>
+        </scaling>
+      </health>
       <movement>
         <vel_cap>-1</vel_cap>
         <vel_overcap>-1</vel_overcap>

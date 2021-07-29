@@ -36,14 +36,16 @@ try{
   text t7a("", 280, 60);
   text t8("overheated?", 10, 90);
   text t8a("", 280, 90);
-  text t9("health:", 10, 120);
+  text t9("burnt out?", 10, 120);
   text t9a("", 280, 120);
-  text t10("regenerating?", 10, 150);
+  text t10("health:", 10, 150);
   text t10a("", 280, 150);
-  text t11("shields:", 10, 180);
+  text t11("regenerating?", 10, 180);
   text t11a("", 280, 180);
-  text t12("shield %:", 10, 210);
+  text t12("shields:", 10, 210);
   text t12a("", 280, 210);
+  text t13("shield %:", 10, 240);
+  text t13a("", 280, 240);
 
 
 
@@ -193,10 +195,11 @@ try{
       t6a.set_msg(std::to_string(e_handler::get().get_plr_heat_frac()));
       t7a.set_msg(std::to_string(e_handler::get().get_plr_overheat_frac()));
       t8a.set_msg(std::to_string(e_handler::get().get_plr_is_overheat()));
-      t9a.set_msg(std::to_string(e_handler::get().get_plr_health_frac()));
-      t10a.set_msg(std::to_string(e_handler::get().get_plr_is_regenerating()));
-      t11a.set_msg(std::to_string(e_handler::get().get_plr_shield_segs()));
-      t12a.set_msg(std::to_string(e_handler::get().get_plr_shield_frac()));
+      t9a.set_msg(std::to_string(e_handler::get().get_plr_is_burnout()));
+      t10a.set_msg(std::to_string(e_handler::get().get_plr_health_frac()));
+      t11a.set_msg(std::to_string(e_handler::get().get_plr_is_regenerating()));
+      t12a.set_msg(std::to_string(e_handler::get().get_plr_shield_segs()));
+      t13a.set_msg(std::to_string(e_handler::get().get_plr_shield_frac()));
 
       t6.draw();
       t6a.draw();
@@ -212,6 +215,8 @@ try{
       t11a.draw();
       t12.draw();
       t12a.draw();
+      t13.draw();
+      t13a.draw();
 
 
 
