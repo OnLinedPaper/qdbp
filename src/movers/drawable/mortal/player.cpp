@@ -41,10 +41,14 @@ player::player(const std::string &path, const vec2d &p, const vec2d &v) :
   is_boost(false)
 { }
 
+float player::get_heat_frac() {
+  return (heat < max_heat * max_heat_mod ? heat / (max_heat * max_heat_mod) : 1); 
+}
+
 float player::get_overheat_frac() { 
-  return is_overheat 
-      ? (heat - (max_heat * max_heat_mod)) / (max_overheat * max_overheat_mod) 
-      : 0;
+  if(!is_overheat) { return 0; }
+  float frac = (heat - (max_heat * max_heat_mod)) / (max_overheat * max_overheat_mod); 
+  return frac > 0 ? frac : 0;
 }
 
 void player::draw() const {
@@ -59,9 +63,9 @@ void player::update() {
     is_overheat = true;
   }
   //check for burnout, take damage and start venting if we are
-  if(heat > max_overheat * max_overheat_mod) {
+  if(heat > max_heat * max_heat_mod + max_overheat * max_overheat_mod) {
     is_burnout = true;
-    heat = max_overheat * max_overheat_mod;
+    heat = max_heat * max_heat_mod + max_overheat * max_overheat_mod;
     //burnout always destroys current + next bar
     //this IS LETHAL for ships < 3 bars
     take_damage(max_health, -1);
@@ -73,13 +77,17 @@ void player::update() {
   if(is_overheat && !is_burnout && heat < max_heat * max_heat_mod) {
     is_overheat = false;
   }
+
+  //if we ARE burnt out, can't drop that status till we hit 0
   if(is_burnout && heat <= 0) {
-    is_overheat = false;
-    is_burnout = false;
-  }
-  else {
-    //force venting if we're burnt out
-    is_vent = true;
+    if(heat <= 0) {
+      is_overheat = false;
+      is_burnout = false;
+    }
+    else {
+      //force venting if we're burnt out
+      is_vent = true;
+    }
   }
 
   if(is_vent) {
@@ -91,6 +99,9 @@ void player::update() {
   }
 
 //---- add or remove heat -----------------------------------------------------
+
+  //let gunner (and mortal) run first so they can cancel regen if needed
+  gunner::update();
 
   if(is_boost) { 
     heat_up(boost_heat_per_tick * boost_heat_per_tick_mod); 
@@ -109,5 +120,4 @@ void player::update() {
 
   if(heat < 0) { heat = 0; }
 
-  gunner::update();
 }

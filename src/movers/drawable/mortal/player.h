@@ -20,7 +20,7 @@ public:
 
   void boost(bool b) { is_boost = b; }
   void heat_up(float h) { heat += h; }
-  float get_heat_frac() { return heat / (max_heat * max_heat_mod); }
+  float get_heat_frac();
   float get_overheat_frac();
 
   bool is_overheated() { return is_overheat; }

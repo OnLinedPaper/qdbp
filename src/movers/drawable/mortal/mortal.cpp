@@ -295,6 +295,9 @@ bool mortal::take_damage(float damage, int box_type_hit) {
   while(seg_min > curr_health) { seg_min -= seg_each; }
   //go to the next segment - health can drop no lower than there
   seg_min -= seg_each;
+
+  //clamp at 0 for last segment
+  seg_min = seg_min >= 0 ? seg_min : 0;
   
   //now take damage, clamping at seg_min
   curr_health = (
