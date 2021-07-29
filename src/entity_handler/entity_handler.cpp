@@ -353,6 +353,10 @@ bool e_handler::get_plr_is_overheat() {
   return plr->is_overheated();
 }
 
+bool e_handler::get_plr_is_burnout() {
+  return plr->is_burntout();
+}
+
 float e_handler::get_plr_health_frac() {
   return plr->get_health_frac();
 }

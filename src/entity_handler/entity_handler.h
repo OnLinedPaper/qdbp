@@ -38,6 +38,7 @@ public:
   float 	get_plr_heat_frac();
   float 	get_plr_overheat_frac();
   bool 		get_plr_is_overheat();
+  bool    get_plr_is_burnout();
   float 	get_plr_health_frac();
   bool 		get_plr_is_regenerating();
   int 		get_plr_shield_segs();
