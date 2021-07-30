@@ -18,6 +18,8 @@ public:
   virtual void move_lf() = 0;
   virtual void move_rt() = 0;
 
+  void shoot(const vec2d &);
+
   void boost(bool b) { is_boost = b; }
   void heat_up(float h) { heat += h; }
   float get_heat_frac();

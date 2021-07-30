@@ -1,4 +1,5 @@
 #include "src/movers/drawable/mortal/player.h"
+#include "src/movers/drawable/mortal/weapon.h"
 
 player::player(const std::string &path) :
   player(path, vec2d(0, 0), vec2d(0, 0))
@@ -41,6 +42,20 @@ player::player(const std::string &path, const vec2d &p, const vec2d &v) :
   is_boost(false)
 { }
 
+void player::shoot(const vec2d &angle) {
+  //check if we're burnt out
+  if(is_burnout) { return; }
+
+  //check if we're limited by the fire rate
+  if(!can_shoot()) { return; }
+
+  //alright, shoot
+  gunner::shoot(angle);
+
+  //now heat up
+  heat_up(weapon::get_heat_from_id(weapon_id));
+}
+
 float player::get_heat_frac() {
   return (heat < max_heat * max_heat_mod ? heat / (max_heat * max_heat_mod) : 1); 
 }
@@ -68,13 +83,15 @@ void player::update() {
     heat = max_heat * max_heat_mod + max_overheat * max_overheat_mod;
     //burnout always destroys current + next bar
     //this IS LETHAL for ships < 3 bars
-    take_damage(max_health, -1);
+    take_damage(max_health, -1, true);
   }
 
   //if overheated or burnt out, check if we're below threshold again
   //we can freely pass to and from overheat as long as we aren't burntout
   //but if we burnout then we're stuck until we hit 0
-  if(is_overheat && !is_burnout && heat < max_heat * max_heat_mod) {
+  //note that once overheated (100%) we have to drop below a threshold 
+  //(90%) to prevent jittering when right at the boundary
+  if(is_overheat && !is_burnout && heat < max_heat * max_heat_mod * .9) {
     is_overheat = false;
   }
 
