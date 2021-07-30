@@ -20,7 +20,7 @@ public:
 
   void shoot(const vec2d &);
 
-  void boost(bool b) { is_boost = b; }
+  void boost(bool b);
   void heat_up(float h) { heat += h; }
   float get_heat_frac();
   float get_overheat_frac();
@@ -74,6 +74,9 @@ protected:
   float vent_cool_per_tick;         //heat lost through venting
   float vent_startup_tick_delay;    //time delay before venting starts
 
+  float boost_vel_multiplier;       //speed multiplier when boosted
+  float boost_accel_multiplier;     //acceleration multiplier when boosted
+
 //---- modifiers --------------------------------------------------------------
 
   float max_heat_mod;               //can heat more before overheat
@@ -85,6 +88,9 @@ protected:
   float cool_per_tick_mod;          //higher numbers, more cooling per tick
   float vent_cool_per_tick_mod;     //higher numbers, more cooling per tick
   float vent_startup_tick_delay_mod;  //higher numbers, more time before vent
+
+  float boost_vel_multiplier_mod;   //higher numbers, faster speed
+  float boost_accel_multiplier_mod;   //higher numbers, faster accel
 
 //---- booleans ---------------------------------------------------------------
 

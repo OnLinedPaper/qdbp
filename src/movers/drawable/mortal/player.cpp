@@ -29,6 +29,12 @@ player::player(const std::string &path, const vec2d &p, const vec2d &v) :
   vent_startup_tick_delay(xmlparse::get().safe_get_xml_float(
     path + "/heat/vent_delay_tick", 0
   )),
+  boost_vel_multiplier(xmlparse::get().safe_get_xml_float(
+    path + "/movement/vel_boost", 1
+  )),
+  boost_accel_multiplier(xmlparse::get().safe_get_xml_float(
+    path + "/movement/vel_boost_accel", 1
+  )),
   max_heat_mod(1),
   max_overheat_mod(1),
   boost_heat_per_tick_mod(1),
@@ -36,6 +42,8 @@ player::player(const std::string &path, const vec2d &p, const vec2d &v) :
   cool_per_tick_mod(1),
   vent_cool_per_tick_mod(1),
   vent_startup_tick_delay_mod(1),
+  boost_vel_multiplier_mod(1),
+  boost_accel_multiplier_mod(1),
   is_overheat(false),
   is_burnout(false),
   is_vent(false),
@@ -54,6 +62,23 @@ void player::shoot(const vec2d &angle) {
 
   //now heat up
   heat_up(weapon::get_heat_from_id(weapon_id));
+}
+
+void player::boost(bool b) {
+  //can't boost when burnt out
+  if(is_burnout) { is_boost = false; return; }
+
+  is_boost = b;
+
+  //adjust the velocity and acceleration modifiers in movable
+  if(is_boost) {
+    vel_cap_mod = boost_vel_multiplier * boost_vel_multiplier_mod;
+    vel_accel_mod = boost_accel_multiplier * boost_accel_multiplier_mod;
+  }
+  else {
+    vel_cap_mod = 1;
+    vel_accel_mod = 1;
+  }
 }
 
 float player::get_heat_frac() {
@@ -78,7 +103,7 @@ void player::update() {
     is_overheat = true;
   }
   //check for burnout, take damage and start venting if we are
-  if(heat > max_heat * max_heat_mod + max_overheat * max_overheat_mod) {
+  if(!is_burnout && heat > max_heat * max_heat_mod + max_overheat * max_overheat_mod) {
     is_burnout = true;
     heat = max_heat * max_heat_mod + max_overheat * max_overheat_mod;
     //burnout always destroys current + next bar
@@ -111,7 +136,7 @@ void player::update() {
     //TODO: vent delay
     //not allowed to boost or regen health when venting
     //(regenerating shields is fine)
-    is_boost = false;
+    boost(false);
     if(is_regen_h()) { toggle_regen_h(); }
   }
 
