@@ -78,17 +78,18 @@ try{
       //no keybounce protection
 
       //handle movement
-      if(keystate[SDL_SCANCODE_D])
+      if(keystate[SDL_SCANCODE_W])
         { e_handler::get().move_plr(e_handler::UP); }
       if(keystate[SDL_SCANCODE_A])
         { e_handler::get().move_plr(e_handler::LF); }
       if(keystate[SDL_SCANCODE_S])
         { e_handler::get().move_plr(e_handler::DN); }
-      if(keystate[SDL_SCANCODE_F])
+      if(keystate[SDL_SCANCODE_D])
         { e_handler::get().move_plr(e_handler::RT); }
 
       if(keystate[SDL_SCANCODE_LSHIFT])
         { e_handler::get().boost_plr(true); }
+      else { e_handler::get().boost_plr(false); }
 
       if(keystate[SDL_SCANCODE_SPACE] || true) { //TODO: reenable?
         static vec2d angle(0, 0);

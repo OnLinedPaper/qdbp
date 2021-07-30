@@ -50,9 +50,10 @@
           </heat>
           <movement>
             <vel_cap>16</vel_cap>
-            <vel_overcap>27</vel_overcap>
+            <vel_boost>1.5</vel_boost>
             <vel_decay>0.1</vel_decay>
             <vel_accel>1</vel_accel>
+            <vel_boost_accel>3</vel_boost_accel>
           </movement>
           <textures>
             <body>arrow2</body>
