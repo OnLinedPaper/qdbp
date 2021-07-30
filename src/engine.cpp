@@ -160,7 +160,7 @@ try{
         //debugging section
         if(debug_mode) {
           if(keystate[SDL_SCANCODE_X]) {
-            e_handler::get().DEBUG_get_plr()->take_damage(20, -1);
+            e_handler::get().DEBUG_get_plr()->take_damage(20, -1, false);
           }
         }
 

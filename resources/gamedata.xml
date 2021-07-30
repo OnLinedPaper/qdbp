@@ -41,9 +41,9 @@
 
           <heat>
             <max_heat>400</max_heat>
-            <max_overheat>600</max_overheat>
+            <max_overheat>200</max_overheat>
             <boost_heat_per_tick>3</boost_heat_per_tick>
-            <regen_heat_per_tick>8</regen_heat_per_tick>
+            <regen_heat_per_tick>4</regen_heat_per_tick>
             <cool_per_tick>1</cool_per_tick>
             <vent_heat_per_tick>4</vent_heat_per_tick>
             <vent_delay_tick>10</vent_delay_tick>
@@ -122,7 +122,7 @@
         <body>beam</body>
       </textures>
       <shot>
-        <heat_per_shot>2</heat_per_shot>
+        <heat_per_shot>12</heat_per_shot>
         <tick_shot_delay>4</tick_shot_delay>
         <tick_lifespan>50</tick_lifespan>
         <dist_lifespan>400</dist_lifespan>
