@@ -249,10 +249,10 @@ void mortal::update_boxes() {
 //==== DAMAGE AND HEALTH ======================================================
 
 //returns true if ship took actual damage
-bool mortal::take_damage(float damage, int box_type_hit) {
+bool mortal::take_damage(float damage, int box_type_hit, bool bypass_shields) {
   if(damage < 0 || tangible == false) { return false; }
 
-  if(curr_shield_segments > 0) {
+  if(curr_shield_segments > 0 && !bypass_shields) {
     if(curr_shield_segments == 1) {
       //remove all shields on the last segment
       curr_shields = 0;
@@ -292,7 +292,7 @@ bool mortal::take_damage(float damage, int box_type_hit) {
   float seg_min = max_health * max_health_mod;
 
   //get the segment we're on now
-  while(seg_min > curr_health) { seg_min -= seg_each; }
+  while(seg_min >= curr_health) { seg_min -= seg_each; }
   //go to the next segment - health can drop no lower than there
   seg_min -= seg_each;
 

@@ -58,7 +58,8 @@ public:
   void toggle_regen_s() { s_is_regenerating = !s_is_regenerating; }
 
   //damage scales depending on which box was struck
-  virtual bool take_damage(float damage, int box_type_hit);
+  virtual bool take_damage
+      (float damage, int box_type_hit, bool bypass_shields);
 
   //when health hits 0, the entity usually becomes intangible and begins a
   //death animation of some sort before becoming invisible. this handles
