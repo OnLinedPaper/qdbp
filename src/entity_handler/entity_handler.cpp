@@ -313,32 +313,9 @@ void e_handler::toggle_plr_regen() {
   plr->toggle_regen_h();
 }
 
-void e_handler::plr_shoot(const vec2d angle) {
-  //first thing to do is see if we can shoot at all
-  if(!plr->can_shoot()) { return; }
-
-  //second thing to do is get the projectile we're going to shoot
-  uint8_t w_id = plr->get_weapon_id();
-
-  weapon *weap = NULL;
-  for(weapon *w : shot_all) {
-    if(w->is_type(w_id) && !w->is_active()) {
-      //we found an inactive projectile that meets our criteria
-      weap = w;
-      break;
-    }
-  }
-  if(weap == NULL) {
-    weap = new weapon(plr->get_weapon_id());
-    shot_all.push_back(weap);
-  }
-
-  //third is to spawn / activate the weapon and send it on its way 
-  weap->fire(plr->get_pos(), plr->get_vel(),
-      angle, 1, 1, 1, 1, 1, 1, plr->get_col());
-
-  //fourth is to add some heat to the player
-  plr->heat_up(weapon::get_heat_from_id(w_id)); 
+void e_handler::plr_shoot(const vec2d &angle) {
+  //get player to request a shot
+  plr->shoot(angle);
 }
 
 float e_handler::get_plr_heat_frac() {

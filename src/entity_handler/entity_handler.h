@@ -33,7 +33,7 @@ public:
   void toggle_plr_regen();
   void teleport_plr(const vec2d &);
   void teleport_plr_new_map();
-  void plr_shoot(const vec2d);
+  void plr_shoot(const vec2d &);
 
   float 	get_plr_heat_frac();
   float 	get_plr_overheat_frac();
