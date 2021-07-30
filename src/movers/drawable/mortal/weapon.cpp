@@ -35,7 +35,8 @@ weapon::weapon(const std::string path) :
   life_tick_mod(1),
   dist_tick_mod(1),
   impact_damage_mod(1),
-  armor_pierce_mod(armor_pierce)
+  armor_pierce_mod(armor_pierce),
+  bypass_shield_mod(false)
 { }
 
 weapon::weapon(uint8_t id) :
@@ -91,7 +92,7 @@ void weapon::strike_target(mortal &target, int box_type) {
   //depends on weapon - the vast majority will just do damage, but more exotic
   //effects like healing or slowdowns may apply
 
-  target.take_damage(impact_damage * impact_damage_mod, box_type);
+  target.take_damage(impact_damage * impact_damage_mod, box_type, bypass_shield_mod);
   armor_pierce_mod -= 1;
   if(armor_pierce_mod < 0) {
     this->perish();
