@@ -15,6 +15,7 @@ public:
   gunner(const std::string &path, const vec2d &pos, const vec2d &vel);
   virtual ~gunner() = default;
 
+  void shoot(const vec2d &);
   void shoot(); 
 
   //other children may check different factors (heat for player)
@@ -26,9 +27,9 @@ public:
   virtual void update() override;
 
 protected:
+  uint8_t weapon_id;
 
 private:
-  uint8_t weapon_id;
   float w_life_ms_mod;
   float w_life_dist_mod;
   float w_inacc_mod;

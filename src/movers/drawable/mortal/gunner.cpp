@@ -57,6 +57,10 @@ gunner::gunner(const std::string &path, const vec2d &p, const vec2d &v) :
   last_shot_time(t_frame::get().get_t())
 { }
 
+void gunner::shoot(const vec2d &angle) {
+  shot_angle = angle;
+  shoot();
+}
 
 //meant to be overridden in child classes if they want to, say, 
 //add heat or the like
@@ -69,14 +73,15 @@ void gunner::shoot() {
     w_life_ms_mod, w_life_dist_mod, w_inacc_mod, w_vel_mod, w_pierce_mod, 
     w_damage_mod, get_col()
   );
+
+  //now updates last shot time
+  last_shot_time = t_frame::get().get_t();
 }
 
 bool gunner::can_shoot() {
  
   //get elapsed ticks...
   float elapsed_ticks = t_frame::get().get_t() - last_shot_time; 
-  //...and immediately save current time...
-  last_shot_time = t_frame::get().get_t();
   //...then scale elapsed time for any lag
   elapsed_ticks *= t_frame::get().t_adjust();
 
