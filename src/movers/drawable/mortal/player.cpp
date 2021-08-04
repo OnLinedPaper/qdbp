@@ -200,21 +200,21 @@ void player::update() {
 
   //boosting generates heat
   if(is_boost) { 
-    heat_up(boost_heat_per_tick * boost_heat_per_tick_mod); 
+    heat_up(boost_heat_per_tick * boost_heat_per_tick_mod * t_frame::get().t_adjust()); 
   }
 
   //regenerating generates heat
   if(is_regen_h()) {
-    heat_up(regen_heat_per_tick * regen_heat_per_tick_mod);
+    heat_up(regen_heat_per_tick * regen_heat_per_tick_mod * t_frame::get().t_adjust());
   }
 
   //venting removes heat fast...
   if(is_vent) {
-    heat_up(-1 * vent_cool_per_tick * vent_cool_per_tick_mod);
+    heat_up(-1 * vent_cool_per_tick * vent_cool_per_tick_mod * t_frame::get().t_adjust());
   }
   //...but it will dissipate on its own naturally
   else {
-    heat_up(-1 * cool_per_tick * cool_per_tick_mod);
+    heat_up(-1 * cool_per_tick * cool_per_tick_mod * t_frame::get().t_adjust());
   }
 
   //clamp heat at 0
