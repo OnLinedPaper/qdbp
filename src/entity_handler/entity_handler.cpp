@@ -309,6 +309,10 @@ void e_handler::boost_plr(bool b) {
   plr->boost(b);
 }
 
+void e_handler::toggle_plr_vent() {
+  plr->toggle_vent();
+}
+
 void e_handler::toggle_plr_regen() {
   plr->toggle_regen_h();
 }
@@ -332,6 +336,10 @@ bool e_handler::get_plr_is_overheat() {
 
 bool e_handler::get_plr_is_burnout() {
   return plr->is_burntout();
+}
+
+bool e_handler::get_plr_is_vent() {
+  return plr->is_venting();
 }
 
 float e_handler::get_plr_health_frac() {

@@ -46,7 +46,8 @@ try{
   text t12a("", 280, 210);
   text t13("shield %:", 10, 240);
   text t13a("", 280, 240);
-
+  text t14("venting?", 10, 270);
+  text t14a("", 280, 270);
 
 
   e_handler::get().create_plr("mortal/gunner/player/debug_player");
@@ -144,6 +145,11 @@ try{
           }
         }
 
+        if(keystate[SDL_SCANCODE_V]) {
+          //toggle venting
+          e_handler::get().toggle_plr_vent();
+        }
+
         if(keystate[SDL_SCANCODE_R]) {
           e_handler::get().toggle_plr_regen();
         }
@@ -201,6 +207,7 @@ try{
       t11a.set_msg(std::to_string(e_handler::get().get_plr_is_regenerating()));
       t12a.set_msg(std::to_string(e_handler::get().get_plr_shield_segs()));
       t13a.set_msg(std::to_string(e_handler::get().get_plr_shield_frac()));
+      t14a.set_msg(std::to_string(e_handler::get().get_plr_is_vent()));
 
       t6.draw();
       t6a.draw();
@@ -218,6 +225,8 @@ try{
       t12a.draw();
       t13.draw();
       t13a.draw();
+      t14.draw();
+      t14a.draw();
 
 
 

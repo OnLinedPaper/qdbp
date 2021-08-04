@@ -30,6 +30,7 @@ public:
   void create_plr(std::string);
   void move_plr(unsigned char);
   void boost_plr(bool);
+  void toggle_plr_vent();
   void toggle_plr_regen();
   void teleport_plr(const vec2d &);
   void teleport_plr_new_map();
@@ -39,6 +40,7 @@ public:
   float 	get_plr_overheat_frac();
   bool 		get_plr_is_overheat();
   bool    get_plr_is_burnout();
+  bool    get_plr_is_vent();
   float 	get_plr_health_frac();
   bool 		get_plr_is_regenerating();
   int 		get_plr_shield_segs();
