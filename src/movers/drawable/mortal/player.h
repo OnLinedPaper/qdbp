@@ -21,18 +21,26 @@ public:
   void shoot(const vec2d &);
 
   void boost(bool b);
+  void toggle_vent();
   void heat_up(float h) { heat += h; }
   float get_heat_frac();
   float get_overheat_frac();
 
   bool is_overheated() { return is_overheat; }
   bool is_burntout() { return is_burnout; }
+  bool is_venting() { return is_vent; }
 
   void draw() const override;
   virtual void update() override;
 
 
 protected:
+
+  void start_boost();
+  void stop_boost();
+  void start_vent();
+  void stop_vent();
+  void trigger_burnout();
 
 //==== HEAT ===================================================================  
 
@@ -100,6 +108,9 @@ protected:
   bool is_boost;                    //is boosting, which raises velocity cap
 
 private:
+
+  float last_vent_toggle_tick;      //will be used to track when venting 
+                                    //started, for purposes of delay
 
 };
 

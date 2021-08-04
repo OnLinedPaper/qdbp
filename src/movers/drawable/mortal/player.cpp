@@ -47,7 +47,8 @@ player::player(const std::string &path, const vec2d &p, const vec2d &v) :
   is_overheat(false),
   is_burnout(false),
   is_vent(false),
-  is_boost(false)
+  is_boost(false),
+  last_vent_toggle_tick(0)
 { }
 
 void player::shoot(const vec2d &angle) {
@@ -64,21 +65,47 @@ void player::shoot(const vec2d &angle) {
   heat_up(weapon::get_heat_from_id(weapon_id));
 }
 
+
+void player::start_boost() {
+  vel_cap_mod = boost_vel_multiplier * boost_vel_multiplier_mod;
+  vel_accel_mod = boost_accel_multiplier * boost_accel_multiplier_mod;
+  is_boost = true;
+}
+
+void player::stop_boost() {
+  vel_cap_mod = 1;
+  vel_accel_mod = 1;
+  is_boost = false;
+}
+
 void player::boost(bool b) {
   //can't boost when burnt out
-  if(is_burnout) { is_boost = false; return; }
-
-  is_boost = b;
+  if(is_burnout) { 
+    stop_boost();
+    return; 
+  }
 
   //adjust the velocity and acceleration modifiers in movable
-  if(is_boost) {
-    vel_cap_mod = boost_vel_multiplier * boost_vel_multiplier_mod;
-    vel_accel_mod = boost_accel_multiplier * boost_accel_multiplier_mod;
+  if(b) {
+    start_boost();
   }
   else {
-    vel_cap_mod = 1;
-    vel_accel_mod = 1;
+    stop_boost();
   }
+}
+
+void player::toggle_vent() {
+  //can't vent when there's no heat
+  if(heat <= 0) { is_vent = false; return; }
+
+  //can't STOP venting if burnt out
+  if(is_burnout) { is_vent = true; return; }
+
+  //if we're venting, stop
+  if(is_vent) { is_vent = false; }
+  //if we're NOT venting, set the last toggle tick and wait for the update
+  //function to start the venting
+  else { last_vent_toggle_tick = t_frame::get().get_t(); }
 }
 
 float player::get_heat_frac() {
@@ -99,13 +126,19 @@ void player::update() {
 
 //---- heat checks ------------------------------------------------------------
   //check to see if we're overheated
-  if(heat > max_heat * max_heat_mod) {
+  if(!is_overheat && heat > max_heat * max_heat_mod) {
+    //we just overheated - handle it here
     is_overheat = true;
   }
+
   //check for burnout, take damage and start venting if we are
   if(!is_burnout && heat > max_heat * max_heat_mod + max_overheat * max_overheat_mod) {
+    //we just burnt out - handle it here
     is_burnout = true;
+
+    //cap heat at max
     heat = max_heat * max_heat_mod + max_overheat * max_overheat_mod;
+
     //burnout always destroys current + next bar
     //this IS LETHAL for ships < 3 bars
     take_damage(max_health, -1, true);
@@ -116,50 +149,75 @@ void player::update() {
   //but if we burnout then we're stuck until we hit 0
   //note that once overheated (100%) we have to drop below a threshold 
   //(90%) to prevent jittering when right at the boundary
+
+  //if we're overheated but not burnt out, it's easy to cool off
   if(is_overheat && !is_burnout && heat < max_heat * max_heat_mod * .9) {
     is_overheat = false;
   }
 
-  //if we ARE burnt out, can't drop that status till we hit 0
-  if(is_burnout && heat <= 0) {
+  //if we ARE burnt out, though, can't drop that status till we hit 0, and
+  //systems are affected
+  if(is_burnout) {
     if(heat <= 0) {
+      //cooled enough
       is_overheat = false;
       is_burnout = false;
     }
     else {
-      //force venting if we're burnt out
+      //force immediate venting
       is_vent = true;
     }
   }
 
+  //if venting was requested (last_vent_toggle_tick != 0), check to see if 
+  //enough time has passed to let us start venting
+  if(last_vent_toggle_tick && 
+      last_vent_toggle_tick 
+      + (vent_startup_tick_delay * vent_startup_tick_delay_mod)
+      < t_frame::get().get_t()) 
+  {
+    //we've passed the time we needed to wait
+    last_vent_toggle_tick = 0;
+    is_vent = true;
+  }
+
+  //if we're at no heat, deactivate venting
+  if(heat <= 0 && is_vent) {
+    toggle_vent();
+  }
+
+  //venting forcibly disables boosting and health regen (shields unaffected)
   if(is_vent) {
-    //TODO: vent delay
-    //not allowed to boost or regen health when venting
-    //(regenerating shields is fine)
-    boost(false);
+    stop_boost();
     if(is_regen_h()) { toggle_regen_h(); }
   }
 
 //---- add or remove heat -----------------------------------------------------
 
-  //let gunner (and mortal) run first so they can cancel regen if needed
+  //let gunner (and mortal) run first - they may want to deactivate health
+  //regen if the player is fully healed
   gunner::update();
 
+  //boosting generates heat
   if(is_boost) { 
     heat_up(boost_heat_per_tick * boost_heat_per_tick_mod); 
   }
 
+  //regenerating generates heat
   if(is_regen_h()) {
     heat_up(regen_heat_per_tick * regen_heat_per_tick_mod);
   }
 
+  //venting removes heat fast...
   if(is_vent) {
     heat_up(-1 * vent_cool_per_tick * vent_cool_per_tick_mod);
   }
+  //...but it will dissipate on its own naturally
   else {
     heat_up(-1 * cool_per_tick * cool_per_tick_mod);
   }
 
+  //clamp heat at 0
   if(heat < 0) { heat = 0; }
 
 }
