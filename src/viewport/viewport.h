@@ -33,6 +33,9 @@ private:
   int view_width, view_height;
   vec2d pos;
 
+  vec2d nc_pix_dims;    //how many pixels are in one block (font aspect ratio)
+  vec2d nc_world_dims;  //how many world units are in one block
+
   viewport();
   viewport(const viewport&) = delete;
   viewport &operator=(const viewport&) = delete;
