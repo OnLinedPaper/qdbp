@@ -234,8 +234,14 @@ try{
       //l1.set_end(l1.get_end() + vec2d(0, .4));
 
 //-----------------------------------------------------------------------------
-
-      SDL_RenderPresent(render::get().get_r());
+      //call proper rendering function for SDL or ncurses
+      if(render::get().mode() == render::R_SDL) {
+        SDL_RenderPresent(render::get().get_r());
+      }
+      else if(render::get().mode() == render::R_NCURSES) {
+        //TODO: ncurses rendering
+        render::get().nc_render();
+      }
     }
 
 //==== DEBUG STUFF here =======================================================
@@ -251,8 +257,10 @@ try{
 //==== GAME TICK here =========================================================
 
     incr_debug_swirly();
-    fprintf(stdout, "%c\r", debug_swirly());
-    fflush(stdout);
+    if(render::get().mode() != render::R_NCURSES) {
+      fprintf(stdout, "%c\r", debug_swirly());
+      fflush(stdout);
+    }
 
     next_tick();
   }
@@ -342,9 +350,12 @@ try{
     }
   }
 
-  if( SDL_InitSubSystem(SDL_INIT_EVERYTHING) < 0) {
+  if(render::get().mode() == render::R_SDL && SDL_InitSubSystem(SDL_INIT_EVERYTHING) < 0) {
     msg::print_error("Couldn't init SDL! Error: " + std::string(SDL_GetError()));
     throw("couldn't start SDL!");
+  }
+  else if(render::get().mode() == render::R_NCURSES) {
+    //TODO: ncurses error handling on bad init
   }
 } catch (std::string e) { msg::print_error(e); msg::get().close_log(); return; }
 }
