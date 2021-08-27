@@ -3,7 +3,7 @@ WC=x86_64-w64-mingw32-g++
 DIR := ${CURDIR}
 CFLAGS= -Wall -Wpedantic --std=c++17 -O3 -I$(DIR)
 DFLAGS = -g -ggdb
-LFLAGS= -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lstdc++fs
+LFLAGS= -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lstdc++fs -lncurses
 WFLAGS= -lmingw32 -mwindows -I$(DIR)/lib -L$(DIR)/lib
 DDIR = debugging
 XDIR = bin
