@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <experimental/filesystem>
+#include "src/renders/render.h"
 
 const std::string msg::rn = "\033[0;31m";
 const std::string msg::rb = "\033[1;31m";
@@ -20,34 +21,49 @@ msg::~msg() {
   close_log();
 }
 
+//TODO: handle ncurses messages
+
 void msg::print_error(const std::string message) {
-  std::cerr << rb << "error! " << rn << message << none << std::endl;
   if(get().outfile && get().outfile.is_open()) {
     get().outfile << "error! " << message << std::endl;
   }
+
+  if(render::get().mode() != render::R_SDL) { return; } //don't print to screen
+
+  std::cerr << rb << "error! " << rn << message << none << std::endl;
+
 }
 
 void msg::print_warn(const std::string message) {
-  std::cerr << yb << "warning: " << yn << message << none << std::endl;
   if(get().outfile && get().outfile.is_open()) {
     get().outfile << "warning: " << message << std::endl;
   }
 
+  if(render::get().mode() != render::R_SDL) { return; } //don't print to screen
+
+  std::cerr << yb << "warning: " << yn << message << none << std::endl;
+
 }
 
 void msg::print_alert(const std::string message) {
-  std::cerr << cn << "- " << message << none << std::endl;
   if(get().outfile && get().outfile.is_open()) {
     get().outfile << "- " << message << std::endl;
   }
 
+  if(render::get().mode() != render::R_SDL) { return; } //don't print to screen
+
+  std::cerr << cn << "- " << message << none << std::endl;
+
 }
 
 void msg::print_good(const std::string message) {
-  std::cerr << gn << message << none << std::endl;
   if(get().outfile && get().outfile.is_open()) {
     get().outfile << message << std::endl;
   }
+
+  if(render::get().mode() != render::R_SDL) { return; } //don't print to screen
+
+  std::cerr << gn << message << none << std::endl;
 
 }
 
