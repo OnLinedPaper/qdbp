@@ -114,12 +114,12 @@ void image::fill_t_vec(const std::string &name) {
 
     SDL_Texture *t;
     if(surf == NULL) {
-      fprintf(stderr, "couldn't load image! SDL_Error: %s\n", SDL_GetError());
+      msg::print_error("couldn't load image! SDL_Error " + std::string(SDL_GetError()));
     }
     else {
       t = SDL_CreateTextureFromSurface(render::get().get_r(), surf);
       if(t == NULL) {
-        fprintf(stderr, "couldn't create texture! SDL_Error: %s\n", SDL_GetError());
+        msg::print_error("couldn't craete texture! SDL_Error " + std::string(SDL_GetError()));
       }
       //save the texture
       t_vec.push_back(t);
