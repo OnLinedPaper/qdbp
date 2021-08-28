@@ -97,6 +97,9 @@ void render::init_ncurses_window() {
   keypad(w_nc, TRUE);
   timeout(1);
   curs_set(0);
+  
+  //"render" once to get the draw_vals data
+  nc_render();
 }
 
 void render::shade_display(float shade) {

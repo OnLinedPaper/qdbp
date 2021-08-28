@@ -32,6 +32,8 @@ public:
   int nc_get_l() { return LINES; }
   int nc_get_c() { return COLS; }
 
+  char * const nc_get_dv() { return draw_vals; }
+
   //draw a box on the screen at the specified location, allowing the renderer to handle the rest
   void nc_draw_box(const vec2d &tlc, const vec2d &brc, char c);
 

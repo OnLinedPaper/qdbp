@@ -1,4 +1,5 @@
 #include "image_handler.h"
+#include "src/renders/render.h"
 #include <utility>
 #include <algorithm>
 
@@ -52,8 +53,14 @@ void image_handler::draw_tile(const std::string name, float parallax) {
   images.at(name).draw_tile(parallax);
 }
 
+void image_handler::draw_nc_bg() {
+  //make a background of random data
+  char * const arr = render::get().nc_get_dv();
+  arr[0] = '.';
+}
+
 void image_handler::add_image(std::string name) {
-  #//used emplace so i could avoid a default constructor call to image
+  //used emplace so i could avoid a default constructor call to image
   images.emplace(name, name);
 }
 

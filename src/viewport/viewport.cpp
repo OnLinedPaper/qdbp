@@ -40,7 +40,6 @@ viewport::viewport() {
     //world height units will scale to world width based on aspect ratio
     nc_world_dims[1] = (nc_world_dims[0] * nc_pix_dims[1]) / nc_pix_dims[0]; //ordered to avoid rounding errors
     view_height = nc_world_dims[1] * LINES; //get total world height units, usually ~half of width
-//TODO: find segfault cause
   }
 }
 
