@@ -81,10 +81,15 @@ protected:
   std::vector<std::vector<hy_box> *> boxes;
 
   //boxes are split into 1 + 6 "types" 
-  //- hitboxes deal damage and are commonly found on weapons
+  //- hitboxes deal damage and are ONLY found on weapons, this is a design
+  //    decision i'm making right now. mortals will have no reason to 
+  //    directly interact with one another's hitboxes; attached weapons
+  //    will serve that purpose if needed. 
   //
   //- hurtboxes take normal damage and are commonly found on entities, and are
-  //    usually ABSENT from weapons unless they're destroyable en route
+  //    ABSENT from weapons. if the projectile is destroyable in flight, it
+  //    will be coded as a mortal with an attached weapon, and this will be
+  //    a rare case, not a common one.
   //- weakboxes take increased damage
   //- armorboxes take reduced damage
   //- shieldboxes take no damage (but still deplete shields if hit)
