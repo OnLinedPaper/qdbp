@@ -324,8 +324,6 @@ try{
   //preload weapon data, can't do this till the tree is built
   weapon::preload_weapon_data();
 
-  //prelaod entity ids and names, can't do this till the tree is built
-  e_handler::get().preload_entity_data();
 
   if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
     msg::print_error("couldn't init joysticks subsystem! SDL_Error: " + std::string(SDL_GetError()));
