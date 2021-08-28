@@ -68,6 +68,7 @@ void gunner::shoot(const vec2d &angle) {
 //of any children
 void gunner::shoot() {
   e_handler::get().request_shot(
+    this,
     weapon_id, get_pos(), get_vel(), shot_angle, 
     weapon::get_delay_from_id(weapon_id) * w_delay_mod,
     w_life_ms_mod, w_life_dist_mod, w_inacc_mod, w_vel_mod, w_pierce_mod, 

@@ -14,6 +14,7 @@ weapon::weapon(const std::string path) :
   type_id(xmlparse::get().get_xml_int(
     path + "/shot/unique_type_id"
   )),
+  parent(NULL),
   life_tick(xmlparse::get().get_xml_float(
     path + "/shot/tick_lifespan"
   )),
@@ -146,6 +147,7 @@ void weapon::draw() const {
 }
 
 void weapon::fire(
+  const mortal *p,
   const vec2d &start_pos, const vec2d &start_vel, const vec2d &angle,
   float life_tick_mod, float life_dist_mod,
   float inacc_mod,
@@ -153,6 +155,8 @@ void weapon::fire(
   int pierce_mod, float damage_mod,
   const SDL_Color &c
 ) {
+  parent = p;
+
   //spawn projectile
   set_pos(start_pos);
 

@@ -25,7 +25,8 @@ public:
   void draw() const override;
   virtual void update() override;
 
-  void fire(const vec2d &start_pos, const vec2d &start_vel,
+  void fire(const mortal* parent,
+    const vec2d &start_pos, const vec2d &start_vel,
     const vec2d &angle,
     float life_tick_mod,
     float life_dist_mod, float inacc_mod,
@@ -52,6 +53,8 @@ private:
 
   //the unique id of this weapon
   uint8_t type_id;
+  //the mortal that fired this weapon
+  const mortal *parent;
 
   //the number of ticks the shot can last before expiring
   float life_tick;
