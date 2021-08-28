@@ -71,6 +71,7 @@ public:
 
   //called by a gunner (or child) who would like a shot to be fired
   void request_shot(
+    const mortal *parent,
     uint8_t w_id,
     const vec2d &w_pos, const vec2d &w_vel, const vec2d &w_ang, 
     float delay_factor,
@@ -84,7 +85,6 @@ private:
   e_handler();
 
   bool check_category_collision(weapon *w, mortal *h, int type);
-  void preload_specific_entities(const std::string &, const std::vector<std::string> &);
 
   player *plr;
   const std::string entity_xml_root = "/movers/";
@@ -93,7 +93,6 @@ private:
   std::vector<weapon *> shot_all;
 
   std::unordered_map<std::string, int> entity_count_by_id;
-  std::unordered_map<std::string, std::string> entity_name_and_id;
 
   bool draw_debug_info;
 

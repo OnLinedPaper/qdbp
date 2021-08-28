@@ -28,48 +28,6 @@ e_handler::~e_handler() {
 
 //==== GENERIC THINGS =========================================================
 
-void e_handler::preload_entity_data() {
-  std::string path = "";
-  std::vector<std::string> e_names;
-
-  //preload killables
-  path = "/movers/killable";
-  e_names = xmlparse::get().get_all_child_tags(path);
-  preload_specific_entities(path, e_names);
-
-  //preload heatables
-  path = "/movers/heatable";
-  e_names = xmlparse::get().get_all_child_tags(path);
-  preload_specific_entities(path, e_names);
-
-
-  //preload hittables
-  path = "/movers/hittable";
-  e_names = xmlparse::get().get_all_child_tags(path);
-  preload_specific_entities(path, e_names);
-
- 
-  for(const auto & [key, value] : entity_name_and_id) {
-    std::cout << key << " " << value << std::endl;
-  } 
-}
-
-void e_handler::preload_specific_entities(
-    const std::string &path, const std::vector<std::string> &e_names
-) {
-  for(std::string s : e_names) {
-    entity_name_and_id.insert(
-      {s, xmlparse::get().get_xml_string(
-        path + "/" + s + "/id"
-      )}
-    );
-  }
-}
-
-int e_handler::get_entity_count_by_name(const std::string &name) {
-  return get_entity_count_by_id(entity_name_to_id(name));
-}
-
 int e_handler::get_entity_count_by_id(const std::string &id) {
   if(entity_count_by_id.find(id) 
       == entity_count_by_id.end()) {
@@ -77,16 +35,6 @@ int e_handler::get_entity_count_by_id(const std::string &id) {
   }
   else {
     return(entity_count_by_id[id]);
-  }
-}
-
-const std::string &e_handler::entity_name_to_id(const std::string &name) {
-  if(entity_name_and_id.find(name) != entity_name_and_id.end()) {
-    return entity_name_and_id[name];
-  }
-  else {
-    //TODO: proper error handling here for bad data
-    throw("S-H-I-T!");
   }
 }
 
@@ -115,7 +63,19 @@ void e_handler::update_entities() {
 
 //check entity collision - note that this may change
 //dramatically in the future, as it currently runs in O(n*m) time
-//where n is (player) projectiles and m is (hostile) entities
+//where n is projectiles and m is entities
+
+//i've made the design decision - weapons are the ONLY entites with hitboxes,
+//and mortals are NOT going to interact with one another via hitboxes. any 
+//mortal that can deal "contact damage" or any weapon projectile that can be
+//"shot down" will be handled the same: a mortal with a weapon directly 
+//attached to it. 
+
+//as far as "teams" go, this will be left to the weapon itself to determine; 
+//if a weapon can track a player, it can selectively target the player too, and
+//passively ignore other entities in its strike_target() function. HOPEFULLY,
+//limiting this to JUST determining if entities bump one another should make
+//the design process much easier to manage.
 
 //when checking for collision, check shields, then armor, then hit, then weak
 //SHIELD boxes (different from health-related shields) take 0 damage, ARMOR
@@ -127,9 +87,6 @@ void e_handler::update_entities() {
 //collision with HURT and then WEAK. each count of penetration punches deeper 
 //into the ship. 
 //(note: this usually is only noticable if the projectile is moving very fast)
-
-//collision also does not currently differentiate based on team
-//it also doesn't check for multiple collisions from the same box
 
 //note that the EFFECT of the collision is left up to the weapon itself, to
 //accommodate a wider variety of effects than just "oh it takes damage now".
@@ -269,6 +226,7 @@ void e_handler::find_or_create_npe(const std::string &name,
 //multiple projectiles as a factor of how hard the game has lagged since the
 //last shot. 
 void e_handler::request_shot (
+  const mortal *parent,
   uint8_t w_id, const vec2d &w_pos, const vec2d &w_vel, const vec2d &w_ang, 
   float delay_factor, 
   float w_life_tick_mod, float w_life_dist_mod, float w_inacc_mod,
@@ -287,8 +245,7 @@ void e_handler::request_shot (
     shot_all.push_back(weap);
   }
 
-  weap->fire(w_pos, w_vel, w_ang, w_life_tick_mod, w_life_dist_mod, w_inacc_mod, w_vel_mod, w_pierce_mod, w_damage_mod, c);
-  //TODO: add to npe_all as well? weapons can be shot down now
+  weap->fire(parent, w_pos, w_vel, w_ang, w_life_tick_mod, w_life_dist_mod, w_inacc_mod, w_vel_mod, w_pierce_mod, w_damage_mod, c);
 }
 
 //==== PLAYER THINGS ==========================================================
