@@ -138,7 +138,7 @@ void render::nc_render() {
   //data will have, by now, been loaded into draw_vals
   for(int i=0; i<COLS; i++) {
     for(int j=0; j<LINES; j++) {
-      mvwaddch(w_nc, j, i, draw_vals[j*sizeof(char)*COLS*i]);
+      mvwaddch(w_nc, j, i, draw_vals[j*sizeof(char)*COLS+i]);
     }
   }
   

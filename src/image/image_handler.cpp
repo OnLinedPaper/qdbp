@@ -55,8 +55,17 @@ void image_handler::draw_tile(const std::string name, float parallax) {
 
 void image_handler::draw_nc_bg() {
   //make a background of random data
+  std::random_device rd;
+  std::uniform_int_distribution<> distrib(0, 100);
+
   char * const arr = render::get().nc_get_dv();
-  arr[0] = '.';
+  for(int i=0; i<COLS; i++) {
+    for(int j=0; j<LINES; j++) {
+      char c = '?';
+      if(distrib(rd) % 100 == 0) { c = '.'; } else { c = ' '; }
+      arr[j * sizeof(char) * COLS + i] = c;
+    }
+  }
 }
 
 void image_handler::add_image(std::string name) {
