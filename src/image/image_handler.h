@@ -21,7 +21,9 @@ public:
   void draw_rotate_color_outline(const std::string name, float x, float y,
       float frame_bump, float angle, const SDL_Color &c, bool outline_color, float opacity);
   void draw_tile(const std::string name, float parallax);
-  void draw_nc_bg();
+  void draw_nc_bg(int density);
+  void draw_nc_bg(const vec2d &tlc, const vec2d &brc, int density);
+  void draw_nc_bg(int tlcx, int tlcy, int brcx, int brcy, int density);
 
   static void get_col_from_team(const std::string, SDL_Color &);
   static void jitter_col(int, SDL_Color &);

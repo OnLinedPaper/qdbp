@@ -43,4 +43,25 @@ viewport::viewport() {
   }
 }
 
+//x and y are points in world units that need to be converted to screen 
+//units - note that they may be offscreen, in which case the max value
+//for the screen dim is returned
+void viewport::convert_to_nc_screen_units(int &x, int &y) const {
+//TODO: validate this
+  x = x - get_tlc_x();
+  y = y - get_tlc_y();
+
+  if(x < 0) { x = 0; }
+  else if(x > view_width) { x = COLS; }
+  else {
+    x = (x * nc_pix_dims[0]) / nc_world_dims[0];
+  }
+
+  if(y < 0) { y = 0; }
+  else if(y > view_height) { y = LINES; }
+  else {
+    y = (y * nc_pix_dims[1]) / nc_world_dims[1];
+  }
+}
+
 viewport::~viewport() { }

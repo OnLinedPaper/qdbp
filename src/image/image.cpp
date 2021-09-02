@@ -132,6 +132,7 @@ void image::fill_t_vec(const std::string &name) {
 }
 
 void image::draw_rotate(float x_pos, float y_pos, float angle, float frame_bump) const {
+  if(render::get().mode() == render::R_NCURSES) { return; }
   static SDL_Color no_col = {255, 255, 255};
   draw_rotate_color(x_pos, y_pos, angle, frame_bump, no_col);
 }
@@ -139,12 +140,14 @@ void image::draw_rotate(float x_pos, float y_pos, float angle, float frame_bump)
 void image::draw_rotate_color(float x_pos, float y_pos, float angle, 
     float frame_bump, const SDL_Color &mod) const 
 {
+  if(render::get().mode() == render::R_NCURSES) { return; }
   draw_rotate_color_opacity(x_pos, y_pos, angle, frame_bump, mod, 1);
 }
 
 void image::draw_rotate_color_opacity(float x_pos, float y_pos, float angle, 
     float frame_bump, const SDL_Color &mod, float opacity) const 
 {
+  if(render::get().mode() == render::R_NCURSES) { return; }
 
   //check to see if the entity is anywhere on-screen - if it's not,
   //don't draw it, to save time
@@ -195,6 +198,7 @@ void image::draw_rotate_color_opacity(float x_pos, float y_pos, float angle,
 }
 
 void image::draw_tile(float parallax) const {
+  if(render::get().mode() == render::R_NCURSES) { return; }
   //draw the image in a tile-like format across the screen, shifting it
   //with player's movement according to parallax. parallax 1 means it's
   //"fixed" like an unmoving background.

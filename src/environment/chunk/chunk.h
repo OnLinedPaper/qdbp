@@ -61,6 +61,7 @@ public:
   void add_gate(std::string dest, std::string name);
 
   void draw() const;
+  void draw_nc() const;
   void debug_draw(float x, float y) const;
 
 private:

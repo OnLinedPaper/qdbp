@@ -191,49 +191,59 @@ void chunk::add_gate(std::string dest, std::string name) {
 
 void chunk::draw() const {
 
-  float x = tlc[0];
-  float y = tlc[1];
-  //debug_draw(x, y);
-  //draw 2 barriers on each line where border[i] = true -
-  //that's where a border is
-  //check in order: u, d, l, r
-  if(border[0]) {
-    //the top is a border
-    image_handler::get().draw_rotate(i1_name, x + (length / 4), y, frame_bump, 0);
-    image_handler::get().draw_rotate(i1_name, x + 3 * (length / 4), y, frame_bump, 0);
-
-    image_handler::get().draw_rotate(i2_name, x, y, 0, 0);
-    image_handler::get().draw_rotate(i2_name, x + (length / 2), y, 0, 0);
+  if(render::get().mode() == render::R_NCURSES) { 
+    draw_nc();
+    return; 
   }
-  if(border[1]) {
-    //the bottom is a border
-    image_handler::get().draw_rotate(i1_name, x + (length / 4), y + length, frame_bump, 180);
-    image_handler::get().draw_rotate(i1_name, x + 3 * (length / 4), y + length, frame_bump, 180);
+    else if(render::get().mode() == render::R_SDL) {
+    float x = tlc[0];
+    float y = tlc[1];
+    //debug_draw(x, y);
+    //draw 2 barriers on each line where border[i] = true -
+    //that's where a border is
+    //check in order: u, d, l, r
+    if(border[0]) {
+      //the top is a border
+      image_handler::get().draw_rotate(i1_name, x + (length / 4), y, frame_bump, 0);
+      image_handler::get().draw_rotate(i1_name, x + 3 * (length / 4), y, frame_bump, 0);
 
-    image_handler::get().draw_rotate(i2_name, x + (length / 2), y + length, 0, 0);
-    image_handler::get().draw_rotate(i2_name, x + length, y + length, 0, 0);
+      image_handler::get().draw_rotate(i2_name, x, y, 0, 0);
+      image_handler::get().draw_rotate(i2_name, x + (length / 2), y, 0, 0);
+    }
+    if(border[1]) {
+      //the bottom is a border
+      image_handler::get().draw_rotate(i1_name, x + (length / 4), y + length, frame_bump, 180);
+      image_handler::get().draw_rotate(i1_name, x + 3 * (length / 4), y + length, frame_bump, 180);
+
+      image_handler::get().draw_rotate(i2_name, x + (length / 2), y + length, 0, 0);
+      image_handler::get().draw_rotate(i2_name, x + length, y + length, 0, 0);
+    }
+    if(border[2]) {
+      //the left is a border
+      image_handler::get().draw_rotate(i1_name, x, y + (length / 4), frame_bump, 270);
+      image_handler::get().draw_rotate(i1_name, x, y + 3 * (length / 4), frame_bump, 270);
+
+      image_handler::get().draw_rotate(i2_name, x, y + (length / 2), 0, 0);
+      image_handler::get().draw_rotate(i2_name, x, y + length, 0, 0);
+    }
+    if(border[3]) {
+      //the right is a border
+      image_handler::get().draw_rotate(i1_name, x + length, y + (length / 4), frame_bump, 90);
+      image_handler::get().draw_rotate(i1_name, x + length, y + 3 * (length / 4), frame_bump, 90);
+
+      image_handler::get().draw_rotate(i2_name, x + length, y, 0, 0);
+      image_handler::get().draw_rotate(i2_name, x + length, y + (length / 2), 0, 0);
+    }
+
+    if(has_gate) {
+      image_handler::get().draw_rotate(g_name, x + length/2, y + length/2, 0, 0);
+    }
   }
-  if(border[2]) {
-    //the left is a border
-    image_handler::get().draw_rotate(i1_name, x, y + (length / 4), frame_bump, 270);
-    image_handler::get().draw_rotate(i1_name, x, y + 3 * (length / 4), frame_bump, 270);
 
-    image_handler::get().draw_rotate(i2_name, x, y + (length / 2), 0, 0);
-    image_handler::get().draw_rotate(i2_name, x, y + length, 0, 0);
-  }
-  if(border[3]) {
-    //the right is a border
-    image_handler::get().draw_rotate(i1_name, x + length, y + (length / 4), frame_bump, 90);
-    image_handler::get().draw_rotate(i1_name, x + length, y + 3 * (length / 4), frame_bump, 90);
+}
 
-    image_handler::get().draw_rotate(i2_name, x + length, y, 0, 0);
-    image_handler::get().draw_rotate(i2_name, x + length, y + (length / 2), 0, 0);
-  }
-
-  if(has_gate) {
-    image_handler::get().draw_rotate(g_name, x + length/2, y + length/2, 0, 0);
-  }
-
+void chunk::draw_nc() const {
+  image_handler::get().draw_nc_bg(tlc, {tlc[0] + length, tlc[1] + length}, 1);
 }
 
 void chunk::debug_draw(float x, float y) const {

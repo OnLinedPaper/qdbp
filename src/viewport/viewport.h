@@ -29,6 +29,8 @@ public:
 
   void set_pos(const vec2d p) { pos = p; }
 
+  void convert_to_nc_screen_units(int &x, int &y) const;
+
 private:
   int view_width, view_height;
   vec2d pos;

@@ -1,5 +1,6 @@
 #include "image_handler.h"
 #include "src/renders/render.h"
+#include "src/viewport/viewport.h"
 #include <utility>
 #include <algorithm>
 
@@ -53,16 +54,47 @@ void image_handler::draw_tile(const std::string name, float parallax) {
   images.at(name).draw_tile(parallax);
 }
 
-void image_handler::draw_nc_bg() {
+//cover whole screen if no dimensions specified
+void image_handler::draw_nc_bg(int density) {
+  draw_nc_bg(0, 0, COLS, LINES, density);
+}
+
+//if dimensions come in as vec2d, they're in world units - convert them to
+//screen units, check if those aare on viewport, and send them on their way (or
+//not, if they're off screen)
+void image_handler::draw_nc_bg(const vec2d &tlc, const vec2d &brc, int density) {
+  //check if this chunk is on-screen
+  if(viewport::get().get_tlc_x() > brc[0] || viewport::get().get_tlc_y() > brc[1] ||
+      viewport::get().get_brc_x() < tlc[0] || viewport::get().get_brc_y() < tlc[1]) {
+    //it's off-screen
+    return;
+  }
+
+  //pass these values to viewport and let it convert the coordinate pair
+  //to an onscreen value
+  int tlcx, tlcy, brcx, brcy;
+  tlcx = tlc[0];
+  tlcy = tlc[1];
+  brcx = brc[0];
+  brcy = brc[1];
+
+//TODO: validate this
+  viewport::get().convert_to_nc_screen_units(tlcx, tlcy);
+  viewport::get().convert_to_nc_screen_units(brcx, brcy);
+
+  draw_nc_bg(tlcx, tlcy, brcx, brcy, density);
+}
+
+void image_handler::draw_nc_bg(int tlcx, int tlcy, int brcx, int brcy, int density) {
   //make a background of random data
   std::random_device rd;
-  std::uniform_int_distribution<> distrib(0, 100);
+  std::uniform_int_distribution<> distrib(0, density);
 
   char * const arr = render::get().nc_get_dv();
-  for(int i=0; i<COLS; i++) {
-    for(int j=0; j<LINES; j++) {
+  for(int i=tlcx; i<brcx; i++) {
+    for(int j=tlcy; j<brcy; j++) {
       char c = '?';
-      if(distrib(rd) % 100 == 0) { c = '.'; } else { c = ' '; }
+      if(distrib(rd) % density == 0) { c = '.'; } else { c = ' '; }
       arr[j * sizeof(char) * COLS + i] = c;
     }
   }
