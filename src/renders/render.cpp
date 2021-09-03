@@ -7,7 +7,7 @@ const uint8_t render::R_SDL = 0;
 const uint8_t render::R_NCURSES = 1;
 
 render::render() : graphics_mode(R_SDL), w(nullptr), r(nullptr), w_nc(NULL), draw_vals(NULL) {
-  if( SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
+  if(true || SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
     std::cout << ("Couldn't init SDL! Error: " + std::string(SDL_GetError())) << std::endl;
     
     //check if we want to run in ncurses mode instead of sdl mode

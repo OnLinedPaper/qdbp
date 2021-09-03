@@ -243,7 +243,8 @@ void chunk::draw() const {
 }
 
 void chunk::draw_nc() const {
-  image_handler::get().draw_nc_bg(tlc, {tlc[0] + length, tlc[1] + length}, 1);
+  if(!in_bounds) { return; }
+  image_handler::get().draw_nc_bg(tlc, {tlc[0] + length, tlc[1] + length}, 100000);
 }
 
 void chunk::debug_draw(float x, float y) const {

@@ -15,6 +15,8 @@
 #include <SDL2/SDL_ttf.h>
 #include "src/text/text.h"
 
+#include <unistd.h>
+
 //looking for the constructors? they're below "play"
 
 
@@ -71,6 +73,7 @@ try{
 
 //==== PLAYER INPUT here ======================================================
 
+  if(render::get().mode() == render::R_SDL) {
     //get the keystate
     SDL_PumpEvents();
 
@@ -171,6 +174,29 @@ try{
           }
         }
 
+      }
+    }
+    }
+    else if(render::get().mode() == render::R_NCURSES) {
+      //TODO: find a way around key repeat to get raw input
+      int ch = getch();
+      while(ch != ERR) {
+        switch(ch) {
+          case 27:
+            quit = true; break;
+          case 'w':
+            e_handler::get().move_plr(e_handler::UP); break;
+          case 'a':
+            e_handler::get().move_plr(e_handler::LF); break;
+          case 's':
+            e_handler::get().move_plr(e_handler::DN); break;
+          case 'd':
+            e_handler::get().move_plr(e_handler::RT); break;
+          default: 
+            break;
+        }
+
+        ch = getch();
       }
     }
 
