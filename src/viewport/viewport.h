@@ -29,14 +29,17 @@ public:
 
   void set_pos(const vec2d p) { pos = p; }
 
-  void convert_to_nc_screen_units(int &x, int &y) const;
+  void convert_to_nc_screen_units(int &x, int &y);
 
 private:
   int view_width, view_height;
+  int prev_LINES, prev_COLS;
   vec2d pos;
 
   vec2d nc_pix_dims;    //how many pixels are in one block (font aspect ratio)
   vec2d nc_world_dims;  //how many world units are in one block
+
+  void recalculate_view_dims();
 
   viewport();
   viewport(const viewport&) = delete;

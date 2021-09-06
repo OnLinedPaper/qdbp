@@ -4,6 +4,7 @@
 
 viewport::viewport() {
   view_width = view_height = 0;
+  prev_LINES = prev_COLS = -1;
   pos[0] = pos[1] = 0;
   nc_pix_dims[0] = nc_pix_dims[1] = 0;
   nc_world_dims[0] = nc_world_dims[1] = 0;
@@ -28,25 +29,37 @@ viewport::viewport() {
     //actually, fuck it, i'm just gonna ask.
     std::cout << "what's the aspect ratio of your terminal's font? (crappy is 8 16)\nenter as \"# #\": " << std::flush;
     std::cin >> nc_pix_dims[0] >> nc_pix_dims[1];
-    
-    //now use COLS (x) and LINES (y) to determine view scale (crappy is 128x37)
-    //  determine how many width world units a single block holds, rounding to a whole number
-    //  determine view width by multiplying width world unit per block by COLS
-    //  use aspect ratio to determine how many height world units a single block holds, again rounding
-    //  determine view height by multiplying height world unit per block by LINES
-    nc_world_dims[0] = 2000 / COLS;         //get world width units per block
-    view_width = nc_world_dims[0] * COLS;   //get total world width units; <2000 due to int rounding
-    
-    //world height units will scale to world width based on aspect ratio
-    nc_world_dims[1] = (nc_world_dims[0] * nc_pix_dims[1]) / nc_pix_dims[0]; //ordered to avoid rounding errors
-    view_height = nc_world_dims[1] * LINES; //get total world height units, usually ~half of width
+
+    recalculate_view_dims();
   }
+
+}
+
+void viewport::recalculate_view_dims() {
+  if(COLS == prev_COLS && LINES == prev_LINES) { return; }
+
+  //now use COLS (x) and LINES (y) to determine view scale (crappy is 128x37)
+  //  determine how many width world units a single block holds, rounding to a whole number
+  //  determine view width by multiplying width world unit per block by COLS
+  //  use aspect ratio to determine how many height world units a single block holds, again rounding
+  //  determine view height by multiplying height world unit per block by LINES
+  nc_world_dims[0] = 2000 / COLS;         //get world width units per block
+  view_width = nc_world_dims[0] * COLS;   //get total world width units; <2000 due to int rounding
+    
+  //world height units will scale to world width based on aspect ratio
+  nc_world_dims[1] = (nc_world_dims[0] * nc_pix_dims[1]) / nc_pix_dims[0]; //ordered to avoid rounding errors
+  view_height = nc_world_dims[1] * LINES; //get total world height units, usually ~half of width
+
+  prev_LINES = LINES;
+  prev_COLS = COLS;
 }
 
 //x and y are points in world units that need to be converted to screen 
 //units - note that they may be offscreen, in which case the max value
 //for the screen dim is returned
-void viewport::convert_to_nc_screen_units(int &x, int &y) const {
+void viewport::convert_to_nc_screen_units(int &x, int &y) {
+  recalculate_view_dims();
+
   x = x - get_tlc_x();
   y = y - get_tlc_y();
 

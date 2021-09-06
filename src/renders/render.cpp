@@ -124,6 +124,10 @@ void render::nc_render() {
 
 
   //check for window resizing - this will always trigger on first draw
+  //note that if the window resized, we skip drawing for this phase
+  //also note that this is not an authoritative fix - i'm not completely
+  //certain why, but rapidly resizing the window causes mvwaddch to fail below
+  //when it tries to call resize_term from libncurses
   if(draw_vals == NULL || LINES != last_lines || COLS != last_cols) {
     free(draw_vals);
     draw_vals = (char *)malloc(sizeof(char) * LINES * COLS);
@@ -134,11 +138,13 @@ void render::nc_render() {
     last_lines = LINES;
     last_cols = COLS;
   }
-
-  //data will have, by now, been loaded into draw_vals
-  for(int i=0; i<COLS; i++) {
-    for(int j=0; j<LINES; j++) {
-      mvwaddch(w_nc, j, i, draw_vals[j*sizeof(char)*COLS+i]);
+  //we didn't resize, it's safe to draw
+  else {
+    //data will have, by now, been loaded into draw_vals
+    for(int i=0; i<COLS; i++) {
+      for(int j=0; j<LINES; j++) {
+        mvwaddch(w_nc, j, i, draw_vals[j*sizeof(char)*COLS+i]);
+      }
     }
   }
   
