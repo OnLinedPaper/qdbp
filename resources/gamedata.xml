@@ -2,6 +2,15 @@
 <first_map>debug_2</first_map>
 <draw_debug_info>0</draw_debug_info>
 
+<ncurses_rendering>
+  <aspect_ratio>
+    <width>8</width>
+    <height>16</height>
+  </aspect_ratio>
+
+  <keyboard_input_device>/dev/input/event4</keyboard_input_device>
+</ncurses_rendering>
+
 <movers>
 
   <mortal>

@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <string>
 #include <iostream>
+#include <linux/input.h>
+
 
 #define CONTROLLER_DEADZONE 8000
 
@@ -37,6 +39,9 @@ private:
   char const debug_swirly();
   void incr_debug_swirly();
   SDL_Joystick *controller;
+
+  FILE *nc_kbd;
+  char key_map[KEY_MAX/8 +1];
 };
 
 #endif //ENGINE_H_

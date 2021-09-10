@@ -1,5 +1,6 @@
 #include "viewport.h"
 #include "src/renders/render.h"
+#include "src/xml_parser/xmlparse.h"
 #include <iostream>
 
 viewport::viewport() {
@@ -27,8 +28,8 @@ viewport::viewport() {
     //the ability to render things meaningfully anyway.
 
     //actually, fuck it, i'm just gonna ask.
-    std::cout << "what's the aspect ratio of your terminal's font? (crappy is 8 16)\nenter as \"# #\": " << std::flush;
-    std::cin >> nc_pix_dims[0] >> nc_pix_dims[1];
+    nc_pix_dims[0] = xmlparse::get().get_xml_int("/ncurses_rendering/aspect_ratio/width");
+    nc_pix_dims[1] = xmlparse::get().get_xml_int("/ncurses_rendering/aspect_ratio/height");
 
     recalculate_view_dims();
   }
