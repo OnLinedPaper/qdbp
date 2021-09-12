@@ -54,6 +54,7 @@ render::~render() {
   else if(graphics_mode == R_NCURSES) {
     delwin(w_nc);
     endwin();
+    free(draw_vals);
   }
 }
 
