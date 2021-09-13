@@ -178,6 +178,9 @@ try{
     }
     }
     else if(render::get().mode() == render::R_NCURSES) {
+      //consume keys so they don't pile up in the terminal
+      while(getch() != ERR) {}
+
       //wipe the character array
       memset(key_map, 0, sizeof(key_map)); 
 
@@ -222,14 +225,14 @@ try{
         else { comma_down = false; }
 
         //quit
-        static bool q_down = false;
-        if(key_map[KEY_Q/8] & (1 << (KEY_Q % 8))) {
-          if(!q_down) {
+        static bool esc_down = false;
+        if(key_map[KEY_ESC/8] & (1 << (KEY_ESC % 8))) {
+          if(!esc_down) {
             quit = true;
-            q_down = true;
+            esc_down = true;
           }
         }
-        else { q_down = false; }
+        else { esc_down = false; }
       }
     }
 

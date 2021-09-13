@@ -65,13 +65,13 @@ void viewport::convert_to_nc_screen_units(int &x, int &y) {
   y = y - get_tlc_y();
 
   if(x < 0) { x = 0; }
-  else if(x > view_width) { x = COLS; }
+  else if(x > view_width) { x = COLS - 1; }
   else {
     x = (x * COLS) / view_width;
   }
 
   if(y < 0) { y = 0; }
-  else if(y > view_height) { y = LINES; }
+  else if(y > view_height) { y = LINES - 1; }
   else {
     y = (y * LINES) / view_height;
   }

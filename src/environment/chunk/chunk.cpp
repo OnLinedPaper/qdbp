@@ -245,6 +245,25 @@ void chunk::draw() const {
 void chunk::draw_nc() const {
   if(!in_bounds) { return; }
   image_handler::get().draw_nc_bg(tlc, {tlc[0] + length, tlc[1] + length}, 100000);
+
+  if(border[0]) { /*top border*/ 
+    image_handler::get().draw_nc_line(tlc, {tlc[0] + length, tlc[1]}, 'N'); 
+  }
+  if(border[1]) { /*bottom border*/ 
+    image_handler::get().draw_nc_line({tlc[0], tlc[1] + length}, {tlc[0] + length, tlc[1] + length}, 'N'); 
+  }
+  if(border[2]) { /*left border*/ 
+    image_handler::get().draw_nc_line(tlc, {tlc[0], tlc[1] + length}, 'N'); 
+  }
+  if(border[3]) { /*right border*/ 
+    image_handler::get().draw_nc_line({tlc[0] + length, tlc[1]}, {tlc[0] + length, tlc[1] + length}, 'N');
+  }
+  //TODO: remove, for debugging
+  image_handler::get().draw_nc_line(
+    {tlc[0] + length / 7, tlc[1] + length / 7},
+    {tlc[0] + length / 3 + length /3, tlc[1] + length / 3 + length / 3},
+    '&'
+  );
 }
 
 void chunk::debug_draw(float x, float y) const {

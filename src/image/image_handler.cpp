@@ -54,6 +54,15 @@ void image_handler::draw_tile(const std::string name, float parallax) {
   images.at(name).draw_tile(parallax);
 }
 
+bool image_handler::is_on_screen(const vec2d &tlc, const vec2d &brc) {
+  if(viewport::get().get_tlc_x() > brc[0] || viewport::get().get_tlc_y() > brc[1] ||
+      viewport::get().get_brc_x() < tlc[0] || viewport::get().get_brc_y() < tlc[1]) {
+    //it's off-screen
+    return false;
+  }
+  return true;
+}
+
 //cover whole screen if no dimensions specified
 void image_handler::draw_nc_bg(int density) {
   draw_nc_bg(0, 0, COLS, LINES, density);
@@ -64,11 +73,7 @@ void image_handler::draw_nc_bg(int density) {
 //not, if they're off screen)
 void image_handler::draw_nc_bg(const vec2d &tlc, const vec2d &brc, int density) {
   //check if this chunk is on-screen
-  if(viewport::get().get_tlc_x() > brc[0] || viewport::get().get_tlc_y() > brc[1] ||
-      viewport::get().get_brc_x() < tlc[0] || viewport::get().get_brc_y() < tlc[1]) {
-    //it's off-screen
-    return;
-  }
+  if(!is_on_screen(tlc, brc)) { return; }
 
   //pass these values to viewport and let it convert the coordinate pair
   //to an onscreen value
@@ -78,7 +83,6 @@ void image_handler::draw_nc_bg(const vec2d &tlc, const vec2d &brc, int density) 
   brcx = brc[0];
   brcy = brc[1];
 
-//TODO: validate this
   viewport::get().convert_to_nc_screen_units(tlcx, tlcy);
   viewport::get().convert_to_nc_screen_units(brcx, brcy);
 
@@ -98,6 +102,52 @@ void image_handler::draw_nc_bg(int tlcx, int tlcy, int brcx, int brcy, int densi
       arr[j * sizeof(char) * COLS + i] = c;
     }
   }
+}
+
+void image_handler::draw_nc_line(const vec2d &tlc, const vec2d &brc, char c) {
+  if(!is_on_screen(tlc, brc)) { return; }
+
+  //pass these values to viewport and let it convert the coordinate pair
+  //to an onscreen value
+  int tlcx, tlcy, brcx, brcy;
+  tlcx = tlc[0];
+  tlcy = tlc[1];
+  brcx = brc[0];
+  brcy = brc[1];
+
+  viewport::get().convert_to_nc_screen_units(tlcx, tlcy);
+  viewport::get().convert_to_nc_screen_units(brcx, brcy);
+
+  char *const arr = render::get().nc_get_dv();
+  arr[tlcy * sizeof(char) * COLS + tlcx] = c;
+  arr[brcy * sizeof(char) * COLS + brcx] = c; 
+
+  //instead of trying to create a line and poll for where it exists, instead
+  //determine the "rise and run" of the line and render it that way:
+  //start at the top left corner of the line, and then at every pass, try to 
+  //determine if it's better to go down or to the right depending on where we
+  //are right now.
+  int run = brcx - tlcx;
+  int rise = brcy - tlcy;
+
+  //handle easy cases here
+  if(run == 0) {
+    //vertical line
+    for(int i=tlcy; i<brcy; i++) {
+      arr[i * sizeof(char) * COLS + tlcx] = c;
+    }
+  }
+  if(rise == 0) {
+    //horizontal line
+    for(int i=tlcx; i<brcx; i++) {
+      arr[tlcy * sizeof(char) * COLS + i] = c;
+    }
+  }
+  if(rise != 0 && run != 0) {
+    //some sort of diagonal line
+    //TODO: figure out the fraction of rise and run: for every right we go, how much down?
+  }
+
 }
 
 void image_handler::add_image(std::string name) {
