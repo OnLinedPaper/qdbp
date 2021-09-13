@@ -90,10 +90,58 @@
               <type>VACUUM</type>
             </pickup>
           </hitboxes>
-          <team>GREEN</team>
+          <team>WHITE</team>
         </debug_player>
       </player>
     </gunner>
+
+    <mortals>
+      <debug_follower>
+        <id>d_0002</id>
+        <entity_type>d_follower</entity_type>
+
+        <health>
+          <health_max>1</health_max>
+          <health_segments>1</health_segments>
+          <health_regen_rate>0</health_regen_rate>
+          <health_regen_heat>0</health_regen_heat>
+
+          <shield_segments>0</shield_segments>
+          <shield_regen_rate>0</shield_regen_rate>
+          <shield_first_seg_size>1</shield_first_seg_size>
+          
+          <scaling>
+            <weak>1</weak>
+            <hurt>1</hurt>
+            <armor>1</armor>
+          </scaling>
+        </health>
+        <movement>
+          <vel_cap>22</vel_cap>
+          <vel_overcap>0</vel_overcap>
+          <vel_decay>0.04</vel_decay>
+          <vel_accel>1.4</vel_accel>
+        </movement>
+        <textures>
+          <body>tiny</body>
+        </textures>
+        <hitboxes>
+          <vacuum>
+            <x_offset>0</x_offset>
+            <y_offset>0</y_offset>
+            <size>48</size>
+            <type>VACUUM</type>
+          </vacuum>
+          <shield>
+            <x_offset>0</x_offset>
+            <y_offset>0</y_offset>
+            <size>30</size>
+            <type>SHIELD</type>
+          </shield>
+        </hitboxes>
+        <team>WHITE</team>
+      </debug_follower>
+    </mortals>
   </mortal>
 
   <weapons>
@@ -133,7 +181,7 @@
       </shot>
       <damage>
         <impact_damage>12</impact_damage>
-        <armor_penetration>4</armor_penetration>
+        <armor_penetration>1</armor_penetration>
       </damage>
       <hitboxes>
         <hurty>

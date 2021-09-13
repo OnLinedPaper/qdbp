@@ -13,7 +13,12 @@ drawable::drawable(const std::string path, const vec2d vel, const vec2d pos) :
   last_angle(0)
 { 
   image_handler::get_col_from_team(team_name, team_col); 
-  image_handler::jitter_col(20, team_col);
+  
+  //don't apply color jitter to WHITE team, that's for debugging and it helps
+  //to keep it visible
+  if(strcmp(team_name.c_str(), "WHITE") != 0) {
+    image_handler::jitter_col(20, team_col);
+  }
 }
  
 void drawable::update() {

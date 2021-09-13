@@ -53,7 +53,7 @@ void image_handler::draw_tile(const std::string name, float parallax) {
 }
 
 void image_handler::add_image(std::string name) {
-  #//used emplace so i could avoid a default constructor call to image
+  //used emplace so i could avoid a default constructor call to image
   images.emplace(name, name);
 }
 
@@ -79,7 +79,10 @@ void image_handler::get_col_from_team(const std::string team, SDL_Color &c) {
   else if(strcmp(team.c_str(), "BROWN") == 0) {
     c.r = 96; c.g = 64; c.b = 0;
   }
-  else { c.r = 255; c.g = 255; c.b = 255; }
+  else if(strcmp(team.c_str(), "WHITE") == 0) {
+    c.r = 255; c.g = 255; c.b = 255;
+  }
+  else { c.r = 40; c.g = 40; c.b = 40; }
 }
 
 void image_handler::jitter_col(int strength, SDL_Color &c) {

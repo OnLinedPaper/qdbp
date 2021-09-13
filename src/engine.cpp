@@ -51,10 +51,10 @@ try{
 
 
   e_handler::get().create_plr("mortal/gunner/player/debug_player");
-/*
-  e_handler::get()
-      .add_npe("hittable/debug_follower");
 
+  e_handler::get()
+      .add_npe("mortal/mortals/debug_follower");
+/*
   e_handler::get()
       .add_npe("hittable/debug_stationary", {1500, 500}, {0, 10});
 

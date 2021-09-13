@@ -155,7 +155,7 @@ void e_handler::add_npe(const std::string &name,
     const vec2d &pos, const vec2d &vel) {
 
   mortal *h = NULL;
-  find_or_create_npe(name, h);
+  find_or_create_npe(name, &h);
   add_npe(h, pos, vel);
 
 }
@@ -179,12 +179,15 @@ void e_handler::add_npe(mortal *h,
       entity_count_by_id[h->get_id()] += 1;
     }
   }
+  else {
+    msg::get().print_warn("failed to add entity! passed mortal was NULL");
+  }
 }
 
 void e_handler::find_or_create_npe(const std::string &name,
-    mortal *h) {
-  if(h) {
-    delete(h);
+    mortal **h) {
+  if(*h) {
+    delete(*h);
   }
   std::string type = xmlparse::get().get_xml_string(
     entity_xml_root + name + "/entity_type"
@@ -193,20 +196,20 @@ void e_handler::find_or_create_npe(const std::string &name,
   for(mortal *hi : npe_all) {
     if(type.compare(hi->get_type()) && !hi->is_active()) {
       //found an inactive instance of the entity type we want
-      h = hi;
+      *h = hi;
       break;
     }
   }
 
-  if(!h) {
+  if(!*h) {
     //couldn't find an instance of this hittable that exists already
 
     if(!type.compare("d_follower"))
-      { h = new d_follower(entity_xml_root + name); }
+      { *h = new d_follower(entity_xml_root + name); }
     else if(!type.compare("d_hittable"))
-      { h = new d_hittable(entity_xml_root + name); }
+      { *h = new d_hittable(entity_xml_root + name); }
     else if(!type.compare("d_killable"))
-      { h = new d_killable(entity_xml_root + name); }
+      { *h = new d_killable(entity_xml_root + name); }
     else {
       msg::print_warn("didn't recognize entity type \"" + type + 
           "\" while trying to spawn entity \"" + name + "\""
@@ -216,6 +219,8 @@ void e_handler::find_or_create_npe(const std::string &name,
       );
     }
   }
+
+  if(!*h) { msg::get().print_warn("failed to find or create entity with name \"" + name + "\"!"); }
 }
 
 //when a gunner wants to shoot its weapon, this function is called. all

@@ -67,7 +67,7 @@ public:
   void add_npe(const std::string &name);
   void add_npe(const std::string &name, const vec2d &pos, const vec2d &vel);
   void add_npe(mortal *h, const vec2d &pos, const vec2d &vel);
-  void find_or_create_npe(const std::string &name, mortal *h);
+  void find_or_create_npe(const std::string &name, mortal **h);
 
   //called by a gunner (or child) who would like a shot to be fired
   void request_shot(
