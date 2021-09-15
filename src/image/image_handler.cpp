@@ -55,8 +55,14 @@ void image_handler::draw_tile(const std::string name, float parallax) {
 }
 
 bool image_handler::is_on_screen(const vec2d &tlc, const vec2d &brc) {
-  if(viewport::get().get_tlc_x() > brc[0] || viewport::get().get_tlc_y() > brc[1] ||
-      viewport::get().get_brc_x() < tlc[0] || viewport::get().get_brc_y() < tlc[1]) {
+  //take "tlc" and "brc", then determine ACTUAL tlc and brc
+  float tlcx = (tlc[0] < brc[0] ? tlc[0] : brc[0]);
+  float tlcy = (tlc[1] < brc[1] ? tlc[1] : brc[1]);
+  float brcx = (tlc[0] < brc[0] ? brc[0] : tlc[0]);
+  float brcy = (tlc[1] < brc[1] ? brc[1] : tlc[1]);
+
+  if(viewport::get().get_tlc_x() > brcx || viewport::get().get_tlc_y() > brcy ||
+      viewport::get().get_brc_x() < tlcx || viewport::get().get_brc_y() < tlcy) {
     //it's off-screen
     return false;
   }
@@ -104,48 +110,72 @@ void image_handler::draw_nc_bg(int tlcx, int tlcy, int brcx, int brcy, int densi
   }
 }
 
-void image_handler::draw_nc_line(const vec2d &tlc, const vec2d &brc, char c) {
-  if(!is_on_screen(tlc, brc)) { return; }
+void image_handler::draw_nc_line(const vec2d &p1, const vec2d &p2, char c) {
+  if(!is_on_screen(p1, p2)) { return; }
 
   //pass these values to viewport and let it convert the coordinate pair
   //to an onscreen value
-  int tlcx, tlcy, brcx, brcy;
-  tlcx = tlc[0];
-  tlcy = tlc[1];
-  brcx = brc[0];
-  brcy = brc[1];
+  int lcx, lcy, rcx, rcy;
+  lcx = p1[0];
+  lcy = p1[1];
+  rcx = p2[0];
+  rcy = p2[1];
 
-  viewport::get().convert_to_nc_screen_units(tlcx, tlcy);
-  viewport::get().convert_to_nc_screen_units(brcx, brcy);
+  //"tlc" is a bit of a misnomer - this end doesn't necessarily need to be
+  //the top left corner, just the leftmost point of the line
+  if(lcx > rcx) {
+    //swap lc and rc so "lc" is leftmost
+    int temp = 0;
+    temp = rcx; rcx = lcx; lcx = temp;
+    temp = rcy; rcy = lcy; lcy = temp;
+  }
+
+  viewport::get().convert_to_nc_screen_units(lcx, lcy);
+  viewport::get().convert_to_nc_screen_units(rcx, rcy);
 
   char *const arr = render::get().nc_get_dv();
-  arr[tlcy * sizeof(char) * COLS + tlcx] = c;
-  arr[brcy * sizeof(char) * COLS + brcx] = c; 
+  arr[lcy * sizeof(char) * COLS + lcx] = c;
+  arr[rcy * sizeof(char) * COLS + rcx] = c; 
 
   //instead of trying to create a line and poll for where it exists, instead
   //determine the "rise and run" of the line and render it that way:
   //start at the top left corner of the line, and then at every pass, try to 
   //determine if it's better to go down or to the right depending on where we
   //are right now.
-  int run = brcx - tlcx;
-  int rise = brcy - tlcy;
+  int run = rcx - lcx;    //guaranteed to be positive, x is sorted
+  int rise = rcy - lcy;   //MAY be negative, y is NOT sorted
 
   //handle easy cases here
   if(run == 0) {
-    //vertical line
-    for(int i=tlcy; i<brcy; i++) {
-      arr[i * sizeof(char) * COLS + tlcx] = c;
+    //vertical line - find lesser y and draw to greater
+    for(int i=(lcy<rcy ? lcy : rcy); i<(lcy<rcy ? rcy : lcy); i++) {
+      arr[i * sizeof(char) * COLS + lcx] = c;
     }
   }
   if(rise == 0) {
-    //horizontal line
-    for(int i=tlcx; i<brcx; i++) {
-      arr[tlcy * sizeof(char) * COLS + i] = c;
+    //horizontal line - x is already sorted lesser-to-greater
+    for(int i=lcx; i<rcx; i++) {
+      arr[lcy * sizeof(char) * COLS + i] = c;
     }
   }
   if(rise != 0 && run != 0) {
     //some sort of diagonal line
-    //TODO: figure out the fraction of rise and run: for every right we go, how much down?
+    //figure out the fraction of rise and run: for every right we go, how much down?
+    //note that this should accommodate lines that go any direction, not just down and right
+    float frise = rise;
+    float frun = run;
+    float rioru = frise/frun; //for every 1 we run, how far do we rise?
+    
+    //go from left to right, one column at a time
+    for(int i=lcx; i<rcx; i++) {
+      //calculate how many rows up we have to go
+      //for nearly horizontal lines, this may only run once in a while; for vertical lines it
+      //may run several times per pass
+//TODO: continue from here
+      for(int j=lcy + (rioru * (i-lcx)); j<lcy + (rioru * ((i-lcx) + 1)); j++) {
+        arr[(j+1) * sizeof(char) * COLS + i] = c;
+      }
+    }
   }
 
 }
