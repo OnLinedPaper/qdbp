@@ -268,7 +268,12 @@ unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) const {
 }
 
 bool map::check_gate(const vec2d &pos) {
-  return(get_chunk(convert_chunk_index(pos)).get_has_gate());
+  //check if there's a gate in this chunk
+  if(get_chunk(convert_chunk_index(pos)).get_has_gate()) {
+    //check if we're close enough to the gate to jump
+    return (get_chunk(convert_chunk_index(pos)).get_midpoint().dist(pos) < 200);
+  }
+  return false;
 }
 
 std::string map::get_gate_dest(const vec2d &pos) {

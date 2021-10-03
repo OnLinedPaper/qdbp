@@ -5,7 +5,9 @@
 d_follower::d_follower(const std::string path) :
   mortal(path),
   player_pos(0, 0)
-{ }
+{ 
+  set_follow_thru_portals(true);
+}
 
 void d_follower::update() {
   mortal::update();

@@ -13,6 +13,7 @@ movable::movable(std::string path) :
 //  vel_overcap(xmlparse::get().safe_get_xml_float(path + "/movement/vel_overcap")),
   vel_decay(xmlparse::get().get_xml_float(path + "/movement/vel_decay") * t_frame::get().t_factor()),
   moved(false),
+  follow_thru_portals(false),
   active(true)
 { }
 

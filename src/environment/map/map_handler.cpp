@@ -14,10 +14,19 @@ void map_h::jump() {
   return;
 }
 
-bool map_h::debug_jump(const vec2d &pos) {
+bool map_h::try_jump() {
 
-  if(m->check_gate(pos)) {
-    set_map("/" + m->get_gate_dest(pos));
+  if(m->check_gate(e_handler::get().get_plr_pos())) {
+    //the player's close enough to the gate to be able to make the jump
+    //warn the entity handler to wipe existing entities, and then 
+    //change the map
+    e_handler::get().prep_for_map_change();
+
+    //change the map to  its new location
+    set_map("/" + m->get_gate_dest(e_handler::get().get_plr_pos()));
+
+    //teleport the player to the new location and handle the rest
+    e_handler::get().finish_map_change();
 
     return true;
   }

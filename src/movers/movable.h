@@ -31,6 +31,9 @@ public:
 
   void rebuff(unsigned char posi);
 
+  bool get_follow_thru_portals() const { return follow_thru_portals; }
+  void set_follow_thru_portals(bool b) { follow_thru_portals = b; }
+
   bool is_active() const { return active; }
   void set_active(bool b) { active = b; vel_accel_mod = 1; vel_cap_mod = 1; }
 
@@ -53,6 +56,8 @@ protected:
   //float vel_overcap;
   float vel_decay;
   bool moved;
+
+  bool follow_thru_portals;
 
   bool active;
 

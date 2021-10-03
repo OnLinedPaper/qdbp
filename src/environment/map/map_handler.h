@@ -15,7 +15,7 @@ public:
 
   void set_map(std::string);
   void jump();
-  bool debug_jump(const vec2d &);
+  bool try_jump();
 
   unsigned char check_rebuff(vec2d &curr_pos, vec2d &prev_pos) const {
     return( m->check_rebuff(curr_pos, prev_pos) );

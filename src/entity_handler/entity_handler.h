@@ -56,6 +56,8 @@ public:
   bool get_draw_debug_info() const { return draw_debug_info; }
 
   void preload_entity_data();
+  void prep_for_map_change();
+  void finish_map_change();
   int get_entity_count_by_id(const std::string &);
   int get_entity_count_by_name(const std::string &);
   const std::string &entity_name_to_id(const std::string &);

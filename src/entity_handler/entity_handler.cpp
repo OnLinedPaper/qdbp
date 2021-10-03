@@ -28,6 +28,43 @@ e_handler::~e_handler() {
 
 //==== GENERIC THINGS =========================================================
 
+//if this is called, the map handler has decided it's time to change maps. if
+//entities aren't ready for this, it can lead to a whole host of issues, the 
+//most common of which is great numbers of them being out of bounds. 
+//first, deactivate all weapon projectiles; they don't ever persist between 
+//maps.
+//then, deactivate the entities that need to be deactivated; this mostly
+//encompasses everything that's not a player ally.
+void e_handler::prep_for_map_change() {
+  for(weapon *w : shot_all) {
+    w->set_active(false);
+  }
+  for(mortal *m : npe_all) {
+    //deactivate anything that doesn't follow through a portal
+    if(!m->get_follow_thru_portals()) {
+      m->set_active(false);
+    }
+  }
+}
+
+//if this is called, the map handler has ACTUALLY changed the map. once it's
+//loaded...
+//first, teleport the player to the map's starting position
+//then, teleport any entities that have remained active to the player's
+//position (or nearby), as though they "jumped" too. 
+//then, if any entities have the ability to follow a player through a
+//portal, process them and their behaviors (pop out on delay? appear randomly
+//on the map? who knows? nothing does this yet.)
+void e_handler::finish_map_change() {
+  plr->set_pos(map_h::get().get_start_pos());
+
+  for(mortal *m : npe_all) {
+    if(m->is_active()) {
+      m->set_pos(get_plr_pos());
+    }
+  }
+}
+
 int e_handler::get_entity_count_by_id(const std::string &id) {
   if(entity_count_by_id.find(id) 
       == entity_count_by_id.end()) {

@@ -60,9 +60,9 @@ try{
 
   e_handler::get()
       .add_npe("hittable/debug_stationary", {2500, 500}, {0, 125});
-
-  e_handler::get().add_npe("killable/fishbone", {500, 2500}, {0, 0});
 */
+  e_handler::get().add_npe("mortal/mortals/fishbone", {500, 2500}, {0, 0});
+
 //-    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -        
 
   const Uint8* keystate = SDL_GetKeyboardState(NULL);
@@ -138,11 +138,7 @@ try{
         }
 
         if(keystate[SDL_SCANCODE_O]) {
-          //TODO: make "tryjump" in map handler
-          if(map_h::get().debug_jump(e_handler::get().get_plr_pos())) {
-            //jumped
-            e_handler::get().teleport_plr_new_map();
-          }
+          map_h::get().try_jump();
         }
 
         if(keystate[SDL_SCANCODE_V]) {

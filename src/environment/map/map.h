@@ -15,8 +15,15 @@ public:
   const vec2d get_start_pos() const;
   const vec2d convert_chunk_index(const vec2d &pos) const;
 
+  //checks the boundaries of the current chunk and compares the source and 
+  //destination positions to see if any barriers are crossed
   unsigned char check_rebuff(vec2d &curr_pos, vec2d &prev_pos) const;
+
+  //checks both that there's a gate in this chunk and that they player's within
+  //a certain distance from it - setting that to 200 units for now
   bool check_gate(const vec2d &);
+
+  //gets the next map's name 
   std::string get_gate_dest(const vec2d &);
 
   chunk &get_chunk(vec2d coord) { return c_deque[index(coord[0], coord[1])]; }
