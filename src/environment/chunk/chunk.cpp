@@ -189,6 +189,10 @@ void chunk::add_gate(std::string dest, std::string name) {
   g_name = "/" + name;
 }
 
+void chunk::spawn_initial_entities() {
+  return;
+}
+
 void chunk::draw() const {
 
   float x = tlc[0];

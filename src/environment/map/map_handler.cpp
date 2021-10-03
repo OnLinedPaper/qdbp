@@ -2,10 +2,20 @@
 #include "src/entity_handler/entity_handler.h"
 
 void map_h::set_map(std::string s) {
-  //TODO: warn entity handler to remove all entities, and then
-  //make a whole new map
+  //warn the entity handler to wipe existing entities, and then 
+  //change the map
+  e_handler::get().prep_for_map_change();
+
   delete m;
   m = new map(s);
+
+  //teleport the player to the new location and handle the rest
+  e_handler::get().finish_map_change();
+
+  //spawn any entities the map starts with
+  //TODO: determine HOW to indicate enemies spawn and where in the xml
+  m->spawn_initial_entities();
+
 }
 
 void map_h::jump() {
@@ -18,16 +28,8 @@ bool map_h::try_jump() {
 
   if(m->check_gate(e_handler::get().get_plr_pos())) {
     //the player's close enough to the gate to be able to make the jump
-    //warn the entity handler to wipe existing entities, and then 
-    //change the map
-    e_handler::get().prep_for_map_change();
-
-    //change the map to  its new location
+    //change the map to its new location
     set_map("/" + m->get_gate_dest(e_handler::get().get_plr_pos()));
-
-    //teleport the player to the new location and handle the rest
-    e_handler::get().finish_map_change();
-
     return true;
   }
   return false;

@@ -60,6 +60,10 @@ public:
 
   void add_gate(std::string dest, std::string name);
 
+  //spawn any entities that are coded into the xml - other entities, such as
+  //closet-spawned ones, are handled later
+  void spawn_initial_entities();
+
   void draw() const;
   void debug_draw(float x, float y) const;
 

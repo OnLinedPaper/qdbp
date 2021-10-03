@@ -56,7 +56,10 @@ void e_handler::prep_for_map_change() {
 //portal, process them and their behaviors (pop out on delay? appear randomly
 //on the map? who knows? nothing does this yet.)
 void e_handler::finish_map_change() {
-  plr->set_pos(map_h::get().get_start_pos());
+  //check if there's a player yet - none on startup
+  if(plr) {
+    plr->set_pos(map_h::get().get_start_pos());
+  }
 
   for(mortal *m : npe_all) {
     if(m->is_active()) {

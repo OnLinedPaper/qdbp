@@ -280,6 +280,16 @@ std::string map::get_gate_dest(const vec2d &pos) {
   return(get_chunk(convert_chunk_index(pos)).get_gate_dest());
 }
 
+//when a map is initialized, spawn entities according to whatever xml rules
+//exist. note that this is for spawning hard-coded entities; soft-coded ones
+//such as monster closets will be managed later in the update function.
+void map::spawn_initial_entities() {
+  for(int i=0; i<y_dim * x_dim; i++) {
+    //allow each chunk to spawn its entities
+    c_deque[i].spawn_initial_entities();
+  }
+}
+
 void map::draw() const {
   //draw the bg first
   bg.draw();

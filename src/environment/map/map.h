@@ -28,6 +28,9 @@ public:
 
   chunk &get_chunk(vec2d coord) { return c_deque[index(coord[0], coord[1])]; }
 
+  //when a map is created, it spawns in entities absed on xml rules
+  void spawn_initial_entities();
+
 private:
   int x_dim;
   int y_dim;
