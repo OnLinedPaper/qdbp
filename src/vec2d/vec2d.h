@@ -42,7 +42,6 @@ public:
   bool operator==(const vec2d &v) const;
 
   //these modify the vector in question itself in a scalar way
-  //TODO: +=, -=, *=? may not even need these
 
   float magnitude() const;
   float magnitudeSquared() const;

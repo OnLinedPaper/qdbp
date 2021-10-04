@@ -122,7 +122,6 @@ protected:
   //can remove the current bar and the next one, but no more than that. more 
   //bars means less passive regen but also less damage from massive attacks.
   //passive healing is toggled, and will, for players, generate "heat".
-  //TODO: modifiers for health and shields
   float max_health;
   float curr_health;
   int health_segments;
@@ -154,7 +153,6 @@ protected:
   //player and some enemies can adjust how resistant they are to damage, and
   //more powerful enemies can scale their damage resistance based on the player
 
-  //TODO: add these to an array for reduced code in take_damage?
   float weakbox_scale = 4;  //usually 4x damage in a weak box
   float hurtbox_scale = 1;  //usually 1x damage in a hurt box
   float armorbox_scale = .25;  //usually 1/4x damage in an armor box

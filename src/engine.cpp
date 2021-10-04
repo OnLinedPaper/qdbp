@@ -92,19 +92,20 @@ try{
         { e_handler::get().boost_plr(true); }
       else { e_handler::get().boost_plr(false); }
 
-      if(keystate[SDL_SCANCODE_SPACE] || true) { //TODO: reenable?
-        static vec2d angle(0, 0);
-        angle[0] = 0;
-        angle[1] = 0;
+      //handle shooting
+      static vec2d angle(0, 0);
+      angle[0] = 0;
+      angle[1] = 0;
 
-        //handle shooting
-        if(keystate[SDL_SCANCODE_H]) { angle[0] -= 1; }
-        if(keystate[SDL_SCANCODE_L]) { angle[0] += 1; }
-        if(keystate[SDL_SCANCODE_K]) { angle[1] -= 1; }
-        if(keystate[SDL_SCANCODE_J]) { angle[1] += 1; }
+      //handle shooting
+      if(keystate[SDL_SCANCODE_H]) { angle[0] -= 1; }
+      if(keystate[SDL_SCANCODE_L]) { angle[0] += 1; }
+      if(keystate[SDL_SCANCODE_K]) { angle[1] -= 1; }
+      if(keystate[SDL_SCANCODE_J]) { angle[1] += 1; }
         
-        if(angle.magnitude() > 0) { e_handler::get().plr_shoot(angle); }
-      }
+      if(angle.magnitude() > 0) { e_handler::get().plr_shoot(angle); }
+      
+
 
       if(controller) {
         //process controller input
@@ -127,15 +128,11 @@ try{
 
     while(SDL_PollEvent(&e) != 0) {
       //get an event: protect from keybounce
-      if(e.type == SDL_QUIT) { quit = true; }
+      if(e.type == SDL_QUIT || keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
       else if(e.type == SDL_KEYDOWN) {
 
         //pause unpause
         if(keystate[SDL_SCANCODE_P]) { pause = !pause; }
-          if(pause || !pause) { //TODO: remove this / update it
-            //pause menu
-            if(keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
-        }
 
         if(keystate[SDL_SCANCODE_O]) {
           map_h::get().try_jump();
@@ -184,7 +181,7 @@ try{
 
     //if the correct amount of time between frames has elapsed, show it
     //TODO: decide if this is actually necessary given that the program "waits"
-   //between game ticks, resulting in a failure to render
+    //between game ticks, resulting in a failure to render
     if(t_frame::get().incr_f() || true) {
       map_h::get().draw();
       e_handler::get().draw_entities();

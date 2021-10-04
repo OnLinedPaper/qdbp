@@ -84,8 +84,7 @@ private:
   //ability to bypass shields - NEVER available by default. EVER.
   bool bypass_shield_mod;
 
-  //TODO: change to "/movers/mortal/weapon" or something?
-  std::string xml_path = "/movers/hittable/";
+  std::string xml_path = "/movers/mortal/weapon/";
 };
 
 
