@@ -4,6 +4,7 @@
 #include "src/image/image.h"
 #include "src/image/image_handler.h"
 #include "src/xml_parser/xmlparse.h"
+#include "src/entity_handler/entity_handler.h"
 
 const unsigned char chunk::IN = 0;
 const unsigned char chunk::UP = 1;
@@ -11,6 +12,9 @@ const unsigned char chunk::DN = 2;
 const unsigned char chunk::LF = 4;
 const unsigned char chunk::RT = 8;
 const float chunk::length = 1000;
+
+const uint8_t chunk::INITIAL = 0;
+const uint8_t chunk::CLOSET = 1;
 
 chunk::chunk(vec2d &v) :
   tlc(v),
@@ -113,6 +117,12 @@ chunk &chunk::operator=(const chunk& c) {
   return *this;
 }
 
+chunk::~chunk() {
+  for(auto r : spawn_rules) {
+    delete r;
+  }
+  spawn_rules.clear();
+}
 
 unsigned char chunk::chunk_pos(vec2d &v) const {
   return( this->chunk_pos(v[0], v[1]) );
@@ -189,7 +199,41 @@ void chunk::add_gate(std::string dest, std::string name) {
   g_name = "/" + name;
 }
 
+//push back a new spawn rule
+void chunk::add_spawn_rule (
+  uint8_t spawn_type, int max_count, int total_count, int tick_spawn_delay,
+  const std::string &entity, uint8_t team, float spawn_distance
+) {
+  spawn_rules.push_back(new spawn_rule {
+    spawn_type,
+    max_count,
+    total_count,
+    tick_spawn_delay,
+    entity,
+    xmlparse::get().get_xml_string("/movers/mortal/" + entity + "/id"),
+    team,
+    spawn_distance
+  });
+}
+
 void chunk::spawn_initial_entities() {
+  //iterate through spawn rules and look for any marked as "initial"
+  for(spawn_rule *r : spawn_rules) {
+    //check to see if it's an initial spawn
+    if(r->spawn_type == chunk::INITIAL) {
+      //make sure we haven't hit the max count for this entity already
+      if(e_handler::get().get_entity_count_by_id(r->id) < r->max_count) {
+        //TODO: spawn delay, though this might not be as important for initials
+
+        //make sure player's far enough away to spawn entity
+        if(this->get_midpoint().dist(
+            e_handler::get().get_plr_pos()) > r->spawn_distance) {
+          //TODO: add team
+          e_handler::get().add_npe("mortal/" + r->entity, this->get_midpoint(), {0, 0});
+        }
+      }
+    }
+  }
   return;
 }
 

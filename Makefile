@@ -1,8 +1,9 @@
 CC=g++
 WC=x86_64-w64-mingw32-g++
 DIR := ${CURDIR}
-CFLAGS= -Wall -Wpedantic --std=c++17 -O3 -I$(DIR)
-DFLAGS = -g -ggdb
+CFLAGS= -Wall -Wpedantic --std=c++17 -I$(DIR)
+OFLAGS = -O3
+DFLAGS = -g -ggdb -O0
 LFLAGS= -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lstdc++fs
 WFLAGS= -lmingw32 -mwindows -I$(DIR)/lib -L$(DIR)/lib
 DDIR = debugging
@@ -39,13 +40,13 @@ VPATH = $(addprefix src/,$(PATHS))
 $(BDIR)/%.o: %.cpp %.h
 	@mkdir -p $(BDIR)
 	@printf "building %s\n" $@
-	@$(CC) $(CFLAGS) -c -o $@ $<
+	@$(CC) $(CFLAGS) $(OFLAGS) -c -o $@ $<
 
 $(WBDIR)/%.o: %.cpp %.h
 	@mkdir -p $(BDIR)
 	@mkdir -p $(WBDIR)
 	@printf "building winobj %s\n" $@
-	@$(WC) $(CFLAGS) $(WFLAGS) -c -o $@ $<
+	@$(WC) $(CFLAGS) $(OFLAGS) $(WFLAGS) -c -o $@ $<
 
 $(DBDIR)/%.o: %.cpp %.h
 	@mkdir -p $(BDIR)
@@ -56,13 +57,13 @@ $(DBDIR)/%.o: %.cpp %.h
 run: $(OBJS) main_driver.cpp
 	@mkdir -p $(XDIR)
 	@printf "final compilation... "
-	@$(CC) $(CFLAGS) -o $(XDIR)/$@ $^ $(LFLAGS) $(SPECIAL_LFLAGS)
+	@$(CC) $(CFLAGS) $(OFLAGS) -o $(XDIR)/$@ $^ $(LFLAGS) $(SPECIAL_LFLAGS)
 	@printf "compiled\ndone\n"
 
 win: $(WOBJS) main_driver_w.cpp
 	@mkdir -p $(WDDIR)
 	@printf "final win compilation... "
-	@$(WC) $(CFLAGS) $^ $(WFLAGS) $(LFLAGS) $(SPECIAL_LFLAGS) -o $(WDDIR)/$(WEXE)
+	@$(WC) $(CFLAGS) $(OFLAGS) $^ $(WFLAGS) $(LFLAGS) $(SPECIAL_LFLAGS) -o $(WDDIR)/$(WEXE)
 	@printf "compiled\nadding resources... "
 	@cp -r resources/ $(WDDIR)/
 	@cp win_dll/*.dll $(WDDIR)/

@@ -166,6 +166,9 @@ protected:
   float s_regen_rate_mod;         //multiplier; larger nums, faster regen
   float first_s_size_mod;         //multiplier; larger nums, slower first regen
 
+//==== MISC GAME DATA =========================================================
+//TODO: add team
+
 private: 
 
 };

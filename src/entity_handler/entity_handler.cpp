@@ -13,6 +13,17 @@ const unsigned char e_handler::DN = 2;
 const unsigned char e_handler::LF = 4;
 const unsigned char e_handler::RT = 8;
 
+//TODO: refactor other uses of these colors
+const uint8_t e_handler::RED = 1;
+const uint8_t e_handler::ORG = 2;
+const uint8_t e_handler::YLW = 3;
+const uint8_t e_handler::GRN = 4;
+const uint8_t e_handler::BLU = 5;
+const uint8_t e_handler::PRP = 6;
+const uint8_t e_handler::BRN = 7;
+const uint8_t e_handler::BLK = 8;
+const uint8_t e_handler::WHT = 9;
+
 //==== INSTANCE THINGS ========================================================
 
 e_handler::e_handler() :
@@ -43,6 +54,7 @@ void e_handler::prep_for_map_change() {
     //deactivate anything that doesn't follow through a portal
     if(!m->get_follow_thru_portals()) {
       m->set_active(false);
+      entity_count_by_id[m->get_id()] -= 1;
     }
   }
 }
@@ -291,6 +303,44 @@ void e_handler::request_shot (
   }
 
   weap->fire(parent, w_pos, w_vel, w_ang, w_life_tick_mod, w_life_dist_mod, w_inacc_mod, w_vel_mod, w_pierce_mod, w_damage_mod, c);
+}
+
+uint8_t e_handler::team_str_to_int(const std::string &s) {
+  if(!s.compare("RED")) { return e_handler::RED; }
+  if(!s.compare("ORG") || !s.compare("ORANGE")) { return e_handler::ORG; }
+  if(!s.compare("YLW") || !s.compare("YELLOW")) { return e_handler::YLW; }
+  if(!s.compare("GRN") || !s.compare("GREEN"))  { return e_handler::GRN; }
+  if(!s.compare("BLU") || !s.compare("BLUE"))   { return e_handler::BLU; }
+  if(!s.compare("PRP") || !s.compare("PURPLE")) { return e_handler::PRP; }
+  if(!s.compare("BRN") || !s.compare("BROWN"))  { return e_handler::BRN; }
+  if(!s.compare("BLK") || !s.compare("BLACK"))  { return e_handler::BLK; }
+  if(!s.compare("WHT") || !s.compare("WHITE"))  { return e_handler::WHT; }
+  return -1;
+}
+
+std::string e_handler::team_int_to_str(int i) {
+  switch(i) {
+    case(e_handler::RED):
+      return "RED";
+    case(e_handler::ORG):
+      return "ORG";
+    case(e_handler::YLW):
+      return "YLW";
+    case(e_handler::GRN):
+      return "GRN";
+    case(e_handler::BLU):
+      return "BLU";
+    case(e_handler::PRP):
+      return "PRP";
+    case(e_handler::BRN):
+      return "BRN";
+    case(e_handler::BLK):
+      return "BLK";
+    case(e_handler::WHT):
+      return "WHT";
+    default:
+      return "ERR";
+  }
 }
 
 //==== PLAYER THINGS ==========================================================

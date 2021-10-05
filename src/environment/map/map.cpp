@@ -5,6 +5,7 @@
 #include "map.h"
 #include "src/xml_parser/xmlparse.h"
 #include "src/utils/message.h"
+#include "src/entity_handler/entity_handler.h"
 
 map::map(std::string n) :
   bg(xmlparse::get().get_xml_string(n + "/background")),
@@ -23,6 +24,8 @@ map::map(std::string n) :
   init_c_deque();
   //initiate any special chunks
   init_special_chunks();
+  //init the spawning rules for each chunk
+  parse_spawn_rules();
 }
 
 map::~map() { }
@@ -108,6 +111,202 @@ void map::init_special_chunks() {
     }
   }
 }
+
+//==== spawn rule parsing =====================================================
+
+void map::parse_spawn_rules() {
+  //collect information about spawning data for each chunk, and pass it along
+  //to the chunks in question
+  std::string s_path = name + "/entity_spawning";
+
+  if(!xmlparse::get().check_path(s_path, false)) {
+    //there's no spawn rules for this map (what?) so return immediately
+    return;
+  }
+
+  //get the spawn rules
+  std::vector<std::string> rules = xmlparse::get().get_all_child_tags(s_path);
+
+  int x, y = 0;
+
+  std::string spawn_type = "";
+  int max_count = 0;
+  int total_count = 0;
+  int tick_spawn_delay = 0;
+  std::string entity = "";
+  std::string team = "";
+  float spawn_distance = 0;
+
+  for(std::string s_r_name : rules) {
+
+//---- x/y coordinates --------------------------------------------------------
+
+    //get the xy index of the chunk for the deque and validate it
+    x = xmlparse::get().get_xml_int(s_path + "/" + s_r_name + "/x_chunk");
+    y = xmlparse::get().get_xml_int(s_path + "/" + s_r_name + "/y_chunk");
+
+    if(x < 0 || x >= x_dim || y < 0 || y >= y_dim) {
+      //this chunk isn't valid - skip it
+      msg::print_warn("bad chunk coordinate for spawn rule " + s_path + "/" +
+        s_r_name + " (" + std::to_string(x) + "," + std::to_string(y) + ")");
+      msg::print_alert("valid x coords: (0 to " + std::to_string(x_dim-1) +
+        "); valid y coords: (0 to " + std::to_string(y_dim-1) + ")");
+      msg::print_alert("skipping rule " + s_path + "/" + s_r_name);
+      continue;
+    }
+
+    if(!c_deque[index(x, y)].get_in_bounds()) {
+      //this chunk isn't in bounds
+      msg::print_warn("chunk for spawn rule " + s_path + "/" +
+        s_r_name + " (" + std::to_string(x) + "," + std::to_string(y) + 
+        ") is marked as \"out of bounds\"");
+      msg::print_alert("skipping rule " + s_path + "/" + s_r_name);
+      continue;
+    }
+
+//---- spawn type ------------------------------------------------------------- 
+
+    //get the type of spawn (initial or closet)
+    //- initial entities are created only when the map is, and do not reappear
+    //- closet entities spawn repeatedly after creation
+    spawn_type = xmlparse::get().get_xml_string(s_path + "/" + s_r_name + "/spawn_type"); 
+
+    if(spawn_type.compare("initial") && spawn_type.compare("closet")) {
+      //this field didn't match known types
+      msg::print_warn("unrecognized spawn type \"" + spawn_type + "\" for rule " +
+        s_path + "/" + s_r_name);
+      msg::print_alert("valid types are \"initial\" or \"closet\"");
+      msg::print_alert("skipping rule " + s_path + "/" + s_r_name);
+      continue;
+    }
+
+//---- max count --------------------------------------------------------------
+    
+    //get the max count (int > 0)
+    //- for closet entities (and some map entities), there's a maximum amount
+    //  that can exist on the map at any given time
+    max_count = xmlparse::get().get_xml_int(s_path + "/" + s_r_name + "/max_count");
+
+    if(max_count <= 0) {
+      msg::print_warn("bad max entity count \"" + std::to_string(max_count) + 
+        "\" for rule " + s_path + "/" + s_r_name);
+      msg::print_alert("max count must be greater than 0");
+      msg::print_alert("skipping rule " + s_path + "/" + s_r_name);
+      continue;
+    }
+
+//---- total count ------------------------------------------------------------
+
+    //get the total count (int > 0 OR -1)
+    //- for closet entities (and some map entities), a certain number are 
+    //  spawnable: if given a nonzero positive number, they will spawn until
+    //  they run out, and if -1 is given they will spawn indefinitely
+    total_count = xmlparse::get().get_xml_int(s_path + "/" + s_r_name + "/total_count");
+
+    if(total_count == 0 || total_count < -1) {
+      msg::print_warn("bad total entity count \"" + std::to_string(total_count) +
+        "\" for rule " + s_path + "/" + s_r_name);
+      msg::print_alert("total count should be either greater than 0 to spawn a fixed number of entites, or -1 to spawn entities continuously.");
+      msg::print_alert("skipping rule " + s_path + "/" + s_r_name);
+      continue;
+    }
+
+//---- tick spawn delay -------------------------------------------------------
+
+    //get the tick spawn delay (int > 0)
+    //- number of ticks before the entity spawns
+    //- generally ignored by initial entities as they're supposed to "already
+    //  be there" on player spawn
+    //- for closet entities, WHEN the spawn rule determines one should be
+    //  created, the timer begins to tick, and not before then.
+    tick_spawn_delay = xmlparse::get().get_xml_int(s_path + "/" + s_r_name + "/tick_spawn_delay");
+
+    if(tick_spawn_delay < 0) {
+      msg::print_warn("bad spawn delay \"" + std::to_string(tick_spawn_delay) +
+        "\" for rule" + s_path + "/" + s_r_name);
+      msg::print_alert("spawn delay should be at least 0");
+      msg::print_alert("skipping rule " + s_path + "/" + s_r_name);
+      continue;
+    }
+
+//---- entity -----------------------------------------------------------------
+
+    //get the entity (string - xml path)
+    //- the path of the entity to spawn, as would be passed to entity handler
+    entity = xmlparse::get().get_xml_string(s_path + "/" + s_r_name + "/entity");
+
+    if(!xmlparse::get().check_path("/movers/mortal/" + entity, false)) {
+      msg::print_warn("bad entity path \"/movers/mortal/" + entity + "\" for rule " +
+        s_path + "/" + s_r_name);
+      msg::print_alert("is the entity path spelled correctly?");
+      msg::print_alert("skipping rule " + s_path + "/" + s_r_name);
+      continue;
+    }
+
+//---- team -------------------------------------------------------------------
+
+    //get the team (string - RED ORANGE YELLOW GREEN BLUE PURPLE BROWN WHITE)
+    //- the team to spawn the entity on
+    team = xmlparse::get().get_xml_string(s_path + "/" + s_r_name + "/team");
+
+    if(team.compare("RED") && team.compare("ORANGE") && 
+        team.compare("YELLOW") && team.compare("GREEN") && team.compare("BLUE") 
+        && team.compare("PURPLE") && team.compare("BROWN")) {
+      if(team.compare("WHITE")) {
+        msg::print_warn("bad team \"" + team + "\" for rule " + s_path + "/" 
+          + s_r_name);
+        msg::print_alert(
+          "valid teams are RED ORANGE YELLOW GREEN BLUE PURPLE BROWN"
+        );
+        msg::print_alert("skipping rule " + s_path + "/" + s_r_name);
+        continue;
+      }
+      else {
+        msg::print_warn("rule " + s_r_name + " is spawning a white team entity");
+        msg::print_alert("this team is typically reserved for debugging purposes.");
+      }
+    }
+
+//---- spawn distance ---------------------------------------------------------
+
+    //get the spawn distance (float)
+    //- the minimum distance the player must be to spawn these entities
+    //- initial entities typically ignore this or use low values, since the 
+    //  player's position is known on map spawn... usually
+    //- closet entities use this to make sure they don't spawn on top of the
+    //  player when they kill another entity
+    spawn_distance = xmlparse::get().get_xml_float(s_path + "/" + s_r_name + "/spawn_distance");
+
+    if(spawn_distance < 500) {
+      if(spawn_distance < 0) {
+        msg::print_warn("bad spawn distance \"" + std::to_string(spawn_distance) + 
+          "\" for rule " + s_path + "/" + s_r_name);
+        msg::print_alert("distance should be greater than 0, and ideally greater than 500 to prevent entities from spawning too close to the player");
+        msg::print_alert("skipping rule " + s_path + "/" + s_r_name);
+        continue;
+      }
+      else {
+        msg::print_warn("rule " + s_r_name + " is spawning an entity at distance " +
+        std::to_string(spawn_distance));
+        msg::print_alert("this may spawn very close to the player");
+      }
+    }
+
+//---- add rule to chunk ------------------------------------------------------
+
+    c_deque[index(x, y)].add_spawn_rule(
+      (!spawn_type.compare("initial") ? chunk::INITIAL : chunk::CLOSET),
+      max_count,
+      total_count,
+      tick_spawn_delay,
+      entity,
+      e_handler::team_str_to_int(team),
+      spawn_distance
+    );
+  }
+}
+
+//=============================================================================
 
 void map::check_barriers(int x, int y) {
   //a change has been made to this chunk - check all nearby chunks

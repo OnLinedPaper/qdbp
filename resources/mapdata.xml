@@ -17,7 +17,7 @@
   <background>/debug_heart_</background>
 
   <special_chunks>
-    <2-0>
+    <1-0>
       <x_chunk>1</x_chunk>
       <y_chunk>0</y_chunk>
       <type>default</type>
@@ -26,8 +26,23 @@
         <destination>debug_2</destination>
         <body>debug_gate</body>
       </jump_gate>
-    </2-0>
+    </1-0>
   </special_chunks>
+
+  <entity_spawning>
+    <initial_2-0_fishbone>
+      <x_chunk>2</x_chunk>
+      <y_chunk>0</y_chunk>
+
+      <spawn_type>initial</spawn_type>
+      <max_count>1</max_count>
+      <total_count>1</total_count>
+      <tick_spawn_delay>0</tick_spawn_delay>
+      <entity>mortals/fishbone</entity>
+      <team>BLUE</team>
+      <spawn_distance>1000</spawn_distance>
+    </initial_2-0_fishbone>
+  </entity_spawning>
 </debug_1>
 
 <debug_2>

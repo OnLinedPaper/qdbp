@@ -17,6 +17,16 @@ public:
   static const unsigned char LF;
   static const unsigned char RT;
 
+  static const uint8_t RED;
+  static const uint8_t ORG;
+  static const uint8_t YLW;
+  static const uint8_t GRN;
+  static const uint8_t BLU;
+  static const uint8_t PRP;
+  static const uint8_t BRN;
+  static const uint8_t BLK;
+  static const uint8_t WHT;
+
 //==== INSTANCE THINGS ========================================================
   ~e_handler();
 
@@ -69,6 +79,7 @@ public:
   void add_npe(const std::string &name);
   void add_npe(const std::string &name, const vec2d &pos, const vec2d &vel);
   void add_npe(mortal *h, const vec2d &pos, const vec2d &vel);
+  void add_npe(mortal *h, uint8_t team, const vec2d &pos, const vec2d &vel);
   void find_or_create_npe(const std::string &name, mortal **h);
 
   //called by a gunner (or child) who would like a shot to be fired
@@ -82,6 +93,9 @@ public:
     int w_pierce_mod, float w_damage_mod,
     const SDL_Color &c
   );
+
+  static uint8_t team_str_to_int(const std::string &);
+  static std::string team_int_to_str(int);
 
 private:
   e_handler();

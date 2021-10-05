@@ -15,6 +15,8 @@ public:
   chunk(const chunk&);
   chunk &operator=(const chunk&);
 
+  ~chunk();
+
   static const unsigned char IN;
   static const unsigned char UP;
   static const unsigned char DN;
@@ -22,6 +24,9 @@ public:
   static const unsigned char RT;
 
   static const float length;
+
+  static const uint8_t INITIAL;
+  static const uint8_t CLOSET;
 
   //check if a given point is in a chunk - if not, check if it's above,
   //below, left, or right
@@ -58,8 +63,11 @@ public:
   bool get_has_gate() const { return has_gate; }
   std::string get_gate_dest() const { return g_dest; }
 
-  void add_gate(std::string dest, std::string name);
+  void add_gate(std::string dest, std::string name); 
 
+  //adds an entity spawning rule to the vector of spawn rules
+  void add_spawn_rule (uint8_t, int, int, int, const std::string &, uint8_t, float);
+  
   //spawn any entities that are coded into the xml - other entities, such as
   //closet-spawned ones, are handled later
   void spawn_initial_entities();
@@ -68,6 +76,18 @@ public:
   void debug_draw(float x, float y) const;
 
 private:
+
+  //a set of rules for spawning a specific type of entity
+  struct spawn_rule {
+    uint8_t spawn_type;       //0: initial, 1: closet
+    int max_count;            //allowed active entities
+    int total_count;          //total spawned entities
+    int tick_spawn_delay;     //delay before spawn happens
+    std::string entity;       //abbreviated xml path to entity
+    std::string id;               //standardized entity id
+    uint8_t team;             //see entity handler for team codes
+    float spawn_distance;     //min distance from player before spawn
+  };
 
   vec2d tlc; //top-left corner
   bool border[4];
@@ -83,6 +103,8 @@ private:
   bool has_gate;
   std::string g_dest;
   std::string g_name;
+
+  std::vector<spawn_rule *> spawn_rules;
 
 };
 

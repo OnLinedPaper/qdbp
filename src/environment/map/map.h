@@ -44,6 +44,7 @@ private:
   void validate();
   void init_c_deque();
   void init_special_chunks();
+  void parse_spawn_rules();
   void check_barriers(int, int);
 
   //will be a SINGLE array, with clever referenceing
