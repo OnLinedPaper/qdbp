@@ -25,6 +25,8 @@ public:
   const vec2d get_start_chunk() const { return m->get_start_chunk(); }
   void draw() const { m->draw(); }
 
+  void update();
+
 private:
   map_h() : m(NULL) { }
 

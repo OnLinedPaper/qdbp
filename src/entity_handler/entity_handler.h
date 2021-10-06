@@ -78,6 +78,7 @@ public:
 
   void add_npe(const std::string &name);
   void add_npe(const std::string &name, const vec2d &pos, const vec2d &vel);
+  void add_npe(const std::string &name, const vec2d &pos, const vec2d &dir, float vel_frac);
   void add_npe(mortal *h, const vec2d &pos, const vec2d &vel);
   void add_npe(mortal *h, uint8_t team, const vec2d &pos, const vec2d &vel);
   void find_or_create_npe(const std::string &name, mortal **h);

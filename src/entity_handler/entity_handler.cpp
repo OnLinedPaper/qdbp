@@ -212,6 +212,17 @@ void e_handler::add_npe(const std::string &name,
 
 }
 
+void e_handler::add_npe(const std::string &name, const vec2d &pos,
+    const vec2d &dir, float vel_frac) {
+  //this iteration, instead of being given a definite velocity, is given a
+  //direction and a fraction of the entity's max velocity to use instead
+
+  mortal *h = NULL;
+  find_or_create_npe(name, &h);
+  add_npe(h, pos, dir * h->get_vel_cap() * vel_frac);
+
+}
+
 void e_handler::add_npe(mortal *h, 
     const vec2d &pos, const vec2d &vel) {
   //a function to add a hittable to the vector - note that this

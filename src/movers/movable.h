@@ -23,6 +23,7 @@ public:
   const vec2d get_vel() const { return vel; }
   void set_vel(vec2d v) { vel = v; }
   void set_vel(float x, float y) { vel[0] = x; vel[1] = y; }
+  float get_vel_cap() { return vel_cap; }
   const vec2d get_pos() const { return pos; }
   virtual void set_pos(const vec2d p) { this->set_pos(p[0], p[1]); }
   virtual void set_pos(float x, float y) { pos[0] = x; pos[1] = y; last_pos = pos; }

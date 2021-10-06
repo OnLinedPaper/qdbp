@@ -172,6 +172,7 @@ try{
     if(pause) {
     }
     else {
+      map_h::get().update();
       e_handler::get().update_entities();
       viewport::get().set_pos(e_handler::get().get_plr_pos());
 

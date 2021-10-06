@@ -13,7 +13,6 @@ void map_h::set_map(std::string s) {
   e_handler::get().finish_map_change();
 
   //spawn any entities the map starts with
-  //TODO: determine HOW to indicate enemies spawn and where in the xml
   m->spawn_initial_entities();
 
 }
@@ -33,4 +32,8 @@ bool map_h::try_jump() {
     return true;
   }
   return false;
+}
+
+void map_h::update() {
+  m->spawn_closet_entities();
 }

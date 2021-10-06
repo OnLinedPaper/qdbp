@@ -1,3 +1,5 @@
+#include <random>
+
 #include "chunk.h"
 #include "src/renders/render.h"
 #include "src/viewport/viewport.h"
@@ -202,7 +204,9 @@ void chunk::add_gate(std::string dest, std::string name) {
 //push back a new spawn rule
 void chunk::add_spawn_rule (
   uint8_t spawn_type, int max_count, int total_count, int tick_spawn_delay,
-  const std::string &entity, uint8_t team, float spawn_distance
+  const std::string &entity, uint8_t team, float min_spawn_distance,
+  float max_spawn_distance, float x_coord, float y_coord, float x_dir_comp,
+  float y_dir_comp, float vel_frac
 ) {
   spawn_rules.push_back(new spawn_rule {
     spawn_type,
@@ -212,7 +216,13 @@ void chunk::add_spawn_rule (
     entity,
     xmlparse::get().get_xml_string("/movers/mortal/" + entity + "/id"),
     team,
-    spawn_distance
+    min_spawn_distance,
+    max_spawn_distance,
+    x_coord,
+    y_coord,
+    x_dir_comp,
+    y_dir_comp,
+    vel_frac
   });
 }
 
@@ -225,11 +235,50 @@ void chunk::spawn_initial_entities() {
       if(e_handler::get().get_entity_count_by_id(r->id) < r->max_count) {
         //TODO: spawn delay, though this might not be as important for initials
 
-        //make sure player's far enough away to spawn entity
+        //make sure player's at an appropriate distance to spawn entity
         if(this->get_midpoint().dist(
-            e_handler::get().get_plr_pos()) > r->spawn_distance) {
+            e_handler::get().get_plr_pos()) > r->min_spawn_distance &&
+            (this->get_midpoint().dist(e_handler::get().get_plr_pos()) 
+                < r->max_spawn_distance || 
+            r->max_spawn_distance == -1)
+        ) {
+          //calculate initial position
+          std::random_device rd;
+          std::uniform_int_distribution<> vel_distrib(1, 999);
+
+          vec2d spawn_pos = tlc;
+          spawn_pos[0] += (r->x_coord != -1 ? r->x_coord : vel_distrib(rd));
+          spawn_pos[1] += (r->y_coord != -1 ? r->y_coord : vel_distrib(rd));
+
+
+          //calculate initial direction
+          std::uniform_int_distribution<> dir_distrib(-100, 100);
+
+          //first get the components and normalize them
+          vec2d spawn_dir = {r->x_dir_comp, r->y_dir_comp};
+          spawn_dir = spawn_dir.normalize();
+
+          //now multiply any components by 100
+          spawn_dir = spawn_dir * 100;
+          //if any of the components are 0, give them a random value
+          if(spawn_dir[0] == 0) { spawn_dir[0] += dir_distrib(rd); }
+          if(spawn_dir[1] == 0) { spawn_dir[1] += dir_distrib(rd); }
+
+          //one last normalize
+          spawn_dir = spawn_dir.normalize();
+
+          //finally, check the velocity fraction
+          float vel_f = r->vel_frac;
+          if(vel_f == -1) {
+            //get a random velocity
+            vel_f = dir_distrib(rd);
+            vel_f /= 100;
+          }
+
+          //now ask the entity handler to add this entity
+
           //TODO: add team
-          e_handler::get().add_npe("mortal/" + r->entity, this->get_midpoint(), {0, 0});
+          e_handler::get().add_npe("mortal/" + r->entity, spawn_pos, spawn_dir, vel_f);
         }
       }
     }

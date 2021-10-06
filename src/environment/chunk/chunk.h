@@ -66,7 +66,10 @@ public:
   void add_gate(std::string dest, std::string name); 
 
   //adds an entity spawning rule to the vector of spawn rules
-  void add_spawn_rule (uint8_t, int, int, int, const std::string &, uint8_t, float);
+  void add_spawn_rule (
+      uint8_t, int, int, int, const std::string &, uint8_t, float, float, 
+      float, float, float, float, float
+  );
   
   //spawn any entities that are coded into the xml - other entities, such as
   //closet-spawned ones, are handled later
@@ -79,14 +82,20 @@ private:
 
   //a set of rules for spawning a specific type of entity
   struct spawn_rule {
-    uint8_t spawn_type;       //0: initial, 1: closet
-    int max_count;            //allowed active entities
-    int total_count;          //total spawned entities
-    int tick_spawn_delay;     //delay before spawn happens
-    std::string entity;       //abbreviated xml path to entity
-    std::string id;               //standardized entity id
-    uint8_t team;             //see entity handler for team codes
-    float spawn_distance;     //min distance from player before spawn
+    uint8_t spawn_type;         //0: initial, 1: closet
+    int max_count;              //allowed active entities
+    int total_count;            //total spawned entities
+    int tick_spawn_delay;       //delay before spawn happens
+    std::string entity;         //abbreviated xml path to entity
+    std::string id;             //standardized entity id
+    uint8_t team;               //see entity handler for team codes
+    float min_spawn_distance;   //min distance from player before spawn
+    float max_spawn_distance;   //max distance from player that allows spawn
+    float x_coord;              //x coordinate in the chunk to spawn entity at
+    float y_coord;              //y coordinate in the chunk to spawn entity at
+    float x_dir_comp;           //x direction component
+    float y_dir_comp;           //y direction component
+    float vel_frac;             //fraction of max velocity the entity spawns with
   };
 
   vec2d tlc; //top-left corner

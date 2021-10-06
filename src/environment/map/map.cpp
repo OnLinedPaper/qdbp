@@ -128,6 +128,9 @@ void map::parse_spawn_rules() {
   std::vector<std::string> rules = xmlparse::get().get_all_child_tags(s_path);
 
   int x, y = 0;
+  float x_coord, y_coord = 0;
+  float x_dir_comp, y_dir_comp = 0;
+  float vel_frac = 0;
 
   std::string spawn_type = "";
   int max_count = 0;
@@ -135,11 +138,12 @@ void map::parse_spawn_rules() {
   int tick_spawn_delay = 0;
   std::string entity = "";
   std::string team = "";
-  float spawn_distance = 0;
+  float min_spawn_distance = 0;
+  float max_spawn_distance = 0;
 
   for(std::string s_r_name : rules) {
 
-//---- x/y coordinates --------------------------------------------------------
+//---- x/y coordinates of the chunk -------------------------------------------
 
     //get the xy index of the chunk for the deque and validate it
     x = xmlparse::get().get_xml_int(s_path + "/" + s_r_name + "/x_chunk");
@@ -163,6 +167,68 @@ void map::parse_spawn_rules() {
       msg::print_alert("skipping rule " + s_path + "/" + s_r_name);
       continue;
     }
+
+//---- x/y coordinates in the chunk -------------------------------------------
+
+    //get the x/y coordinates where we'll spawn the entity in the chunk
+    //- this can be a float value between 1 and 999, corresponding to the 1000
+    //  unit size of a chunk. the center of the entity will be placed here.
+    //- passing -1 in either field will result in a random coordinate being 
+    //  used at spawn time
+    x_coord = xmlparse::get().get_xml_float(s_path + "/" + s_r_name + "/x_coord");
+    y_coord = xmlparse::get().get_xml_float(s_path + "/" + s_r_name + "/y_coord");
+  
+    if(x_coord != -1 && (x_coord < 1 || x_coord > 999)) {
+      msg::print_warn("bad entity spawning x coordinate \"" + 
+        std::to_string(x_coord) + "\"");
+      msg::print_alert("value should be between 0 and 999, or -1 for a random x coordinate");
+      msg::print_alert("skipping rule " + s_path + "/" + s_r_name);
+      continue;
+    }
+
+    if(y_coord != -1 && (y_coord < 1 || y_coord > 999)) {
+      msg::print_warn("bad entity spawning y coordinate \"" + 
+        std::to_string(y_coord) + "\" for rule " + s_path + "/" + s_r_name);
+      msg::print_alert("value should be between 0 and 999, or -1 for a random y coordinate");
+      msg::print_alert("skipping rule " + s_path + "/" + s_r_name);
+      continue;
+    }
+
+//---- x and y components for entity direction --------------------------------
+
+  //get the x and y components of entity velocity - note that these are NOT the
+  //actual velocity that will be used, instead
+  //- a velocity component of 0 will result in a random direction; for entities
+  //  that are meant to stand still, vel_frac should be 0
+
+  x_dir_comp = xmlparse::get().get_xml_float(s_path + "/" + s_r_name + "/x_dir_component");
+  y_dir_comp = xmlparse::get().get_xml_float(s_path + "/" + s_r_name + "/y_dir_component");
+
+  //these don't really need to be validated; they're used as direction
+  //components as opposed to the actual velocity itself, and will be normalized
+  //before being used
+
+//---- fraction of max vel ----------------------------------------------------
+
+  //get the fraction of max velocity this will spawn with
+  //- this cannot be lower than 0, and generally shouldn't be higher than 2,
+  //  BUT a value of -1 will result in a random velocity (within acceptable
+  //  limits for that entity)
+
+  vel_frac = xmlparse::get().get_xml_float(s_path + "/" + s_r_name + "/vel_frac");
+
+  if(vel_frac != -1 && vel_frac < 0) {
+    msg::print_warn("bad velocity component \"" + std::to_string(vel_frac) +
+      "\" for rule " + s_path + "/" + s_r_name);
+    msg::print_alert("velocity should ideally be between 0 and 1, or -1 for a random velocity");
+    msg::print_alert("skipping rule " + s_path + "/" + s_r_name);
+    continue;
+  }
+  if(vel_frac > 2) {
+    msg::print_warn("rule " + s_path + "/" + s_r_name + " is spawning an entity moving at " +
+      std::to_string(vel_frac) + " times its normal max velocity.");
+    msg::print_alert("this may result in unexpected movement behavior, especially if the entity does not have normal velocity decay rules.");
+  }
 
 //---- spawn type ------------------------------------------------------------- 
 
@@ -262,35 +328,65 @@ void map::parse_spawn_rules() {
         continue;
       }
       else {
-        msg::print_warn("rule " + s_r_name + " is spawning a white team entity");
+        msg::print_warn("rule " + s_path + "/" + s_r_name + " is spawning a white team entity");
         msg::print_alert("this team is typically reserved for debugging purposes.");
       }
     }
 
-//---- spawn distance ---------------------------------------------------------
+//---- min spawn distance -----------------------------------------------------
 
-    //get the spawn distance (float)
-    //- the minimum distance the player must be to spawn these entities
+    //get the min spawn distance (float)
+    //- the minimum distance away the player must be to spawn these entities
     //- initial entities typically ignore this or use low values, since the 
     //  player's position is known on map spawn... usually
     //- closet entities use this to make sure they don't spawn on top of the
     //  player when they kill another entity
-    spawn_distance = xmlparse::get().get_xml_float(s_path + "/" + s_r_name + "/spawn_distance");
+    min_spawn_distance = xmlparse::get().get_xml_float(s_path + "/" + 
+        s_r_name + "/min_spawn_distance");
 
-    if(spawn_distance < 500) {
-      if(spawn_distance < 0) {
-        msg::print_warn("bad spawn distance \"" + std::to_string(spawn_distance) + 
-          "\" for rule " + s_path + "/" + s_r_name);
+    if(min_spawn_distance < 500) {
+      if(min_spawn_distance < 0) {
+        msg::print_warn("bad min spawn distance \"" + 
+          std::to_string(min_spawn_distance) + "\" for rule " + s_path + "/" + 
+          s_r_name);
         msg::print_alert("distance should be greater than 0, and ideally greater than 500 to prevent entities from spawning too close to the player");
         msg::print_alert("skipping rule " + s_path + "/" + s_r_name);
         continue;
       }
       else {
-        msg::print_warn("rule " + s_r_name + " is spawning an entity at distance " +
-        std::to_string(spawn_distance));
+        msg::print_warn("rule " + s_r_name + 
+          " is spawning an entity at min distance " + 
+          std::to_string(min_spawn_distance));
         msg::print_alert("this may spawn very close to the player");
       }
     }
+
+//---- max spawn distance -----------------------------------------------------
+
+  //get the max spawn distance (float)
+  //- the maximum distance a player can be, else entity is too far to spawn
+  //- initial entities almost always ignore this, as it will often prevent
+  //  them from spawning altogether
+  //- closet entities use this to make sure they don't spawn somewhere super
+  //  remote, depriving a player of the chance to fight the entity
+  max_spawn_distance = xmlparse::get().get_xml_float(s_path + "/" + s_r_name +
+      "/max_spawn_distance");
+
+  //max spawn dist of -1 means there is no "maximum" and the entity can always
+  //spawn regardless of player position - mostly used for initials
+  if(max_spawn_distance != -1) {
+    if(max_spawn_distance < min_spawn_distance) {
+      msg::print_warn("bad max spawn distance \"" +
+        std::to_string(max_spawn_distance) + "\" for rule " + s_path + "/" +
+        s_r_name);
+      msg::print_alert("max distance (" + std::to_string(max_spawn_distance) +
+        ") should not be less than min distance (" + 
+        std::to_string(min_spawn_distance) + ") or the entity will not spawn.");
+      msg::print_alert("note: a value of -1 will remove the max distance.");
+      msg::print_alert("skipping rule " + s_path + "/" + s_r_name);
+      continue;
+    }
+  }
 
 //---- add rule to chunk ------------------------------------------------------
 
@@ -301,7 +397,13 @@ void map::parse_spawn_rules() {
       tick_spawn_delay,
       entity,
       e_handler::team_str_to_int(team),
-      spawn_distance
+      min_spawn_distance,
+      max_spawn_distance,
+      x_coord,
+      y_coord,
+      x_dir_comp,
+      y_dir_comp,
+      vel_frac
     );
   }
 }
@@ -487,6 +589,13 @@ void map::spawn_initial_entities() {
     //allow each chunk to spawn its entities
     c_deque[i].spawn_initial_entities();
   }
+}
+
+//after the map is initialized, try to spawn reoccurring entities according to
+//whatever xml rules exist. these are the soft-coded monster closet entities 
+//that are spawned once the player is interacting with the map.
+void map::spawn_closet_entities() {
+//TODO: spawning behaviors
 }
 
 void map::draw() const {

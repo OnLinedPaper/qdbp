@@ -33,6 +33,11 @@
     <initial_2-0_fishbone>
       <x_chunk>2</x_chunk>
       <y_chunk>0</y_chunk>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <x_dir_component>0</x_dir_component>
+      <y_dir_component>0</y_dir_component>
+      <vel_frac>-1</vel_frac>
 
       <spawn_type>initial</spawn_type>
       <max_count>1</max_count>
@@ -40,7 +45,8 @@
       <tick_spawn_delay>0</tick_spawn_delay>
       <entity>mortals/fishbone</entity>
       <team>BLUE</team>
-      <spawn_distance>1000</spawn_distance>
+      <min_spawn_distance>1000</min_spawn_distance>
+      <max_spawn_distance>-1</max_spawn_distance>
     </initial_2-0_fishbone>
   </entity_spawning>
 </debug_1>

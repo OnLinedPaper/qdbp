@@ -31,6 +31,9 @@ public:
   //when a map is created, it spawns in entities absed on xml rules
   void spawn_initial_entities();
 
+  //each game tick, the map tries to spawn in reocurring entities
+  void spawn_closet_entities();
+
 private:
   int x_dim;
   int y_dim;
