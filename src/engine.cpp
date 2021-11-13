@@ -60,8 +60,9 @@ try{
 
   e_handler::get()
       .add_npe("hittable/debug_stationary", {2500, 500}, {0, 125});
-*/
+
   e_handler::get().add_npe("mortal/mortals/fishbone", {500, 2500}, {0, 0});
+*/
 
 //-    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -        
 
