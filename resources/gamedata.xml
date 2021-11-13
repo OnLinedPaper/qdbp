@@ -310,14 +310,14 @@
         <unique_type_id>0</unique_type_id>
       </shot>
       <damage>
-        <impact_damage>12</impact_damage>
-        <armor_penetration>1</armor_penetration>
+        <impact_damage>120000</impact_damage>
+        <armor_penetration>4</armor_penetration>
       </damage>
       <hitboxes>
         <hurty>
           <x_offset>0</x_offset>
           <y_offset>0</y_offset>
-          <size>16</size>
+          <size>16000</size>
           <type>HIT</type>
         </hurty>
       </hitboxes>
