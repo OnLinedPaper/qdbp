@@ -133,7 +133,9 @@ vec2d vec2d::decay(float scalar_val) const {
   if(m < 0.05 && m > -0.05) {
     return(vec2d(0,0));
   }
-  return((this->normalize() * (m - (m * scalar_val))));
+  return((this->normalize() * (
+    (m - (m * scalar_val)) > 0 ? (m - (m * scalar_val)) : 0)
+  ));
 }
 
 float vec2d::dist(const vec2d &v) const {
