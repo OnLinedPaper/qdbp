@@ -20,7 +20,7 @@ SPECIAL_LFLAGS = #-I$(DIR)/lib -L$(DIR)/lib -Wl,-R,$(DIR)/lib -Wl,--verbose
 
 DEPS = background.h chunk.h debug_follower.h debug_hittable.h debug_killable.h debug_player.o drawable.h engine.h entity_handler.h gunner.h hitbox.h hitline.h hybrid_box.h image.h image_handler.h map.h map_handler.h message.h mortal.h movable.h player.h rect2d.h render.h text.h text_handler.h timeframe.h vec2d.h viewport.h weapon.h xmlnode.h xmlparse.h 
 
-OBJS:= debug_player.o entity_handler.o background.o chunk.o debug_follower.o debug_hittable.o debug_killable.o debug_player.o drawable.o engine.o entity_handler.o gunner.o hitbox.o hitline.o hybrid_box.o image.o image_handler.o map.o map_handler.o message.o mortal.o movable.o player.o rect2d.o render.o text.o text_handler.o timeframe.o vec2d.o viewport.o weapon.o xmlnode.o xmlparse.o
+OBJS:= background.o chunk.o debug_follower.o debug_hittable.o debug_killable.o debug_player.o drawable.o engine.o entity_handler.o gunner.o hitbox.o hitline.o hybrid_box.o image.o image_handler.o map.o map_handler.o message.o mortal.o movable.o player.o rect2d.o render.o text.o text_handler.o timeframe.o vec2d.o viewport.o weapon.o xmlnode.o xmlparse.o
 #OBJS:= engine.o render.o movable.o xmlparse.o xmlnode.o vec2d.o viewport.o image.o timeframe.o chunk.o map.o message.o image_handler.o background.o rect2d.o debug_hittable.o drawable.o hittable.o hitbox.o hitline.o hybrid_box.o map_handler.o debug_follower.o entity_handler.o text_handler.o text.o heatable.o debug_heatable.o weapon.o killable.o debug_killable.o mortal.o
 WOBJS:= $(addprefix $(WBDIR)/,$(OBJS))
 DOBJS:= $(addprefix $(DBDIR)/,$(OBJS))
