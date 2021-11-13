@@ -212,7 +212,11 @@ void chunk::add_spawn_rule (
     spawn_type,
     max_count,
     total_count,
+    //no entities spawned yet
+    0,
     tick_spawn_delay,
+    //set initial "spawn checkpoint" to map load time
+    t_frame::get().get_t(),
     entity,
     xmlparse::get().get_xml_string("/movers/mortal/" + entity + "/id"),
     team,
@@ -226,22 +230,39 @@ void chunk::add_spawn_rule (
   });
 }
 
-void chunk::spawn_initial_entities() {
+void chunk::spawn_entities(uint8_t spawn_type) {
   //iterate through spawn rules and look for any marked as "initial"
   for(spawn_rule *r : spawn_rules) {
-    //check to see if it's an initial spawn
-    if(r->spawn_type == chunk::INITIAL) {
+    //check to see if this matches the desired type
+    if(r->spawn_type == spawn_type) {
       //make sure we haven't hit the max count for this entity already
-      if(e_handler::get().get_entity_count_by_id(r->id) < r->max_count) {
-        //TODO: spawn delay, though this might not be as important for initials
+      //(ignored for entities that spawn on arrival)
+      if(r->spawn_type == chunk::INITIAL || 
+          e_handler::get().get_entity_count_by_id(r->id) < r->max_count) {
 
-        //make sure player's at an appropriate distance to spawn entity
-        if(this->get_midpoint().dist(
+        //if it's a closet, process spawn delay here
+        if(spawn_type == chunk::CLOSET) {
+          if(t_frame::get().get_t() - r->spawn_checkpoint < r->tick_spawn_delay) {
+            //too soon to spawn this rule - skip it and go to the next rule
+            continue;
+          }
+        }
+
+        //make sure we haven't burned out the max allowable spawns
+        if(r->total_count != -1 && r->spawned_count >= r->total_count) { continue; }
+
+
+        //make sure player's at an appropriate distance to spawn entity. if
+        //player is too close, entity fails to spawn
+        if((this->get_midpoint().dist(
             e_handler::get().get_plr_pos()) > r->min_spawn_distance &&
             (this->get_midpoint().dist(e_handler::get().get_plr_pos()) 
                 < r->max_spawn_distance || 
             r->max_spawn_distance == -1)
-        ) {
+        ) || r->spawn_type == chunk::INITIAL) {
+          //at this point, all criteria have been met. set the entity's initial
+          //values and request its addition to the game
+
           //calculate initial position
           std::random_device rd;
           std::uniform_int_distribution<> vel_distrib(1, 999);
@@ -279,11 +300,27 @@ void chunk::spawn_initial_entities() {
 
           //TODO: add team
           e_handler::get().add_npe("mortal/" + r->entity, spawn_pos, spawn_dir, vel_f);
+
+          //register this as a successful spawn
+          r->spawned_count += 1;
+          r->spawn_checkpoint = t_frame::get().get_t();
         }
+      }
+      else {
+        r->spawn_checkpoint = t_frame::get().get_t();
       }
     }
   }
   return;
+}
+
+void chunk::spawn_initial_entities() {
+  spawn_entities(chunk::INITIAL);
+}
+
+void chunk::spawn_closet_entities() {
+//TODO: take the spawn behavior above and generalize it for closet and initial
+  spawn_entities(chunk::CLOSET);
 }
 
 void chunk::draw() const {
