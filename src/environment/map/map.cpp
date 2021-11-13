@@ -281,10 +281,11 @@ void map::parse_spawn_rules() {
 
     //get the tick spawn delay (int > 0)
     //- number of ticks before the entity spawns
-    //- generally ignored by initial entities as they're supposed to "already
+    //- IGNORED by initial entities as they're supposed to "already
     //  be there" on player spawn
-    //- for closet entities, WHEN the spawn rule determines one should be
-    //  created, the timer begins to tick, and not before then.
+    //- for closet entities, the timer begins to tick immediately upon arrival
+    //  in the map, and will begin ticking again when there is an availability,
+    //  meaning the delay must fully elapse before next spawn
     tick_spawn_delay = xmlparse::get().get_xml_int(s_path + "/" + s_r_name + "/tick_spawn_delay");
 
     if(tick_spawn_delay < 0) {
@@ -337,10 +338,12 @@ void map::parse_spawn_rules() {
 
     //get the min spawn distance (float)
     //- the minimum distance away the player must be to spawn these entities
-    //- initial entities typically ignore this or use low values, since the 
-    //  player's position is known on map spawn... usually
+    //- initial entities typically use low values, since the player's position 
+    //  is known on map spawn... usually. if an initial entitiy is too close,
+    //  it WILL fail to spawn, and make no more attempts
     //- closet entities use this to make sure they don't spawn on top of the
-    //  player when they kill another entity
+    //  player when they kill another entity, and should use a value at least
+    //  as large as the distance between the furthest edges of their hitboxes
     min_spawn_distance = xmlparse::get().get_xml_float(s_path + "/" + 
         s_r_name + "/min_spawn_distance");
 
@@ -365,7 +368,7 @@ void map::parse_spawn_rules() {
 
   //get the max spawn distance (float)
   //- the maximum distance a player can be, else entity is too far to spawn
-  //- initial entities almost always ignore this, as it will often prevent
+  //- initial entities ALWAYS ignore this, as it will often prevent
   //  them from spawning altogether
   //- closet entities use this to make sure they don't spawn somewhere super
   //  remote, depriving a player of the chance to fight the entity
@@ -373,7 +376,7 @@ void map::parse_spawn_rules() {
       "/max_spawn_distance");
 
   //max spawn dist of -1 means there is no "maximum" and the entity can always
-  //spawn regardless of player position - mostly used for initials
+  //spawn regardless of player position
   if(max_spawn_distance != -1) {
     if(max_spawn_distance < min_spawn_distance) {
       msg::print_warn("bad max spawn distance \"" +
@@ -595,7 +598,10 @@ void map::spawn_initial_entities() {
 //whatever xml rules exist. these are the soft-coded monster closet entities 
 //that are spawned once the player is interacting with the map.
 void map::spawn_closet_entities() {
-//TODO: spawning behaviors
+  for(int i=0; i<y_dim * x_dim; i++) {
+    //allow each chunk to spawn its entities
+    c_deque[i].spawn_closet_entities();
+  }
 }
 
 void map::draw() const {
