@@ -141,6 +141,24 @@ void mortal::draw_boxes() const {
   }
 }
 
+//reset changeable attributes
+void mortal::reset() {
+  //reset base attributes
+  curr_health = max_health;
+  h_is_regenerating = false;
+  curr_shields = max_shields;
+  curr_shield_segments = max_shield_segments;
+  s_is_regenerating = true;
+
+  //reset modifiers
+  max_health_mod = 1;
+  health_segment_mod = 0;
+  h_regen_rate_mod = 1;
+  max_shield_segments_mod = 0;
+  s_regen_rate_mod = 1;
+  first_s_size_mod = 1;
+}
+
 void mortal::update() {
   drawable::update();
 

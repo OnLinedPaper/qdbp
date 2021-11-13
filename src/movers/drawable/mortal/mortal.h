@@ -29,6 +29,7 @@ public:
   void draw() const override;
   void draw_boxes() const;
 
+  virtual void reset();
   virtual void update() override;
 
 //==== HITBOX AND COLLISION ===================================================
