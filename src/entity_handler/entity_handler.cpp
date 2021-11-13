@@ -52,7 +52,7 @@ void e_handler::prep_for_map_change() {
   }
   for(mortal *m : npe_all) {
     //deactivate anything that doesn't follow through a portal
-    if(!m->get_follow_thru_portals()) {
+    if(!m->get_follow_thru_portals() && m->is_active()) {
       m->set_active(false);
       entity_count_by_id[m->get_id()] -= 1;
     }
@@ -230,9 +230,11 @@ void e_handler::add_npe(mortal *h,
   //used "behind the scenes" for loading from a map or the like
 
   if(h) { 
+    h->reset();
     h->set_pos(pos);
     h->set_vel(vel);
-    npe_all.push_back(h);
+    h->set_tangible(true);
+    h->set_active(true);
 
     //increment entity count for tracking spawn limits
     if(entity_count_by_id.find(h->get_id()) == entity_count_by_id.end()) {
@@ -257,7 +259,7 @@ void e_handler::find_or_create_npe(const std::string &name,
   );
 
   for(mortal *hi : npe_all) {
-    if(type.compare(hi->get_type()) && !hi->is_active()) {
+    if(!type.compare(hi->get_type()) && !hi->is_active()) {
       //found an inactive instance of the entity type we want
       *h = hi;
       break;
@@ -280,6 +282,11 @@ void e_handler::find_or_create_npe(const std::string &name,
       msg::print_alert(
           "tried to check at " + entity_xml_root + name + "/entity_type"
       );
+    }
+
+    if(*h) {
+      //add npe here and ONLY here to prevent double-additions
+      npe_all.push_back(*h);
     }
   }
 
