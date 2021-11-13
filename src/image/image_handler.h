@@ -13,6 +13,7 @@ public:
 
   ~image_handler();
 
+  //draws relative to game world
   void draw_rotate(const std::string name, float x, float y, float frame_bump, float angle);
   void draw_rotate_color(const std::string name, float x, float y, 
       float frame_bump, float angle, const SDL_Color &c);
@@ -21,6 +22,10 @@ public:
   void draw_rotate_color_outline(const std::string name, float x, float y,
       float frame_bump, float angle, const SDL_Color &c, bool outline_color, float opacity);
   void draw_tile(const std::string name, float parallax);
+
+  //draws relative to the screen (used by hud)
+  void draw_r_c_o_relative(const std::string name, float x,
+      float y, float frame_bump, float angle, const SDL_Color &c, float opacity);
 
   static void get_col_from_team(const std::string, SDL_Color &);
   static void jitter_col(int, SDL_Color &);

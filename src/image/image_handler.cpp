@@ -52,6 +52,16 @@ void image_handler::draw_tile(const std::string name, float parallax) {
   images.at(name).draw_tile(parallax);
 }
 
+void image_handler::draw_r_c_o_relative(const std::string name, float x,
+    float y, float frame_bump, float angle, const SDL_Color &c, float opacity)
+  {
+  if(images.find(name) == images.end()) {
+    //lazy initialization
+    add_image(name);
+  }
+  images.at(name).draw_r_c_o_all(x, y, angle, true, frame_bump, c, opacity);
+}
+
 void image_handler::add_image(std::string name) {
   //used emplace so i could avoid a default constructor call to image
   images.emplace(name, name);

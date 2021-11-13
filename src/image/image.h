@@ -15,6 +15,9 @@ public:
   void draw_rotate_color(float x, float y, float a, float frame_bump, const SDL_Color &mod) const;
   void draw_rotate_color_opacity(
       float x, float y, float z, float frame_bump, const SDL_Color &mod, float opacity) const;
+  void draw_r_c_o_all(
+      float x, float y, float z, bool relative_to_screen, float frame_bump, 
+      const SDL_Color &mod, float opacity) const;
   void draw_rotate(float x, float y, float a, float frame_bump) const;
   void draw_tile(float parallax) const;
   const vec2d &get_dim() const { return dimensions; }

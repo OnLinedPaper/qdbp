@@ -64,6 +64,7 @@ try{
   e_handler::get().add_npe("mortal/mortals/fishbone", {500, 2500}, {0, 0});
 */
 
+
 //-    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -        
 
   const Uint8* keystate = SDL_GetKeyboardState(NULL);
@@ -225,6 +226,7 @@ try{
 
 
 
+  image_handler::get().draw_r_c_o_relative("/hud_outline", 0, 668, 0, 0, {255, 255, 255}, 1);
       //l1.set_start(l1.get_start() + vec2d(0, .4));
       //l1.set_end(l1.get_end() + vec2d(0, .4));
 

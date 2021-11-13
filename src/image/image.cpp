@@ -145,19 +145,41 @@ void image::draw_rotate_color(float x_pos, float y_pos, float angle,
 void image::draw_rotate_color_opacity(float x_pos, float y_pos, float angle, 
     float frame_bump, const SDL_Color &mod, float opacity) const 
 {
+  draw_r_c_o_all(x_pos, y_pos, angle, false, frame_bump, mod, opacity);
+}
 
-  //check to see if the entity is anywhere on-screen - if it's not,
-  //don't draw it, to save time
-  if(
-    x_pos + dimensions[0] < viewport::get().get_tlc_x() ||
-    x_pos - dimensions[0] > viewport::get().get_brc_x() ||
-    y_pos + dimensions[1] < viewport::get().get_tlc_y() ||
-    y_pos - dimensions[1] > viewport::get().get_brc_y()
-  ) { return; }
-
+void image::draw_r_c_o_all(float x_pos, float y_pos, float angle, 
+    bool relative_to_screen, float frame_bump, const SDL_Color &mod, 
+    float opacity) const
+{
   SDL_Rect dest_r;
-  dest_r.x = x_pos - (dimensions[0] / 2) - viewport::get().get_tlc_x();
-  dest_r.y = y_pos - (dimensions[1] / 2) - viewport::get().get_tlc_y();
+
+  if(!relative_to_screen) {
+    //this (and the vast majority of other renders) has passed its x,y to us
+    //in world units. convert these to viewport units and work.
+
+    //check to see if the entity is anywhere on-screen - if it's not,
+    //don't draw it, to save time
+    if(
+      x_pos + dimensions[0] < viewport::get().get_tlc_x() ||
+      x_pos - dimensions[0] > viewport::get().get_brc_x() ||
+      y_pos + dimensions[1] < viewport::get().get_tlc_y() ||
+      y_pos - dimensions[1] > viewport::get().get_brc_y()
+    ) { return; }
+
+    dest_r.x = x_pos - (dimensions[0] / 2) - viewport::get().get_tlc_x();
+    dest_r.y = y_pos - (dimensions[1] / 2) - viewport::get().get_tlc_y();
+  }
+  else {
+    //this has passed its x,y as viewport units - it's probably the hud or menu
+    //onviously we don't need to validate whether or not this is on-screen
+
+//TODO: possibly alter this for top-left corner, etc? also might just let the
+//HUD class bother with that, it seems more relevant there than here
+    dest_r.x = x_pos;
+    dest_r.y = y_pos;
+  }
+
   dest_r.w = dimensions[0];
   dest_r.h = dimensions[1];
 

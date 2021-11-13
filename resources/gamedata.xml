@@ -2,6 +2,17 @@
 <first_map>debug_2</first_map>
 <draw_debug_info>0</draw_debug_info>
 
+<hud>
+  <textures>
+    <blc_outline></blc_outline>
+    <heat_curve></heat_curve>
+    <overheat_curve></overheat_curve>
+    <overheat_warning></overheat_warning>
+    <burnout_warning></burnout_warning>
+    <burnout_sign></burnout_sign>
+  </textures>
+</hud>
+
 <movers>
 
   <mortal>
