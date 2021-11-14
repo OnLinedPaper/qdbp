@@ -285,6 +285,32 @@
   </dimensions>
 </hud_outline>
 
+<hud_shield_curve>
+  <file>resources/images/hud_shield_curve.png</file>
+  <dimensions>
+    <width>154</width>
+    <height>390</height>
+
+    <pivot_x>-190</pivot_x>
+    <pivot_y>261</pivot_y>
+    <frames>1</frames>
+    <frame_delay>1</frame_delay>
+  </dimensions>
+</hud_shield_curve>
+
+<hud_shield_divider>
+  <file>resources/images/hud_shield_divider.png</file>
+  <dimensions>
+    <width></width>
+    <height></height>
+
+    <pivot_x></pivot_x>
+    <pivot_y></pivot_y>
+    <frames>1</frames>
+    <frame_delay>1</frame_delay>
+  </dimensions>
+</hud_shield_divider>
+
 <tiny>
   <file>resources/images/tiny.png</file>
   <dimensions>
