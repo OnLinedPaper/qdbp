@@ -301,11 +301,11 @@
 <hud_shield_divider>
   <file>resources/images/hud_shield_divider.png</file>
   <dimensions>
-    <width></width>
-    <height></height>
+    <width>49</width>
+    <height>52</height>
 
-    <pivot_x></pivot_x>
-    <pivot_y></pivot_y>
+    <pivot_x>-185</pivot_x>
+    <pivot_y>262</pivot_y>
     <frames>1</frames>
     <frame_delay>1</frame_delay>
   </dimensions>

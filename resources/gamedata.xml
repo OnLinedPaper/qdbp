@@ -28,15 +28,15 @@
     <shield_curve>
       <body>hud_shield_curve</body>
       <x_offset>330</x_offset>
-      <y_offset>-4</y_offset>
+      <y_offset>-2</y_offset>
       <hide_angle>71</hide_angle>
     </shield_curve>
 
     <shield_divider>
       <body>hud_shield_divider</body>
-      <x_offset>0</x_offset>
-      <y_offset>0</y_offset>
-      <hide_angle>0</hide_angle>
+      <x_offset>329</x_offset>
+      <y_offset>341</y_offset>
+      <hide_angle>72</hide_angle>
     </shield_divider>
 
     <overheat_warning></overheat_warning>

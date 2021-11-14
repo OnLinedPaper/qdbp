@@ -30,7 +30,7 @@ hud::hud() :
   shield_curve_y_offset(xmlparse::get().get_xml_int(path + "/textures/shield_curve/y_offset")),
   shield_curve_hide_angle(xmlparse::get().get_xml_int(path + "/textures/shield_curve/hide_angle")),
 
-  shield_divider("/" + xmlparse::get().get_xml_string(path + "/textures/shield_divider")),
+  shield_divider("/" + xmlparse::get().get_xml_string(path + "/textures/shield_divider/body")),
   shield_divider_ht(xmlparse::get().get_xml_int(shield_divider + "/dimensions/height")),
   shield_divider_x_offset(xmlparse::get().get_xml_int(path + "/textures/shield_divider/x_offset")),
   shield_divider_y_offset(xmlparse::get().get_xml_int(path + "/textures/shield_divider/y_offset")),
@@ -243,20 +243,42 @@ void hud::draw() {
 
   //draw shield divider(s)
   r = g = b = 255;
-//  for(int i=1; i<e_handler::get().get_plr_total_health_segs(); i++) {
-  {  //print a bar to divide each health segment
+
+  //first shield bar
+  int total_segs = e_handler::get().get_plr_total_shield_segs();
+  if(total_segs > 1) {
+    display_frac = e_handler::get().get_plr_first_shield_frac();
 
     image_handler::get().draw_r_c_o_relative(
       shield_divider,
       shield_divider_x_offset,
       viewport::get().get_h() - shield_divider_ht - shield_divider_y_offset,
       0,
-      shield_divider_hide_angle,
+      shield_divider_hide_angle * (1 - display_frac),
       {r, g, b},
       1
     );
   }
 
+  //secondary shield bars
+  if(total_segs > 2) {
+    float remaining_display_frac = 1 - display_frac;
+    int secondary_segs = total_segs - 1;
+
+    for(int i=1; i<secondary_segs; i++) {
+      display_frac += (remaining_display_frac / secondary_segs);
+
+      image_handler::get().draw_r_c_o_relative(
+        shield_divider,
+        shield_divider_x_offset,
+        viewport::get().get_h() - shield_divider_ht - shield_divider_y_offset,
+        0,
+        shield_divider_hide_angle * (1 - display_frac),
+        {r, g, b},
+        1
+      );
+    }
+  }
 
 
 //---- draw the outline of the hud --------------------------------------------
@@ -271,7 +293,7 @@ void hud::draw() {
     0, 
     0, 
     {r, g, b}, 
-    0.1
+    1
   );
 
 } 
