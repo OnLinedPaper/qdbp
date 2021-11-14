@@ -233,6 +233,45 @@
   </dimensions>
 </glow_ship>
 
+<hud_health_curve>
+  <file>resources/images/hud_health_curve.png</file>
+  <dimensions>
+    <width>178</width>
+    <height>389</height>
+
+    <pivot_x>-139</pivot_x>
+    <pivot_y>265</pivot_y>
+    <frames>1</frames>
+    <frame_delay>1</frame_delay>
+  </dimensions>
+</hud_health_curve>
+
+<hud_health_divider>
+  <file>resources/images/hud_health_divider.png</file>
+  <dimensions>
+    <width>50</width>
+    <height>60</height>
+
+    <pivot_x>-137</pivot_x>
+    <pivot_y>275</pivot_y>
+    <frames>1</frames>
+    <frame_delay>1</frame_delay>
+  </dimensions>
+</hud_health_divider>
+
+<hud_heat_curve>
+  <file>resources/images/hud_heat_curve.png</file>
+  <dimensions>
+    <width>397</width>
+    <height>395</height>
+
+    <pivot_x>127</pivot_x>
+    <pivot_y>271</pivot_y>
+    <frames>1</frames>
+    <frame_delay>1</frame_delay>
+  </dimensions>
+</hud_heat_curve>
+
 <hud_outline>
   <file>resources/images/hud_outline.png</file>
   <dimensions>
@@ -240,7 +279,7 @@
     <height>412</height>
 
     <pivot_x>128</pivot_x>
-    <pivot_y>125</pivot_y>
+    <pivot_y>287</pivot_y>
     <frames>1</frames>
     <frame_delay>1</frame_delay>
   </dimensions>
