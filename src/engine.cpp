@@ -11,6 +11,7 @@
 #include "src/entity_handler/entity_handler.h"
 #include "src/text/text_handler.h"
 #include "src/movers/drawable/mortal/weapon.h"
+#include "src/hud/hud.h"
 
 #include <SDL2/SDL_ttf.h>
 #include "src/text/text.h"
@@ -177,7 +178,7 @@ try{
       map_h::get().update();
       e_handler::get().update_entities();
       viewport::get().set_pos(e_handler::get().get_plr_pos());
-
+      hud::get().update();
     }
 
 //==== DISPLAY stuff here =====================================================
@@ -188,6 +189,7 @@ try{
     if(t_frame::get().incr_f() || true) {
       map_h::get().draw();
       e_handler::get().draw_entities();
+      hud::get().draw();
 
 
       if(pause) { render::get().shade_display(0.7); }
@@ -201,7 +203,7 @@ try{
       t9a.set_msg(std::to_string(e_handler::get().get_plr_is_burnout()));
       t10a.set_msg(std::to_string(e_handler::get().get_plr_health_frac()));
       t11a.set_msg(std::to_string(e_handler::get().get_plr_is_regenerating()));
-      t12a.set_msg(std::to_string(e_handler::get().get_plr_shield_segs()));
+      t12a.set_msg(std::to_string(e_handler::get().get_plr_shields()));
       t13a.set_msg(std::to_string(e_handler::get().get_plr_shield_frac()));
       t14a.set_msg(std::to_string(e_handler::get().get_plr_is_vent()));
 
@@ -226,7 +228,6 @@ try{
 
 
 
-  image_handler::get().draw_r_c_o_relative("/hud_outline", 0, 668, 0, 0, {255, 255, 255}, 1);
       //l1.set_start(l1.get_start() + vec2d(0, .4));
       //l1.set_end(l1.get_end() + vec2d(0, .4));
 
@@ -310,6 +311,7 @@ try{
   map_h::get().set_map("/" + xmlparse::get().get_xml_string("/first_map"));
   e_handler::get();
   text_h::get();
+  hud::get();
 
   msg::get();
   msg::get().init_log("");

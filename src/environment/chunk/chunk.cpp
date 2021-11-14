@@ -319,7 +319,6 @@ void chunk::spawn_initial_entities() {
 }
 
 void chunk::spawn_closet_entities() {
-//TODO: take the spawn behavior above and generalize it for closet and initial
   spawn_entities(chunk::CLOSET);
 }
 

@@ -174,8 +174,6 @@ void image::draw_r_c_o_all(float x_pos, float y_pos, float angle,
     //this has passed its x,y as viewport units - it's probably the hud or menu
     //onviously we don't need to validate whether or not this is on-screen
 
-//TODO: possibly alter this for top-left corner, etc? also might just let the
-//HUD class bother with that, it seems more relevant there than here
     dest_r.x = x_pos;
     dest_r.y = y_pos;
   }
@@ -210,6 +208,7 @@ void image::draw_r_c_o_all(float x_pos, float y_pos, float angle,
 
   SDL_SetTextureColorMod(t, mod.r, mod.g, mod.b);
   SDL_SetTextureAlphaMod(t, opacity * 255);
+  SDL_SetTextureBlendMode(t, SDL_BLENDMODE_BLEND);
   SDL_RenderCopyEx(render::get().get_r(), t, NULL, &dest_r, angle, piv, SDL_FLIP_NONE);
 
   delete piv;
