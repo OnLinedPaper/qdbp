@@ -416,11 +416,23 @@ float e_handler::get_plr_health_frac() {
   return plr->get_health_frac();
 }
 
+int e_handler::get_plr_total_health_segs() {
+  return plr->get_total_health_segs();
+}
+
+float e_handler::get_plr_h_available_to_regen() {
+  return plr->h_available_to_regen();
+}
+
+int e_handler::get_plr_full_health_segs() {
+  return plr->get_full_health_segs();
+}
+
 bool e_handler::get_plr_is_regenerating() {
   return plr->is_regen_h();
 }
 
-int e_handler::get_plr_shield_segs() {
+int e_handler::get_plr_shields() {
   return plr->get_shields();
 }
 

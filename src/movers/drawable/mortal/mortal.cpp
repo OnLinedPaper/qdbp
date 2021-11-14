@@ -266,6 +266,19 @@ void mortal::update_boxes() {
 
 //==== DAMAGE AND HEALTH ======================================================
 
+//get full health segments
+int mortal::get_full_health_segs() const {
+  int retval = 0;
+  float health_per_seg = (max_health * max_health_mod) / get_total_health_segs();
+  float c_health = get_health();
+  while(c_health > health_per_seg) {
+    c_health -= health_per_seg;
+    retval++;
+  } 
+
+  return retval;
+}
+
 //returns true if ship took actual damage
 bool mortal::take_damage(float damage, int box_type_hit, bool bypass_shields) {
   if(damage < 0 || tangible == false) { return false; }
@@ -332,24 +345,32 @@ void mortal::perish() {
   active = false;
 }
 
-//regenerates ship health up to nearest segment - note that by default, mortals
-//NEVER regenerate health and ALWAYS stop regenerating at full
-void mortal::do_health_regen() {
-  if(!h_is_regenerating) { return; }
-
+//checks to see whether the player is missing health that can be regenerated
+float mortal::h_available_to_regen() const {
   //check to see if health can go any higher
   float seg_each = (max_health * max_health_mod) 
     / (health_segments + health_segment_mod > 0 ? health_segments + health_segment_mod : 1);
   float seg_max = max_health * max_health_mod;
 
-  //get the max we can generate to based on lsot segments
+  //get the max we can generate to based on lost segments
   while(seg_max - seg_each >= curr_health) { seg_max -= seg_each; }
 
-  if(curr_health < seg_max) {
-    //add health
-    curr_health += h_regen_rate * h_regen_rate_mod * t_frame::get().t_adjust();
-    //clamp at segment max
-    curr_health = (curr_health > seg_max ? seg_max : curr_health);
+  return (seg_max - curr_health); 
+}
+
+//regenerates ship health up to nearest segment - note that by default, mortals
+//NEVER regenerate health and ALWAYS stop regenerating at full
+void mortal::do_health_regen() {
+  if(!h_is_regenerating) { return; }
+
+  //see if any regen is available
+  float h_available = h_available_to_regen();
+
+  if(h_available > 0) {
+    //see max we can regenerate this tick
+    float max_available = h_regen_rate * h_regen_rate_mod * t_frame::get().t_adjust();
+    //regen up to health cap
+    curr_health += (max_available < h_available ? max_available : h_available);
   }
   else {
     //regen stops automatically when health is maxed

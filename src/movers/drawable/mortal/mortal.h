@@ -49,10 +49,15 @@ public:
 //==== DAMAGE AND HEALTH ======================================================
   
   float get_health() const { return curr_health; }
-  float get_health_frac() const { return curr_health / max_health; }
+  float get_health_frac() const { return curr_health / (max_health * max_health_mod); }
+  int   get_total_health_segs() const { return health_segments + health_segment_mod; }
+  int   get_full_health_segs() const;
   float get_shields() const { return curr_shield_segments; }
+  int   get_total_shield_segs() const { return max_shield_segments + max_shield_segments_mod; }
+  float get_first_shield_frac() const { return first_s_size * first_s_size_mod; }
   float get_shield_frac() const { return curr_shields / max_shields; }
 
+  float h_available_to_regen() const;
   bool is_regen_h() const { return h_is_regenerating; }
   void toggle_regen_h() { h_is_regenerating = !h_is_regenerating; }
   bool is_regen_s() const { return s_is_regenerating; }
