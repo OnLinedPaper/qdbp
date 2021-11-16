@@ -21,10 +21,19 @@ image::image (const std::string name)
     xmlp::get().get_xml_float(name + "/dimensions/pivot_x"),
     xmlp::get().get_xml_float(name + "/dimensions/pivot_y")
   ),
+  blend(SDL_BLENDMODE_BLEND),
   frames(xmlp::get().get_xml_float(name + "/dimensions/frames")),
   frame_delay(xmlp::get().get_xml_float(name + "/dimensions/frame_delay"))
 {
+  //blend mode will almost always be regular alpha blending, but can be 
+  //switched to something else
+  xmlparse::get().set_show_debug_msg(false);
+  if(!xmlparse::get().safe_get_xml_string(name + "/blend", "").compare("ADD")) {
+    blend = SDL_BLENDMODE_ADD;
+  }
+  xmlparse::get().set_show_debug_msg(true);
 
+  //validate size and frames
   if(dimensions[0] <= 0) {
     std::string warn = name + "/dimensions/width is <= 0";
     msg::print_warn(warn);
@@ -208,7 +217,7 @@ void image::draw_r_c_o_all(float x_pos, float y_pos, float angle,
 
   SDL_SetTextureColorMod(t, mod.r, mod.g, mod.b);
   SDL_SetTextureAlphaMod(t, opacity * 255);
-  SDL_SetTextureBlendMode(t, SDL_BLENDMODE_BLEND);
+  SDL_SetTextureBlendMode(t, blend);
   SDL_RenderCopyEx(render::get().get_r(), t, NULL, &dest_r, angle, piv, SDL_FLIP_NONE);
 
   delete piv;

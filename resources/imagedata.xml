@@ -257,6 +257,7 @@
     <frames>1</frames>
     <frame_delay>1</frame_delay>
   </dimensions>
+  <blend>ADD</blend>
 </hud_health_divider>
 
 <hud_heat_curve>
@@ -309,6 +310,7 @@
     <frames>1</frames>
     <frame_delay>1</frame_delay>
   </dimensions>
+  <blend>ADD</blend>
 </hud_shield_divider>
 
 <tiny>

@@ -31,6 +31,7 @@ private:
 
   vec2d dimensions;
   vec2d pivot;
+  SDL_BlendMode blend;
   int frames;
   int frame_delay;
 
