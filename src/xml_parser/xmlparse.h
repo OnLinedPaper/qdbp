@@ -21,6 +21,7 @@ public:
   std::vector<std::string> get_all_child_tags(const std::string path) const;
   bool check_path(const std::string path, bool send_alert) const;
 
+  void set_show_debug_msg(bool b) { show_debug_msg = b; }
 
   std::string get_xml_string(const std::string path);
   std::string safe_get_xml_string(const std::string path, std::string def = "");
@@ -42,6 +43,8 @@ private:
   xmlparse &operator=(const xmlparse&) = delete;
 
   xmlnode *root;
+
+  bool show_debug_msg;
 
   //for getting a "tree" of tags - previously found in tree_regex.rx
   const std::regex tree_rx =

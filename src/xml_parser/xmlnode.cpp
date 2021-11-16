@@ -104,7 +104,7 @@ bool xmlnode::recursive_check_path(const std::string path, bool send_alert) {
 
 //=============================================================================
 
-std::string xmlnode::recursive_get_value(const std::string path) {
+std::string xmlnode::recursive_get_value(const std::string path, bool send_alert) {
   try {
     if(path == ("")) {
       //this is where we get value
@@ -140,14 +140,16 @@ std::string xmlnode::recursive_get_value(const std::string path) {
           error = "\"" + n + "\" is not a child of \"" + this->get_name() + "\"!";
         }
         std::string alert = "(might be misspelled, or have non-matching open and close tags)";
-
-        msg::print_error(error);
-        msg::print_alert(alert);
+ 
+        if(send_alert) {
+          msg::print_error(error);
+          msg::print_alert(alert);
+        }
         throw error;
       }
       else {
         //it's a valid child, go deeper
-        return(this->children[n]->recursive_get_value(p));
+        return(this->children[n]->recursive_get_value(p, send_alert));
       }
     }
   }

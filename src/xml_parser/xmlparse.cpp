@@ -6,7 +6,7 @@
 #include <regex>
 #include <fstream>
 
-xmlparse::xmlparse() : root(new xmlnode()) { }
+xmlparse::xmlparse() : root(new xmlnode()), show_debug_msg(true) { }
 
 xmlparse::~xmlparse() {
   delete root;
@@ -61,11 +61,13 @@ void xmlparse::build_tree(const std::string file_name) {
 
 std::string xmlparse::get_xml_string(const std::string path) {
   try {
-    return(root->recursive_get_value(path));
+    return(root->recursive_get_value(path, show_debug_msg));
   }
   catch (const std::string e) {
     //something went wrong, add some data and throw the exception
-    msg::print_alert("bad tag path: " + path);
+    if(show_debug_msg) {
+      msg::print_alert("bad tag path: " + path);
+    }
     std::string error = e + " bad tag path: " + path;
 
     throw error;
@@ -79,7 +81,9 @@ std::string xmlparse::safe_get_xml_string(const std::string path, std::string de
     return get_xml_string(path);
   }
   catch (std::string e) {
-    msg::print_good("==== safe mode: returning \"" + def + "\" ====");
+    if(show_debug_msg) {
+      msg::print_good("==== safe mode: returning \"" + def + "\" ====");
+    }
     return def;
   }
 }
@@ -95,9 +99,11 @@ int xmlparse::get_xml_int(const std::string path) {
   catch (const std::invalid_argument& ia) {
     //they probably tried to convert a string or something
     std::string error = "can't convert this value to an int!";
-    msg::print_error(error);
-    msg::print_alert("value: " + retval);
-    msg::print_alert("bad tag path: " + path);
+    if(show_debug_msg) {
+      msg::print_error(error);
+      msg::print_alert("value: " + retval);
+      msg::print_alert("bad tag path: " + path);
+    }
     throw error;
   }
 }
@@ -109,7 +115,9 @@ int xmlparse::safe_get_xml_int(const std::string path, int def) {
     return get_xml_int(path);
   }
   catch (std::string e) {
-    msg::print_good("==== safe mode: returning " + std::to_string(def) + " ====");
+    if(show_debug_msg) {
+      msg::print_good("==== safe mode: returning " + std::to_string(def) + " ====");
+    }
     return def;
   }
 }
@@ -124,9 +132,11 @@ float xmlparse::get_xml_float(const std::string path) {
   catch (const std::invalid_argument& ia) {
     //they probably tried to convert a string or something
     std::string error = "can't convert this value to a float!";
-    msg::print_error(error);
-    msg::print_alert("value: " + retval);
-    msg::print_alert("bad tag path: " + path);
+    if(show_debug_msg) {
+      msg::print_error(error);
+      msg::print_alert("value: " + retval);
+      msg::print_alert("bad tag path: " + path);
+    }
     throw error;
   }
 }
@@ -138,7 +148,9 @@ float xmlparse::safe_get_xml_float(const std::string path, float def) {
     return get_xml_float(path);
   }
   catch (std::string e) {
-    msg::print_good("==== safe mode: returning " + std::to_string(def) + " ====");
+    if(show_debug_msg) {
+      msg::print_good("==== safe mode: returning " + std::to_string(def) + " ====");
+    }
     return def;
   }
 }
@@ -159,9 +171,11 @@ bool xmlparse::get_xml_bool(const std::string path) {
   }
   else {
     std::string error = "can't convert this value to bool!";
-    msg::print_error(error);
-    msg::print_alert("value: " + retval);
-    msg::print_alert("bad tag path: " + path);
+    if(show_debug_msg) {
+      msg::print_error(error);
+      msg::print_alert("value: " + retval);
+      msg::print_alert("bad tag path: " + path);
+    }
     throw error;
   }
 }
@@ -173,7 +187,9 @@ bool xmlparse::safe_get_xml_bool(const std::string path, bool def) {
     return get_xml_bool(path);
   }
   catch (std::string e) {
-    msg::print_good("==== safe mode: returning " + std::to_string(def) + " ====");
+    if(show_debug_msg) {
+      msg::print_good("==== safe mode: returning " + std::to_string(def) + " ====");
+    }
     return def;
   }
 }
@@ -182,7 +198,7 @@ bool xmlparse::safe_get_xml_bool(const std::string path, bool def) {
 //============================================================================
 
 bool xmlparse::check_path(const std::string path, bool send_alert) const {
-  return(root->recursive_check_path(path, send_alert));
+  return(root->recursive_check_path(path, send_alert && show_debug_msg));
 }
 
 void xmlparse::print_tree() {
@@ -197,7 +213,9 @@ std::vector<std::string> xmlparse::get_all_child_tags(const std::string path) co
   }
   catch (std::string s) {
     //one of the tags was bad
-    msg::print_alert("bad tag path: " + path);
+    if(show_debug_msg) {
+      msg::print_alert("bad tag path: " + path);
+    }
     return std::vector<std::string>();
   }
 }
