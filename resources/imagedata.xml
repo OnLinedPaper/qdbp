@@ -273,6 +273,19 @@
   </dimensions>
 </hud_heat_curve>
 
+<hud_heat_warn>
+  <file>resources/images/hud_heat_warn.png</file>
+  <dimensions>
+    <width>267</width>
+    <height>239</height>
+
+    <pivot_x>0</pivot_x>
+    <pivot_y>0</pivot_y>
+    <frames>1</frames>
+    <frame_delay>1</frame_delay>
+  </dimensions>
+</hud_heat_warn>
+
 <hud_outline>
   <file>resources/images/hud_outline.png</file>
   <dimensions>

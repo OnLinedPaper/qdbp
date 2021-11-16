@@ -21,6 +21,8 @@ public:
 private:
   std::string path = "/hud";
 
+  void draw_overheat_warning();
+
   std::string blc_outline;        //outlines of the hud 
   int blc_outline_ht;             //height of the hud
 
@@ -54,6 +56,10 @@ private:
   int shield_divider_hide_angle;
 
   std::string overheat_warning;   //yellow triangle, warns rising heat
+  int overheat_warning_ht;
+  int overheat_warning_x_offset;
+  int overheat_warning_y_offset;
+
   std::string burnout_warning;    //red diamond, warns imminent burnout
   std::string burnout_sign;       //dark red x, signals burnout  
   

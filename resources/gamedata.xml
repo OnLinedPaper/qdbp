@@ -39,7 +39,11 @@
       <hide_angle>72</hide_angle>
     </shield_divider>
 
-    <overheat_warning></overheat_warning>
+    <overheat_warning>
+      <body>hud_heat_warn</body>
+      <x_offset>10</x_offset>
+      <y_offset>20</y_offset>
+    </overheat_warning>
     <burnout_warning></burnout_warning>
     <burnout_sign></burnout_sign>
   </textures>

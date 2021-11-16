@@ -36,7 +36,11 @@ hud::hud() :
   shield_divider_y_offset(xmlparse::get().get_xml_int(path + "/textures/shield_divider/y_offset")),
   shield_divider_hide_angle(xmlparse::get().get_xml_int(path + "/textures/shield_divider/hide_angle")),
 
-  overheat_warning("/" + xmlparse::get().get_xml_string(path + "/textures/overheat_warning")),
+  overheat_warning("/" + xmlparse::get().get_xml_string(path + "/textures/overheat_warning/body")),
+  overheat_warning_ht(xmlparse::get().get_xml_int(overheat_warning + "/dimensions/height")),
+  overheat_warning_x_offset(xmlparse::get().get_xml_int(path + "/textures/overheat_warning/x_offset")),
+  overheat_warning_y_offset(xmlparse::get().get_xml_int(path + "/textures/overheat_warning/y_offset")),
+
   burnout_warning("/" + xmlparse::get().get_xml_string(path + "/textures/burnout_warning")),
   burnout_sign("/" + xmlparse::get().get_xml_string(path + "/textures/burnout_sign")) 
 { }
@@ -281,6 +285,11 @@ void hud::draw() {
   }
 
 
+//---- draw warnings on the hud -----------------------------------------------
+
+  //presently draws only one warning at a time, choosing based on priority
+  draw_overheat_warning();
+
 //---- draw the outline of the hud --------------------------------------------
 
   //needs no special data
@@ -297,3 +306,38 @@ void hud::draw() {
   );
 
 } 
+
+void hud::draw_overheat_warning() {
+  static float overheat_opacity = 0;
+//dummying out blinking atm, may add it later
+//static int blinker = 0;
+  uint8_t r, g, b = 0;
+  r = g = 255; b = 96;
+
+  if(e_handler::get().get_plr_is_overheat()) {
+    
+    //make icon fade in
+    overheat_opacity += 0.1;
+    overheat_opacity = (overheat_opacity >= 1 ? 1 : overheat_opacity);
+
+  }
+  else { 
+    //make icon fade out
+    overheat_opacity -= 0.05;
+    overheat_opacity = (overheat_opacity <= 0 ? 0 : overheat_opacity);
+  }
+/*
+  blinker = (blinker + 1) % 20;
+  if(blinker <= 2 || blinker >= 11) { overheat_opacity *= 0.8; }
+  if(blinker >= 14) { overheat_opacity *= 0.7; }
+*/
+  image_handler::get().draw_r_c_o_relative(
+    overheat_warning,
+    overheat_warning_x_offset,
+    viewport::get().get_h() - overheat_warning_ht - overheat_warning_y_offset,
+    0,
+    0,
+    {r, g, b},
+    overheat_opacity
+  );
+}
