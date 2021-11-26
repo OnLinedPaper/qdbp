@@ -5,6 +5,10 @@
 #include <regex>
 #include <string>
 
+#ifdef XML_TOOL_
+#include <fstream>
+#endif
+
 class xmlparse {
 public:
   ~xmlparse();
@@ -16,6 +20,7 @@ public:
 
   void build_tree(const std::string file_name); //make the tree
   void recurse_build_tree(const std::smatch, const std::string);
+  void destroy_tree() { if(root) {delete root; root = new xmlnode();} };
 
   void print_tree();
   std::vector<std::string> get_all_child_tags(const std::string path) const;
@@ -34,6 +39,13 @@ public:
 
   bool get_xml_bool(const std::string path);
   bool safe_get_xml_bool(const std::string path, bool def = false);
+
+
+#ifdef XML_TOOL_
+  //DO NOT USE in normal programming. this is for the xml builder tool's use ONLY.
+  xmlnode *get_root() { return root; }
+  void print_as_file(std::ofstream &f) { root->recursive_file_print(f, -1); }
+#endif
 
 private:
   //singleton

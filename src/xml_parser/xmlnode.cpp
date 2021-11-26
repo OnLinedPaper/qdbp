@@ -214,6 +214,39 @@ void xmlnode::recursive_print(const int depth) {
 
 //=============================================================================
 
+void xmlnode::recursive_file_print(std::ofstream &f, int depth) {
+  //print out this node's name and value, followed by each child
+
+  //print some spaces to give this a "tree-like" look
+  for(int i=0; i< depth; i++) { f << "  "; }
+
+  bool no_value = false;
+
+  if(!this->get_name().empty() && this->get_value() != "") {
+    f << "<" << this->get_name() << ">" <<
+      this->get_value() << "</" << this->get_name() << ">\n";
+  }
+  else if(!this->get_name().empty()) {
+    f << "<" << this->get_name() << ">\n";
+    no_value = true;
+  }
+
+  std::map<std::string, xmlnode*>::iterator it = children.begin();
+  while(it != children.end()) {
+    //recursive print call on child
+    it->second->recursive_file_print(f, depth + 1);
+    it++;
+  }
+  
+  if(!this->get_name().empty() && no_value) {
+    //print the closing tag
+    for(int i=0; i< depth; i++) { f << "  "; }
+    f << "</" << this->get_name() << ">\n";
+  }
+}
+
+//=============================================================================
+
 std::vector<std::string> xmlnode::recursive_get_all_child_tags(const std::string path) {
   if(path == "") {
     //get the children of this node

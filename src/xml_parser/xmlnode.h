@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <fstream>
 
 class xmlnode {
 public:
@@ -23,6 +24,7 @@ public:
   void insert_child(const std::string name, const std::string path, const std::string value);
 
   void recursive_print(const int depth);
+  void recursive_file_print(std::ofstream &f, int depth);
   std::string recursive_get_value(const std::string path, bool send_alert);
   std::vector<std::string> recursive_get_all_child_tags(const std::string path);
   bool recursive_check_path(const std::string path, bool send_alert);
