@@ -107,7 +107,9 @@ mem:
 	perl -i -ne 'BEGIN{$$/=""} print unless (/SDL_.*Init/ or /X11_ShowCursor/ or  /dlopen\@\@GLIBC_2.2.5/ or /XSetLocaleModifiers/ or /_dl_catch_exception/ or /_XlcCurrentLC/ or /libpulsecommon/ or /SDL_CreateWindow_REAL/ or /lib\/x86_64-linux-gnu\/dri\/i965_dri.so/ or /TTF_Init/ or /_dl_init/ or /_dbus_strdup/ or /vgpreload/)' $(DDIR)/valgrind-out.txt;
 	@rm $(DDIR)/.v.out $(DDIR)/.v2.out; less $(DDIR)/valgrind-out.txt;
 
-
+#a little tool for xml modification
+xml_tool:
+	g++ $(CFLAGS) $(DFLAGS) -o tools/xml_mod_tool src/xml_parser/main.cpp src/xml_parser/xmlparse.cpp src/xml_parser/xmlparse.h src/utils/message.h src/utils/message.cpp src/xml_parser/xmlnode.h src/xml_parser/xmlnode.cpp -lstdc++fs 
 
 #win2: $(OBJS) main_driver_w.cpp
 #	@mkdir -p $(WDDIR)
