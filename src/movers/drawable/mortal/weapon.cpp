@@ -99,6 +99,8 @@ void weapon::strike_target(mortal &target, int box_type) {
     this->perish();
   }
 
+  die_on_update();  //don't let high-piwercing projectiles pass through more than 1 target
+
   return;
 }
 
@@ -156,6 +158,9 @@ void weapon::fire(
   const SDL_Color &c
 ) {
   parent = p;
+
+  //reset stats
+  this->reset();
 
   //spawn projectile
   set_pos(start_pos);

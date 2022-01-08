@@ -31,6 +31,8 @@ mortal::mortal(const std::string &path, const vec2d &p, const vec2d &v) :
     path + "/health/health_regen_rate", 0
   )),
 
+  dies_on_update(false),
+
   //get max shield segments - default to 0, meaning no shields
   max_shield_segments(xmlparse::get().safe_get_xml_int(
     path + "/health/shield_segments", 0
@@ -149,6 +151,7 @@ void mortal::reset() {
   curr_shields = max_shields;
   curr_shield_segments = max_shield_segments;
   s_is_regenerating = true;
+  dies_on_update = false;
 
   //reset modifiers
   max_health_mod = 1;
@@ -165,7 +168,7 @@ void mortal::update() {
   //update the hitboxes
   mortal::update_boxes();
 
-  if(curr_health <= 0) {
+  if(curr_health <= 0 || dies_on_update) {
     perish();
   }
 

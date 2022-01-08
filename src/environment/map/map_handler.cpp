@@ -28,7 +28,7 @@ bool map_h::try_jump() {
   if(m->check_gate(e_handler::get().get_plr_pos())) {
     //the player's close enough to the gate to be able to make the jump
     //change the map to its new location
-    set_map("/" + m->get_gate_dest(e_handler::get().get_plr_pos()));
+    set_map("/maps/" + m->get_gate_dest(e_handler::get().get_plr_pos()));
     return true;
   }
   return false;

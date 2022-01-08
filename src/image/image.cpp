@@ -191,11 +191,9 @@ void image::draw_r_c_o_all(float x_pos, float y_pos, float angle,
   dest_r.h = dimensions[1];
 
   SDL_Point *piv = NULL;
-  if(pivot.magnitude() != 0) {
-    piv = new SDL_Point();
-    piv->x = pivot[0];
-    piv->y = pivot[1];
-  }
+  piv = new SDL_Point();
+  piv->x = pivot[0];
+  piv->y = pivot[1];
 
   //animate by frame
   //"frame_count" is how many frames have elapsed since the first frame

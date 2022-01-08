@@ -71,6 +71,7 @@ public:
   //death animation of some sort before becoming invisible. this handles
   //such an event.
   virtual void perish();
+  void die_on_update() { dies_on_update = true; }
 
 //=============================================================================
 //=============================================================================
@@ -133,6 +134,8 @@ protected:
   int health_segments;
   bool h_is_regenerating;
   float h_regen_rate;
+  bool dies_on_update;  //when the mortal needs to die on next update but is
+                        //still needed till then
 
   void do_health_regen();
 
