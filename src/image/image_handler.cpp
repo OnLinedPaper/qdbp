@@ -166,15 +166,37 @@ void image_handler::draw_nc_line(const vec2d &p1, const vec2d &p2, char c) {
     float frun = run;
     float rioru = frise/frun; //for every 1 we run, how far do we rise?
     
-    //go from left to right, one column at a time
-    for(int i=lcx; i<rcx; i++) {
+    //go from left to right, one column at a time, skipping the already-drawn
+    //first and last points of the line
+    for(int i=lcx+1; i<rcx; i++) {
       //calculate how many rows up we have to go
       //for nearly horizontal lines, this may only run once in a while; for vertical lines it
       //may run several times per pass
+
+      //start j at the lcy, then offset it by its rise relative to "I", the 
+      //current position of x
+      //continue printing for j until we reach the next offset: using the 
+      //calculated rise, jump up until we reach the next point at which we
+      //should go "over" another point
+      //increment j by 1 each time to go up one row at a time
 //TODO: continue from here
-      for(int j=lcy + (rioru * (i-lcx)); j<lcy + (rioru * ((i-lcx) + 1)); j++) {
-        arr[(j+1) * sizeof(char) * COLS + i] = c;
+
+      float jstart = lcy + (rioru * (i-lcx));
+      float jend = lcy + (rioru * ((i+1)-lcx));
+
+      //the slope is downwards and j is counting up
+      if(rioru >= 0) {
+        for(int j=jstart; j<jend; j++) {
+          arr[j * sizeof(char) * COLS + i] = c;
+        }
       }
+      //the slope is upwards and j is counting down
+      else {
+        for(int j=jstart; j>jend; j--) {
+          arr[j * sizeof(char) * COLS + i] = c;
+        }
+      }
+      
     }
   }
 
