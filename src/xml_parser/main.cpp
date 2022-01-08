@@ -32,6 +32,8 @@ std::string get_string_input(bool nonempty);
 bool get_yn_input();
 int get_int_input(bool nonnegative, bool nonzero, bool half_on_blank = false, int base_value = 0, bool neg_one_allowed = false);
 int get_int_input_range(int lower, int upper);
+float get_float_input(bool nonnegative, bool nonzero, bool neg_one_allowed = false);
+float get_float_input_range(float lower, float upper, bool special_value_allowed = false, float special_value = 0);
 
 void re_load_xml_trees();
 
@@ -137,6 +139,47 @@ int get_int_input_range(int lower, int upper) {
     } catch (std::invalid_argument) { input = ""; }
   } while(input.empty());
   
+  return retval;
+}
+
+//=============================================================================
+
+float get_float_input(bool nonnegative, bool nonzero, bool neg_one_allowed /*= false*/) {
+  std::string input = "";
+  float retval = 0;
+
+  do {
+    getline(std::cin, input);
+
+    try {
+      retval = std::stof(input);
+      if(nonnegative && retval < 0) {
+        if(!(neg_one_allowed && retval == -1)) { input = ""; }
+      }
+      if(nonzero && retval == 0) { input = ""; }
+    } catch (std::invalid_argument) { input = ""; }
+  } while(input.empty());
+
+  return retval;
+}
+
+//=============================================================================
+
+float get_float_input_range(float lower, float upper, bool special_value_allowed /*= false*/, float special_value /*= 0*/) {
+  std::string input = "";
+  float retval = 0;
+
+  do {
+    getline(std::cin, input);
+
+    try {
+      retval = std::stof(input);
+      if(retval < lower || retval > upper) {
+        if(!(special_value_allowed && retval == special_value)) { input = ""; }
+      }
+    } catch (std::invalid_argument) { input = ""; }
+  } while(input.empty());
+
   return retval;
 }
 
@@ -499,9 +542,47 @@ void add_to_map_tree() {
     sr_max_count = get_int_input(true, true);
 
     //delay between spawns
-    std::cout << "tick delay between spawns? (positive int): ";
+    std::cout << "tick delay between spawns? (positive int, 20 = ~1 sec): ";
     sr_tsd = get_int_input(true, false);
     
+
+    //x and y coord
+    std::cout << "x and y coord? (float in range 1, 999; -1 for random)\nx: ";
+    sr_x_coord = get_float_input_range(1, 999, true, -1);
+    std::cout << "y: ";
+    sr_y_coord = get_float_input_range(1, 999, true, -1);
+
+
+    //x and y vel comp, vel mag
+    std::cout << "x and y velocity components? (float, 0 for random)\nx: ";
+    sr_x_dir_comp = get_float_input(false, false);
+    std::cout << "y: ";
+    sr_y_dir_comp = get_float_input(false, false);
+
+    //magnitude
+    std::cout << "fraction of max speed to spawn entity at? (positive float, preferably in range 0, 1; -1 for random): ";
+    sr_vel_frac = get_float_input(true, false, true);
+
+
+    //spawning distance
+    std::cout << "minimum distance from player required to spawn? (positive float, preferably above 500): ";
+    sr_min_sd = get_float_input(true, false);
+    std::cout << "maximum distance from player that still allows spawn? (positive float, or -1 for infinite distance): ";
+    sr_max_sd = get_float_input(true, false, true);
+
+
+    spawn_rules.push_back({
+      sr_x_chunk, sr_y_chunk,
+      sr_spawn_type,
+      sr_max_count, sr_total_count,
+      sr_tsd,
+      sr_team,
+      sr_x_coord, sr_y_coord,
+      sr_x_dir_comp, sr_y_dir_comp, sr_vel_frac,
+      sr_min_sd, sr_max_sd,
+      sr_name,
+      sr_entity
+    });
 
 
     std::cout << "another new spawn rule? y/n: ";

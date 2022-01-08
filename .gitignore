@@ -6,6 +6,7 @@ out.txt
 #executables
 debug
 run
+tools/*
 
 #directories
 build
