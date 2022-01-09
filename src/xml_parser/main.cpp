@@ -589,6 +589,12 @@ void add_to_map_tree() {
     another_sr = get_yn_input();
   }
 
+  //add to tree
+  xmlparse::get().get_root->insert_child(sr_name, "/");
+  xmlparse::get().get_root->insert_child("dimensions", "/" + sr_name + "/");
+  xmlparse::get().get_root->insert_child("x_dim", "/" + sr_name + "/dimensions/", std::to_string(x_chunk));
+  xmlparse::get().get_root->insert_child("y_dim", "/" + sr_name + "/dimensions/", std::to_string(y_chunk));
+  xmlparse::get().get_root->insert_child("generation", "/" + sr_name + "/");
 }
 
 //=============================================================================
