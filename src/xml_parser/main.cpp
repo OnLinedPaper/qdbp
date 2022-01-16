@@ -595,6 +595,10 @@ void add_to_map_tree() {
   xmlparse::get().get_root->insert_child("x_dim", "/" + sr_name + "/dimensions/", std::to_string(x_chunk));
   xmlparse::get().get_root->insert_child("y_dim", "/" + sr_name + "/dimensions/", std::to_string(y_chunk));
   xmlparse::get().get_root->insert_child("generation", "/" + sr_name + "/");
+  xmlparse::get().get_root->insert_child("style", "/" + sr_name + "/generation/", "blank");
+  xmlparse::get().get_root->insert_child("start_chunk", "/" + sr_name + "/");
+  xmlparse::get().get_root->insert_child("x_chunk", "/" + sr_name + "/start_chunk/", std::to_string(x_start_chunk));
+  xmlparse::get().get_root->insert_child("y_chunk", "/" + sr_name + "/start_chunk/", std::to_string(y_start_chunk));
 }
 
 //=============================================================================
