@@ -1,0 +1,107 @@
+<debug_1>
+  <dimensions>
+    <x_dim>3</x_dim>
+    <y_dim>1</y_dim>
+  </dimensions>
+  <generation>
+    <style>
+      <!--can be blank, random, or userdef-->
+      blank
+    </style>
+  </generation>
+  <start_chunk>
+    <!--the chunk where the player is placed to start-->
+    <x_chunk>0</x_chunk>
+    <y_chunk>0</y_chunk>
+  </start_chunk>
+  <background>/debug_heart_</background>
+
+  <special_chunks>
+    <1-0>
+      <x_chunk>1</x_chunk>
+      <y_chunk>0</y_chunk>
+      <type>default</type>
+
+      <jump_gate>
+        <destination>debug_2</destination>
+        <body>debug_gate</body>
+      </jump_gate>
+    </1-0>
+  </special_chunks>
+
+  <entity_spawning>
+    <initial_2-0_fishbone>
+      <x_chunk>2</x_chunk>
+      <y_chunk>0</y_chunk>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <x_dir_component>0</x_dir_component>
+      <y_dir_component>0</y_dir_component>
+      <vel_frac>-1</vel_frac>
+
+      <spawn_type>initial</spawn_type>
+      <max_count>1</max_count>
+      <total_count>1</total_count>
+      <tick_spawn_delay>0</tick_spawn_delay>
+      <entity>mortals/fishbone</entity>
+      <team>BLUE</team>
+      <min_spawn_distance>10</min_spawn_distance>
+      <max_spawn_distance>10</max_spawn_distance>
+    </initial_2-0_fishbone>
+  </entity_spawning>
+</debug_1>
+
+<debug_2>
+  <dimensions>
+    <x_dim>3</x_dim>
+    <y_dim>3</y_dim>
+  </dimensions>
+  <generation>
+    <style>userdef</style>
+    <default_chunk_type>default</default_chunk_type>
+  </generation>
+  <start_chunk>
+    <x_chunk>0</x_chunk>
+    <y_chunk>0</y_chunk>
+  </start_chunk>
+  <background>/debug_heart_</background>
+
+  <special_chunks>
+    <1-1>
+      <x_chunk>1</x_chunk>
+      <y_chunk>1</y_chunk>
+      <type>default_impassible</type>
+    </1-1>
+    <0-1>
+      <x_chunk>0</x_chunk>
+      <y_chunk>1</y_chunk>
+      <type>default</type>
+
+      <jump_gate>
+        <destination>debug_1</destination>
+        <body>debug_gate</body>
+      </jump_gate>
+    </0-1>
+  </special_chunks>
+
+  <entity_spawning>
+    <closet_0-2_fishbone>
+      <x_chunk>0</x_chunk>
+      <y_chunk>2</y_chunk>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <x_dir_component>0</x_dir_component>
+      <y_dir_component>0</y_dir_component>
+      <vel_frac>-1</vel_frac>
+
+      <spawn_type>closet</spawn_type>
+      <max_count>2</max_count>
+      <total_count>-1</total_count>
+      <tick_spawn_delay>200</tick_spawn_delay>
+      <entity>mortals/fishbone</entity>
+      <team>BLUE</team>
+      <min_spawn_distance>10</min_spawn_distance>
+      <max_spawn_distance>1000</max_spawn_distance>
+    </closet_0-2_fishbone>
+  </entity_spawning>
+</debug_2>

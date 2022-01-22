@@ -444,6 +444,7 @@ void add_to_map_tree() {
   while(another_sc) {
     //special chunks are so far passable/impassable, and may have a gate
     //gates have a destination they go to and a body to render to screen
+    //special chunks SHOULD NOT OVERLAP, they should all be unique!
     int x_spec_chunk, y_spec_chunk, type_spec_chunk, has_gate = 0;    
     std::string gate_dest, gate_body = "";
 
@@ -589,16 +590,74 @@ void add_to_map_tree() {
     another_sr = get_yn_input();
   }
 
+
   //add to tree
-  xmlparse::get().get_root->insert_child(sr_name, "/");
-  xmlparse::get().get_root->insert_child("dimensions", "/" + sr_name + "/");
-  xmlparse::get().get_root->insert_child("x_dim", "/" + sr_name + "/dimensions/", std::to_string(x_chunk));
-  xmlparse::get().get_root->insert_child("y_dim", "/" + sr_name + "/dimensions/", std::to_string(y_chunk));
-  xmlparse::get().get_root->insert_child("generation", "/" + sr_name + "/");
-  xmlparse::get().get_root->insert_child("style", "/" + sr_name + "/generation/", "blank");
-  xmlparse::get().get_root->insert_child("start_chunk", "/" + sr_name + "/");
-  xmlparse::get().get_root->insert_child("x_chunk", "/" + sr_name + "/start_chunk/", std::to_string(x_start_chunk));
-  xmlparse::get().get_root->insert_child("y_chunk", "/" + sr_name + "/start_chunk/", std::to_string(y_start_chunk));
+  xmlparse::get().get_root()->insert_child(map_name, "/");
+  xmlparse::get().get_root()->insert_child("dimensions", "/" + map_name + "/");
+  xmlparse::get().get_root()->insert_child("x_dim", "/" + map_name + "/dimensions/", std::to_string(x_chunk));
+  xmlparse::get().get_root()->insert_child("y_dim", "/" + map_name + "/dimensions/", std::to_string(y_chunk));
+  xmlparse::get().get_root()->insert_child("generation", "/" + map_name + "/");
+  xmlparse::get().get_root()->insert_child("style", "/" + map_name + "/generation/", (gen_style == 0 ? "blank" : "NOT IMPLEMENTED"));
+  xmlparse::get().get_root()->insert_child("start_chunk", "/" + map_name + "/");
+  xmlparse::get().get_root()->insert_child("x_chunk", "/" + map_name + "/start_chunk/", std::to_string(x_start_chunk));
+  xmlparse::get().get_root()->insert_child("y_chunk", "/" + map_name + "/start_chunk/", std::to_string(y_start_chunk));
+  xmlparse::get().get_root()->insert_child("background", "/" + map_name + "/", background_name);
+
+
+  //add the special chunks 
+  xmlparse::get().get_root()->insert_child("special_chunks", "/" + map_name + "/");
+  std::string sc_path = "/" + map_name + "/special_chunks/";
+
+  for(special_chunk sc : special_chunks) {
+    //generate a name based on the chunk's coords
+    std::string sc_name = std::to_string(sc.x_chunk) + "-" + std::to_string(sc.y_chunk);
+
+    xmlparse::get().get_root()->insert_child(sc_name, sc_path);
+    xmlparse::get().get_root()->insert_child("x_chunk", sc_path + sc_name + "/", std::to_string(sc.x_chunk));
+    xmlparse::get().get_root()->insert_child("y_chunk", sc_path + sc_name + "/", std::to_string(sc.y_chunk));
+    xmlparse::get().get_root()->insert_child("type", sc_path + sc_name + "/", (sc.type == 0 ? "default" : "default_impassible"));
+    if(sc.has_gate) {
+      xmlparse::get().get_root()->insert_child("jump_gate", sc_path + sc_name + "/");
+      xmlparse::get().get_root()->insert_child("destination", sc_path + sc_name + "/jump_gate/", sc.destination);
+      xmlparse::get().get_root()->insert_child("body", sc_path + sc_name + "/jump_gate/", sc.body);
+    }
+  }
+
+  //add the spawn rules 
+  xmlparse::get().get_root()->insert_child("entity_spawning", "/" + map_name + "/");
+  std::string sr_path = "/" + map_name + "/entity_spawning/";
+
+  for(spawn_rule sr : spawn_rules) {
+    xmlparse::get().get_root()->insert_child(sr.rule_name, sr_path);
+    xmlparse::get().get_root()->insert_child("x_chunk", sr_path + sr.rule_name + "/", std::to_string(sr.x_chunk));
+    xmlparse::get().get_root()->insert_child("y_chunk", sr_path + sr.rule_name + "/", std::to_string(sr.y_chunk));
+    xmlparse::get().get_root()->insert_child("x_coord", sr_path + sr.rule_name + "/", std::to_string(sr.x_coord));
+    xmlparse::get().get_root()->insert_child("y_coord", sr_path + sr.rule_name + "/", std::to_string(sr.y_coord));
+    xmlparse::get().get_root()->insert_child("x_dir_component", sr_path + sr.rule_name + "/", std::to_string(sr.x_dir_component));
+    xmlparse::get().get_root()->insert_child("y_dir_component", sr_path + sr.rule_name + "/", std::to_string(sr.y_dir_component));
+    xmlparse::get().get_root()->insert_child("vel_frac", sr_path + sr.rule_name + "/", std::to_string(sr.vel_frac));
+    
+    xmlparse::get().get_root()->insert_child("spawn_type", sr_path + sr.rule_name + "/", (sr.spawn_type == 1 ? "initial" : "closet"));
+    xmlparse::get().get_root()->insert_child("max_count", sr_path + sr.rule_name + "/", std::to_string(sr.max_count));
+    xmlparse::get().get_root()->insert_child("total_count", sr_path + sr.rule_name + "/", std::to_string(sr.total_count));
+    xmlparse::get().get_root()->insert_child("tick_spawn_delay", sr_path + sr.rule_name + "/", std::to_string(sr.tick_spawn_delay));
+    xmlparse::get().get_root()->insert_child("entity", sr_path + sr.rule_name + "/", sr.entity_name);
+    xmlparse::get().get_root()->insert_child("min_spawn_distance", sr_path + sr.rule_name + "/", std::to_string(sr.min_spawn_distance));
+    xmlparse::get().get_root()->insert_child("max_spawn_distance", sr_path + sr.rule_name + "/", std::to_string(sr.max_spawn_distance));
+
+    std::string sr_team = "";
+    switch(sr.team) {
+      case 1: sr_team = "RED"; break;
+      case 2: sr_team = "ORANGE"; break;
+      case 3: sr_team = "YELLOW"; break;
+      case 4: sr_team = "GREEN"; break;
+      case 5: sr_team = "BLUE"; break;
+      case 6: sr_team = "PURPLE"; break;
+      case 7: sr_team = "BROWN"; break;
+      default: sr_team = "WHITE"; break;
+    }
+    xmlparse::get().get_root()->insert_child("team", sr_path + sr.rule_name + "/", sr_team);
+  }
 }
 
 //=============================================================================

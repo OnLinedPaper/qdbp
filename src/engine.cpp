@@ -51,8 +51,6 @@ try{
   text t14a("", 280, 270);
 
 
-  e_handler::get().create_plr("mortal/gunner/player/debug_player");
-
   e_handler::get()
       .add_npe("mortal/mortals/debug_follower");
 /*
@@ -308,7 +306,6 @@ try{
   viewport::get();
   image_handler::get();
   t_frame::get();
-  map_h::get().set_map("/" + xmlparse::get().get_xml_string("/first_map"));
   e_handler::get();
   text_h::get();
   hud::get();
@@ -323,6 +320,8 @@ try{
   //preload weapon data, can't do this till the tree is built
   weapon::preload_weapon_data();
 
+  //create the first map and load the player into it
+  map_h::get().set_map("/" + xmlparse::get().get_xml_string("/first_map"));
 
   if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
     msg::print_error("couldn't init joysticks subsystem! SDL_Error: " + std::string(SDL_GetError()));

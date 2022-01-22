@@ -69,9 +69,12 @@ void e_handler::prep_for_map_change() {
 //on the map? who knows? nothing does this yet.)
 void e_handler::finish_map_change() {
   //check if there's a player yet - none on startup
-  if(plr) {
-    plr->set_pos(map_h::get().get_start_pos());
+  if(!plr) {
+    //TODO: proper xml searching
+    create_plr("mortal/gunner/player/debug_player");
   }
+
+  plr->set_pos(map_h::get().get_start_pos());
 
   for(mortal *m : npe_all) {
     if(m->is_active()) {
