@@ -96,7 +96,7 @@
 <test1>
   <background>/debug_heart_</background>
   <dimensions>
-    <x_dim>2</x_dim>
+    <x_dim>8</x_dim>
     <y_dim>2</y_dim>
   </dimensions>
   <entity_spawning>

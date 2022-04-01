@@ -264,17 +264,6 @@
   </dimensions>
   <file>resources/images/hud_shield_divider.png</file>
 </hud_shield_divider>
-<pink_scanlines>
-  <dimensions>
-    <frame_delay>2</frame_delay>
-    <frames>1</frames>
-    <height>100</height>
-    <pivot_x>50</pivot_x>
-    <pivot_y>50</pivot_y>
-    <width>100</width>
-  </dimensions>
-  <file>resources/images/pink_scanlines.png</file>
-</pink_scanlines>
 <tiny>
   <dimensions>
     <frame_delay>16</frame_delay>
