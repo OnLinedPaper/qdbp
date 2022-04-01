@@ -49,9 +49,10 @@ SDL_Renderer *render::init_renderer() {
 
     //disable warnings for ints in boolean context, then re-enable them
   #pragma GCC diagnostic ignored "-Wint-in-bool-context"
-  Uint32 flags = SDL_RENDERER_PRESENTVSYNC || SDL_RENDERER_ACCELERATED;
+  Uint32 flags = SDL_RENDERER_ACCELERATED;
   #pragma GCC diagnostic pop
 
+  SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 
   SDL_Renderer *r = SDL_CreateRenderer(w, -1, flags);
   if(r == NULL) {
