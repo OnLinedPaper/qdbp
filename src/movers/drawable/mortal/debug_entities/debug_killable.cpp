@@ -17,9 +17,10 @@ void d_killable::draw() const {
   dest_r.w = 128;
   dest_r.h = 128;
 
-  image_handler::get().draw_rotate_color_outline(
-    image_name, dest_r.x, dest_r.y, 0, last_angle, team_col, true, get_health_frac() 
-  );
+  //the outline, fading with health
+  image_handler::get().draw_v2(image_name + "_outline", dest_r.x, dest_r.y, last_angle, false, 0, team_col, get_health_frac());
+  //the actual wireframe
+  image_handler::get().draw_v2(image_name, dest_r.x, dest_r.y, last_angle, false, 0, team_col, 1);
 
   mortal::draw();
 

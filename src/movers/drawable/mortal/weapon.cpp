@@ -143,9 +143,7 @@ void weapon::preload_weapon_data() {
 }
 
 void weapon::draw() const {
-  image_handler::get().draw_rotate_color(
-      image_name, pos[0], pos[1], 0, last_angle, team_col
-  );
+  image_handler::get().draw_v2(image_name, pos[0], pos[1], last_angle, false, 0, team_col, 1);
 }
 
 void weapon::fire(

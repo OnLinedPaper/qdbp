@@ -38,7 +38,7 @@ void d_follower::draw() const {
   dest_r.w = 128;
   dest_r.h = 128;
 
-  image_handler::get().draw_rotate_color(image_name, dest_r.x, dest_r.y, 0, last_angle, team_col);
+  image_handler::get().draw_v2(image_name, dest_r.x, dest_r.y, last_angle, false, 0, team_col, 1);
 
   mortal::draw();
  
