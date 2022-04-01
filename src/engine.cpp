@@ -224,7 +224,16 @@ try{
       t14.draw();
       t14a.draw();
 
-
+    
+      //TODO: make "compound image" that renders in the background of these
+      //will evnetually need a wireframe on top, an alpha channel, and a background "scanline" thing
+      //for now, just get alpha overlay working
+      static int debug_target_spin = 0;
+      image_handler::get().draw_v2("/debug_target", 1200, 200, debug_target_spin++, false, 0, {255, 255, 255}, 1);
+      image_handler::get().draw_v2("/debug_target", 1200, 200, debug_target_spin, true, 0, {255, 255, 255}, 1);
+      image_handler::get().draw_v2("/pink_scanlines", 0, 0, 0, true, 0, {255, 255, 255}, 1);
+      image_handler::get().draw_v2("/pink_scanlines", 960, 540, 0, false, 0, {255, 255, 255}, 1);
+      image_handler::get().draw_tile("/pink_scanlines", 0.5, debug_target_spin, 0);
 
       //l1.set_start(l1.get_start() + vec2d(0, .4));
       //l1.set_end(l1.get_end() + vec2d(0, .4));
@@ -236,13 +245,6 @@ try{
 
 //==== DEBUG STUFF here =======================================================
 
-//  std::cout << e_handler::get().get_entity_count_by_name("fishbone") << std::endl;
-/*
-  int d_i = 1;
-  if(e_handler::get().get_entity_count_by_name("fishbone") < 1) {
-    e_handler::get().add_npe("killable/fishbone", {500, 2500 - 250 * d_i}, {0, 0});
-  }
-*/
 
 //==== GAME TICK here =========================================================
 
