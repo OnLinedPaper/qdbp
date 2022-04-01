@@ -86,12 +86,13 @@ void hud::draw() {
     b = 0;
   }
 
-  image_handler::get().draw_r_c_o_relative(
+  image_handler::get().draw_v2(
     heat_curve,
     0,
     viewport::get().get_h() - heat_curve_ht,
-    0,
     display_frac,
+    true,
+    0,
     {r, g, b},
     1
   );
@@ -111,12 +112,13 @@ void hud::draw() {
     b = 0;
   }
 
-  image_handler::get().draw_r_c_o_relative(
+  image_handler::get().draw_v2(
     heat_curve,
     0,
     viewport::get().get_h() - heat_curve_ht,
-    0,
     display_frac,
+    true,
+    0,
     {r, g, b},
     1
   );
@@ -142,12 +144,13 @@ void hud::draw() {
         / (float)e_handler::get().get_plr_total_health_segs();
   }
 
-  image_handler::get().draw_r_c_o_relative(
+  image_handler::get().draw_v2(
     health_curve,
     health_curve_x_offset,
     viewport::get().get_h() - heat_curve_ht - health_curve_y_offset,
-    0,
     health_curve_hide_angle * (1 - health_seg_angle),
+    true,
+    0,
     {r, g, b},
     1
   );
@@ -156,12 +159,13 @@ void hud::draw() {
   //draw health bar
   r = 64; g = 255; b = 96;
 
-  image_handler::get().draw_r_c_o_relative(
+  image_handler::get().draw_v2(
     health_curve,
     health_curve_x_offset,
     viewport::get().get_h() - health_curve_ht - health_curve_y_offset,
-    0,
     (health_curve_hide_angle * (1 - e_handler::get().get_plr_health_frac())),
+    true,
+    0,
     {r, g, b},
     1
   );
@@ -172,12 +176,13 @@ void hud::draw() {
   for(int i=1; i<e_handler::get().get_plr_total_health_segs(); i++) {
     //print a bar to divide each health segment
 
-    image_handler::get().draw_r_c_o_relative(
+    image_handler::get().draw_v2(
       health_divider,
       health_divider_x_offset,
       viewport::get().get_h() - health_divider_ht - health_divider_y_offset,
-      0,
       health_divider_hide_angle * ((float)i / e_handler::get().get_plr_total_health_segs()),
+      true,
+      0,
       {r, g, b},
       1
     );
@@ -194,12 +199,13 @@ void hud::draw() {
 
   r = g = 64;
   b = 255;
-  image_handler::get().draw_r_c_o_relative(
+  image_handler::get().draw_v2(
     shield_curve,
     shield_curve_x_offset,
     viewport::get().get_h() - shield_curve_ht - shield_curve_y_offset,
-    0,
     shield_curve_hide_angle * display_frac,
+    true,
+    0,
     {r, g, b},
     1
   );
@@ -234,12 +240,13 @@ void hud::draw() {
 
   display_frac = 1 - display_frac;
 
-  image_handler::get().draw_r_c_o_relative(
+  image_handler::get().draw_v2(
     shield_curve,
     shield_curve_x_offset,
     viewport::get().get_h() - shield_curve_ht - shield_curve_y_offset,
-    0,
     shield_curve_hide_angle * display_frac,
+    true,
+    0,
     {r, g, b},
     1
   );
@@ -253,15 +260,17 @@ void hud::draw() {
   if(total_segs > 1) {
     display_frac = e_handler::get().get_plr_first_shield_frac();
 
-    image_handler::get().draw_r_c_o_relative(
+    image_handler::get().draw_v2(
       shield_divider,
       shield_divider_x_offset,
       viewport::get().get_h() - shield_divider_ht - shield_divider_y_offset,
-      0,
       shield_divider_hide_angle * (1 - display_frac),
+      true,
+      0,
       {r, g, b},
       1
     );
+
   }
 
   //secondary shield bars
@@ -272,15 +281,17 @@ void hud::draw() {
     for(int i=1; i<secondary_segs; i++) {
       display_frac += (remaining_display_frac / secondary_segs);
 
-      image_handler::get().draw_r_c_o_relative(
+      image_handler::get().draw_v2(
         shield_divider,
         shield_divider_x_offset,
         viewport::get().get_h() - shield_divider_ht - shield_divider_y_offset,
-        0,
         shield_divider_hide_angle * (1 - display_frac),
+        true,
+        0,
         {r, g, b},
         1
       );
+
     }
   }
 
@@ -295,13 +306,14 @@ void hud::draw() {
   //needs no special data
   r = g = b = 255;  
 
-  image_handler::get().draw_r_c_o_relative(
+  image_handler::get().draw_v2(
     blc_outline, 
     0, 
     viewport::get().get_h() - blc_outline_ht, 
-    0, 
-    0, 
-    {r, g, b}, 
+    0,
+    true,
+    0,
+    {r, g, b},
     1
   );
 
@@ -331,13 +343,15 @@ void hud::draw_overheat_warning() {
   if(blinker <= 2 || blinker >= 11) { overheat_opacity *= 0.8; }
   if(blinker >= 14) { overheat_opacity *= 0.7; }
 */
-  image_handler::get().draw_r_c_o_relative(
+  image_handler::get().draw_v2(
     overheat_warning,
     overheat_warning_x_offset,
     viewport::get().get_h() - overheat_warning_ht - overheat_warning_y_offset,
     0,
+    true,
     0,
     {r, g, b},
     overheat_opacity
   );
+
 }

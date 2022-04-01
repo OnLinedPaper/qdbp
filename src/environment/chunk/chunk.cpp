@@ -332,39 +332,39 @@ void chunk::draw() const {
   //check in order: u, d, l, r
   if(border[0]) {
     //the top is a border
-    image_handler::get().draw_rotate(i1_name, x + (length / 4), y, frame_bump, 0);
-    image_handler::get().draw_rotate(i1_name, x + 3 * (length / 4), y, frame_bump, 0);
+    image_handler::get().draw_v2(i1_name, x + (length / 4), y, frame_bump, 0);
+    image_handler::get().draw_v2(i1_name, x + 3 * (length / 4), y, frame_bump, 0);
 
-    image_handler::get().draw_rotate(i2_name, x, y, 0, 0);
-    image_handler::get().draw_rotate(i2_name, x + (length / 2), y, 0, 0);
+    image_handler::get().draw_v2(i2_name, x, y, 0, 0);
+    image_handler::get().draw_v2(i2_name, x + (length / 2), y, 0, 0);
   }
   if(border[1]) {
     //the bottom is a border
-    image_handler::get().draw_rotate(i1_name, x + (length / 4), y + length, frame_bump, 180);
-    image_handler::get().draw_rotate(i1_name, x + 3 * (length / 4), y + length, frame_bump, 180);
+    image_handler::get().draw_v2(i1_name, x + (length / 4), y + length, frame_bump, 180);
+    image_handler::get().draw_v2(i1_name, x + 3 * (length / 4), y + length, frame_bump, 180);
 
-    image_handler::get().draw_rotate(i2_name, x + (length / 2), y + length, 0, 0);
-    image_handler::get().draw_rotate(i2_name, x + length, y + length, 0, 0);
+    image_handler::get().draw_v2(i2_name, x + (length / 2), y + length, 0, 0);
+    image_handler::get().draw_v2(i2_name, x + length, y + length, 0, 0);
   }
   if(border[2]) {
     //the left is a border
-    image_handler::get().draw_rotate(i1_name, x, y + (length / 4), frame_bump, 270);
-    image_handler::get().draw_rotate(i1_name, x, y + 3 * (length / 4), frame_bump, 270);
+    image_handler::get().draw_v2(i1_name, x, y + (length / 4), frame_bump, 270);
+    image_handler::get().draw_v2(i1_name, x, y + 3 * (length / 4), frame_bump, 270);
 
-    image_handler::get().draw_rotate(i2_name, x, y + (length / 2), 0, 0);
-    image_handler::get().draw_rotate(i2_name, x, y + length, 0, 0);
+    image_handler::get().draw_v2(i2_name, x, y + (length / 2), 0, 0);
+    image_handler::get().draw_v2(i2_name, x, y + length, 0, 0);
   }
   if(border[3]) {
     //the right is a border
-    image_handler::get().draw_rotate(i1_name, x + length, y + (length / 4), frame_bump, 90);
-    image_handler::get().draw_rotate(i1_name, x + length, y + 3 * (length / 4), frame_bump, 90);
+    image_handler::get().draw_v2(i1_name, x + length, y + (length / 4), frame_bump, 90);
+    image_handler::get().draw_v2(i1_name, x + length, y + 3 * (length / 4), frame_bump, 90);
 
-    image_handler::get().draw_rotate(i2_name, x + length, y, 0, 0);
-    image_handler::get().draw_rotate(i2_name, x + length, y + (length / 2), 0, 0);
+    image_handler::get().draw_v2(i2_name, x + length, y, 0, 0);
+    image_handler::get().draw_v2(i2_name, x + length, y + (length / 2), 0, 0);
   }
 
   if(has_gate) {
-    image_handler::get().draw_rotate(g_name, x + length/2, y + length/2, 0, 0);
+    image_handler::get().draw_v2(g_name, x + length/2, y + length/2, 0, 0);
   }
 
 }
