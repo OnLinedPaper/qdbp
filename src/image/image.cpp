@@ -140,23 +140,6 @@ void image::fill_t_vec(const std::string &name) {
 
 }
 
-void image::draw_rotate(float x_pos, float y_pos, float angle, float frame_bump) const {
-  static SDL_Color no_col = {255, 255, 255};
-  draw_rotate_color(x_pos, y_pos, angle, frame_bump, no_col);
-}
-
-void image::draw_rotate_color(float x_pos, float y_pos, float angle, 
-    float frame_bump, const SDL_Color &mod) const 
-{
-  draw_rotate_color_opacity(x_pos, y_pos, angle, frame_bump, mod, 1);
-}
-
-void image::draw_rotate_color_opacity(float x_pos, float y_pos, float angle, 
-    float frame_bump, const SDL_Color &mod, float opacity) const 
-{
-  draw_r_c_o_all(x_pos, y_pos, angle, false, frame_bump, mod, opacity);
-}
-
 void image::draw_r_c_o_all(float x_pos, float y_pos, float angle, 
     bool relative_to_screen, float frame_bump, const SDL_Color &mod, 
     float opacity) const
@@ -222,41 +205,62 @@ void image::draw_r_c_o_all(float x_pos, float y_pos, float angle,
   piv = NULL;
 }
 
-void image::draw_tile(float parallax) const {
+void image::draw_tile(float parallax, float x_offset, float y_offset) const {
   //draw the image in a tile-like format across the screen, shifting it
   //with player's movement according to parallax. parallax 1 means it's
   //"fixed" like an unmoving background.
 
+  float x_dest = (0 - viewport::get().get_tlc_x()) * parallax;
+  float y_dest = (0 - viewport::get().get_tlc_y()) * parallax;
+  float x_offs = std::fmod(x_offset, dimensions[0]);
+  float y_offs = std::fmod(y_offset, dimensions[1]);
+
   SDL_Rect dest_r;
-  dest_r.x = (0 - viewport::get().get_tlc_x()) * parallax;
-  dest_r.y = (0 - viewport::get().get_tlc_y()) * parallax;
+  dest_r.x = x_dest + x_offs;
+  dest_r.y = y_dest + y_offs;
   dest_r.w = dimensions[0];
   dest_r.h = dimensions[1];
 
 
   //check if viewport is too far to the left
-  if(viewport::get().get_tlc_x() < 0) {
+  if(viewport::get().get_tlc_x() - x_offs < 0) {
     //calculate HOW far to the left it needs to be shifted
-    dest_r.x -= dimensions[0] * ((int)(0 - viewport::get().get_tlc_x() * parallax) / (int)(dimensions[0]) + 1);
+    dest_r.x -= dimensions[0] * ((int)(x_dest + x_offs) / (int)(dimensions[0]) + 1);
   }
 
   //check if the viewport is too far to the right
-  if(viewport::get().get_tlc_x() > dimensions[0]) {
+  else if(viewport::get().get_tlc_x() - x_offs > dimensions[0]) {
     //calculate how far to the right it needs to be shifted
     //get the top left corner, then divide it by the tile width -
     //this allows us to tell how many "tiles" too far we are, and
     //adjust accordingly
-    dest_r.x += dimensions[0] * ((int)(viewport::get().get_tlc_x() * parallax) / (int)(dimensions[0]));
+    dest_r.x += dimensions[0] * ((int)(0 - ((x_dest + x_offs) / (int)(dimensions[0]))));
+  }
+
+  //if we're "centered", make sure offset doesn't cause us to drift out of frame
+  else {
+    if(viewport::get().get_tlc_x() - x_offs > 0) {
+      //shift the right direction
+      dest_r.x -= dimensions[0];
+    }
   }
 
   //check if viewport is too far up
-  if(viewport::get().get_tlc_y() < 0) {
-    dest_r.y -= dimensions[1] * ((int)(0 - viewport::get().get_tlc_y() * parallax) / (int)(dimensions[1]) + 1);
+  if(viewport::get().get_tlc_y() - y_offs < 0) {
+    dest_r.y -= dimensions[1] * ((int)(y_dest + y_offs) / (int)(dimensions[1]) + 1);
   }
 
   //check if viewport is too far down
-  if(viewport::get().get_tlc_y() > dimensions[1]) {
-    dest_r.y += dimensions[1] * ((int)(viewport::get().get_tlc_y() * parallax) / (int)(dimensions[1]));
+  else if(viewport::get().get_tlc_y() - y_offs > dimensions[1]) {
+    dest_r.y += dimensions[1] * ((int)(0 - (y_dest + y_offs)) / (int)(dimensions[1]));
+  }
+
+  //if we're "centered", make sure the offset doesn't cause us to drift out of frame
+  else {
+    if(viewport::get().get_tlc_y() - y_offs > 0) {
+      //shift the right direction
+      dest_r.y -= dimensions[1];
+    }
   }
 
   SDL_Rect draw_me = dest_r;
@@ -265,11 +269,31 @@ void image::draw_tile(float parallax) const {
   //draw the tiles with nested for - they draw in stripes
   for(int i = dest_r.x; i < viewport::get().get_w(); i += dimensions[0]) {
     draw_me.x = i;
-    for(int j = dest_r.y; j < viewport::get().get_h(); j += dimensions[0]) {
+    for(int j = dest_r.y; j < viewport::get().get_h(); j += dimensions[1]) {
     draw_me.y = j;
-      SDL_RenderCopyEx(render::get().get_r(), t_vec[0], NULL, &draw_me, 0, 0, SDL_FLIP_NONE);
+      draw_r_c_o_all(draw_me.x, draw_me.y, 0, true, 0, {255, 255, 255}, 1);
     }
   }
+
+/*
+void image::draw_rotate(float x_pos, float y_pos, float angle, float frame_bump) const {
+  static SDL_Color no_col = {255, 255, 255};
+  draw_rotate_color(x_pos, y_pos, angle, frame_bump, no_col);
+}
+
+void image::draw_rotate_color(float x_pos, float y_pos, float angle, 
+    float frame_bump, const SDL_Color &mod) const 
+{
+  draw_rotate_color_opacity(x_pos, y_pos, angle, frame_bump, mod, 1);
+}
+
+void image::draw_rotate_color_opacity(float x_pos, float y_pos, float angle, 
+    float frame_bump, const SDL_Color &mod, float opacity) const 
+{
+  draw_r_c_o_all(x_pos, y_pos, angle, false, frame_bump, mod, opacity);
+}
+*/
+
 
 
 }

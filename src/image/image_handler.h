@@ -13,22 +13,29 @@ public:
 
   ~image_handler();
 
-  //draws relative to game world
-  void draw_rotate(const std::string name, float x, float y, float frame_bump, float angle);
-  void draw_rotate_color(const std::string name, float x, float y, 
-      float frame_bump, float angle, const SDL_Color &c);
-  void draw_rotate_color_opacity(const std::string name, float x, float y, 
-      float frame_bump, float angle, const SDL_Color &c, float opacity);
-  void draw_rotate_color_outline(const std::string name, float x, float y,
-      float frame_bump, float angle, const SDL_Color &c, bool outline_color, float opacity);
-  void draw_tile(const std::string name, float parallax);
+  void draw_tile(const std::string name, float parallax, float x_offset, float y_offset);
+  void draw_tile(const std::string name, float parallax)
+    { draw_tile(name, parallax, 0, 0); }
 
-  //draws relative to the screen (used by hud)
-  void draw_r_c_o_relative(const std::string name, float x,
-      float y, float frame_bump, float angle, const SDL_Color &c, float opacity);
+  //hopefully the end-all, be-all drawing function
+  void draw_v2(
+      const std::string name,     //name of image to draw
+      float x,                    //x value to draw at
+      float y,                    //y value to draw at
+      float angle,                //angle to draw at
+      bool relative_to_screen,    //uses screen units? (entities = false, HUD = true)
+      float frame_bump,           //which frame of the animation to start with
+      const SDL_Color &c,         //color to modualte the sprite with
+      float opacity               //how opaque to make the image (0 = transparent, 1 = opaque)
+  );
+
+  //some overloads
+  void draw_v2(const std::string name, float x, float y, float frame_bump, float angle) 
+    { draw_v2(name, x, y, angle, false, frame_bump, {255, 255, 255}, 1); }
 
   static void get_col_from_team(const std::string, SDL_Color &);
   static void jitter_col(int, SDL_Color &);
+
 
 private:
   std::unordered_map<std::string, image> images;
@@ -41,3 +48,24 @@ private:
 };
 
 #endif
+
+
+
+/*
+public:
+  //deprecated drawing functions - these were the steps i took to arrive at the final
+  //function above
+
+  void draw_rotate(const std::string name, float x, float y, float frame_bump, float angle);
+  void draw_rotate_color(const std::string name, float x, float y, 
+      float frame_bump, float angle, const SDL_Color &c);
+  void draw_rotate_color_opacity(const std::string name, float x, float y, 
+      float frame_bump, float angle, const SDL_Color &c, float opacity);
+  void draw_rotate_color_outline(const std::string name, float x, float y,
+      float frame_bump, float angle, const SDL_Color &c, bool outline_color, float opacity);
+  //draws relative to the screen (used by hud)
+  void draw_r_c_o_relative(const std::string name, float x,
+      float y, float frame_bump, float angle, const SDL_Color &c, float opacity);
+*/
+ 
+

@@ -10,56 +10,21 @@ image_handler::~image_handler() {
   images.clear();
 }
 
-void image_handler::draw_rotate_color(const std::string name, float x, float y,
-    float frame_bump, float angle, const SDL_Color &c) 
-{
-  draw_rotate_color_opacity(name, x, y, frame_bump, angle, c, 1);
-}
- 
-void image_handler::draw_rotate_color_opacity(const std::string name, float x, float y,
-    float frame_bump, float angle, const SDL_Color &c, float opacity) 
-{
+void image_handler::draw_v2(const std::string name, float x, float y, float angle, 
+    bool relative_to_screen, float frame_bump, const SDL_Color &c, float opacity) {
   if(images.find(name) == images.end()) {
     //lazy initialization
     add_image(name);
   }
-  images.at(name).draw_rotate_color_opacity(x, y, angle, frame_bump, c, opacity);
+  images.at(name).draw_r_c_o_all(x, y, angle, relative_to_screen, frame_bump, c, opacity);
 }
 
-void image_handler::draw_rotate_color_outline(const std::string name, 
-    float x, float y, float frame_bump, float angle, 
-    const SDL_Color &c, bool outline_color, float opacity)
-{
-  SDL_Color nc = {255, 255, 255};
-  if(outline_color) { nc = c; }
-  draw_rotate_color_opacity(name + "_outline", x, y, frame_bump, angle, nc, opacity);
-  draw_rotate_color(name, x, y, frame_bump, angle, c);
-}
-
-void image_handler::draw_rotate(const std::string name, float x, float y, 
-    float frame_bump, float angle) 
-{
-  //draw with no color mod
-  static SDL_Color no_col = {255, 255, 255};
-  draw_rotate_color(name, x, y, frame_bump, angle, no_col);
-}
-
-void image_handler::draw_tile(const std::string name, float parallax) {
+void image_handler::draw_tile(const std::string name, float parallax, float x_offset, float y_offset) {
   if(images.find(name) == images.end()) {
     //lazy initialization
     add_image(name);
   }
-  images.at(name).draw_tile(parallax);
-}
-
-void image_handler::draw_r_c_o_relative(const std::string name, float x,
-    float y, float frame_bump, float angle, const SDL_Color &c, float opacity)
-  {
-  if(images.find(name) == images.end()) {
-    //lazy initialization
-    add_image(name);
-  }
-  images.at(name).draw_r_c_o_all(x, y, angle, true, frame_bump, c, opacity);
+  images.at(name).draw_tile(parallax, x_offset, y_offset);
 }
 
 void image_handler::add_image(std::string name) {
@@ -105,3 +70,55 @@ void image_handler::jitter_col(int strength, SDL_Color &c) {
 
 
 }
+
+//deprecated drawing functions
+/*
+void image_handler::draw_rotate_color(const std::string name, float x, float y,
+    float frame_bump, float angle, const SDL_Color &c) 
+{
+  draw_rotate_color_opacity(name, x, y, frame_bump, angle, c, 1);
+}
+
+void image_handler::draw_rotate_color_opacity(const std::string name, float x, float y,
+    float frame_bump, float angle, const SDL_Color &c, float opacity) 
+{
+  if(images.find(name) == images.end()) {
+    //lazy initialization
+    add_image(name);
+  }
+  images.at(name).draw_r_c_o_all(x, y, angle, false, frame_bump, c, opacity);
+}
+
+void image_handler::draw_rotate_color_outline(const std::string name, 
+    float x, float y, float frame_bump, float angle, 
+    const SDL_Color &c, bool outline_color, float opacity)
+{
+  SDL_Color nc = {255, 255, 255};
+  if(outline_color) { nc = c; }
+  draw_rotate_color_opacity(name + "_outline", x, y, frame_bump, angle, nc, opacity);
+  draw_rotate_color(name, x, y, frame_bump, angle, c);
+}
+
+void image_handler::draw_rotate(const std::string name, float x, float y, 
+    float frame_bump, float angle) 
+{
+  //draw with no color mod
+  static SDL_Color no_col = {255, 255, 255};
+  if(images.find(name) == images.end()) {
+    //lazy initialization
+    add_image(name);
+   }
+   images.at(name).draw_r_c_o_all(x, y, angle, false, frame_bump, no_col, 1);
+}
+
+void image_handler::draw_r_c_o_relative(const std::string name, float x,
+    float y, float frame_bump, float angle, const SDL_Color &c, float opacity)
+  {
+  if(images.find(name) == images.end()) {
+    //lazy initialization
+    add_image(name);
+  }
+  images.at(name).draw_r_c_o_all(x, y, angle, true, frame_bump, c, opacity);
+}
+*/
+
