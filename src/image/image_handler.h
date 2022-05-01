@@ -37,6 +37,8 @@ public:
   static void jitter_col(int, SDL_Color &);
 
 
+  void DEBUG_draw_with_tile_overlay(const std::string shape_name, float x, float y, float angle, bool relative_to_screen, float frame_bump, const SDL_Color &c, float opacity, const std::string overlay_name, float parallax, float x_offset, float y_offset, int f_bump);
+
 private:
   std::unordered_map<std::string, image> images;
 

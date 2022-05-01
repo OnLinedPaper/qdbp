@@ -274,6 +274,99 @@ void image::draw_tile(float parallax, float x_offset, float y_offset) const {
       draw_r_c_o_all(draw_me.x, draw_me.y, 0, true, 0, {255, 255, 255}, 1);
     }
   }
+}
+
+void image::DEBUG_draw_with_texture_overlay(float x_pos, float y_pos, float angle, bool relative_to_screen, float frame_bump, const SDL_Color &mod, float opacity, SDL_Texture *overlay_tx, float parallax, float x_offset, float y_offset) {
+  SDL_Rect dest_r;
+
+  if(!relative_to_screen) {
+    //this (and the vast majority of other renders) has passed its x,y to us
+    //in world units. convert these to viewport units and work.
+
+    //check to see if the entity is anywhere on-screen - if it's not,
+    //don't draw it, to save time
+    if(
+      x_pos + dimensions[0] < viewport::get().get_tlc_x() ||
+      x_pos - dimensions[0] > viewport::get().get_brc_x() ||
+      y_pos + dimensions[1] < viewport::get().get_tlc_y() ||
+      y_pos - dimensions[1] > viewport::get().get_brc_y()
+    ) { return; }
+
+    dest_r.x = x_pos - (dimensions[0] / 2) - viewport::get().get_tlc_x();
+    dest_r.y = y_pos - (dimensions[1] / 2) - viewport::get().get_tlc_y();
+  }
+  else {
+    //this has passed its x,y as viewport units - it's probably the hud or menu
+    //onviously we don't need to validate whether or not this is on-screen
+
+    dest_r.x = x_pos;
+    dest_r.y = y_pos;
+  }
+
+  dest_r.w = dimensions[0];
+  dest_r.h = dimensions[1];
+
+  SDL_Point *piv = NULL;
+  piv = new SDL_Point();
+  piv->x = pivot[0];
+  piv->y = pivot[1];
+
+  //animate by frame
+  //"frame_count" is how many frames have elapsed since the first frame
+  //it's divided by frame delay to get the current frame to render= 0;
+  int frame_to_render = 0;
+  if(frame_delay != 0) {
+    frame_to_render =
+      int(t_frame::get().get_f()) //the current frame, from timeframe class
+      %
+      int((frames * frame_delay)) //total frames to complete one animation loop
+      /
+      frame_delay; //get the current frame
+
+    //introduce a little randomness, predetermined at beginning
+    frame_to_render = int(frame_to_render + frame_bump) % frames;
+  }
+
+  SDL_Texture *t = t_vec[frame_to_render];
+  SDL_Texture *ot = overlay_tx;
+  uint8_t prev_t_blendmode, prev_ot_blendmode = 0;
+  uint32_t pixel_format = 0;
+  SDL_GetTextureAlphaMod(t, &prev_t_blendmode);
+  SDL_GetTextureAlphaMod(ot, &prev_ot_blendmode);
+  SDL_QueryTexture(t, &pixel_format, NULL, NULL, NULL);
+
+  SDL_SetTextureColorMod(t, mod.r, mod.g, mod.b);
+  SDL_SetTextureAlphaMod(t, opacity * 255);
+
+  //TODO: SDL_ComposeCustomBlendMode
+  SDL_SetTextureBlendMode(t, SDL_BLENDMODE_BLEND);
+  SDL_SetTextureBlendMode(ot, SDL_BLENDMODE_BLEND);
+
+  //TODO: develop function to get custom dest_r for each texture being rendered
+  int big_w = ceil(dest_r.w * sqrt(2));
+  int big_h = ceil(dest_r.h * sqrt(2));
+  SDL_Rect new_dest_r = {dest_r.x, dest_r.y, big_w, big_h};
+  SDL_Texture *ft = SDL_CreateTexture(render::get().get_r(), SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, big_w, big_h);
+  //SDL_SetTextureBlendMode(ft, SDL_BLENDMODE_BLEND);
+
+  SDL_SetRenderTarget(render::get().get_r(), ft);
+  SDL_SetRenderDrawColor(render::get().get_r(), 255, 0, 255, 0);
+  SDL_RenderClear(render::get().get_r());
+
+  SDL_Rect smol_dest_r = {big_w/2 - dest_r.w/2, big_h/2 - dest_r.h/2, dest_r.w, dest_r.h};
+//  SDL_RenderCopy(render::get().get_r(), t, NULL, NULL);
+  SDL_RenderCopyEx(render::get().get_r(), t, NULL, &smol_dest_r, angle, piv, SDL_FLIP_NONE);
+  SDL_RenderCopyEx(render::get().get_r(), ot, NULL, &smol_dest_r, 0, piv, SDL_FLIP_NONE);
+
+  SDL_SetRenderTarget(render::get().get_r(), NULL);
+
+  SDL_RenderCopyEx(render::get().get_r(), ft, NULL, &new_dest_r, 0, piv, SDL_FLIP_NONE);
+
+  SDL_DestroyTexture(ft);
+
+  delete piv;
+  piv = NULL;
+}
 
 /*
 void image::draw_rotate(float x_pos, float y_pos, float angle, float frame_bump) const {
@@ -296,4 +389,3 @@ void image::draw_rotate_color_opacity(float x_pos, float y_pos, float angle,
 
 
 
-}

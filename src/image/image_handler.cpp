@@ -27,6 +27,12 @@ void image_handler::draw_tile(const std::string name, float parallax, float x_of
   images.at(name).draw_tile(parallax, x_offset, y_offset);
 }
 
+void image_handler::DEBUG_draw_with_tile_overlay(const std::string shape_name, float x, float y, float angle, bool relative_to_screen, float frame_bump, const SDL_Color &c, float opacity, const std::string overlay_name, float parallax, float x_offset, float y_offset, int f_bump) {
+  if(images.find(shape_name) == images.end()) { add_image(shape_name); }
+  if(images.find(overlay_name) == images.end()) { add_image(overlay_name); }
+  images.at(shape_name).DEBUG_draw_with_texture_overlay(x, y, angle, relative_to_screen, frame_bump, c, opacity, images.at(overlay_name).get_tx(f_bump), parallax, x_offset, y_offset);
+}
+
 void image_handler::add_image(std::string name) {
   //used emplace so i could avoid a default constructor call to image
   images.emplace(name, name);

@@ -27,12 +27,13 @@ public:
   void draw_rotate_color(float x, float y, float a, float frame_bump, const SDL_Color &mod) const;
   void draw_rotate_color_opacity(
       float x, float y, float z, float frame_bump, const SDL_Color &mod, float opacity) const;
-*/
-/*
   void draw_rotate(float x, float y, float a, float frame_bump) const;
 */
   void draw_tile(float parallax, float x_offset, float y_offset) const;
+  void DEBUG_draw_with_texture_overlay(float x, float y, float angle, bool relative_to_screen, float frame_bump, const SDL_Color &c, float opacity, SDL_Texture *overlay_tx, float parallax, float x_offset, float y_offset);
+
   const vec2d &get_dim() const { return dimensions; }
+  SDL_Texture *get_tx(int f) const { return t_vec.at(f % frames); }
 
 private:
   void fill_t_vec(const std::string &);
