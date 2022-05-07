@@ -229,12 +229,14 @@ try{
       //will evnetually need a wireframe on top, an alpha channel, and a background "scanline" thing
       //for now, just get alpha overlay working
       static int debug_target_spin = 0;
+      image_handler::get().draw_tile("/pink_scanlines", 0.5, debug_target_spin, 0);
       image_handler::get().draw_v2("/debug_target", 1200, 200, debug_target_spin++, false, 0, {255, 255, 255}, 1);
       image_handler::get().draw_v2("/debug_target", 1200, 200, debug_target_spin, true, 0, {255, 255, 255}, 1);
+      image_handler::get().DEBUG_draw_with_tile_overlay("/debug_target", 1920, 600, debug_target_spin, false, 0, {255, 255, 255}, 1, "/pink_scanlines", 0.5, debug_target_spin, 0, 1);
       image_handler::get().DEBUG_draw_with_tile_overlay("/debug_target", 1400, 600, debug_target_spin, true, 0, {255, 255, 255}, 1, "/pink_scanlines", 0.5, debug_target_spin, 0, 1);
+      //image_handler::get().draw_v2("/debug_target", 1400, 600, 0, true, 0, {255, 255, 255}, 1);
       //image_handler::get().draw_v2("/pink_scanlines", 0, 0, 0, true, 0, {255, 255, 255}, 1);
       //image_handler::get().draw_v2("/pink_scanlines", 960, 540, 0, false, 0, {255, 255, 255}, 1);
-      //image_handler::get().draw_tile("/pink_scanlines", 0.5, debug_target_spin, 0);
 
       //l1.set_start(l1.get_start() + vec2d(0, .4));
       //l1.set_end(l1.get_end() + vec2d(0, .4));

@@ -38,6 +38,11 @@ public:
 private:
   void fill_t_vec(const std::string &);
 
+  //takes an existing dest_r and redefines it in the context of a new dest_r
+  //more specifically: when an image needs an overlay, a new texture is created at its render location
+  //and used as a renderer for it and the overlay. multiple rects are needed as a result
+  void redefine_dest_r(SDL_Rect &new_context, SDL_Rect &dest_r);
+
   image();
   image(const image&);
   image& operator=(const image&);

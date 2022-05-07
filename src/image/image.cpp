@@ -140,6 +140,11 @@ void image::fill_t_vec(const std::string &name) {
 
 }
 
+//redefine the dest_r of a given texture, for purposes of rendering to a second target texture
+void image::redefine_dest_r(SDL_Rect &new_context, SDL_Rect &dest_r) {
+  
+}
+
 void image::draw_r_c_o_all(float x_pos, float y_pos, float angle, 
     bool relative_to_screen, float frame_bump, const SDL_Color &mod, 
     float opacity) const
@@ -223,9 +228,9 @@ void image::draw_tile(float parallax, float x_offset, float y_offset) const {
 
 
   //check if viewport is too far to the left
-  if(viewport::get().get_tlc_x() - x_offs < 0) {
+  if(viewport::get().get_tlc_x() - x_offs < dimensions[0]) {
     //calculate HOW far to the left it needs to be shifted
-    dest_r.x -= dimensions[0] * ((int)(x_dest + x_offs) / (int)(dimensions[0]) + 1);
+    dest_r.x -= dimensions[0] * ((int)(dest_r.x) / (int)(dimensions[0]) + 1);
   }
 
   //check if the viewport is too far to the right
@@ -234,33 +239,17 @@ void image::draw_tile(float parallax, float x_offset, float y_offset) const {
     //get the top left corner, then divide it by the tile width -
     //this allows us to tell how many "tiles" too far we are, and
     //adjust accordingly
-    dest_r.x += dimensions[0] * ((int)(0 - ((x_dest + x_offs) / (int)(dimensions[0]))));
-  }
-
-  //if we're "centered", make sure offset doesn't cause us to drift out of frame
-  else {
-    if(viewport::get().get_tlc_x() - x_offs > 0) {
-      //shift the right direction
-      dest_r.x -= dimensions[0];
-    }
+    dest_r.x += dimensions[0] * ((int)(0 - ((dest_r.x) / (int)(dimensions[0]))));
   }
 
   //check if viewport is too far up
-  if(viewport::get().get_tlc_y() - y_offs < 0) {
-    dest_r.y -= dimensions[1] * ((int)(y_dest + y_offs) / (int)(dimensions[1]) + 1);
+  if(viewport::get().get_tlc_y() - y_offs < dimensions[1]) {
+    dest_r.y -= dimensions[1] * ((int)(dest_r.y) / (int)(dimensions[1]) + 1);
   }
 
   //check if viewport is too far down
   else if(viewport::get().get_tlc_y() - y_offs > dimensions[1]) {
-    dest_r.y += dimensions[1] * ((int)(0 - (y_dest + y_offs)) / (int)(dimensions[1]));
-  }
-
-  //if we're "centered", make sure the offset doesn't cause us to drift out of frame
-  else {
-    if(viewport::get().get_tlc_y() - y_offs > 0) {
-      //shift the right direction
-      dest_r.y -= dimensions[1];
-    }
+    dest_r.y += dimensions[1] * ((int)(0 - (dest_r.y)) / (int)(dimensions[1]));
   }
 
   SDL_Rect draw_me = dest_r;
@@ -342,26 +331,75 @@ void image::DEBUG_draw_with_texture_overlay(float x_pos, float y_pos, float angl
   SDL_SetTextureBlendMode(t, SDL_BLENDMODE_BLEND);
   SDL_SetTextureBlendMode(ot, SDL_BLENDMODE_BLEND);
 
-  //TODO: develop function to get custom dest_r for each texture being rendered
-  int big_w = ceil(dest_r.w * sqrt(2));
-  int big_h = ceil(dest_r.h * sqrt(2));
-  SDL_Rect new_dest_r = {dest_r.x, dest_r.y, big_w, big_h};
-  SDL_Texture *ft = SDL_CreateTexture(render::get().get_r(), SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, big_w, big_h);
-  //SDL_SetTextureBlendMode(ft, SDL_BLENDMODE_BLEND);
+
+  //this rect accounts for the size and position of the new render context;
+  //the texture that was originally going to be rendered here is instead 
+  //rendered to the center of this new context
+  SDL_Rect ft_dest = {dest_r.x, dest_r.y, (int)ceil(dest_r.w * sqrt(2)), (int)ceil(dest_r.h * sqrt(2))};
+  ft_dest.x -= (ft_dest.w - dest_r.w) / 2;
+  ft_dest.y -= (ft_dest.h - dest_r.h) / 2;
+  SDL_Texture *ft = SDL_CreateTexture(render::get().get_r(), SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, ft_dest.w, ft_dest.h);
+  //make this new texture / rendering context thing transparent
+ // SDL_SetTextureBlendMode(ft, SDL_BLENDMODE_BLEND);
 
   SDL_SetRenderTarget(render::get().get_r(), ft);
   SDL_SetRenderDrawColor(render::get().get_r(), 255, 0, 255, 0);
   SDL_RenderClear(render::get().get_r());
 
-  SDL_Rect smol_dest_r = {big_w/2 - dest_r.w/2, big_h/2 - dest_r.h/2, dest_r.w, dest_r.h};
-//  SDL_RenderCopy(render::get().get_r(), t, NULL, NULL);
-  SDL_RenderCopyEx(render::get().get_r(), t, NULL, &smol_dest_r, angle, piv, SDL_FLIP_NONE);
-  SDL_RenderCopyEx(render::get().get_r(), ot, NULL, &smol_dest_r, 0, piv, SDL_FLIP_NONE);
+  //create the new rendering info from the original texture's data
+  SDL_Rect t_dest_r = {ft_dest.w/2 - dest_r.w/2, ft_dest.h/2 - dest_r.h/2, dest_r.w, dest_r.h};
+  //copy it into the new context
+  SDL_RenderCopyEx(render::get().get_r(), t, NULL, &t_dest_r, angle, piv, SDL_FLIP_NONE);
 
+
+  //now do the tiling
+  //this still uses the new context for its tiling, but gets "nudged" a bit
+  //to snap to the world grid
+  SDL_Rect ot_dest_r = {0, 0, 0, 0};
+  SDL_QueryTexture(ot, NULL, NULL, &ot_dest_r.w, &ot_dest_r.h);
+  float x_dest = (0 - viewport::get().get_tlc_x()) * parallax;
+  float y_dest = (0 - viewport::get().get_tlc_y()) * parallax;
+  float x_offs = std::fmod(x_offset, ot_dest_r.w);
+  float y_offs = std::fmod(y_offset, ot_dest_r.h);
+  ot_dest_r.x = x_dest + x_offs;
+  ot_dest_r.y = y_dest + y_offs;
+
+  //just literally ignore the position of the ft and snap it to the world corner
+  ot_dest_r.x += 0 - ft_dest.x;
+  ot_dest_r.y += 0 - ft_dest.y;
+
+  if(ot_dest_r.x - x_offs < ft_dest.x + ot_dest_r.w) {
+    ot_dest_r.x -= ot_dest_r.w * ((int)(ot_dest_r.x) / (int)(ot_dest_r.w));
+  }
+  else if(ot_dest_r.x - x_offs > ft_dest.x + ot_dest_r.w) {
+    ot_dest_r.x += ot_dest_r.w * ((int)(0 - ((ot_dest_r.x) / (int)(ot_dest_r.w))));
+  }
+
+  if(ot_dest_r.y - y_offs < ft_dest.y + ot_dest_r.h) {
+    ot_dest_r.y -= ot_dest_r.h * ((int)(ot_dest_r.y) / (int)(ot_dest_r.h));
+  }
+  else if(viewport::get().get_tlc_y() - y_offs > ft_dest.y + ot_dest_r.h) {
+    ot_dest_r.y += ot_dest_r.h * ((int)(0 - ((ot_dest_r.y) / (int)(ot_dest_r.h))));
+  }
+
+  //calculate a tiny lil offset and add it here
+  SDL_Rect draw_me = ot_dest_r;
+  //draw tiles with nested for
+  for(int i = ot_dest_r.x; i < ft_dest.w; i += ot_dest_r.w) {
+    draw_me.x = i;
+    for(int j = ot_dest_r.y; j < ft_dest.h; j+= ot_dest_r.h) {
+      draw_me.y = j;
+      SDL_RenderCopyEx(render::get().get_r(), ot, NULL, &draw_me, 0, piv, SDL_FLIP_NONE);  
+    }
+  }
+
+
+
+  //reset render target
   SDL_SetRenderTarget(render::get().get_r(), NULL);
-
-  SDL_RenderCopyEx(render::get().get_r(), ft, NULL, &new_dest_r, 0, piv, SDL_FLIP_NONE);
-
+  //render the compiled texture
+  SDL_RenderCopyEx(render::get().get_r(), ft, NULL, &ft_dest, 0, piv, SDL_FLIP_NONE);
+  //remove the texture (TODO: change this? maybe a full-screen texture?)
   SDL_DestroyTexture(ft);
 
   delete piv;
