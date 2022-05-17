@@ -260,8 +260,8 @@ void chunk::draw_nc() const {
   }
   //TODO: remove, for debugging
   image_handler::get().draw_nc_line(
-   {tlc[0] + length / 7, tlc[1] + length / 3 + length / 3},
-    {tlc[0] + length / 3 + length / 3, tlc[1] + length / 7},
+   {tlc[0] + 2*length / 3, tlc[1] + length / 7},
+    {tlc[0] + length / 7, tlc[1] + 2*length / 3},
      '&'
   );
 }

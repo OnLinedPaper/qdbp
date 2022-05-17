@@ -1,6 +1,8 @@
 #include "image_handler.h"
 #include "src/renders/render.h"
 #include "src/viewport/viewport.h"
+#include "src/rect2d/rect2d.h"
+#include "src/rect2d/hitbox/hitline.h"
 #include <utility>
 #include <algorithm>
 
@@ -69,6 +71,17 @@ bool image_handler::is_on_screen(const vec2d &tlc, const vec2d &brc) {
   return true;
 }
 
+bool image_handler::is_on_screen_line(const vec2d &p1, const vec2d &p2) {
+  rect2d r{
+      viewport::get().get_tlc_x(), 
+      viewport::get().get_tlc_y(),
+      viewport::get().get_w(), 
+      viewport::get().get_h()
+  };
+  hitline l(p1, p2);
+  return r.overlap(l);
+}
+
 //cover whole screen if no dimensions specified
 void image_handler::draw_nc_bg(int density) {
   draw_nc_bg(0, 0, COLS, LINES, density);
@@ -101,6 +114,7 @@ void image_handler::draw_nc_bg(int tlcx, int tlcy, int brcx, int brcy, int densi
   std::uniform_int_distribution<> distrib(0, density);
 
   char * const arr = render::get().nc_get_dv();
+//TODO: standardize brc, do i -1 or not?
   for(int i=tlcx; i<brcx; i++) {
     for(int j=tlcy; j<brcy; j++) {
       char c = '?';
@@ -110,8 +124,82 @@ void image_handler::draw_nc_bg(int tlcx, int tlcy, int brcx, int brcy, int densi
   }
 }
 
+//accepts a pair of coordinates in world units, NOT in nc
+//screen units
+void image_handler::nc_truncate_line_to_screen(int &lx, int &ly, int &rx, int &ry) {
+
+  //handle vertical or horizontal lines
+  if(rx - lx == 0) {
+    //vertical line
+    if(ly < viewport::get().get_tlc_y()) {
+      ly = viewport::get().get_tlc_y();
+    }
+    if(ry > viewport::get().get_brc_y()) {
+      ry = viewport::get().get_brc_y() - 1;
+    }
+    return;
+  }
+  if(ry - ly == 0) {
+    //horizontal line
+    if(lx < viewport::get().get_tlc_x()) {
+      lx = viewport::get().get_tlc_x();
+    }
+    if(rx > viewport::get().get_brc_x()) {
+      rx = viewport::get().get_brc_x() - 1;
+    }
+    return;
+  }
+
+  //calculate slope
+  float slope = (float)(ry-ly)/(float)(rx-lx);
+  int offset = 0;
+
+  //check if lx is less than 0; if it is, shift
+  //lx to the right till it's 0, and shift ly up or down as
+  //appropriate
+  if(lx - viewport::get().get_tlc_x() < 0){
+    offset = viewport::get().get_tlc_x() - lx;
+    lx += offset;
+    ly += std::round(offset * slope);
+  }
+
+  //same for rx
+  if(rx > viewport::get().get_brc_x()) {
+    offset = rx - viewport::get().get_brc_x() + 1;
+    rx -= offset;
+    ry -= std::round(offset * slope);
+  }
+
+  //the y values could be either less or greater than
+  //viewport limits: check both
+
+  //check ly
+  if(ly - viewport::get().get_tlc_y() < 0){
+    offset = viewport::get().get_tlc_y() - ly;
+    ly += offset;
+    lx += std::round(offset * slope);
+  }
+  if(ly > viewport::get().get_brc_y()) {
+    offset = ly - viewport::get().get_brc_y() + 1;
+    ly -= offset;
+    lx -= std::round(offset * slope);
+  }
+
+  //check ry
+  if(ry - viewport::get().get_tlc_y() < 0){
+    offset = viewport::get().get_tlc_y() - ry;
+    ry += offset;
+    rx += std::round(offset * slope);
+  }
+  if(ry > viewport::get().get_brc_y()) {
+    offset = ry - viewport::get().get_brc_y() + 1;
+    ry -= offset;
+    rx -= std::round(offset * slope);
+  }
+}
+
 void image_handler::draw_nc_line(const vec2d &p1, const vec2d &p2, char c) {
-  if(!is_on_screen(p1, p2)) { return; }
+  if(!is_on_screen_line(p1, p2)) { return; }
 
   //pass these values to viewport and let it convert the coordinate pair
   //to an onscreen value
@@ -121,8 +209,6 @@ void image_handler::draw_nc_line(const vec2d &p1, const vec2d &p2, char c) {
   rcx = p2[0];
   rcy = p2[1];
 
-  //"tlc" is a bit of a misnomer - this end doesn't necessarily need to be
-  //the top left corner, just the leftmost point of the line
   if(lcx > rcx) {
     //swap lc and rc so "lc" is leftmost
     int temp = 0;
@@ -130,17 +216,21 @@ void image_handler::draw_nc_line(const vec2d &p1, const vec2d &p2, char c) {
     temp = rcy; rcy = lcy; lcy = temp;
   }
 
+  //truncate this to the viewport's size
+  nc_truncate_line_to_screen(lcx, lcy, rcx, rcy);
+  //turn it into screen units
   viewport::get().convert_to_nc_screen_units(lcx, lcy);
   viewport::get().convert_to_nc_screen_units(rcx, rcy);
 
   char *const arr = render::get().nc_get_dv();
+  //draw end point - start point gets drawn anyway
   arr[lcy * sizeof(char) * COLS + lcx] = c;
   arr[rcy * sizeof(char) * COLS + rcx] = c; 
 
   //instead of trying to create a line and poll for where it exists, instead
   //determine the "rise and run" of the line and render it that way:
-  //start at the top left corner of the line, and then at every pass, try to 
-  //determine if it's better to go down or to the right depending on where we
+  //start at the left point of the line, and then at every pass, try to 
+  //determine if it's better to go the right or go up/down depending on where we
   //are right now.
   int run = rcx - lcx;    //guaranteed to be positive, x is sorted
   int rise = rcy - lcy;   //MAY be negative, y is NOT sorted
@@ -162,15 +252,13 @@ void image_handler::draw_nc_line(const vec2d &p1, const vec2d &p2, char c) {
     //some sort of diagonal line
     //figure out the fraction of rise and run: for every right we go, how much down?
     //note that this should accommodate lines that go any direction, not just down and right
-    float frise = rise;
-    float frun = run;
-    float rioru = frise/frun; //for every 1 we run, how far do we rise?
+    float rioru = (float)rise/(float)run; //for every 1 we run, how far do we rise?
     
     //go from left to right, one column at a time, skipping the already-drawn
     //first and last points of the line
-    for(int i=lcx+1; i<rcx; i++) {
+    for(int i=lcx; i<rcx; i++) {
       //calculate how many rows up we have to go
-      //for nearly horizontal lines, this may only run once in a while; for vertical lines it
+      //for nearly horizontal lines, this may only run once in a while; for nearly vertical lines it
       //may run several times per pass
 
       //start j at the lcy, then offset it by its rise relative to "I", the 
@@ -181,8 +269,11 @@ void image_handler::draw_nc_line(const vec2d &p1, const vec2d &p2, char c) {
       //increment j by 1 each time to go up one row at a time
 //TODO: continue from here
 
-      float jstart = lcy + (rioru * (i-lcx));
-      float jend = lcy + (rioru * ((i+1)-lcx));
+      float jstart = std::round(lcy + (rioru * (i-lcx)));
+      float jend = std::round(lcy + (rioru * ((i+1)-lcx)));
+
+      //draw a point right where we want to determine
+      arr[(int)jstart * sizeof(char) * COLS + i] = c;
 
       //the slope is downwards and j is counting up
       if(rioru >= 0) {

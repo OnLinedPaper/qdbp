@@ -27,6 +27,7 @@ public:
   void draw_nc_bg(const vec2d &tlc, const vec2d &brc, int density);
   void draw_nc_bg(int tlcx, int tlcy, int brcx, int brcy, int density);
 
+  void nc_truncate_line_to_screen(int &lx, int &ly, int &rx, int &ry);
   void draw_nc_line(const vec2d &tlc, const vec2d &brc, char c);
 
   static void get_col_from_team(const std::string, SDL_Color &);
@@ -37,6 +38,7 @@ private:
 
   void add_image(const std::string name);
   bool is_on_screen(const vec2d &tlc, const vec2d &brc);
+  bool is_on_screen_line(const vec2d &p1, const vec2d &p2);
 
   image_handler();
   image_handler(const image_handler&) = delete;
