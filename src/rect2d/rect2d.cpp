@@ -57,17 +57,39 @@ void rect2d::draw(int red, int green, int blue) const {
   SDL_RenderDrawRect(render::get().get_r(), &r);
 }
 
+//check 2 things:
+//does one or both points lie within the box?
+//does the line collide with the box's wall?
 bool rect2d::overlap(const hitline &l) const {
 
   vec2d trc(get_brc()[0], get_tlc()[1]);
   vec2d blc(get_tlc()[0], get_brc()[1]);
 
-  return(
-    l.collides({get_tlc(), trc}) ||
-    l.collides({get_tlc(), blc}) ||
-    l.collides({get_brc(), trc}) ||
-    l.collides({get_brc(), blc})
-  );
+  bool olap = false;
+
+  //check for edge collisions
+  olap = olap || 
+      l.collides({get_tlc(), trc}) ||
+      l.collides({get_tlc(), blc}) ||
+      l.collides({get_brc(), trc}) ||
+      l.collides({get_brc(), blc});
+
+  //check for containment in the box
+  olap = olap ||
+      (
+        l.get_start()[0] > get_tlc()[0] &&
+        l.get_start()[1] > get_tlc()[1] &&
+        l.get_start()[0] < get_brc()[0] &&
+        l.get_start()[1] < get_brc()[1]
+      ) ||
+      (
+        l.get_end()[0] > get_tlc()[0] &&
+        l.get_end()[1] > get_tlc()[1] &&
+        l.get_end()[0] < get_brc()[0] &&
+        l.get_end()[1] < get_brc()[1]
+      );
+
+  return(olap);
 
   return false;
 }
