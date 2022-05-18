@@ -16,6 +16,6 @@ void b_ground::draw() const {
   }
   else if(render::get().mode() == render::R_NCURSES) {
     //draw tile as a blank set of spaces
-    image_handler::get().draw_nc_bg(100);
+    image_handler::get().nc_draw_bg(100);
   }
 }

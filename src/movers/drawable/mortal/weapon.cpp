@@ -4,6 +4,7 @@
 #include "src/timeframe/timeframe.h"
 #include "src/image/image_handler.h"
 #include "src/utils/message.h"
+#include "src/renders/render.h"
 
   std::map<uint8_t, float> weapon::id_to_heat;
   std::map<uint8_t, float> weapon::id_to_delay;
@@ -140,9 +141,16 @@ void weapon::preload_weapon_data() {
 }
 
 void weapon::draw() const {
-  image_handler::get().draw_rotate_color(
-      image_name, pos[0], pos[1], 0, last_angle, team_col
-  );
+  if(render::get().mode() == render::R_SDL) {
+    //TODO: toss up to mortal instead?
+    image_handler::get().draw_rotate_color(
+        image_name, pos[0], pos[1], 0, last_angle, team_col
+    );
+  }
+  else if(render::get().mode() == render::R_NCURSES) {
+    //trigger mortal draw
+    mortal::draw();
+  }
 }
 
 void weapon::fire(

@@ -2,6 +2,8 @@
 #include "src/vec2d/vec2d.h"
 #include <math.h>
 #include "src/xml_parser/xmlparse.h"
+#include "src/renders/render.h"
+#include "src/image/image_handler.h"
 
 const int hitbox::TYPE_HITBOX = 0;
 const int hitbox::TYPE_HURTBOX = 1;
@@ -86,15 +88,19 @@ std::string hitbox::type_to_str(int type) const {
 }
 
 void hitbox::draw() const {
-  //color the boxes based on their type
-  if(type == TYPE_HURTBOX) { rect2d::draw(0, 200, 0); }
-  if(type == TYPE_HITBOX) { rect2d::draw(255, 0, 0); }
-  if(type == TYPE_WEAKBOX) { rect2d::draw(255, 255, 0); }
-  if(type == TYPE_ARMORBOX) { rect2d::draw(255, 128, 0); }
-  if(type == TYPE_SHIELDBOX) { rect2d::draw(0, 255, 255); }
-  if(type == TYPE_PICKUPBOX) { rect2d::draw(255, 128, 255); }
-  if(type == TYPE_VACUUMBOX) { rect2d::draw(0, 0, 128); }
-
+  if(render::get().mode() == render::R_SDL) {
+    //color the boxes based on their type
+    if(type == TYPE_HURTBOX) { rect2d::draw(0, 200, 0); }
+    if(type == TYPE_HITBOX) { rect2d::draw(255, 0, 0); }
+    if(type == TYPE_WEAKBOX) { rect2d::draw(255, 255, 0); }
+    if(type == TYPE_ARMORBOX) { rect2d::draw(255, 128, 0); }
+    if(type == TYPE_SHIELDBOX) { rect2d::draw(0, 255, 255); }
+    if(type == TYPE_PICKUPBOX) { rect2d::draw(255, 128, 255); }
+    if(type == TYPE_VACUUMBOX) { rect2d::draw(0, 0, 128); }
+  }
+  else if(render::get().mode() == render::R_NCURSES) {
+    image_handler::get().nc_draw_box(get_tlc(), get_brc(), 'O');
+  }
 }
 
 std::ostream &operator<<(std::ostream &output, const hitbox &h) {

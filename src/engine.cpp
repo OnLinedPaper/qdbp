@@ -290,7 +290,19 @@ try{
       t14.draw();
       t14a.draw();
 
+      vec2d vdb{1500, 1500};
+      vec2d vdb0{1500, 1500};
+      vec2d vdb1{1700, 1700};
+      vec2d vdb2{1200, 1800};
+      vec2d vdb3{1100, 1100};
+      vec2d vdb4{2000, 1000};
 
+      image_handler::get().nc_draw_box(vdb0, vdb1, '1');
+      image_handler::get().nc_draw_box(vdb0, vdb2, '2');
+      image_handler::get().nc_draw_box(vdb0, vdb3, '3');
+      image_handler::get().nc_draw_box(vdb0, vdb4, '4');
+
+      image_handler::get().nc_draw_line(e_handler::get().get_plr_pos(), vdb, 'x');
 
       //l1.set_start(l1.get_start() + vec2d(0, .4));
       //l1.set_end(l1.get_end() + vec2d(0, .4));

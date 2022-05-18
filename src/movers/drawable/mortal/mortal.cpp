@@ -2,6 +2,7 @@
 #include "src/rect2d/rect2d.h"
 #include "src/entity_handler/entity_handler.h"
 #include "src/utils/message.h"
+#include "src/renders/render.h"
 
 //==== CONSTRUCTORS ===========================================================
 
@@ -127,8 +128,15 @@ void mortal::set_pos(float x, float y) {
 }
 
 void mortal::draw() const {
-  drawable::draw();
-  if(e_handler::get().get_draw_debug_info()) {
+  if(render::get().mode() == render::R_SDL) {
+    drawable::draw();
+    if(e_handler::get().get_draw_debug_info()) {
+      draw_boxes();
+    }
+  }
+  //TODO: makefile alteraation,r emove reference to render.h
+  else if(render::get().mode() == render::R_NCURSES) {
+    //draw boxes
     draw_boxes();
   }
 }

@@ -3,6 +3,7 @@
 #include "src/renders/render.h"
 #include "src/viewport/viewport.h"
 #include "src/rect2d/rect2d.h"
+#include "src/image/image_handler.h"
 
 hitline::hitline(const vec2d &s, const vec2d &e) :
   start(s),
@@ -50,6 +51,7 @@ bool hitline::collides(const hitline &l) const {
 
 void hitline::draw() const {
 
+  if(render::get().mode() == render::R_SDL) {
     //save color
     SDL_Color c;
     SDL_GetRenderDrawColor(render::get().get_r(), &(c.r), &(c.g), &(c.b), &(c.a));
@@ -66,4 +68,8 @@ void hitline::draw() const {
 
     //restore color
     SDL_SetRenderDrawColor(render::get().get_r(), c.r, c.g, c.b, c.a);
+  }
+  else if(render::get().mode() == render::R_NCURSES) {
+    image_handler::get().nc_draw_line(start, end, 'o');
+  }
 }
