@@ -75,22 +75,22 @@ bool image_handler::is_on_screen_line(const vec2d &p1, const vec2d &p2) {
   rect2d r{
       viewport::get().get_tlc_x(), 
       viewport::get().get_tlc_y(),
-      viewport::get().get_w(), 
-      viewport::get().get_h()
+      (float)viewport::get().get_w(), 
+      (float)viewport::get().get_h()
   };
   hitline l(p1, p2);
   return r.overlap(l);
 }
 
 //cover whole screen if no dimensions specified
-void image_handler::draw_nc_bg(int density) {
-  draw_nc_bg(0, 0, COLS, LINES, density);
+void image_handler::nc_draw_bg(int density) {
+  nc_draw_bg(0, 0, COLS, LINES, density);
 }
 
 //if dimensions come in as vec2d, they're in world units - convert them to
 //screen units, check if those aare on viewport, and send them on their way (or
 //not, if they're off screen)
-void image_handler::draw_nc_bg(const vec2d &tlc, const vec2d &brc, int density) {
+void image_handler::nc_draw_bg(const vec2d &tlc, const vec2d &brc, int density) {
   //check if this chunk is on-screen
   if(!is_on_screen(tlc, brc)) { return; }
 
@@ -105,10 +105,10 @@ void image_handler::draw_nc_bg(const vec2d &tlc, const vec2d &brc, int density) 
   viewport::get().convert_to_nc_screen_units(tlcx, tlcy);
   viewport::get().convert_to_nc_screen_units(brcx, brcy);
 
-  draw_nc_bg(tlcx, tlcy, brcx, brcy, density);
+  nc_draw_bg(tlcx, tlcy, brcx, brcy, density);
 }
 
-void image_handler::draw_nc_bg(int tlcx, int tlcy, int brcx, int brcy, int density) {
+void image_handler::nc_draw_bg(int tlcx, int tlcy, int brcx, int brcy, int density) {
   //make a background of random data
   std::random_device rd;
   std::uniform_int_distribution<> distrib(0, density);
@@ -173,32 +173,33 @@ void image_handler::nc_truncate_line_to_screen(int &lx, int &ly, int &rx, int &r
   //the y values could be either less or greater than
   //viewport limits: check both
 
+//TODO: sliding point bug here, fix it
   //check ly
   if(ly - viewport::get().get_tlc_y() < 0){
     offset = viewport::get().get_tlc_y() - ly;
     ly += offset;
-    lx += std::round(offset * slope);
+    lx += std::round(offset * (1/slope));
   }
   if(ly > viewport::get().get_brc_y()) {
     offset = ly - viewport::get().get_brc_y() + 1;
     ly -= offset;
-    lx -= std::round(offset * slope);
+    lx -= std::round(offset * (1/slope));
   }
 
   //check ry
   if(ry - viewport::get().get_tlc_y() < 0){
     offset = viewport::get().get_tlc_y() - ry;
     ry += offset;
-    rx += std::round(offset * slope);
+    rx += std::round(offset * (1/slope));
   }
   if(ry > viewport::get().get_brc_y()) {
     offset = ry - viewport::get().get_brc_y() + 1;
     ry -= offset;
-    rx -= std::round(offset * slope);
+    rx -= std::round(offset * (1/slope));
   }
 }
 
-void image_handler::draw_nc_line(const vec2d &p1, const vec2d &p2, char c) {
+void image_handler::nc_draw_line(const vec2d &p1, const vec2d &p2, char c) {
   if(!is_on_screen_line(p1, p2)) { return; }
 
   //pass these values to viewport and let it convert the coordinate pair
@@ -287,10 +288,45 @@ void image_handler::draw_nc_line(const vec2d &p1, const vec2d &p2, char c) {
           arr[j * sizeof(char) * COLS + i] = c;
         }
       }
-      
     }
   }
+}
 
+void image_handler::nc_draw_box(const vec2d &tlc, const vec2d &brc, char c) {
+  if(!is_on_screen(tlc, brc)) { return; }
+
+  //pass these values to viewport and let it convert the coordinate pair
+  //to an onscreen value - it's safe to do so as a truncated box
+  //doesn't distort like a line would
+
+  int tlcx, tlcy, brcx, brcy;
+  tlcx = std::round(tlc[0]);
+  tlcy = std::round(tlc[1]);
+  brcx = std::round(brc[0]);
+  brcy = std::round(brc[1]);
+
+  //this is expecting corners to be passed in properly, but check it 
+  //just to be safe
+  if(brcy < tlcy) {
+    int tmp = brcy; brcy = tlcy; tlcy = tmp;
+  }
+  if(brcx < tlcx) {
+    int tmp = brcx; brcx = tlcx; tlcx = tmp;
+  }
+
+  //truncate this to viewport's size and turn it into screen units all
+  //at once
+  viewport::get().convert_to_nc_screen_units(tlcx, tlcy);
+  viewport::get().convert_to_nc_screen_units(brcx, brcy);
+
+  char *const arr = render::get().nc_get_dv();
+
+  //draw entirety of rectangle
+  for(int i=tlcy; i<brcy; i++) {
+    for(int j=tlcx; j<brcx; j++) {
+      arr[i * sizeof(char) * COLS + j] = c;
+    }
+  }
 }
 
 void image_handler::add_image(std::string name) {

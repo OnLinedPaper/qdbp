@@ -23,12 +23,13 @@ public:
   void draw_tile(const std::string name, float parallax);
 
 
-  void draw_nc_bg(int density);
-  void draw_nc_bg(const vec2d &tlc, const vec2d &brc, int density);
-  void draw_nc_bg(int tlcx, int tlcy, int brcx, int brcy, int density);
+  void nc_draw_bg(int density);
+  void nc_draw_bg(const vec2d &tlc, const vec2d &brc, int density);
+  void nc_draw_bg(int tlcx, int tlcy, int brcx, int brcy, int density);
 
   void nc_truncate_line_to_screen(int &lx, int &ly, int &rx, int &ry);
-  void draw_nc_line(const vec2d &tlc, const vec2d &brc, char c);
+  void nc_draw_line(const vec2d &tlc, const vec2d &brc, char c);
+  void nc_draw_box(const vec2d &tlc, const vec2d &brc, char c);
 
   static void get_col_from_team(const std::string, SDL_Color &);
   static void jitter_col(int, SDL_Color &);
