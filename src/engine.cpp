@@ -290,6 +290,8 @@ try{
       t14.draw();
       t14a.draw();
 
+
+      /*
       vec2d vdb{1500, 1500};
       vec2d vdb0{1500, 1500};
       vec2d vdb1{1700, 1700};
@@ -303,7 +305,7 @@ try{
       image_handler::get().nc_draw_box(vdb0, vdb4, '4');
 
       image_handler::get().nc_draw_line(e_handler::get().get_plr_pos(), vdb, 'x');
-
+*/
       //l1.set_start(l1.get_start() + vec2d(0, .4));
       //l1.set_end(l1.get_end() + vec2d(0, .4));
 
@@ -440,7 +442,7 @@ try{
         //file path was bad
         msg::print_error("couldn't open keyboard input at \"" + 
             xmlparse::get().get_xml_string("/ncurses_rendering/keyboard_input_device") + "\"");
-        msg::print_alert("(the path to your keyboard may be incorrect. check /dev/input/by-path/ for available devices, and select the corresponding /dev/input/event* alias for the device you want. use this path to update \"keyboard_input_device\" in gamedata.xml)");
+        msg::print_alert("(the path to your keyboard may be incorrect. check /dev/input/by-path/ for available devices, and select the corresponding /dev/input/event* alias for the device you want. you can use xinput to determine the proper id for event*. use this path to update \"keyboard_input_device\" in gamedata.xml)");
         throw("bad keyboard path!");
       }
       else if(errno == 13) {

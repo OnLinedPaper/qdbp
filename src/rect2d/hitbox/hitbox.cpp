@@ -99,7 +99,16 @@ void hitbox::draw() const {
     if(type == TYPE_VACUUMBOX) { rect2d::draw(0, 0, 128); }
   }
   else if(render::get().mode() == render::R_NCURSES) {
-    image_handler::get().nc_draw_box(get_tlc(), get_brc(), 'O');
+    //draw the boxes based on their type
+    if(type == TYPE_HURTBOX) { image_handler::get().nc_draw_box(get_tlc(), get_brc(), 'H'); }
+    if(type == TYPE_HITBOX) { image_handler::get().nc_draw_box(get_tlc(), get_brc(), '!'); }
+    if(type == TYPE_WEAKBOX) { image_handler::get().nc_draw_box(get_tlc(), get_brc(), 'W'); }
+    if(type == TYPE_ARMORBOX) { image_handler::get().nc_draw_box(get_tlc(), get_brc(), 'A'); }
+    if(type == TYPE_SHIELDBOX) { image_handler::get().nc_draw_box(get_tlc(), get_brc(), 'S'); }
+    if(type == TYPE_PICKUPBOX) { image_handler::get().nc_draw_box(get_tlc(), get_brc(), 'P'); }
+
+    //these are visually distracting, don't draw them
+    //if(type == TYPE_VACUUMBOX) { image_handler::get().nc_draw_box(get_tlc(), get_brc(), 'V'); }
   }
 }
 

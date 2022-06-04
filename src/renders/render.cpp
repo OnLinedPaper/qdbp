@@ -120,8 +120,8 @@ void render::shade_display(float shade) {
 void render::nc_render() {
   //to render the window, first make a buffer for it; this will need to resize
   //gracefully in the event the screen changes size
-  static uint8_t last_lines = -1;
-  static uint8_t last_cols = -1;
+  static int last_lines = -1;
+  static int last_cols = -1;
 
 
   //check for window resizing - this will always trigger on first draw
