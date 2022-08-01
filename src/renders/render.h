@@ -20,6 +20,8 @@ public:
     return instance;
   }
 
+  static void signal_handler_SIGWINCH(int signum);
+
   //returns the graphics mode; defaults to 0, SDL, but can be set to 1, ncurses
   uint8_t mode() { return graphics_mode; }
 
@@ -52,8 +54,10 @@ private:
   void init_ncurses_window();
 
   void draw_blinky() const;
+  void nc_check_for_stale_win_size();
 
 
+  bool nc_render_this_frame;
   render();
   render(const render&) = delete;
   render &operator=(const render&) = delete;

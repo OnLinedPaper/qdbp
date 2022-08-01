@@ -1,10 +1,16 @@
 #include "render.h"
 #include "src/utils/message.h"
-#include <iostream>
 #include "src/viewport/viewport.h"
+
+#include <csignal>
+#include <iostream>
 
 const uint8_t render::R_SDL = 0;
 const uint8_t render::R_NCURSES = 1;
+
+void render::signal_handler_SIGWINCH(int signum) {
+  render::get().nc_check_for_stale_win_size();
+}
 
 render::render() : graphics_mode(R_SDL), w(nullptr), r(nullptr), w_nc(NULL), draw_vals(NULL) {
   if(true || SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
@@ -118,12 +124,30 @@ void render::shade_display(float shade) {
 }
 
 void render::nc_render() {
+  nc_check_for_stale_win_size();
+
+ //we didn't resize, it's safe to draw
+  if(nc_render_this_frame) {
+    //data will have, by now, been loaded into draw_vals
+    for(int i=0; i<COLS; i++) {
+      for(int j=0; j<LINES; j++) {
+        mvwaddch(w_nc, j, i, draw_vals[j*COLS+i]);
+      }
+    }
+  }
+  
+  draw_blinky();
+
+  wrefresh(w_nc);
+}
+
+void render::nc_check_for_stale_win_size() {
   //to render the window, first make a buffer for it; this will need to resize
   //gracefully in the event the screen changes size
   static int last_lines = -1;
   static int last_cols = -1;
 
-
+//TODO: catch SIGWINCH so a resize during a draw cycle doesn't abort the program
   //check for window resizing - this will always trigger on first draw
   //note that if the window resized, we skip drawing for this phase
   //also note that this is not an authoritative fix - i'm not completely
@@ -138,21 +162,13 @@ void render::nc_render() {
     }
     last_lines = LINES;
     last_cols = COLS;
+    nc_render_this_frame = false;
   }
-  //we didn't resize, it's safe to draw
   else {
-    //data will have, by now, been loaded into draw_vals
-    for(int i=0; i<COLS; i++) {
-      for(int j=0; j<LINES; j++) {
-        mvwaddch(w_nc, j, i, draw_vals[j*sizeof(char)*COLS+i]);
-      }
-    }
+   nc_render_this_frame = true;
   }
-  
-  draw_blinky();
-
-  wrefresh(w_nc);
 }
+
 
 void render::draw_blinky() const {
   char c = 'x';

@@ -1,5 +1,6 @@
 #include <random>
 #include <ctime>
+#include <csignal>
 
 #include "engine.h"
 #include "src/renders/render.h"
@@ -404,6 +405,9 @@ try{
   //grab framerate data, can't do this till singletons are created
   t_frame::get().set_f_delay(xmlparse::get().get_xml_float("/msdelay"));
   t_frame::get().set_t_delay(t_frame::tickrate);
+
+  //set up signal handler
+  std::signal(SIGWINCH, render::signal_handler_SIGWINCH);
 
   //preload weapon data, can't do this till the tree is built
   weapon::preload_weapon_data();

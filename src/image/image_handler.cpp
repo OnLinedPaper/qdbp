@@ -119,7 +119,7 @@ void image_handler::nc_draw_bg(int tlcx, int tlcy, int brcx, int brcy, int densi
     for(int j=tlcy; j<brcy; j++) {
       char c = '?';
       if(distrib(rd) % density == 0) { c = '.'; } else { c = ' '; }
-      arr[j * sizeof(char) * COLS + i] = c;
+      arr[j * COLS + i] = c;
     }
   }
 }
