@@ -173,7 +173,6 @@ void image_handler::nc_truncate_line_to_screen(int &lx, int &ly, int &rx, int &r
   //the y values could be either less or greater than
   //viewport limits: check both
 
-//TODO: sliding point bug here, fix it
   //check ly
   if(ly - viewport::get().get_tlc_y() < 0){
     offset = viewport::get().get_tlc_y() - ly;
@@ -268,7 +267,6 @@ void image_handler::nc_draw_line(const vec2d &p1, const vec2d &p2, char c) {
       //calculated rise, jump up until we reach the next point at which we
       //should go "over" another point
       //increment j by 1 each time to go up one row at a time
-//TODO: continue from here
 
       float jstart = std::round(lcy + (rioru * (i-lcx)));
       float jend = std::round(lcy + (rioru * ((i+1)-lcx)));
