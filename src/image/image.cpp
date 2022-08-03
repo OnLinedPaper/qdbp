@@ -329,7 +329,7 @@ void image::DEBUG_draw_with_texture_overlay(float x_pos, float y_pos, float angl
 
   //TODO: SDL_ComposeCustomBlendMode
   SDL_SetTextureBlendMode(t, SDL_BLENDMODE_BLEND);
-  SDL_SetTextureBlendMode(ot, SDL_BLENDMODE_BLEND);
+  SDL_SetTextureBlendMode(ot, SDL_BLENDMODE_MOD);
 
 
   //this rect accounts for the size and position of the new render context;
@@ -340,10 +340,10 @@ void image::DEBUG_draw_with_texture_overlay(float x_pos, float y_pos, float angl
   ft_dest.y -= (ft_dest.h - dest_r.h) / 2;
   SDL_Texture *ft = SDL_CreateTexture(render::get().get_r(), SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, ft_dest.w, ft_dest.h);
   //make this new texture / rendering context thing transparent
- // SDL_SetTextureBlendMode(ft, SDL_BLENDMODE_BLEND);
+  SDL_SetTextureBlendMode(ft, SDL_BLENDMODE_ADD);
 
   SDL_SetRenderTarget(render::get().get_r(), ft);
-  SDL_SetRenderDrawColor(render::get().get_r(), 255, 0, 255, 0);
+  SDL_SetRenderDrawColor(render::get().get_r(), 0, 0, 0, 0);
   SDL_RenderClear(render::get().get_r());
 
   //create the new rendering info from the original texture's data
