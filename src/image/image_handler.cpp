@@ -11,12 +11,25 @@ image_handler::~image_handler() {
 }
 
 void image_handler::draw_v2(const std::string name, float x, float y, float angle, 
-    bool relative_to_screen, float frame_bump, const SDL_Color &c, float opacity) {
+    bool relative_to_screen, float frame_bump, const SDL_Color &c, float opacity,
+    const std::string ot_name, float parallax, float x_offset, float y_offset, float ot_frame_bump) {
   if(images.find(name) == images.end()) {
     //lazy initialization
     add_image(name);
   }
-  images.at(name).draw_r_c_o_all(x, y, angle, relative_to_screen, frame_bump, c, opacity);
+
+  //check for overlay
+  if(ot_name.empty()) {
+    //no overlay
+    images.at(name).draw_r_c_o_all(x, y, angle, relative_to_screen, frame_bump, c, opacity);
+  }
+  else {
+    //overlay
+    if(images.find(ot_name) == images.end()) { add_image(ot_name); }
+      rcoa_struct rcoa_s(images.at(ot_name).get_tx(ot_frame_bump), parallax, x_offset, y_offset);
+      images.at(name).init_shader();
+      images.at(name).draw_r_c_o_all(x, y, angle, relative_to_screen, frame_bump, c, opacity, &rcoa_s);
+  }
 }
 
 void image_handler::draw_tile(const std::string name, float parallax, float x_offset, float y_offset) {
@@ -26,13 +39,15 @@ void image_handler::draw_tile(const std::string name, float parallax, float x_of
   }
   images.at(name).draw_tile(parallax, x_offset, y_offset);
 }
-
+/*
 void image_handler::DEBUG_draw_with_tile_overlay(const std::string shape_name, float x, float y, float angle, bool relative_to_screen, float frame_bump, const SDL_Color &c, float opacity, const std::string overlay_name, float parallax, float x_offset, float y_offset, int f_bump) {
   if(images.find(shape_name) == images.end()) { add_image(shape_name); }
   if(images.find(overlay_name) == images.end()) { add_image(overlay_name); }
-  images.at(shape_name).DEBUG_draw_with_texture_overlay(x, y, angle, relative_to_screen, frame_bump, c, opacity, images.at(overlay_name).get_tx(f_bump), parallax, x_offset, y_offset);
+  rcoa_struct rcoa_s(images.at(overlay_name).get_tx(f_bump), parallax, x_offset, y_offset);
+  images.at(shape_name).init_shader();
+  images.at(shape_name).draw_r_c_o_all(x, y, angle, relative_to_screen, frame_bump, c, opacity, &rcoa_s);
 }
-
+*/
 void image_handler::add_image(std::string name) {
   //used emplace so i could avoid a default constructor call to image
   images.emplace(name, name);

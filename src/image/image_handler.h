@@ -19,14 +19,20 @@ public:
 
   //hopefully the end-all, be-all drawing function
   void draw_v2(
-      const std::string name,     //name of image to draw
-      float x,                    //x value to draw at
-      float y,                    //y value to draw at
-      float angle,                //angle to draw at
-      bool relative_to_screen,    //uses screen units? (entities = false, HUD = true)
-      float frame_bump,           //which frame of the animation to start with
-      const SDL_Color &c,         //color to modualte the sprite with
-      float opacity               //how opaque to make the image (0 = transparent, 1 = opaque)
+      const std::string name,           //name of image to draw
+      float x,                          //x value to draw at
+      float y,                          //y value to draw at
+      float angle,                      //angle to draw at
+      bool relative_to_screen,          //uses screen units? (entities = false, HUD = true)
+      float frame_bump,                 //which frame of the animation to start with
+      const SDL_Color &c,               //color to modualte the sprite with
+      float opacity,                    //how opaque to make the image (0 = transparent, 1 = opaque)
+
+      const std::string ot_name = "",   //name of an overlay texture - it and all below can be blank
+      float parallax = 0,               //parallax of overlay texture
+      float x_offset = 0,               //x offset of overlay texture
+      float y_offset = 0,               //y offset of overlay texture
+      float ot_frame_bump = 0           //frame bump of overlay texture
   );
 
   //some overloads
@@ -37,7 +43,7 @@ public:
   static void jitter_col(int, SDL_Color &);
 
 
-  void DEBUG_draw_with_tile_overlay(const std::string shape_name, float x, float y, float angle, bool relative_to_screen, float frame_bump, const SDL_Color &c, float opacity, const std::string overlay_name, float parallax, float x_offset, float y_offset, int f_bump);
+//  void DEBUG_draw_with_tile_overlay(const std::string shape_name, float x, float y, float angle, bool relative_to_screen, float frame_bump, const SDL_Color &c, float opacity, const std::string overlay_name, float parallax, float x_offset, float y_offset, int f_bump);
 
 private:
   std::unordered_map<std::string, image> images;

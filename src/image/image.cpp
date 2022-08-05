@@ -11,6 +11,18 @@
 
 using xmlp = xmlparse;
 
+//structs used to assist overlay texture drawing
+rcoa_struct::rcoa_struct(SDL_Texture *overlay_texture, float p, float x, float y) :
+  ot(overlay_texture),
+  parallax(p),
+  x_offset(x),
+  y_offset(y)
+{ }
+
+rcoa_struct::~rcoa_struct() { }
+
+
+
 image::image (const std::string name)
 /*try*/ :
   dimensions(
@@ -23,7 +35,8 @@ image::image (const std::string name)
   ),
   blend(SDL_BLENDMODE_BLEND),
   frames(xmlp::get().get_xml_float(name + "/dimensions/frames")),
-  frame_delay(xmlp::get().get_xml_float(name + "/dimensions/frame_delay"))
+  frame_delay(xmlp::get().get_xml_float(name + "/dimensions/frame_delay")),
+  shader_t(NULL)
 {
   //blend mode will almost always be regular alpha blending, but can be 
   //switched to something else
@@ -147,7 +160,7 @@ void image::redefine_dest_r(SDL_Rect &new_context, SDL_Rect &dest_r) {
 
 void image::draw_r_c_o_all(float x_pos, float y_pos, float angle, 
     bool relative_to_screen, float frame_bump, const SDL_Color &mod, 
-    float opacity) const
+    float opacity, rcoa_struct *rcoa_s) const
 {
   SDL_Rect dest_r;
 
@@ -178,10 +191,9 @@ void image::draw_r_c_o_all(float x_pos, float y_pos, float angle,
   dest_r.w = dimensions[0];
   dest_r.h = dimensions[1];
 
-  SDL_Point *piv = NULL;
-  piv = new SDL_Point();
-  piv->x = pivot[0];
-  piv->y = pivot[1];
+  SDL_Point piv;
+  piv.x = pivot[0];
+  piv.y = pivot[1];
 
   //animate by frame
   //"frame_count" is how many frames have elapsed since the first frame
@@ -201,13 +213,135 @@ void image::draw_r_c_o_all(float x_pos, float y_pos, float angle,
 
   SDL_Texture *t = t_vec[frame_to_render];
 
-  SDL_SetTextureColorMod(t, mod.r, mod.g, mod.b);
-  SDL_SetTextureAlphaMod(t, opacity * 255);
-  SDL_SetTextureBlendMode(t, blend);
-  SDL_RenderCopyEx(render::get().get_r(), t, NULL, &dest_r, angle, piv, SDL_FLIP_NONE);
+  //check to see if this image is being drawn without overlay
+  if(rcoa_s == NULL) {
+    SDL_SetTextureColorMod(t, mod.r, mod.g, mod.b);
+    SDL_SetTextureAlphaMod(t, opacity * 255);
+    SDL_SetTextureBlendMode(t, blend);
+    SDL_RenderCopyEx(render::get().get_r(), t, NULL, &dest_r, angle, &piv, SDL_FLIP_NONE);
+  }
 
-  delete piv;
-  piv = NULL;
+  //we're drawing with overlay
+  //the basics of it are as follows:
+  //- set a texture as the new render context, make it black
+  //- render the shape onto it, colored white
+  //- render the pattern onto it, in mod mode so it only appears on the shape
+  //- render the texture onto the world in add mode, so the black background doesn't show
+  else {
+    //get the pattern (ot) to put on the shape (t)
+    SDL_Texture *ot = rcoa_s->ot;
+
+    //save the blend modes - these are going to be changed
+    uint8_t prev_t_blendmode, prev_ot_blendmode = 0;
+    SDL_Color prev_ot_colormod {0, 0, 0};
+    
+    SDL_GetTextureColorMod(ot, &prev_ot_colormod.r, &prev_ot_colormod.g, &prev_ot_colormod.b);
+    SDL_GetTextureAlphaMod(t, &prev_t_blendmode);
+    SDL_GetTextureAlphaMod(ot, &prev_ot_blendmode);
+    
+    //color will be applied to the pattern
+    SDL_SetTextureColorMod(ot, mod.r, mod.g, mod.b); 
+    //opacity will be applied to the shape
+    SDL_SetTextureAlphaMod(t, opacity * 255);
+
+    //shape gets blended into background, pattern gets modded onto shape
+    SDL_SetTextureBlendMode(t, SDL_BLENDMODE_BLEND);
+    SDL_SetTextureBlendMode(ot, SDL_BLENDMODE_MOD);
+
+
+
+    //if there's not already a shader texture for the shape, throw error
+    //(should have been initialized with init_shader)
+    if(shader_t == NULL) {
+      throw("shader texture was not initialized before call to draw_r_c_o_all!");
+    }
+  
+    //get size and position info for rendering, displacing up and to the left to account for the
+    //fact that the rendering texture is larger than the shape it holds
+    SDL_Rect shader_r {0, 0, 0, 0};  
+    SDL_QueryTexture(shader_t, NULL, NULL, &shader_r.w, &shader_r.h);
+    shader_r.x = (dest_r.x - ((shader_r.w - dest_r.w) / 2));
+    shader_r.y = (dest_r.y - ((shader_r.h - dest_r.h) / 2));
+
+    //set render target to shader texture
+    SDL_SetRenderTarget(render::get().get_r(), shader_t);
+    //make it full black so it vanishes when drawn in add mode
+    SDL_SetRenderDrawColor(render::get().get_r(), 0, 0, 0, 0);
+    //clear out previous draw
+    SDL_RenderClear(render::get().get_r());
+
+
+    //now, use the previous positional info to displace the shape inside of the new rendering texture;
+    //specifically, to place it in the middle of the rendering texture
+    SDL_Rect t_dest_r = {shader_r.w/2 - dest_r.w/2, shader_r.h/2-dest_r.h/2, dest_r.w, dest_r.h};
+    //render it into the rendering texture
+    SDL_RenderCopyEx(render::get().get_r(), t, NULL, &t_dest_r, angle, &piv, SDL_FLIP_NONE);
+
+    //at this point, the shape is in the render texture - now put the pattern on top of it
+
+
+    
+    //this tiling is nudged slightly to snap it to the world grid
+    SDL_Rect ot_dest_r = {0, 0, 0, 0};
+    SDL_QueryTexture(ot, NULL, NULL, &ot_dest_r.w, &ot_dest_r.h);
+    float x_dest = (0 - viewport::get().get_tlc_x()) * rcoa_s->parallax;
+    float y_dest = (0 - viewport::get().get_tlc_y()) * rcoa_s->parallax;
+    float x_offs = std::fmod(rcoa_s->x_offset, ot_dest_r.w);
+    float y_offs = std::fmod(rcoa_s->y_offset, ot_dest_r.h);
+    ot_dest_r.x = x_dest + x_offs;
+    ot_dest_r.y = y_dest + y_offs;
+
+    //now snap it to the world corner
+    ot_dest_r.x += 0 - shader_r.x;
+    ot_dest_r.y += 0 - shader_r.y;
+
+    //and now, snap it to the texture corner
+    if(ot_dest_r.x - x_offs < shader_r.x + ot_dest_r.w) {
+      ot_dest_r.x -= ot_dest_r.w * ((int)(ot_dest_r.x) / (int)(ot_dest_r.w));
+    }
+    else if(ot_dest_r.x - x_offs > shader_r.x + ot_dest_r.w) {
+      ot_dest_r.x += ot_dest_r.w * ((int)(0 - ((ot_dest_r.x) / (int)(ot_dest_r.w))));
+    }
+
+    if(ot_dest_r.y - y_offs < shader_r.y + ot_dest_r.h) {
+      ot_dest_r.y -= ot_dest_r.h * ((int)(ot_dest_r.y) / (int)(ot_dest_r.h));
+    }
+    else if(viewport::get().get_tlc_y() - y_offs > shader_r.y + ot_dest_r.h) {
+      ot_dest_r.y += ot_dest_r.h * ((int)(0 - ((ot_dest_r.y) / (int)(ot_dest_r.h))));
+    }
+
+
+    //do the actual tiling process
+    SDL_Rect draw_me = ot_dest_r;
+    //draw tiles with nested for
+    for(int i = ot_dest_r.x; i < shader_r.w; i += ot_dest_r.w) {
+      draw_me.x = i;
+      for(int j = ot_dest_r.y; j < shader_r.h; j+= ot_dest_r.h) {
+        draw_me.y = j;
+        SDL_RenderCopyEx(render::get().get_r(), ot, NULL, &draw_me, 0, &piv, SDL_FLIP_NONE);  
+      }
+    }
+
+  //reset render target
+  SDL_SetRenderTarget(render::get().get_r(), NULL);
+  //render the compiled texture
+  SDL_RenderCopyEx(render::get().get_r(), shader_t, NULL, &shader_r, 0, &piv, SDL_FLIP_NONE);
+ 
+  }
+}
+
+void image::init_shader() {
+  //called before drawing a shader on an image. calling if it's loaded is a no-op
+  //this texture is as wide as the original texture rotated 45 degrees, i.e.
+  //its area is exactly twice as large and each side is sqrt(2)
+   if(shader_t != NULL) { return; }
+
+  int w = (int)ceil(dimensions[0] * sqrt(2));
+  int h = (int)ceil(dimensions[1] * sqrt(2));
+
+  //setting access mode to SDL_TEXTUREACCESS_TARGET makes this a viable rendering point
+  shader_t = SDL_CreateTexture(render::get().get_r(), SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, w, h);
+  SDL_SetTextureBlendMode(shader_t, SDL_BLENDMODE_ADD);
 }
 
 void image::draw_tile(float parallax, float x_offset, float y_offset) const {
@@ -264,8 +398,8 @@ void image::draw_tile(float parallax, float x_offset, float y_offset) const {
     }
   }
 }
-
-void image::DEBUG_draw_with_texture_overlay(float x_pos, float y_pos, float angle, bool relative_to_screen, float frame_bump, const SDL_Color &mod, float opacity, SDL_Texture *overlay_tx, float parallax, float x_offset, float y_offset) {
+/*
+void image::DEBUG_draw_with_texture_overlay(float x_pos, float y_pos, float angle, bool relative_to_screen, float frame_bump, const SDL_Color &mod, float opacity, rcoa_struct *rcoa_s) {
   SDL_Rect dest_r;
 
   if(!relative_to_screen) {
@@ -317,17 +451,14 @@ void image::DEBUG_draw_with_texture_overlay(float x_pos, float y_pos, float angl
   }
 
   SDL_Texture *t = t_vec[frame_to_render];
-  SDL_Texture *ot = overlay_tx;
+  SDL_Texture *ot = rcoa_s->ot;
   uint8_t prev_t_blendmode, prev_ot_blendmode = 0;
-  uint32_t pixel_format = 0;
   SDL_GetTextureAlphaMod(t, &prev_t_blendmode);
   SDL_GetTextureAlphaMod(ot, &prev_ot_blendmode);
-  SDL_QueryTexture(t, &pixel_format, NULL, NULL, NULL);
 
   SDL_SetTextureColorMod(t, mod.r, mod.g, mod.b);
   SDL_SetTextureAlphaMod(t, opacity * 255);
 
-  //TODO: SDL_ComposeCustomBlendMode
   SDL_SetTextureBlendMode(t, SDL_BLENDMODE_BLEND);
   SDL_SetTextureBlendMode(ot, SDL_BLENDMODE_MOD);
 
@@ -357,10 +488,10 @@ void image::DEBUG_draw_with_texture_overlay(float x_pos, float y_pos, float angl
   //to snap to the world grid
   SDL_Rect ot_dest_r = {0, 0, 0, 0};
   SDL_QueryTexture(ot, NULL, NULL, &ot_dest_r.w, &ot_dest_r.h);
-  float x_dest = (0 - viewport::get().get_tlc_x()) * parallax;
-  float y_dest = (0 - viewport::get().get_tlc_y()) * parallax;
-  float x_offs = std::fmod(x_offset, ot_dest_r.w);
-  float y_offs = std::fmod(y_offset, ot_dest_r.h);
+  float x_dest = (0 - viewport::get().get_tlc_x()) * rcoa_s->parallax;
+  float y_dest = (0 - viewport::get().get_tlc_y()) * rcoa_s->parallax;
+  float x_offs = std::fmod(rcoa_s->x_offset, ot_dest_r.w);
+  float y_offs = std::fmod(rcoa_s->y_offset, ot_dest_r.h);
   ot_dest_r.x = x_dest + x_offs;
   ot_dest_r.y = y_dest + y_offs;
 
@@ -399,13 +530,13 @@ void image::DEBUG_draw_with_texture_overlay(float x_pos, float y_pos, float angl
   SDL_SetRenderTarget(render::get().get_r(), NULL);
   //render the compiled texture
   SDL_RenderCopyEx(render::get().get_r(), ft, NULL, &ft_dest, 0, piv, SDL_FLIP_NONE);
-  //remove the texture (TODO: change this? maybe a full-screen texture?)
+  //remove the texture
   SDL_DestroyTexture(ft);
 
   delete piv;
   piv = NULL;
 }
-
+*/
 /*
 void image::draw_rotate(float x_pos, float y_pos, float angle, float frame_bump) const {
   static SDL_Color no_col = {255, 255, 255};
