@@ -232,8 +232,8 @@ try{
 //      image_handler::get().draw_tile("/pink_scanlines", 0.5, debug_target_spin, 0);
       image_handler::get().draw_v2("/debug_target", 1200, 200, debug_target_spin++, false, 0, {255, 255, 255}, 1);
       image_handler::get().draw_v2("/debug_target", 1200, 200, debug_target_spin, true, 0, {255, 255, 255}, 1);
-      image_handler::get().draw_v2("/debug_target", 1920, 600, debug_target_spin, false, 0, {255, 255, 255}, 1, "/pink_scanlines", 0.5, debug_target_spin, 0, 1);
-      image_handler::get().draw_v2("/debug_target", 1400, 600, debug_target_spin, true, 0, {255, 255, 255}, 1, "/pink_scanlines", 0.5, debug_target_spin, 0, 1);
+      image_handler::get().draw_v2("/debug_target", 1920, 600, debug_target_spin, false, 0, {255, 200, 200}, 1, "/pink_scanlines", 0.1, debug_target_spin, 0, 1);
+      image_handler::get().draw_v2("/debug_target", 1400, 600, debug_target_spin, true, 0, {255, 255, 255}, 1, "/pink_scanlines", 0.1, debug_target_spin, 0, 1);
       //image_handler::get().draw_v2("/debug_target", 1400, 600, 0, true, 0, {255, 255, 255}, 1);
       //image_handler::get().draw_v2("/pink_scanlines", 0, 0, 0, true, 0, {255, 255, 255}, 1);
       //image_handler::get().draw_v2("/pink_scanlines", 960, 540, 0, false, 0, {255, 255, 255}, 1);

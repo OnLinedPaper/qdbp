@@ -35,7 +35,7 @@ SDL_Window *render::init_window() {
 
   //disable warnings for ints in boolean context, then re-enable them
   #pragma GCC diagnostic ignored "-Wint-in-bool-context"
-  Uint32 flags = SDL_WINDOW_SHOWN || SDL_WINDOW_FULLSCREEN_DESKTOP;
+  Uint32 flags = SDL_WINDOW_SHOWN || SDL_WINDOW_FULLSCREEN;
   #pragma GCC diagnostic pop
 
   w = SDL_CreateWindow(title.c_str(), 0, 0, DM.w, DM.h, flags);

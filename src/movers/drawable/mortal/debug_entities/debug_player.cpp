@@ -26,10 +26,11 @@ void d_player::draw() const {
   dest_r.h = 128;
 
   //the outline, fading with health
-  image_handler::get().draw_v2(image_name + "_outline", dest_r.x, dest_r.y, last_angle, false, 0, team_col, get_health_frac());
+  //image_handler::get().draw_v2(image_name + "_outline", dest_r.x, dest_r.y, last_angle, false, 0, team_col, get_health_frac());
+  image_handler::get().draw_v2(image_name + "_outline", dest_r.x, dest_r.y, last_angle, false, 0, team_col, 1);
   //the actual wireframe
   static int debug_target_spin = 0;
-  image_handler::get().draw_v2(image_name, dest_r.x, dest_r.y, last_angle, false, 0, team_col, 1, "/pink_scanlines", 0.5, debug_target_spin++, 0, 1);
+  image_handler::get().draw_v2(image_name, dest_r.x, dest_r.y, last_angle, false, 0, team_col, 1, "/pink_scanlines", 0.1, debug_target_spin++, 0, 1);
 
   player::draw();
 }
