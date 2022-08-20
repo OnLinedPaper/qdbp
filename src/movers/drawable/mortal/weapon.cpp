@@ -1,9 +1,8 @@
-#include <random>
-
 #include "src/movers/drawable/mortal/weapon.h"
 #include "src/timeframe/timeframe.h"
 #include "src/image/image_handler.h"
 #include "src/utils/message.h"
+#include "src/utils/rng.h"
 
   std::map<uint8_t, float> weapon::id_to_heat;
   std::map<uint8_t, float> weapon::id_to_delay;
@@ -163,11 +162,8 @@ void weapon::fire(
   //spawn projectile
   set_pos(start_pos);
 
-  std::random_device rd;
-  std::uniform_int_distribution<> distrib(-31, 31);
-
   //get a random vec
-  vec2d randm(distrib(rd), distrib(rd));
+  vec2d randm((int)(rng::get().get_shot() % 63 - 31), (int)(rng::get().get_shot() % 63 - 31));
 
   //create velocity, using velocity of parent and weapon, plus some randomness
   vec2d add_vel = (

@@ -1,6 +1,7 @@
 #include "image_handler.h"
 #include <utility>
 #include <algorithm>
+#include "src/utils/rng.h"
 
 //does this initialize images?? sure fuckin hope so
 image_handler::image_handler() : images() { }
@@ -82,14 +83,9 @@ void image_handler::get_col_from_team(const std::string team, SDL_Color &c) {
 }
 
 void image_handler::jitter_col(int strength, SDL_Color &c) {
-  std::random_device rd;
-  std::uniform_int_distribution<> distrib(-strength, strength);
-
-  c.r += std::clamp((distrib(rd) * c.r) / 255, 0, 255);
-  c.g += std::clamp((distrib(rd) * c.g) / 255, 0, 255);
-  c.b += std::clamp((distrib(rd) * c.b) / 255, 0, 255);
-
-
+  c.r += std::clamp(((int)(rng::get().get_gfx() % (2 * strength)) - strength) / 255, 0, 255);
+  c.g += std::clamp(((int)(rng::get().get_gfx() % (2 * strength)) - strength) / 255, 0, 255);
+  c.b += std::clamp(((int)(rng::get().get_gfx() % (2 * strength)) - strength) / 255, 0, 255);
 }
 
 //deprecated drawing functions

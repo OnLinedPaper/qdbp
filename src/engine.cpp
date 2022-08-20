@@ -1,4 +1,3 @@
-#include <random>
 #include <ctime>
 
 #include "engine.h"
@@ -12,6 +11,7 @@
 #include "src/text/text_handler.h"
 #include "src/movers/drawable/mortal/weapon.h"
 #include "src/hud/hud.h"
+#include "src/utils/rng.h"
 
 #include <SDL2/SDL_ttf.h>
 #include "src/text/text.h"
@@ -27,7 +27,6 @@ try{
   bool debug_mode = false;
   SDL_Event e;
 
-  std::srand(std::time(0));
 
 //- debug stuff  -    -    -    -    -    -    -    -    -    -    -    -    -        
 
@@ -307,6 +306,7 @@ try{
   xmlparse::get().build_tree("resources/chunkdata.xml");
 
 
+  rng::get().seed(0); //TODO: use std::time(NULL) once done debugging
   render::get().get_r();
   viewport::get();
   image_handler::get();

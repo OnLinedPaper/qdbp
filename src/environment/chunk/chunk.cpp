@@ -1,5 +1,3 @@
-#include <random>
-
 #include "chunk.h"
 #include "src/renders/render.h"
 #include "src/viewport/viewport.h"
@@ -7,6 +5,7 @@
 #include "src/image/image_handler.h"
 #include "src/xml_parser/xmlparse.h"
 #include "src/entity_handler/entity_handler.h"
+#include "src/utils/rng.h"
 
 const unsigned char chunk::IN = 0;
 const unsigned char chunk::UP = 1;
@@ -264,17 +263,13 @@ void chunk::spawn_entities(uint8_t spawn_type) {
           //values and request its addition to the game
 
           //calculate initial position
-          std::random_device rd;
-          std::uniform_int_distribution<> vel_distrib(1, 999);
-
           vec2d spawn_pos = tlc;
-          spawn_pos[0] += (r->x_coord != -1 ? r->x_coord : vel_distrib(rd));
-          spawn_pos[1] += (r->y_coord != -1 ? r->y_coord : vel_distrib(rd));
+          //the +1 at the end is to prevent entities from spawning directly on borders
+          spawn_pos[0] += (r->x_coord != -1 ? r->x_coord : (int)(rng::get().get_map() % 998 + 1));
+          spawn_pos[1] += (r->y_coord != -1 ? r->y_coord : (int)(rng::get().get_map() % 998 + 1));
 
 
           //calculate initial direction
-          std::uniform_int_distribution<> dir_distrib(-100, 100);
-
           //first get the components and normalize them
           vec2d spawn_dir = {r->x_dir_comp, r->y_dir_comp};
           spawn_dir = spawn_dir.normalize();
@@ -282,8 +277,8 @@ void chunk::spawn_entities(uint8_t spawn_type) {
           //now multiply any components by 100
           spawn_dir = spawn_dir * 100;
           //if any of the components are 0, give them a random value
-          if(spawn_dir[0] == 0) { spawn_dir[0] += dir_distrib(rd); }
-          if(spawn_dir[1] == 0) { spawn_dir[1] += dir_distrib(rd); }
+          if(spawn_dir[0] == 0) { spawn_dir[0] += (int)(rng::get().get_map() % 200 - 100); }
+          if(spawn_dir[1] == 0) { spawn_dir[1] += (int)(rng::get().get_map() % 200 - 100); }
 
           //one last normalize
           spawn_dir = spawn_dir.normalize();
@@ -292,7 +287,7 @@ void chunk::spawn_entities(uint8_t spawn_type) {
           float vel_f = r->vel_frac;
           if(vel_f == -1) {
             //get a random velocity
-            vel_f = dir_distrib(rd);
+            vel_f = rng::get().get_map() % 200 - 100;
             vel_f /= 100;
           }
 

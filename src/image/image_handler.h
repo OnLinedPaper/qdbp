@@ -2,7 +2,6 @@
 #define IMAGE_HANDLER_H_
 #include <unordered_map>
 #include <src/image/image.h>
-#include <random>
 
 class image_handler {
 public:
