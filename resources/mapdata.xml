@@ -127,11 +127,11 @@
       <tick_spawn_delay>0</tick_spawn_delay>
       <total_count>1</total_count>
       <vel_frac>0.100000</vel_frac>
-      <x_chunk>1</x_chunk>
-      <x_coord>1.000000</x_coord>
+      <x_chunk>0</x_chunk>
+      <x_coord>-1.000000</x_coord>
       <x_dir_component>0.000000</x_dir_component>
       <y_chunk>0</y_chunk>
-      <y_coord>1.000000</y_coord>
+      <y_coord>-1.000000</y_coord>
       <y_dir_component>0.000000</y_dir_component>
     </fishbone_initial>
   </entity_spawning>
