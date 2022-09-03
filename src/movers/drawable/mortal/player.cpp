@@ -52,8 +52,8 @@ player::player(const std::string &path, const vec2d &p, const vec2d &v) :
 { }
 
 void player::shoot(const vec2d &angle) {
-  //check if we're burnt out
-  if(is_burnout) { return; }
+  //check if we're burnt out OR venting
+  if(is_burnout || is_vent) { return; }
 
   //check if we're limited by the fire rate
   if(!can_shoot()) { return; }
