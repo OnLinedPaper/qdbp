@@ -37,6 +37,7 @@ void drawable::update() {
 
       //check that the angle is greater than some threshold degrees, but also
       //check for wrap-around from 360 to 0
+      //TODO: rotation speed drops with lower tick rate - this also affects hitboxes. scale it up?
       if(abs(a - last_angle) > threshold &&
         abs(abs(a- last_angle) - 360) > threshold)
       {
