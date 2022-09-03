@@ -17,7 +17,7 @@ drawable::drawable(const std::string path, const vec2d vel, const vec2d pos) :
   //don't apply color jitter to WHITE team, that's for debugging and it helps
   //to keep it visible
   if(strcmp(team_name.c_str(), "WHITE") != 0) {
-    image_handler::jitter_col(20, team_col);
+    image_handler::jitter_col(40, team_col);
   }
 }
  

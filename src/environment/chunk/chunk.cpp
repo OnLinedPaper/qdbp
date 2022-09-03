@@ -265,8 +265,8 @@ void chunk::spawn_entities(uint8_t spawn_type) {
           //calculate initial position
           vec2d spawn_pos = tlc;
           //the +1 at the end is to prevent entities from spawning directly on borders
-          spawn_pos[0] += (r->x_coord != -1 ? r->x_coord : (int)(rng::get().get_map() % 998 + 1));
-          spawn_pos[1] += (r->y_coord != -1 ? r->y_coord : (int)(rng::get().get_map() % 998 + 1));
+          spawn_pos[0] += (r->x_coord != -1 ? r->x_coord : rng::get().get_map(1, 999));
+          spawn_pos[1] += (r->y_coord != -1 ? r->y_coord : rng::get().get_map(1, 999));
 
 
           //calculate initial direction
@@ -277,8 +277,8 @@ void chunk::spawn_entities(uint8_t spawn_type) {
           //now multiply any components by 100
           spawn_dir = spawn_dir * 100;
           //if any of the components are 0, give them a random value
-          if(spawn_dir[0] == 0) { spawn_dir[0] += (int)(rng::get().get_map() % 200 - 100); }
-          if(spawn_dir[1] == 0) { spawn_dir[1] += (int)(rng::get().get_map() % 200 - 100); }
+          if(spawn_dir[0] == 0) { spawn_dir[0] += rng::get().get_map(-100, 100); }
+          if(spawn_dir[1] == 0) { spawn_dir[1] += rng::get().get_map(-100, 100); }
 
           //one last normalize
           spawn_dir = spawn_dir.normalize();
@@ -287,7 +287,7 @@ void chunk::spawn_entities(uint8_t spawn_type) {
           float vel_f = r->vel_frac;
           if(vel_f == -1) {
             //get a random velocity
-            vel_f = rng::get().get_map() % 200 - 100;
+            vel_f = rng::get().get_map(-100, 100);
             vel_f /= 100;
           }
 

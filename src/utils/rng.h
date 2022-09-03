@@ -24,15 +24,23 @@ public:
     return instance;
   }
   
-  uint32_t get_map()  { return map(); }
-  uint32_t get_shot() { return shot(); }
-  uint32_t get_unim() { return unim(); }
-  uint32_t get_gfx()  { return gfx(); }
+  int get_map()  { return (int)map(); }
+  int get_shot() { return (int)shot(); }
+  int get_unim() { return (int)unim(); }
+  int get_gfx()  { return (int)gfx(); }
+
+  //returns value in range [min, max]
+  int get_map(int, int);
+  int get_shot(int, int);
+  int get_unim(int, int);
+  int get_gfx(int, int);
 
   void seed(int num) { map.seed(num); shot.seed(num); unim.seed(num); gfx.seed(num); }
 
 
 private:
+  int get_range(int, int, std::mt19937 &);
+
   std::mt19937 map;
   std::mt19937 shot;
   std::mt19937 unim;

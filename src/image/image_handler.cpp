@@ -83,9 +83,9 @@ void image_handler::get_col_from_team(const std::string team, SDL_Color &c) {
 }
 
 void image_handler::jitter_col(int strength, SDL_Color &c) {
-  c.r += std::clamp(((int)(rng::get().get_gfx() % (2 * strength)) - strength) / 255, 0, 255);
-  c.g += std::clamp(((int)(rng::get().get_gfx() % (2 * strength)) - strength) / 255, 0, 255);
-  c.b += std::clamp(((int)(rng::get().get_gfx() % (2 * strength)) - strength) / 255, 0, 255);
+  c.r += std::clamp(rng::get().get_gfx(-strength, strength), 0, 255);
+  c.g += std::clamp(rng::get().get_gfx(-strength, strength), 0, 255);
+  c.b += std::clamp(rng::get().get_gfx(-strength, strength), 0, 255);
 }
 
 //deprecated drawing functions
