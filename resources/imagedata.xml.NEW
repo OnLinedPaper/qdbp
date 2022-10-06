@@ -1,0 +1,332 @@
+<@@>
+  <dimensions>
+    <frame_delay>##</frame_delay>
+    <frames>##</frames>
+    <height>##</height>
+    <pivot_x>##</pivot_x>
+    <pivot_y>##</pivot_y>
+    <width>##</width>
+  </dimensions>
+  <file>@@</file>
+</@@>
+<arrow>
+  <dimensions>
+    <frame_delay>20</frame_delay>
+    <frames>4</frames>
+    <height>72</height>
+    <pivot_x>36</pivot_x>
+    <pivot_y>36</pivot_y>
+    <width>72</width>
+  </dimensions>
+  <file>resources/images/arrow.png</file>
+</arrow>
+<arrow2>
+  <dimensions>
+    <frame_delay>24</frame_delay>
+    <frames>4</frames>
+    <height>72</height>
+    <pivot_x>42</pivot_x>
+    <pivot_y>36</pivot_y>
+    <width>84</width>
+  </dimensions>
+  <file>resources/images/arrow2.png</file>
+</arrow2>
+<arrow2_outline>
+  <dimensions>
+    <frame_delay>24</frame_delay>
+    <frames>4</frames>
+    <height>72</height>
+    <pivot_x>42</pivot_x>
+    <pivot_y>36</pivot_y>
+    <width>84</width>
+  </dimensions>
+  <file>resources/images/arrow2_outline.png</file>
+</arrow2_outline>
+<beam>
+  <dimensions>
+    <frame_delay>8</frame_delay>
+    <frames>4</frames>
+    <height>28</height>
+    <pivot_x>11</pivot_x>
+    <pivot_y>14</pivot_y>
+    <width>23</width>
+  </dimensions>
+  <file>resources/images/beam.png</file>
+</beam>
+<boundary_marker>
+  <dimensions>
+    <frame_delay>8</frame_delay>
+    <frames>12</frames>
+    <height>64</height>
+    <pivot_x>32</pivot_x>
+    <pivot_y>32</pivot_y>
+    <width>64</width>
+  </dimensions>
+  <file>resources/images/boundary_marker.png</file>
+</boundary_marker>
+<boundary_point>
+  <dimensions>
+    <frame_delay>12</frame_delay>
+    <frames>8</frames>
+    <height>40</height>
+    <pivot_x>20</pivot_x>
+    <pivot_y>20</pivot_y>
+    <width>40</width>
+  </dimensions>
+  <file>resources/images/boundary_point.png</file>
+</boundary_point>
+<debug_gate>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>410</height>
+    <pivot_x>205</pivot_x>
+    <pivot_y>205</pivot_y>
+    <width>410</width>
+  </dimensions>
+  <file>resources/images/debug_gate.png</file>
+</debug_gate>
+<debug_heart_bg>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>1000</height>
+    <pivot_x>500</pivot_x>
+    <pivot_y>500</pivot_y>
+    <width>1000</width>
+  </dimensions>
+  <file>resources/images/debug_heart_bg.png</file>
+</debug_heart_bg>
+<debug_heart_fg>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>1000</height>
+    <pivot_x>500</pivot_x>
+    <pivot_y>500</pivot_y>
+    <width>1000</width>
+  </dimensions>
+  <file>resources/images/debug_heart_fg.png</file>
+</debug_heart_fg>
+<debug_heart_mg>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>1000</height>
+    <pivot_x>500</pivot_x>
+    <pivot_y>500</pivot_y>
+    <width>1000</width>
+  </dimensions>
+  <file>resources/images/debug_heart_mg.png</file>
+</debug_heart_mg>
+<debug_star_bg>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>1000</height>
+    <pivot_x>500</pivot_x>
+    <pivot_y>500</pivot_y>
+    <width>1000</width>
+  </dimensions>
+  <file>debug_star_bg</file>
+</debug_star_bg>
+<debug_star_fg>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>1000</height>
+    <pivot_x>500</pivot_x>
+    <pivot_y>500</pivot_y>
+    <width>1000</width>
+  </dimensions>
+  <file>debug_star_fg</file>
+</debug_star_fg>
+<debug_star_mg>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>1000</height>
+    <pivot_x>500</pivot_x>
+    <pivot_y>500</pivot_y>
+    <width>1000</width>
+  </dimensions>
+  <file>debug_star_mg</file>
+</debug_star_mg>
+<debug_target>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>256</height>
+    <pivot_x>128</pivot_x>
+    <pivot_y>128</pivot_y>
+    <width>256</width>
+  </dimensions>
+  <file>resources/images/debug_target.png</file>
+</debug_target>
+<fishbone>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>256</height>
+    <pivot_x>64</pivot_x>
+    <pivot_y>128</pivot_y>
+    <width>128</width>
+  </dimensions>
+  <file>resources/images/fishbone.png</file>
+</fishbone>
+<fishbone_outline>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>256</height>
+    <pivot_x>64</pivot_x>
+    <pivot_y>128</pivot_y>
+    <width>128</width>
+  </dimensions>
+  <file>resources/images/fishbone_outline.png</file>
+</fishbone_outline>
+<fork_ship>
+  <dimensions>
+    <frame_delay>20</frame_delay>
+    <frames>4</frames>
+    <height>180</height>
+    <pivot_x>48</pivot_x>
+    <pivot_y>67</pivot_y>
+    <width>96</width>
+  </dimensions>
+  <file>resources/images/fork_ship.png</file>
+</fork_ship>
+<four_ball>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>60</height>
+    <pivot_x>30</pivot_x>
+    <pivot_y>30</pivot_y>
+    <width>60</width>
+  </dimensions>
+  <file>resources/images/fourball.png</file>
+</four_ball>
+<glow_ship>
+  <dimensions>
+    <frame_delay>24</frame_delay>
+    <frames>4</frames>
+    <height>64</height>
+    <pivot_x>32</pivot_x>
+    <pivot_y>32</pivot_y>
+    <width>64</width>
+  </dimensions>
+  <file>resources/images/glow_ship.png</file>
+</glow_ship>
+<hud_health_curve>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>389</height>
+    <pivot_x>-139</pivot_x>
+    <pivot_y>265</pivot_y>
+    <width>178</width>
+  </dimensions>
+  <file>resources/images/hud_health_curve.png</file>
+</hud_health_curve>
+<hud_health_divider>
+  <blend>ADD</blend>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>60</height>
+    <pivot_x>-137</pivot_x>
+    <pivot_y>275</pivot_y>
+    <width>50</width>
+  </dimensions>
+  <file>resources/images/hud_health_divider.png</file>
+</hud_health_divider>
+<hud_heat_curve>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>395</height>
+    <pivot_x>127</pivot_x>
+    <pivot_y>271</pivot_y>
+    <width>397</width>
+  </dimensions>
+  <file>resources/images/hud_heat_curve.png</file>
+</hud_heat_curve>
+<hud_heat_warn>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>239</height>
+    <pivot_x>0</pivot_x>
+    <pivot_y>0</pivot_y>
+    <width>267</width>
+  </dimensions>
+  <file>resources/images/hud_heat_warn.png</file>
+</hud_heat_warn>
+<hud_outline>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>412</height>
+    <pivot_x>128</pivot_x>
+    <pivot_y>287</pivot_y>
+    <width>500</width>
+  </dimensions>
+  <file>resources/images/hud_outline.png</file>
+</hud_outline>
+<hud_shield_curve>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>390</height>
+    <pivot_x>-190</pivot_x>
+    <pivot_y>261</pivot_y>
+    <width>154</width>
+  </dimensions>
+  <file>resources/images/hud_shield_curve.png</file>
+</hud_shield_curve>
+<hud_shield_divider>
+  <blend>ADD</blend>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>52</height>
+    <pivot_x>-185</pivot_x>
+    <pivot_y>262</pivot_y>
+    <width>49</width>
+  </dimensions>
+  <file>resources/images/hud_shield_divider.png</file>
+</hud_shield_divider>
+<pink_scanlines>
+  <dimensions>
+    <frame_delay>2</frame_delay>
+    <frames>1</frames>
+    <height>100</height>
+    <pivot_x>50</pivot_x>
+    <pivot_y>50</pivot_y>
+    <width>100</width>
+  </dimensions>
+  <file>resources/images/pink_scanlines.png</file>
+</pink_scanlines>
+<tiny>
+  <dimensions>
+    <frame_delay>16</frame_delay>
+    <frames>2</frames>
+    <height>48</height>
+    <pivot_x>24</pivot_x>
+    <pivot_y>24</pivot_y>
+    <width>48</width>
+  </dimensions>
+  <file>resources/images/tiny.png</file>
+</tiny>
+<tracker>
+  <dimensions>
+    <frame_delay>16</frame_delay>
+    <frames>3</frames>
+    <height>78</height>
+    <pivot_x>24</pivot_x>
+    <pivot_y>39</pivot_y>
+    <width>48</width>
+  </dimensions>
+  <file>resources/images/tracker.png</file>
+</tracker>

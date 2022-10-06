@@ -86,6 +86,39 @@
   </dimensions>
   <file>resources/images/debug_gate.png</file>
 </debug_gate>
+<debug_star_bg>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>1000</height>
+    <pivot_x>500</pivot_x>
+    <pivot_y>500</pivot_y>
+    <width>1000</width>
+  </dimensions>
+  <file>resources/images/debug_star_bg.png</file>
+</debug_star_bg>
+<debug_star_fg>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>1000</height>
+    <pivot_x>500</pivot_x>
+    <pivot_y>500</pivot_y>
+    <width>1000</width>
+  </dimensions>
+  <file>resources/images/debug_star_fg.png</file>
+</debug_star_fg>
+<debug_star_mg>
+  <dimensions>
+    <frame_delay>1</frame_delay>
+    <frames>1</frames>
+    <height>1000</height>
+    <pivot_x>500</pivot_x>
+    <pivot_y>500</pivot_y>
+    <width>1000</width>
+  </dimensions>
+  <file>resources/images/debug_star_mg.png</file>
+</debug_star_mg>
 <debug_heart_bg>
   <dimensions>
     <frame_delay>1</frame_delay>
