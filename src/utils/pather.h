@@ -36,6 +36,9 @@ public:
 
 private:
 
+  //a consistent zigzagging path, with extra "branches" added in until 
+  //given density is achieved
+  void path_v3(int, float = 0.4);
   //random walk, with bias towards moving right
   void path_v2(int);
   //constant movement to the right, with some up and down thrown in

@@ -2,6 +2,7 @@
 #include "rng.cpp" //TODO - correct this reference when testing is done!
 #include <iostream>
 #include <cmath>
+#include <bits/stdc++.h>
 
 pather::~pather() {
   for(int i=0; i<r; i++) {
@@ -37,7 +38,66 @@ void pather::path(int start) {
   //need to work on the actual algorithm though...
   if(start < 0 || start >= r) { throw("invalid pathing start point!"); }
 
-  path_v2(start);
+  path_v3(start);
+}
+
+//-----------------------------------------------------------------------------
+//zigzagging path, with extra lines thrown randomly in afterwards until a 
+//desired "density" of walkable area is achieved (0.4 by default)
+void pather::path_v3(int start, float density) {
+  //the current "position" in the path box
+  int loc[2] = {start, 0};
+  //the direction to travel in
+  int dir = 0;
+  //the current direction's available travel distance
+  int dist = 0;
+  //the actual distance chosen to travel
+  int trv = 0;
+
+  //some constants
+  int UP = 0;
+  int DN = 1;
+  //some constants to make the array's zero-indexing easier to deal with
+  int cm = c-1;
+  int rm = r-1;
+
+/*-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+part 1 - make a zigzagging path, with the following priorities addressed (in 
+order of priority):
+
+- a horizontal path should be at least as long as 3 chunk units, or 1/4 of the 
+  total width of the box, whichever is longer
+- no horizontal path should be longer than 1/3 of the total width of the box
+- if the box is small enough that both of these rules cannot be followed, the
+  minimum length rule takes precedence
+
+- a vertical path should be at least as long as 3 chunk units, or 1/3 of the 
+  total height of the box, whichever is longer
+- no vertical path should be longer than 2/3 of the total height of the box
+- if the box is small enough that both of these rules cannot be followed, the
+  minimum length rule takes precedence
+
+these values are likely going to be tweak-able and may eventually also become
+parameters, like density
+*/
+
+  //horizontal min length (constant)
+  int h_min_l_cnst = 3;
+  //horizontal min length (ratio)
+  float h_min_l_rtio = 1/4;  
+  //horizontal max length (constant)
+  int h_max_l_cnst = INT_MAX;
+  //horizontal max length (ratio)
+  float h_max_l_rtio = 1/3;
+
+  //vertical min height (constant)
+  int v_min_h_cnst = 3;
+  //vertical min height (ratio)
+  float v_min_h_rtio = 1/3;
+  //vertical max height (constant)
+  int v_max_h_cnst = INT_MAX;
+  //vertical max height (ratio)
+  float h_max_h_rtio = 2/3;
 }
 
 //-----------------------------------------------------------------------------
