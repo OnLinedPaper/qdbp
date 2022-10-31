@@ -46,8 +46,8 @@
 <debug_2>
   <background>/debug_heart_</background>
   <dimensions>
-    <x_dim>3</x_dim>
-    <y_dim>3</y_dim>
+    <x_dim>5</x_dim>
+    <y_dim>5</y_dim>
   </dimensions>
   <entity_spawning>
     <closet_0-2_fishbone>
@@ -87,6 +87,11 @@
       <x_chunk>1</x_chunk>
       <y_chunk>1</y_chunk>
     </1-1>
+    <2-2>
+      <type>default_impassible</type>
+      <x_chunk>2</x_chunk>
+      <y_chunk>2</y_chunk>
+    </2-2>
   </special_chunks>
   <start_chunk>
     <x_chunk>0</x_chunk>
@@ -111,10 +116,10 @@
       <total_count>4</total_count>
       <vel_frac>1.000000</vel_frac>
       <x_chunk>1</x_chunk>
-      <x_coord>800.000000</x_coord>
+      <x_coord>400.000000</x_coord>
       <x_dir_component>1.000000</x_dir_component>
       <y_chunk>0</y_chunk>
-      <y_coord>800.000000</y_coord>
+      <y_coord>400.000000</y_coord>
       <y_dir_component>0.000000</y_dir_component>
     </fishbone_closet>
     <fishbone_initial>

@@ -8,9 +8,12 @@ int main(void) {
   std::cout << "seed: " << seed <<std::endl;
   rng::get().seed(seed);
 
-  pather *p = new pather(8, 8);
+  int rows = 8;
+  int cols = 8;
 
-  p->path(seed % 8);
+  pather *p = new pather(rows, cols);
+
+  p->path(seed % rows, 0.4);
 
   p->print();
 

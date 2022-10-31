@@ -12,7 +12,7 @@ const unsigned char chunk::UP = 1;
 const unsigned char chunk::DN = 2;
 const unsigned char chunk::LF = 4;
 const unsigned char chunk::RT = 8;
-const float chunk::length = 1000;
+const float chunk::length = 500;
 
 const uint8_t chunk::INITIAL = 0;
 const uint8_t chunk::CLOSET = 1;
@@ -265,8 +265,8 @@ void chunk::spawn_entities(uint8_t spawn_type) {
           //calculate initial position
           vec2d spawn_pos = tlc;
           //the +1 at the end is to prevent entities from spawning directly on borders
-          spawn_pos[0] += (r->x_coord != -1 ? r->x_coord : rng::get().get_map(1, 999));
-          spawn_pos[1] += (r->y_coord != -1 ? r->y_coord : rng::get().get_map(1, 999));
+          spawn_pos[0] += (r->x_coord != -1 ? r->x_coord : rng::get().get_map(1, length-1));
+          spawn_pos[1] += (r->y_coord != -1 ? r->y_coord : rng::get().get_map(1, length-1));
 
 
           //calculate initial direction

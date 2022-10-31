@@ -29,21 +29,33 @@ public:
   //with itself.
   //(this can be called multiple times; the paths may overlap if this is
   //the case)
-  void path(int);
+  //the second argument is "density" - how much of the graph should
+  //be taken up
+  void path(int, float = 0);
 
   void print();
   float get_density();
 
 private:
 
-  //a consistent zigzagging path, with extra "branches" added in until 
-  //given density is achieved
-  void path_v3(int, float = 0.4);
+  //a consistent zigzagging path 
+  void path_v3(int);
   //random walk, with bias towards moving right
   void path_v2(int);
   //constant movement to the right, with some up and down thrown in
   void path_v1(int);
 
+
+  //random noise, but only touching other paths
+  void fill_v3(float);
+  //random noise, but as 2x2 squares
+  void fill_v2(float);
+  //random noise added into the graph
+  void fill_v1(float);
+
+
+  //convert all extraneous data to uniform format
+  void flatten();
 
   pather();
   int **a;

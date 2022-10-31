@@ -27,24 +27,25 @@ pather::pather(int rows, int cols):
 
 
 //=============================================================================
-//take a random, nonintersecting walk through the array, stopping when we hit
-//the rightmost edge.
-void pather::path(int start) {
-  //this is the entity that "walks" around the map and draws the path
-  //it starts by walking towards the right, then up/down, then left/right, and
-  //so on. 
+
+void pather::path(int start, float density) {
   //this is deterministic, and will always produce the same result when run 
   //with the same seed.
   //need to work on the actual algorithm though...
   if(start < 0 || start >= r) { throw("invalid pathing start point!"); }
 
   path_v3(start);
+  fill_v2(density);
 }
 
+/*=============================================================================
+the path functions describe various ways to walk through a grid, leaving a
+traversible path behind them. 
+*/
+
 //-----------------------------------------------------------------------------
-//zigzagging path, with extra lines thrown randomly in afterwards until a 
-//desired "density" of walkable area is achieved (0.4 by default)
-void pather::path_v3(int start, float density) {
+//zigzagging path
+void pather::path_v3(int start) {
   //the current "position" in the path box
   int loc[2] = {start, 0};
   //the direction to travel in
@@ -338,6 +339,48 @@ void pather::path_v1(int start) {
 
     //TODO: code this
     location[0]++;
+  }
+}
+
+/*=============================================================================
+the fill functions describe various ways to add noise to a grid
+*/
+
+//-----------------------------------------------------------------------------
+//random noise as 2x2 squares
+void pather::fill_v2(float density) {
+  int t_r = 0;
+  int t_c = 0;
+  while(get_density() < density) {
+    t_r = std::abs(rng::get().get_map()) % (r-1);
+    t_c = std::abs(rng::get().get_map()) % (c-1);
+
+    a  [t_r]  [t_c] = 3;
+    a[t_r+1]  [t_c] = 3;
+    a  [t_r][t_c+1] = 3;
+    a[t_r+1][t_c+1] = 3;
+  }
+}
+
+//-----------------------------------------------------------------------------
+//random noise
+void pather::fill_v1(float density) {
+  int t_r = 0;
+  int t_c = 0;
+  while(get_density() < density) {
+    t_r = std::abs(rng::get().get_map()) % r;
+    t_c = std::abs(rng::get().get_map()) % c;
+    a[t_r][t_c] = 3;
+  }
+}
+
+//=============================================================================
+//convert all data to uniform format
+void pather::flatten() {
+  for(int i=0; i<r; i++) {
+    for(int j=0; j<c; j++) {
+      a[i][j] = (a[i][j] == 0 ? 0 : 1);
+    }
   }
 }
 
