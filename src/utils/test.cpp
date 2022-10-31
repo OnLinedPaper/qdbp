@@ -4,12 +4,13 @@
 
 int main(void) {
 
-  rng::get().seed(time(NULL));
+  auto seed = time(NULL);
+  std::cout << "seed: " << seed <<std::endl;
+  rng::get().seed(seed);
 
   pather *p = new pather(8, 8);
 
-  p->path(2);
-  if(p->get_density() < 0.6) { p->path(5); }
+  p->path(seed % 8);
 
   p->print();
 

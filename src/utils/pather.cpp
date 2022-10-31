@@ -49,8 +49,10 @@ void pather::path_v3(int start, float density) {
   int loc[2] = {start, 0};
   //the direction to travel in
   int dir = 0;
-  //the current direction's available travel distance
-  int dist = 0;
+  //the current direction's max available travel distance
+  int dist_max = 0;
+  //the current direction's minimum required travel distance
+  int dist_min = 0;
   //the actual distance chosen to travel
   int trv = 0;
 
@@ -82,22 +84,132 @@ parameters, like density
 */
 
   //horizontal min length (constant)
-  int h_min_l_cnst = 3;
+  int h_min_l_cnst = 2;
   //horizontal min length (ratio)
-  float h_min_l_rtio = 1/4;  
+  float h_min_l_rtio = 1.0/5;  
   //horizontal max length (constant)
   int h_max_l_cnst = INT_MAX;
   //horizontal max length (ratio)
-  float h_max_l_rtio = 1/3;
+  float h_max_l_rtio = 1.0/2;
 
   //vertical min height (constant)
   int v_min_h_cnst = 3;
   //vertical min height (ratio)
-  float v_min_h_rtio = 1/3;
+  float v_min_h_rtio = 1.0/3;
   //vertical max height (constant)
   int v_max_h_cnst = INT_MAX;
   //vertical max height (ratio)
-  float h_max_h_rtio = 2/3;
+  float v_max_h_rtio = 1;
+
+  
+  //fire up a loop of horizontals and verticals
+  while(loc[1] < cm) {
+
+//-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+    //first do a horizontal
+
+    //initial total dist available to travel
+    dist_max = cm - loc[1];
+    //clamp so it doesn't go too far
+    dist_max = (dist_max < h_max_l_rtio * c ? dist_max : h_max_l_rtio * c);
+    dist_max = (dist_max < h_max_l_cnst ? dist_max : h_max_l_cnst);
+
+    //select minimum distance required to travel
+    dist_min = 0;
+    //clamp so it goes far enough
+    dist_min = (
+      h_min_l_cnst > h_min_l_rtio * c 
+      ? h_min_l_cnst
+      : h_min_l_rtio * c 
+    );
+    //make sure we don't run past boundary of the array - check this by 
+    //verifying the min dist is not greater than the max dist.
+    //this triggers when we're below the min distance from the wall.
+    dist_min = (dist_min > dist_max ? dist_max : dist_min);
+
+    //get a number between the two
+    if(dist_max == dist_min) { trv = dist_max; }
+    else {
+      trv = (std::abs(rng::get().get_map()) % (dist_max-dist_min)) + dist_min;
+    }
+
+    //walk that number of steps to the right
+    for(int i=0; i<trv; i++) {
+      a[loc[0]][loc[1]] = 2;
+      loc[1]++;
+    }
+
+    //terminate when we reach the end
+    if(loc[1] == cm) { break; }
+
+//-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+
+    /*
+    now, deal with the vertical movement
+    first, pick whether to go up or down, by choosing a random number and
+    seeing which "side" of the line it falls on (repeating if necessary) - this
+    favors the side with more empty space. 
+    the line must meet the minimum sapce requirements, so if a wall is too
+    close by, the "choice" is bypassed. 
+    */
+
+    //minimum distance to travel is unchanging
+    dist_min = 0;
+    dist_min = (
+      v_min_h_cnst > v_min_h_rtio * r
+      ? v_min_h_cnst
+      : v_min_h_rtio
+    );
+
+    //determine of either of these directions are too close to the wall
+    
+    bool go_up = loc[0] - dist_min >= 0;
+    bool go_dn = loc[0] + dist_min <= rm;
+
+    //can we move either direction? if not, skip vertical completely - it's the
+    //user's responsibility to set the appropriate parameters for map size
+    if(!go_up && !go_dn) { continue; }
+    //can we go up?
+    else if(go_up && !go_dn) { dir = UP; }
+    //can we go down?
+    else if(!go_up && go_dn) { dir = DN; }
+    //we can do both
+    else {
+      //randomly select whether to go up or down
+      //TODO: height-1 map failsafe
+      int choice = loc[0];
+      while(choice == loc[0]) {
+        choice = std::abs(rng::get().get_map()) % r;
+      }
+      dir = (choice < loc[0] ? UP : DN);
+    }
+
+    //we have a direction - calculate max distance to travel
+    if(dir == UP) { dist_max = loc[0]; }
+    else { dist_max = rm - loc[0]; }
+    dist_max = (dist_max < v_max_h_rtio * c ? dist_max : v_max_h_rtio * c);
+    dist_max = (dist_max < v_max_h_cnst ? dist_max : v_max_h_cnst);
+
+    //get travel distance
+    if(dist_max == dist_min) { trv = dist_max; }
+    else {
+      trv = (std::abs(rng::get().get_map()) % (dist_max-dist_min)) + dist_min;
+    }
+
+    //walk that number of steps up or down
+    
+    for(int i=0; i<trv; i++) {
+      a[loc[0]][loc[1]] = 2;
+      if(dir == UP) { loc[0]--; }
+      else { loc[0]++; }
+    }
+  }
+
+//-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+  
+  //one more for the final resting point
+  a[loc[0]][loc[1]] = 2;
 }
 
 //-----------------------------------------------------------------------------
@@ -233,21 +345,22 @@ void pather::path_v1(int start) {
 //dump the path to stdout
 void pather::print() {
   std::cout << "dumping pather object\n";
+  std::cout << "density: " << std::trunc(get_density() * 1000) /10 << "%\n" << std::endl;
 
-  std::cout << "  ";
+  std::cout << "    ";
   for(int i=0; i<c; i++) {
     std::cout << i % 10 << " ";
   }
-  std::cout << std::endl;
+  std::cout << std::endl << std::endl;
 
   for(int i=0; i<r; i++) {
-    std::cout << i%10 << " ";
+    std::cout << i%10 << "   ";
     for(int j=0; j<c; j++) {
       std::cout << (a[i][j] == 0 ? '-' : 'X') << " ";
     }
     std::cout << std::endl;
   }
-  std::cout << "density: " << std::trunc(get_density() * 1000) /10 << "%" << std::endl;
+  std::cout << std::endl;
 }
 
 //=============================================================================
