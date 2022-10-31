@@ -2,6 +2,8 @@
 valgrind-out.txt
 full-valgrind-out.txt
 out.txt
+test.*
+a.out
 
 #executables
 debug
