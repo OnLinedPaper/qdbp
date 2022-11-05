@@ -36,6 +36,11 @@ public:
   void print();
   float get_density();
 
+  //run dijkstra's algorithm to both determine whether a path exists, and the
+  //distance of any given point from the shortest path. this information is
+  //placed into the graph for later use.
+  bool check_path_exists(int);
+
 private:
 
   //a consistent zigzagging path 

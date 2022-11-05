@@ -15,7 +15,9 @@ int main(void) {
 
   p->path(seed % rows, 0.4);
 
+  p->check_path_exists(seed % rows);
   p->print();
+
 
   delete p;
 

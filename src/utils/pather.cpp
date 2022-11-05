@@ -3,6 +3,8 @@
 #include <iostream>
 #include <cmath>
 #include <bits/stdc++.h>
+#include <vector>
+#include <utility>
 
 pather::~pather() {
   for(int i=0; i<r; i++) {
@@ -399,7 +401,16 @@ void pather::print() {
   for(int i=0; i<r; i++) {
     std::cout << i%10 << "   ";
     for(int j=0; j<c; j++) {
-      std::cout << (a[i][j] == 0 ? '-' : 'X') << " ";
+      //currently printing inaccessible areas differently
+      std::cout << (
+        a[i][j] == 0 
+        ? '-' 
+        : (
+          a[i][j] == INT_MAX 
+          ? '=' 
+          : char(a[i][j] % 10 + 48)
+        )
+      ) << " ";
     }
     std::cout << std::endl;
   }
@@ -416,4 +427,82 @@ float pather::get_density() {
     }
   }
   return(d / (r*c));
+}
+
+//=============================================================================
+//run dijkstra's algorithm to both get shortest path and to populate graph
+//with information about a given chunk's distance from said shortest path. also
+//confirms whether such a path even exists, returning false if not.
+//note: the given starting coordinate is the y-coordinate of a chunk on the
+//left side of a pather. the ending point is any chunk on the right side of 
+//the pather.
+//nodes that have value "0" are considered impassable.
+
+bool pather::check_path_exists(int start) {
+  //sanity check - are we attempting to path from an invalid starting point?
+  //TODO: multiple starting points?
+  if(a[start][0] == 0) { return false; }
+
+  //first, generate a temporary object to hold the "visited/unvisited" graph,
+  //and also adjust values of graph
+  bool path_exists = false;
+  bool visited[r][c]; 
+  for(int i=0; i<r; i++) {
+    for(int j=0; j<c; j++) {
+      //impassible nodes are not considered 
+      if(a[i][j] == 0) { visited[i][j] = true; } 
+      else { 
+        //passable nodes are prepared for the algorithm
+        a[i][j] = INT_MAX;
+        visited[i][j] = false; 
+      }
+    }
+  }
+
+  //next, prepare the vector to hold the unvisited paths
+  std::vector<std::pair<int,int>> visit_me{{start, 0}};
+  //and set the starting point
+  a[start][0] = 1;
+
+  //loop until all visitable points have been visited
+  while(visit_me.size() > 0) {
+    //get location value for current node
+    int rv = visit_me[0].first;
+    int cv = visit_me[0].second;
+
+    if(cv == c-1) { path_exists = true; }
+
+    //check the four directions for visitable nodes, update them, and add them
+    //to the queue for later visitation
+
+    //left
+    if(cv > 0 && visited[rv][cv-1] == false && a[rv][cv-1] > a[rv][cv]+1) {
+      a[rv][cv-1] = a[rv][cv]+1;
+      visit_me.push_back({rv, cv-1});
+    }
+    
+    //right
+    if(cv < c-1 && visited[rv][cv+1] == false && a[rv][cv+1] > a[rv][cv]+1) {
+      a[rv][cv+1] = a[rv][cv]+1;
+      visit_me.push_back({rv, cv+1});
+    }
+
+    //up
+    if(rv > 0 && visited[rv-1][cv] == false && a[rv-1][cv] > a[rv][cv]+1) {
+      a[rv-1][cv] = a[rv][cv]+1;
+      visit_me.push_back({rv-1, cv});
+    }
+
+    //down
+    if(rv < r-1 && visited[rv+1][cv] == false && a[rv+1][cv] > a[rv][cv]+1) {
+      a[rv+1][cv] = a[rv][cv]+1;
+      visit_me.push_back({rv+1, cv});
+    }
+
+    //mark the value as visited, and erase
+    visited[rv][cv] = true;
+    visit_me.erase(visit_me.begin());
+  }
+
+  return path_exists;
 }
