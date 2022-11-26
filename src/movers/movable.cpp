@@ -22,7 +22,6 @@ movable::movable(std::string path, const vec2d p, const vec2d v) :
 { pos = p; vel = v; }
 
 void movable::rebuff(unsigned char posi) {
-  
   if(posi) {
     //somewhere along the way, we tripped a barrier we shouldn't have
     if(posi & chunk::UP) {

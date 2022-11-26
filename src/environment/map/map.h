@@ -4,10 +4,12 @@
 #include <deque>
 #include "src/environment/chunk/chunk.h"
 #include "src/environment/background/background.h"
+#include "src/utils/pather.h"
 
 class map {
 public:
   map(std::string);
+  map(const pather &);
   ~map();
 
   void draw() const;
@@ -43,10 +45,12 @@ private:
   b_ground bg;
 
   std::string name;
+  bool is_pather_gen;
 
   void validate();
   void init_c_deque();
   void init_special_chunks();
+  void parse_pather(const pather &);
   void parse_spawn_rules();
   void check_barriers(int, int);
 

@@ -1,10 +1,11 @@
 #include "pather.h"
-#include "rng.cpp" //TODO - correct this reference when testing is done!
+#include "src/utils/rng.h"
 #include <iostream>
 #include <cmath>
 #include <bits/stdc++.h>
 #include <vector>
 #include <utility>
+#include <string>
 
 pather::~pather() {
   for(int i=0; i<r; i++) {
@@ -38,6 +39,9 @@ void pather::path(int start, float density) {
 
   path_v3(start);
   fill_v2(density);
+  check_path_exists(start);
+  //TODO: remove this when done testing
+  print();
 }
 
 /*=============================================================================
@@ -324,7 +328,6 @@ void pather::path_v1(int start) {
   //the current rng's available travel distance
   int dist = 0;
   //the actual distance to travel
-  int trv = 0;
   int cm = c-1;
 
   while(location[1] < cm) {
@@ -386,11 +389,23 @@ void pather::flatten() {
   }
 }
 
+//-----------------------------------------------------------------------------
+//flip all sign values
+void pather::flip_signs() {
+  for(int i=0; i<r; i++) {
+
+  }
+}
+
+
 //=============================================================================
 //dump the path to stdout
-void pather::print() {
+void pather::print() const {
   std::cout << "dumping pather object\n";
-  std::cout << "density: " << std::trunc(get_density() * 1000) /10 << "%\n" << std::endl;
+  std::cout << "density: " << std::trunc(get_density() * 1000) /10 << "%" << std::endl;
+  std::cout << "start: " << (get_start() != -1 ? "(0, " + std::to_string(get_start()) + ")" : "none") << std::endl;
+  std::cout << "end: " << (get_end() != -1 ? "(" + std::to_string(c-1) + ", " + std::to_string(get_end()) + ")" : "none") << std::endl;
+  std::cout << std::endl;
 
   std::cout << "    ";
   for(int i=0; i<c; i++) {
@@ -408,7 +423,11 @@ void pather::print() {
         : (
           a[i][j] == INT_MAX 
           ? '=' 
-          : char(a[i][j] % 10 + 48)
+          : (
+            a[i][j] == 1 
+            ? 'X' 
+            : char(a[i][j] % 10 + 48)
+          )
         )
       ) << " ";
     }
@@ -418,8 +437,32 @@ void pather::print() {
 }
 
 //=============================================================================
+//get the pather's self-defined starting point
+//(returns -1 if no starting point is present)
+int pather::get_start() const {
+  for(int i=0; i<r; i++) {
+    if(a[i][0] == 1) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+//-----------------------------------------------------------------------------
+//get the pather's self-defined ending point
+//(returns -1 if no ending point is present)
+int pather::get_end() const {
+  for(int i=0; i<r; i++) {
+    if(a[i][c-1] == 1) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+//=============================================================================
 //get "density" - fraction of passable spaces occupied by a path
-float pather::get_density() {
+float pather::get_density() const {
   float d = 0;
   for(int i=0; i<r; i++) {
     for(int j=0; j<c; j++) {
@@ -446,7 +489,9 @@ bool pather::check_path_exists(int start) {
   //first, generate a temporary object to hold the "visited/unvisited" graph,
   //and also adjust values of graph
   bool path_exists = false;
-  bool visited[r][c]; 
+  //making this a 2D vector (ew) because VLAs are forbidden in cpp
+  //bool visited[r][c]; 
+  std::vector<std::vector<bool>> visited(r, std::vector<bool>(c, false));
   for(int i=0; i<r; i++) {
     for(int j=0; j<c; j++) {
       //impassible nodes are not considered 
@@ -504,5 +549,187 @@ bool pather::check_path_exists(int start) {
     visit_me.erase(visit_me.begin());
   }
 
+  if(path_exists) { find_path_data(); }
+
   return path_exists;
+}
+
+//-----------------------------------------------------------------------------
+//after a path is located by check_path_exists(), the data is passed into this
+//function, which marks the shortest path and then marks the distances from
+//that path
+//note that this always assumes a viable path exists, and ends on the right
+//side of the pather
+
+void pather::find_path_data() {
+  std::pair<int, int> loc = {0, c-1};
+
+  int min = INT_MAX;
+  //first, find the path's endpoint
+  for(int i=0; i<r; i++) {
+    if(a[i][c-1] > 0 && a[i][c-1] < min) {
+      loc.first = i; 
+      min = a[i][c-1];
+    }
+  }
+  //load the end of the path and walk backward from it
+  std::vector<std::pair<int,int>> visit_me{{loc.first, loc.second}};
+  std::vector<std::pair<int, int>> visit_me_after;
+
+  //walk backwards through the path, marking the route as we go
+  while(visit_me.size() > 0) {
+    int rv = visit_me[0].first;
+    int cv = visit_me[0].second;
+
+    visit_me_after.push_back({rv, cv});
+    visit_me.erase(visit_me.begin());
+
+    //look for the first path node of lesser value than this one, and then mark
+    //this one as "visited"
+    //(always looks in the order left > up > down > right)
+
+    //left
+    if(cv > 0 && a[rv][cv-1] > 1 && a[rv][cv-1] < a[rv][cv]) {
+      visit_me.push_back({rv, cv-1});
+      a[rv][cv] = 1;
+      continue;
+    }
+
+    //up
+    if(rv > 0 && a[rv-1][cv] > 1 && a[rv-1][cv] < a[rv][cv]) {
+      visit_me.push_back({rv-1, cv});
+      a[rv][cv] = 1;
+      continue;
+    }
+
+    //down
+    if(rv < r-1 && a[rv+1][cv] > 1 && a[rv+1][cv] < a[rv][cv]) {
+      visit_me.push_back({rv+1, cv});
+      a[rv][cv] = 1;
+      continue;
+    }
+
+    //right
+    if(cv < c-1 && a[rv][cv+1] > 1 && a[rv][cv+1] < a[rv][cv]) {
+      visit_me.push_back({rv, cv+1});
+      a[rv][cv] = 1;
+      continue;
+    }
+
+    //no shorter paths found - this is the end
+    loc = {rv, cv};
+  }
+
+  visit_me_after.push_back({loc.first, loc.second});
+  a[loc.first][loc.second] = 1;
+
+
+
+  //now, propagate outwards from the central path
+  while(visit_me_after.size() > 0) {
+    int rv = visit_me_after[0].first;
+    int cv = visit_me_after[0].second;
+
+    visit_me_after.erase(visit_me_after.begin());
+
+    //check the four directions
+
+    //left
+    if(cv > 0 && a[rv][cv-1] > a[rv][cv]+1) {
+      a[rv][cv-1] = a[rv][cv]+1;
+      visit_me_after.push_back({rv, cv-1});
+    }
+
+    //right
+    if(cv < c-1 && a[rv][cv+1] > a[rv][cv]+1) {
+      a[rv][cv+1] = a[rv][cv]+1;
+      visit_me_after.push_back({rv, cv+1});
+    }
+
+    //up
+    if(rv > 0 && a[rv-1][cv] > a[rv][cv]+1) {
+      a[rv-1][cv] = a[rv][cv]+1;
+      visit_me_after.push_back({rv-1, cv});
+    }
+
+    //down
+    if(rv < r-1 && a[rv+1][cv] > a[rv][cv]+1) {
+      a[rv+1][cv] = a[rv][cv]+1;
+      visit_me_after.push_back({rv+1, cv});
+    }
+  }
+}
+
+//=============================================================================
+void pather::get_far_point(std::vector<std::pair<int, std::pair<int, int>>> & vals, int rank) const {
+  get_far_point_v1(vals, rank);
+}
+
+//-----------------------------------------------------------------------------
+//given a "rank", get the coordinates and distance of a point from the central
+//path. 1 is the furthest from the path, 2 is second furthest, and so on.
+//fills a provided empty vector with data.
+//the return value is the coordinate pair (x, y) followed by the distance.
+//if 2 points are equidistant, the one furthest to the bottom right is 
+//given priority.
+//a returned rank of -1 means there were not enough local maxima to satisfy
+//the given number of ranks. 
+void pather::get_far_point_v1(std::vector<std::pair<int, std::pair<int, int>>> & vals, int rank) const {
+//  std::pair<int, std::pair<int, int>> vals[rank];
+
+  //for safety, init values to 0
+  for(int i=0; i<rank; i++) {
+    vals.push_back({-1, {0, 0}});
+  }
+
+  //find local maxima
+  for(int i=0; i<r; i++) {
+    for(int j=0; j<c; j++) {
+      if(a[i][j] > 0 && a[i][j] < INT_MAX && is_local_max(i, j) && a[i][j] >= vals[0].first) {
+        vals[0].first = a[i][j]; 
+        vals[0].second = {j, i};
+        std::sort(vals.begin(), vals.end());
+        std::cout << "added (" << j << "," << i << "):" << a[i][j] << " and sorted: ";
+        for(auto v : vals) { std::cout << "(" << v.second.first << "," << v.second.second << "):" << v.first << " "; }
+        std::cout << std::endl;
+      }
+    }
+  }
+  return;
+}
+
+//-----------------------------------------------------------------------------
+//given a coordinate pair, determine if it is a local maximum
+//note that this assumes find_path_data() has run already
+//
+//a block of identical values regards its corners as "maximum"
+//0, 1, and INT_MAX cannot qualify as maxima
+bool pather::is_local_max(int x, int y) const {
+  //no adjacent values greater than this one
+  bool is_max = true;
+  //more than 2 edges is a corner
+  int edges = 0;
+
+  if(a[x][y] == 0 || a[x][y] == 1 || a[x][y] == INT_MAX) { return false; }
+  //check each adjacent value - NOTE THAT if 2 adjacent values are the same,
+  //the lower right is considered the "local maximum"
+  //TODO: add the above as a potentially toggleable feature
+
+  //up
+  if(x > 0 && a[x-1][y] > a[x][y]) { is_max = false; }
+  if(x == 0 || a[x-1][y] == 0) { edges++; }
+
+  //down
+  if(x < r-1 && a[x+1][y] > a[x][y]) { is_max = false; }
+  if(x == r-1 || a[x+1][y] == 0) { edges++; }
+
+  //left
+  if(y > 0 && a[x][y-1] > a[x][y]) { is_max = false; }
+  if(y == 0 || a[x][y-1] == 0) { edges++; }
+
+  //right
+  if(y < c-1 && a[x][y+1] > a[x][y]) { is_max = false; }
+  if(y == c-1 || a[x][y+1] == 0) { edges++;; }
+
+  return (edges >= 2 && is_max);
 }

@@ -9,7 +9,8 @@
 
 map::map(std::string n) :
   bg(xmlparse::get().get_xml_string(n + "/background")),
-  name(n)
+  name(n),
+  is_pather_gen(false)
 {
   x_dim = xmlparse::get().get_xml_int(name + "/dimensions/x_dim");
   y_dim = xmlparse::get().get_xml_int(name + "/dimensions/y_dim");
@@ -28,6 +29,25 @@ map::map(std::string n) :
   parse_spawn_rules();
 }
 
+map::map(const pather &p) :
+  bg("/debug_star_"),
+  name(""),
+  is_pather_gen(true)
+{
+  x_dim = p.get_c();
+  y_dim = p.get_r();
+  start_chunk = vec2d(0, p.get_start());
+
+  validate(); //TODO: decide if this is necessary
+
+  //init the deque with the chunks
+  //TODO: modify it instead by growing/shrinking it
+  init_c_deque();
+  
+  //take the pather and build the map around it
+  parse_pather(p);
+}
+
 map::~map() { }
 
 void map::init_c_deque() {
@@ -38,11 +58,17 @@ void map::init_c_deque() {
 
   std::string default_type = "";
 
-  if(xmlparse::get().get_xml_string(
-    name + "/generation/style").compare("userdef") == 0
-  ) {
-    default_type = xmlparse::get().get_xml_string(name+"/generation/default_chunk_type");
-    //this is a userdef map
+  if(!is_pather_gen) {
+
+    if(xmlparse::get().get_xml_string(
+      name + "/generation/style").compare("userdef") == 0
+    ) {
+      default_type = xmlparse::get().get_xml_string(name+"/generation/default_chunk_type");
+      //this is a userdef map
+    }
+  }
+  else {
+    default_type = "default";
   }
 
   for(int j=0; j<y_dim; j++) {
@@ -58,6 +84,10 @@ void map::init_c_deque() {
       c_deque.emplace_back(i, j, up, dn, lf, rt, default_type);
     }
   }
+
+  //request the deque be shrunken to size (note that this is implementation
+  //specific and is not guaranteed to have any effect)
+  c_deque.shrink_to_fit();
 }
 
 void map::init_special_chunks() {
@@ -110,6 +140,24 @@ void map::init_special_chunks() {
       }
     }
   }
+}
+
+//==== pather-guided world generation =========================================
+void map::parse_pather(const pather &p) {
+  bool f = false; 
+
+  //generate the maze structure
+  for(int y=0; y<p.get_r(); y++) {
+    for(int x=0; x<p.get_c(); x++) {
+      if(p.at(x, y) == 0) {
+        c_deque[index(x, y)] = chunk(x, y, f, f, f, f, "default_impassible");
+      }
+      check_barriers(x, y);
+    }
+  }
+
+  //place the gate
+  //TODO TODO: this 
 }
 
 //==== spawn rule parsing =====================================================

@@ -332,7 +332,7 @@ try{
     msg::print_error("couldn't init joysticks subsystem! SDL_Error: " + std::string(SDL_GetError()));
   }
   else {
-    if(SDL_NumJoysticks > 0) {
+    if(SDL_NumJoysticks() > 0) {
       controller = SDL_JoystickOpen(0);
       if(controller == NULL) {
         msg::print_alert("didn't find a controller. (SDL_Error: " + std::string(SDL_GetError()) + ")");

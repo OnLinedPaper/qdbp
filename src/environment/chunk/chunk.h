@@ -80,7 +80,7 @@ public:
   void spawn_closet_entities();
 
   void draw() const;
-  void debug_draw(float x, float y) const;
+  void debug_draw() const;
 
 private:
 

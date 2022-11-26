@@ -14,6 +14,7 @@ public:
   }
 
   void set_map(std::string);
+  void set_map();
   void jump();
   bool try_jump();
 

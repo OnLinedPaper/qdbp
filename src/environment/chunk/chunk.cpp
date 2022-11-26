@@ -7,6 +7,10 @@
 #include "src/entity_handler/entity_handler.h"
 #include "src/utils/rng.h"
 
+//TODO: remove when done with testing
+#include "src/utils/message.h"
+#include "src/text/text.h"
+
 const unsigned char chunk::IN = 0;
 const unsigned char chunk::UP = 1;
 const unsigned char chunk::DN = 2;
@@ -318,7 +322,6 @@ void chunk::spawn_closet_entities() {
 }
 
 void chunk::draw() const {
-
   float x = tlc[0];
   float y = tlc[1];
   //debug_draw(x, y);
@@ -364,7 +367,13 @@ void chunk::draw() const {
 
 }
 
-void chunk::debug_draw(float x, float y) const {
+//warning: for reasons i haven't seen fit to investigate this function is
+//apparently extremely detrimental to framerate
+void chunk::debug_draw() const {
+  int x = tlc[0] - viewport::get().get_tlc_x();
+  int y = tlc[1] - viewport::get().get_tlc_y();
+
+
   SDL_Rect r;
   r.x = x;
   r.y = y;
@@ -376,7 +385,7 @@ void chunk::debug_draw(float x, float y) const {
   SDL_Color c;
   SDL_GetRenderDrawColor(render::get().get_r(), &(c.r), &(c.g), &(c.b), &(c.a));
 
-  SDL_SetRenderDrawColor(render::get().get_r(), 200, 200, 200, 255);
+  SDL_SetRenderDrawColor(render::get().get_r(), 200, 200, in_bounds ? 200 : 0, 255);
 
   //draw rect
   SDL_RenderFillRect(render::get().get_r(), &r);
@@ -401,5 +410,10 @@ void chunk::debug_draw(float x, float y) const {
 
   //restore color
   SDL_SetRenderDrawColor(render::get().get_r(), c.r, c.g, c.b, c.a);
+
+  //print inbounds or not
+  text t(in_bounds ? "in bounds" : "out of bounds", x + 40, y + 40);
+  t.draw();
+
 
 }

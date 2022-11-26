@@ -46,8 +46,8 @@
 <debug_2>
   <background>/debug_heart_</background>
   <dimensions>
-    <x_dim>5</x_dim>
-    <y_dim>5</y_dim>
+    <x_dim>8</x_dim>
+    <y_dim>8</y_dim>
   </dimensions>
   <entity_spawning>
     <closet_0-2_fishbone>

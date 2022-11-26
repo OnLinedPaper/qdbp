@@ -25,6 +25,12 @@ public:
   pather(int, int);
   ~pather();
 
+  int get_r() const { return r; }
+  int get_c() const { return c; }
+  int get_start() const;
+  int get_end() const;
+  float get_density() const;
+
   //make a path, starting from the given int, guaranteed not to intersect
   //with itself.
   //(this can be called multiple times; the paths may overlap if this is
@@ -33,13 +39,25 @@ public:
   //be taken up
   void path(int, float = 0);
 
-  void print();
-  float get_density();
+  void print() const;
 
   //run dijkstra's algorithm to both determine whether a path exists, and the
   //distance of any given point from the shortest path. this information is
   //placed into the graph for later use.
   bool check_path_exists(int);
+
+  //return the array value at a given location
+  //horizontal axist first, vertical axis second
+  int at(int x, int y) const { return a[y][x]; }
+  //TODO: vec2d support?
+
+  //fills a provided vector with information about points of interest on the 
+  //map that are far from the main path.
+  //"rank" is the number of points of interest to find, with the furthest point
+  //regarded as rank 1, second furthest as rank 2, and so on.
+  void get_far_point(std::vector<std::pair<int, std::pair<int, int>>> &, int) const;
+  void get_far_point_v1(std::vector<std::pair<int, std::pair<int, int>>> &, int) const;
+  //TODO TODO TODO TODO: make a nicer datatype for the pair nightmare
 
 private:
 
@@ -61,6 +79,14 @@ private:
 
   //convert all extraneous data to uniform format
   void flatten();
+  //flip all signs from positive to negative
+  void flip_signs();
+
+  //if a path exists, populate the map with data about it
+  void find_path_data();
+
+  //find local maxima
+  bool is_local_max(int, int) const;
 
   pather();
   int **a;
