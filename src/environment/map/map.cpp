@@ -96,7 +96,8 @@ map::~map() { }
 void map::extend_map(const pather &p) {
 
 
-//TODO TODO: rare(?) bug happens occasionally where the map either doesn't jump, the deques aren't switched, or the player doesn't get moved. go pester e_handler about it
+//TODO TODO: don't empty and refill the deque, that's wasteful. use what's in there
+//and figure out what to do with any extra. 
   //first, save some data from the inactive deque before it's deleted
   int shift_size = (*dim_inac)[0] * chunk::length;
 
