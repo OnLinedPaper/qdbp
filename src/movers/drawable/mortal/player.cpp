@@ -95,6 +95,7 @@ void player::boost(bool b) {
 }
 
 void player::toggle_vent() {
+  //TODO: add visual indicator when venting
   //can't vent when there's no heat
   if(heat <= 0) { is_vent = false; return; }
 

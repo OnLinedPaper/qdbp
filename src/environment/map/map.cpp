@@ -7,22 +7,58 @@
 #include "src/utils/message.h"
 #include "src/entity_handler/entity_handler.h"
 
+const unsigned char map::DEQUE_A = 0;
+const unsigned char map::DEQUE_B = 1;
+
+//TODO: completely rework this. this is what inits a brand new map and should
+//do exactly that - should ALSO prepare for extending.
+//make an empty deque to the left and a normal active deque to the right.
 map::map(std::string n) :
+  acti_deque(DEQUE_A),
+  inac_deque(DEQUE_B),
   bg(xmlparse::get().get_xml_string(n + "/background")),
   name(n),
   is_pather_gen(false)
 {
-  x_dim = xmlparse::get().get_xml_int(name + "/dimensions/x_dim");
-  y_dim = xmlparse::get().get_xml_int(name + "/dimensions/y_dim");
+  //deque a is always the first active deque, and b is the first inactive
+  //create the empty b first
+  dim_b = {4, 4};//TODO: make this empty once im comfident i can extend a map properly
+  vec2d temp_dim = {0, 0};
+  dim_inac = &temp_dim;
+  init_c_deque(&c_deque_b, &dim_b);
+  dim_inac = &dim_b;
+  c_deque_inac = &c_deque_b;
+
+  //now get the dimensions for a
+  dim_a[0] = xmlparse::get().get_xml_int(name + "/dimensions/x_dim");
+  dim_a[1] = xmlparse::get().get_xml_int(name + "/dimensions/y_dim");
+  dim_acti = &dim_a;
+
   start_chunk = vec2d(
     xmlparse::get().get_xml_int(name + "/start_chunk/x_chunk"),
     xmlparse::get().get_xml_int(name + "/start_chunk/y_chunk")
   );
+    end_chunk = vec2d(
+    xmlparse::get().get_xml_int(name + "/end_chunk/x_chunk"),
+    xmlparse::get().get_xml_int(name + "/end_chunk/y_chunk")
+  );
+  
 
   validate();
 
-  //init c_deque, now that we have dims
-  init_c_deque();
+  //go init the new active map
+  init_c_deque(&c_deque_a, &dim_a);
+  c_deque = &c_deque_a;
+
+  //check the left size border of the active deque for borders between it and
+  //the inactive deque
+  for(int i=0; i<(*dim_acti)[1]; i++) {
+    check_barriers(0, i);
+  }
+
+  //set the sever point - the spot between the deques
+  sever_point = chunk::length * (*dim_inac)[0];
+
   //initiate any special chunks
   init_special_chunks();
   //init the spawning rules for each chunk
@@ -30,13 +66,16 @@ map::map(std::string n) :
 }
 
 map::map(const pather &p) :
+  acti_deque(DEQUE_A),
   bg("/debug_star_"),
   name(""),
   is_pather_gen(true)
 {
-  x_dim = p.get_c();
-  y_dim = p.get_r();
+  dim_a[0] = p.get_c();
+  dim_a[1] = p.get_r();
   start_chunk = vec2d(0, p.get_start());
+  end_chunk = vec2d(dim_a[0]-1, p.get_end());
+
 
   validate(); //TODO: decide if this is necessary
 
@@ -50,6 +89,62 @@ map::map(const pather &p) :
 
 map::~map() { }
 
+void map::flip_active_deque() {
+  if(acti_deque == DEQUE_A) {
+
+    acti_deque = DEQUE_B;
+    inac_deque = DEQUE_A;
+
+    c_deque = &c_deque_b;
+    dim_acti = &dim_b;
+
+    c_deque_inac = &c_deque_a;
+    dim_inac = &dim_a;
+  }
+  else if (acti_deque == DEQUE_B) {
+
+    acti_deque = DEQUE_A;
+    inac_deque = DEQUE_B;
+
+    c_deque = &c_deque_a;
+    dim_acti = &dim_a;
+
+    c_deque_inac = &c_deque_b;
+    dim_inac = &dim_b;
+
+  }
+  else {
+    throw "tried to set a nonexistent deque as active!";
+  }
+}
+
+//given a deque and a set of dimensions, initialize the deque
+//note that this CURRENTLY EXPECTS THE CHUNK TO BE THE ACTIVE ONE
+void map::init_c_deque(std::deque<chunk> *c_d, vec2d *d) {
+  int up, dn, lf, rt;
+  up = dn = lf = rt = 0;
+
+  std::string default_type = "default";
+  
+  for(int j=0; j<(*d)[1]; j++) {
+    for(int i=0; i<(*d)[0]; i++) {
+      up = dn = lf = rt = 0;
+      //check for barriers
+      if(i == 0) { lf = 1; }
+      if(i == (*d)[0] - 1) { rt = 1; }
+      if(j == 0) { up = 1; }
+      if(j == (*d)[1] - 1) { dn = 1; }
+
+
+      (*c_d).emplace_back(i+(*dim_inac)[0], j, up, dn, lf, rt, default_type);
+    }
+  }
+
+  //request the deque be shrunken to size (note that this is implementation
+  //specific and is not guaranteed to have any effect)
+  (*c_d).shrink_to_fit(); 
+}
+
 void map::init_c_deque() {
   //reserve space
   //c_map.reserve(x_dim * y_dim);
@@ -57,6 +152,9 @@ void map::init_c_deque() {
   up = dn = lf = rt = 0;
 
   std::string default_type = "";
+
+  flip_active_deque();
+  (*c_deque).clear();
 
   if(!is_pather_gen) {
 
@@ -71,25 +169,26 @@ void map::init_c_deque() {
     default_type = "default";
   }
 
-  for(int j=0; j<y_dim; j++) {
-    for(int i=0; i<x_dim; i++) {
+  for(int j=0; j<(*dim_acti)[1]; j++) {
+    for(int i=0; i<(*dim_acti)[0]; i++) {
       up = dn = lf = rt = 0;
       //check for barriers
       if(i == 0) { lf = 1; }
-      if(i == x_dim - 1) { rt = 1; }
+      if(i == (*dim_acti)[0] - 1) { rt = 1; }
       if(j == 0) { up = 1; }
-      if(j == y_dim - 1) { dn = 1; }
+      if(j == (*dim_acti)[1] - 1) { dn = 1; }
 
 
-      c_deque.emplace_back(i, j, up, dn, lf, rt, default_type);
+      (*c_deque).emplace_back(i, j, up, dn, lf, rt, default_type);
     }
   }
 
   //request the deque be shrunken to size (note that this is implementation
   //specific and is not guaranteed to have any effect)
-  c_deque.shrink_to_fit();
+  (*c_deque).shrink_to_fit();
 }
 
+//EXPECTS TO BE CALLED ON THE ACTIVE DEQUE
 void map::init_special_chunks() {
   //make path, for convenience's sake
   std::string s_path = name + "/special_chunks";
@@ -117,23 +216,23 @@ void map::init_special_chunks() {
 
     std::vector<std::string> traits = xmlparse::get().get_all_child_tags(s_path + "/" + s_c_name);
 
-    if(x < 0 || x >= x_dim || y < 0 || y >= y_dim) {
+    if(x < 0 || x >= (*dim_acti)[0] || y < 0 || y >= (*dim_acti)[1]) {
       //this chunk isn't valid - skip it
       msg::print_warn("bad coordinate for special chunk " + s_path + "/" +
         s_c_name + " (" + std::to_string(x) + "," + std::to_string(y) + ")");
-      msg::print_alert("valid x coords: (0 to " + std::to_string(x_dim-1) +
-        "); valid y coords: (0 to " + std::to_string(y_dim-1) + ")");
+      msg::print_alert("valid x coords: (0 to " + std::to_string((*dim_acti)[0]-1) +
+        "); valid y coords: (0 to " + std::to_string((*dim_acti)[1]-1) + ")");
     }
     else {
       //replace a chunk with this new one
-      c_deque[index(x, y)] = chunk(x, y, f, f, f, f, t);
+      (*c_deque)[index(x, y, c_deque, dim_acti)] = chunk(x + (*dim_inac)[0], y, f, f, f, f, t);
 
       //check the barriers
       check_barriers(x, y);
 
       //add the gate
       if(std::find(traits.begin(), traits.end(), "jump_gate") != traits.end()) {
-        c_deque[index(x, y)].add_gate(
+        (*c_deque)[index(x, y, c_deque, dim_acti)].add_gate(
           xmlparse::get().get_xml_string(s_path + "/" + s_c_name + "/jump_gate/destination"),
           xmlparse::get().get_xml_string(s_path + "/" + s_c_name + "/jump_gate/body")
         );
@@ -150,14 +249,18 @@ void map::parse_pather(const pather &p) {
   for(int y=0; y<p.get_r(); y++) {
     for(int x=0; x<p.get_c(); x++) {
       if(p.at(x, y) == 0) {
-        c_deque[index(x, y)] = chunk(x, y, f, f, f, f, "default_impassible");
+        (*c_deque)[index(x, y, c_deque, dim_acti)] = chunk(x, y, f, f, f, f, "default_impassible");
       }
       check_barriers(x, y);
     }
   }
 
-  //place the gate
-  //TODO TODO: this 
+  //place the gate - always at the "point of greatest interest", which is
+  //to say, the point furthest from the main path
+  //TODO: eventually, convert this from an actual jump gate to just the keygate
+  std::vector<p_o_i> points;
+  p.get_far_point(points, 1);
+  (*c_deque)[index(points[0].x, points[0].y, c_deque, dim_acti)].add_gate("NONE", "debug_gate");
 }
 
 //==== spawn rule parsing =====================================================
@@ -197,17 +300,17 @@ void map::parse_spawn_rules() {
     x = xmlparse::get().get_xml_int(s_path + "/" + s_r_name + "/x_chunk");
     y = xmlparse::get().get_xml_int(s_path + "/" + s_r_name + "/y_chunk");
 
-    if(x < 0 || x >= x_dim || y < 0 || y >= y_dim) {
+    if(x < 0 || x >= (*dim_acti)[0] || y < 0 || y >= (*dim_acti)[1]) {
       //this chunk isn't valid - skip it
       msg::print_warn("bad chunk coordinate for spawn rule " + s_path + "/" +
         s_r_name + " (" + std::to_string(x) + "," + std::to_string(y) + ")");
-      msg::print_alert("valid x coords: (0 to " + std::to_string(x_dim-1) +
-        "); valid y coords: (0 to " + std::to_string(y_dim-1) + ")");
+      msg::print_alert("valid x coords: (0 to " + std::to_string((*dim_acti)[0]-1) +
+        "); valid y coords: (0 to " + std::to_string((*dim_acti)[1]-1) + ")");
       msg::print_alert("skipping rule " + s_path + "/" + s_r_name);
       continue;
     }
 
-    if(!c_deque[index(x, y)].get_in_bounds()) {
+    if(!(*c_deque)[index(x, y, c_deque, dim_acti)].get_in_bounds()) {
       //this chunk isn't in bounds
       msg::print_warn("chunk for spawn rule " + s_path + "/" +
         s_r_name + " (" + std::to_string(x) + "," + std::to_string(y) + 
@@ -441,7 +544,7 @@ void map::parse_spawn_rules() {
 
 //---- add rule to chunk ------------------------------------------------------
 
-    c_deque[index(x, y)].add_spawn_rule(
+    (*c_deque)[index(x, y, c_deque, dim_acti)].add_spawn_rule(
       (!spawn_type.compare("initial") ? chunk::INITIAL : chunk::CLOSET),
       max_count,
       total_count,
@@ -461,16 +564,17 @@ void map::parse_spawn_rules() {
 
 //=============================================================================
 
+//ALWAYS ASSUMES THIS IS BEING CALLED ON THE ACTIVE DEQUE
 void map::check_barriers(int x, int y) {
   //a change has been made to this chunk - check all nearby chunks
   //and add or remove barriers as needed
 
   //first, check to see if this is on the edge of the map
   //if it's in bounds, add a barrier - else, don't
-  if(x == 0) { c_deque[index(x, y)].set_bound_b_lf(); }
-  if(y == 0) { c_deque[index(x, y)].set_bound_b_up(); }
-  if(x == x_dim-1) { c_deque[index(x, y)].set_bound_b_rt(); }
-  if(y == y_dim-1) { c_deque[index(x, y)].set_bound_b_dn(); }
+  if(x == 0) { (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_lf(); }
+  if(y == 0) { (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_up(); }
+  if(x == (*dim_acti)[0]-1) { (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_rt(); }
+  if(y == (*dim_acti)[1]-1) { (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_dn(); }
 
   //-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
   //next, check to see if existing chunks need their barriers modified
@@ -480,91 +584,108 @@ void map::check_barriers(int x, int y) {
 
   //check left chunk
   if(x > 0) {
-    if(c_deque[index(x, y)].get_in_bounds() ^ c_deque[index(x-1, y)].get_in_bounds()) {
+    if((*c_deque)[index(x, y, c_deque, dim_acti)].get_in_bounds() ^ (*c_deque)[index(x-1, y, c_deque, dim_acti)].get_in_bounds()) {
       //they are not the same
-      c_deque[index(x, y)].set_bound_b_lf();
-      c_deque[index(x-1, y)].set_bound_b_rt();
+      (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_lf();
+      (*c_deque)[index(x-1, y, c_deque, dim_acti)].set_bound_b_rt();
 
     }
     else {
       //they are the same - remove barriers
-      c_deque[index(x, y)].set_b_lf(false);
-      c_deque[index(x-1, y)].set_b_rt(false);
+      (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_lf(false);
+      (*c_deque)[index(x-1, y, c_deque, dim_acti)].set_b_rt(false);
     }
   }
 
   //-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
   //check right chunk
-  if(x < x_dim - 1) {
+  if(x < (*dim_acti)[0] - 1) {
     //check right chunk
-    if(c_deque[index(x, y)].get_in_bounds() ^ c_deque[index(x+1, y)].get_in_bounds()) {
+    if((*c_deque)[index(x, y, c_deque, dim_acti)].get_in_bounds() ^ (*c_deque)[index(x+1, y, c_deque, dim_acti)].get_in_bounds()) {
       //they are not the same
-      c_deque[index(x, y)].set_bound_b_rt();
-      c_deque[index(x+1, y)].set_bound_b_lf();
+      (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_rt();
+      (*c_deque)[index(x+1, y, c_deque, dim_acti)].set_bound_b_lf();
 
     }
     else {
       //they are the same - remove barriers
-      c_deque[index(x, y)].set_b_rt(false);
-      c_deque[index(x+1, y)].set_b_lf(false);
+      (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_rt(false);
+      (*c_deque)[index(x+1, y, c_deque, dim_acti)].set_b_lf(false);
     }
   }
 
   //-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
   //check up chunk
   if(y > 0) {
-    if(c_deque[index(x, y)].get_in_bounds() ^ c_deque[index(x, y-1)].get_in_bounds()) {
+    if((*c_deque)[index(x, y, c_deque, dim_acti)].get_in_bounds() ^ (*c_deque)[index(x, y-1, c_deque, dim_acti)].get_in_bounds()) {
       //they are not the same
-      c_deque[index(x, y)].set_bound_b_up();
-      c_deque[index(x, y-1)].set_bound_b_dn();
+      (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_up();
+      (*c_deque)[index(x, y-1, c_deque, dim_acti)].set_bound_b_dn();
 
     }
     else {
       //they are the same - remove barriers
-      c_deque[index(x, y)].set_b_up(false);
-      c_deque[index(x, y-1)].set_b_dn(false);
+      (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_up(false);
+      (*c_deque)[index(x, y-1, c_deque, dim_acti)].set_b_dn(false);
     }
   }
 
   //-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
   //check down chunk
-  if(y < y_dim - 1) {
+  if(y < (*dim_acti)[1] - 1) {
     //check right chunk
-    if(c_deque[index(x, y)].get_in_bounds() ^ c_deque[index(x, y+1)].get_in_bounds()) {
+    if((*c_deque)[index(x, y, c_deque, dim_acti)].get_in_bounds() ^ (*c_deque)[index(x, y+1, c_deque, dim_acti)].get_in_bounds()) {
       //they are not the same
-      c_deque[index(x, y)].set_bound_b_dn();
-      c_deque[index(x, y+1)].set_bound_b_up();
+      (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_dn();
+      (*c_deque)[index(x, y+1, c_deque, dim_acti)].set_bound_b_up();
 
     }
     else {
       //they are the same - remove barriers
-      c_deque[index(x, y)].set_b_dn(false);
-      c_deque[index(x, y+1)].set_b_up(false);
+      (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_dn(false);
+      (*c_deque)[index(x, y+1, c_deque, dim_acti)].set_b_up(false);
     }
   }
 
 
   //-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+  //SPECIAL - check leftmost wall against the inactive deque
+  if(x == 0) {
+    //check if there actually is a chunk to the left (not guaranteed as deques might be different sizes)
+    if (index(x, y, c_deque_inac, dim_inac) != SIZE_MAX) {
+      if ((*c_deque)[index(x, y, c_deque, dim_acti)].get_in_bounds() ^ (*c_deque_inac)[index((int)(*dim_inac)[0]-1, (int)y, c_deque_inac, dim_inac)].get_in_bounds())
+      {
+        (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_lf();
+        (*c_deque_inac)[index((int)((*dim_inac)[0]-1), (int)y, c_deque_inac, dim_inac)].set_bound_b_rt();
+      }
+      else {
+        (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_lf(false);
+        (*c_deque_inac)[index((int)(*dim_inac)[0]-1, (int)y, c_deque_inac, dim_inac)].set_b_rt(false);
+      }
+    }
+  }
+
+  //-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 }
 
 const vec2d map::get_start_pos() const {
-  //check if cunk is in bounds, or find one if it isn't
+  //check if chunk is in bounds, or find one if it isn't
 
-  if(c_deque[index(start_chunk[0], start_chunk[1])].get_in_bounds()) {
+  if((*c_deque)[index(start_chunk[0], start_chunk[1], c_deque, dim_acti)].get_in_bounds()) {
     //it's in bounds
-    return(c_deque[index(start_chunk[0], start_chunk[1])].get_midpoint());
+    return((*c_deque)[index(start_chunk[0], start_chunk[1], c_deque, dim_acti)].get_midpoint());
   }
   else {
     //it's NOT in bounds
     msg::print_warn("start chunk (" + std::to_string((int)start_chunk[0]) + "," + std::to_string((int)start_chunk[1]) + ") is out of bounds");
 
     //find one that's in bounds
-    for(int j=0; j<y_dim; j++) {
-      for(int i=0; i<x_dim; i++) {
-        if(c_deque[index(i, j)].get_in_bounds()) {
+    for(int j=0; j<(*dim_acti)[1]; j++) {
+      for(int i=0; i<(*dim_acti)[0]; i++) {
+        if((*c_deque)[index(i, j, c_deque, dim_acti)].get_in_bounds()) {
           //this chunk is in bounds
 
-          return(c_deque[index(i, j)].get_midpoint());
+          return((*c_deque)[index(i, j, c_deque, dim_acti)].get_midpoint());
         }
       }
     }
@@ -576,11 +697,66 @@ const vec2d map::get_start_pos() const {
   }
 }
 
+//convert a set of game coordinates to a set of map chunk coordinates
+//this does NOT PERFORM ERROR CHECKING. if given a coordinate system
+//outside the map, it will still return an index.
 const vec2d map::convert_chunk_index(const vec2d &pos) const {
   return(vec2d(int(pos[0] / chunk::length), int(pos[1] / chunk::length)));
 }
 
-unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) const {
+//given an index vector, determine the deque it's in
+std::deque<chunk> * map::deque_from_index(const vec2d &i) {
+  if(i[0] < (*dim_inac)[0]) { return c_deque_inac; }
+  else { return c_deque; } 
+}
+
+//given an index vector, get the dimensions of the deque it's in
+vec2d * map::dim_from_index(const vec2d &i) {
+  if(i[0] < (*dim_inac)[0]) { return dim_inac; }
+  else { return dim_acti; } 
+}
+
+//given a chunk index, truncate it to the chunk it's in
+void map::truncate_chunk_index(vec2d &i) {
+  if(i[0] < (*dim_inac)[0]) { return; }
+  else {
+    //shift this to the left
+    i[0] -= (*dim_inac)[0];
+  }
+}
+
+//convert a set of chunk coordinates to an actual chunk
+//TODO: sanity check and return NULL if it doesn't exist
+chunk & map::get_chunk(const vec2d &coord) {
+  //determine which side of the map this coordinate is on
+  if(coord[0] < (*dim_inac)[0]) {
+    //it's in the inactive deque
+    return((*c_deque_inac)[index(coord[0], coord[1], c_deque_inac, dim_inac)]);
+  }  
+  else {
+    //it's in the active deque
+    return (*c_deque)[index(coord[0], coord[1], c_deque, dim_acti)]; 
+  }
+}
+
+//given an x position, a y position, a deque, and its dimensions, convert
+//the position pair into an actual index where the chunk can be located.
+size_t map::index(int x, int y, std::deque<chunk> *c_d, vec2d *d) const {
+  //sanity checking
+  if(x >= (*d)[0] || y >= (*d)[1] || x < 0 || y < 0) { return SIZE_MAX; }
+
+  return (x + (*d)[0] * y);
+}
+size_t map::index(float x, float y, std::deque<chunk> *c_d, vec2d *d) const {
+  return index((int)x, (int)y, c_d, d);
+}
+size_t map::index(const vec2d &v, std::deque<chunk> *c_d, vec2d *d) const {
+  return index(v[0], v[1], c_d, d);
+}
+
+//TODO: refactor for 2 maps
+unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) {
+
   //check the last chunk that was occupied, and return the position
   //relative to that chunk
 
@@ -588,15 +764,22 @@ unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) const {
   //it was possible to leave the map through a chunk that has no barriers
   //if the corner was hit at EXACTLY the right angle to travel into the new
   //chunk
-  vec2d index_pos = convert_chunk_index(prev_pos);
+  vec2d old_chunk = convert_chunk_index(prev_pos);
+  std::deque<chunk> * old_chunk_deque = deque_from_index(old_chunk);
+  vec2d * old_chunk_deque_dim = dim_from_index(old_chunk); 
+  truncate_chunk_index(old_chunk);
+
   vec2d new_chunk = convert_chunk_index(curr_pos);
+  std::deque<chunk> * new_chunk_deque = deque_from_index(new_chunk);
+  vec2d * new_chunk_deque_dim = dim_from_index(new_chunk); 
+  truncate_chunk_index(new_chunk);
 
   //it's a valid chunk
-  unsigned char r = c_deque[
-    index(index_pos[0], index_pos[1])
+  unsigned char r = (*old_chunk_deque)[
+    index(old_chunk[0], old_chunk[1], old_chunk_deque, old_chunk_deque_dim)
   ].chunk_rebuff(curr_pos);
   if(!r) {
-    //the new chunk is not blocked by barriers
+    //the new chunk is not blocked by barriers, or is this same chunk
     //check if it's in bounds
 
     //first, check to see if the "index" is even in the deque: lag spikes
@@ -604,19 +787,21 @@ unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) const {
     //past the end of the deque
     //next, once we're sure the chunk exists, check to see if it's "in bounds"
     if(
-      (index(new_chunk[0], new_chunk[1]) < 0) ||
-      (index(new_chunk[0], new_chunk[1]) > c_deque.size()) ||
-      (c_deque[index(new_chunk[0], new_chunk[1])].get_in_bounds() == false)
+      (index(new_chunk[0], new_chunk[1], new_chunk_deque, new_chunk_deque_dim) == SIZE_MAX)
     ) {
       //this is out of bounds - force a rebuff
-      r = c_deque[index(
-          index_pos[0],
-          index_pos[1]
+      r = (*old_chunk_deque)[index(
+          old_chunk[0],
+          old_chunk[1],
+          old_chunk_deque,
+          old_chunk_deque_dim
         )].chunk_rebuff_forced(curr_pos);
     }
   }
 
   return (r);
+
+return false;
 }
 
 bool map::check_gate(const vec2d &pos) {
@@ -636,9 +821,9 @@ std::string map::get_gate_dest(const vec2d &pos) {
 //exist. note that this is for spawning hard-coded entities; soft-coded ones
 //such as monster closets will be managed later in the update function.
 void map::spawn_initial_entities() {
-  for(int i=0; i<y_dim * x_dim; i++) {
+  for(int i=0; i<(*dim_acti)[1] * (*dim_acti)[0]; i++) {
     //allow each chunk to spawn its entities
-    c_deque[i].spawn_initial_entities();
+    (*c_deque)[i].spawn_initial_entities();
   }
 }
 
@@ -646,9 +831,9 @@ void map::spawn_initial_entities() {
 //whatever xml rules exist. these are the soft-coded monster closet entities 
 //that are spawned once the player is interacting with the map.
 void map::spawn_closet_entities() {
-  for(int i=0; i<y_dim * x_dim; i++) {
+  for(int i=0; i<(*dim_acti)[1] * (*dim_acti)[0]; i++) {
     //allow each chunk to spawn its entities
-    c_deque[i].spawn_closet_entities();
+    (*c_deque)[i].spawn_closet_entities();
   }
 }
 
@@ -657,9 +842,15 @@ void map::draw() const {
   bg.draw();
 
   //delegate this to each chunk's draw
-  for(int j=0; j<y_dim; j++) {
-    for(int i=0; i<x_dim; i++) {
-      c_deque[index(i, j)].draw();
+  for(int j=0; j<(*dim_acti)[1]; j++) {
+    for(int i=0; i<(*dim_acti)[0]; i++) {
+      (*c_deque)[index(i, j, c_deque, dim_acti)].draw();
+    }
+  }
+  //same here
+  for(int j=0; j<(*dim_inac)[1]; j++) {
+    for(int i=0; i<(*dim_inac)[0]; i++) {
+      (*c_deque_inac)[index(i, j, c_deque_inac, dim_inac)].draw();
     }
   }
 }
@@ -667,31 +858,32 @@ void map::draw() const {
 void map::validate() {
   std::ostringstream errors;
 
-  if(x_dim <=0 ) {
-    msg::print_warn("bad map dimension; x_dim must be > 0");
+  if((*dim_acti)[0] <=0 ) {
+    msg::print_warn("bad map dimension; (*dim_acti)[0] must be > 0");
     msg::print_alert("setting to 1");
-    x_dim = 1;
+    (*dim_acti)[0] = 1;
   }
-  if(y_dim <= 0) {
-    msg::print_warn("bad map dimension; y_dim must be > 0");
+  if((*dim_acti)[1] <= 0) {
+    msg::print_warn("bad map dimension; (*dim_acti)[1] must be > 0");
     msg::print_alert("setting to 1");
-    y_dim = 1;
+    (*dim_acti)[1] = 1;
   }
-  if(start_chunk[0] <= -1 || start_chunk[0] >= x_dim) {
+  if(start_chunk[0] <= -1 || start_chunk[0] >= (*dim_acti)[0]) {
     msg::print_warn("bad start position; x_chunk " +
     std::to_string(start_chunk[0]) +
     " is not in map - range is 0 to " +
-    std::to_string((x_dim - 1)));
+    std::to_string(((*dim_acti)[0] - 1)));
     msg::print_alert("setting to 0");
     start_chunk[0] = 0;
   }
-  if(start_chunk[1] <= -1 || start_chunk[1] >= y_dim) {
+  if(start_chunk[1] <= -1 || start_chunk[1] >= (*dim_acti)[1]) {
     msg::print_warn("bad start position; y_chunk " +
     std::to_string(start_chunk[1]) +
     " is not in map - range is 0 to " +
-    std::to_string((y_dim - 1)));
+    std::to_string(((*dim_acti)[1] - 1)));
     msg::print_alert("setting to 0");
     start_chunk[1] = 0;
   }
 
 }
+

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <float.h>
+#include <string>
 
 class vec2d {
   //a 2d vector class, for position and velocity
@@ -60,6 +61,7 @@ public:
   float angle_rad() const;
   float angle_deg() const;
 
+  std::string to_string() const;
 
 private:
   float x;

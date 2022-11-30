@@ -163,6 +163,10 @@ float vec2d::angle_deg() const {
 //-----------------------------------------------------------------------------
 //and then there's this one just hangin' around down here
 
+std::string vec2d::to_string() const {
+  return("{" + std::to_string(x) + ", " + std::to_string(y) + "}");
+}
+
 std::ostream &operator<<(std::ostream &output, const vec2d &v) {
   output << "(" << v[0] << ", " << v[1] << ")";
   return output;

@@ -30,6 +30,8 @@ try{
 
 //- debug stuff  -    -    -    -    -    -    -    -    -    -    -    -    -        
 
+  text t1("pos:", 10, 30);
+  text t1a("", 280, 30);
   text t6("heat:", 10, 30);
   text t6a("", 280, 30);
   text t7("overheat:", 10, 60);
@@ -194,6 +196,8 @@ try{
 //---- DRAW DEBUG STUFF here --------------------------------------------------
 
 
+      t1a.set_msg(e_handler::get().get_plr_pos().to_string());
+/*
       t6a.set_msg(std::to_string(e_handler::get().get_plr_heat_frac()));
       t7a.set_msg(std::to_string(e_handler::get().get_plr_overheat_frac()));
       t8a.set_msg(std::to_string(e_handler::get().get_plr_is_overheat()));
@@ -222,24 +226,10 @@ try{
       t13a.draw();
       t14.draw();
       t14a.draw();
-
+*/
+      t1.draw();
+      t1a.draw();
     
-      //TODO: make "compound image" that renders in the background of these
-      //will evnetually need a wireframe on top, an alpha channel, and a background "scanline" thing
-      //for now, just get alpha overlay working
-      static int debug_target_spin = 0;
-//      image_handler::get().draw_tile("/pink_scanlines", 0.5, debug_target_spin, 0);
-      image_handler::get().draw_v2("/debug_target", 1200, 200, debug_target_spin++, false, 0, {255, 255, 255}, 1);
-      image_handler::get().draw_v2("/debug_target", 1200, 200, debug_target_spin, true, 0, {255, 255, 255}, 1);
-      image_handler::get().draw_v2("/debug_target", 1920, 600, debug_target_spin, false, 0, {255, 200, 200}, 1, "/pink_scanlines", 0.1, debug_target_spin, 0, 1);
-      image_handler::get().draw_v2("/debug_target", 1400, 600, debug_target_spin, true, 0, {255, 255, 255}, 1, "/pink_scanlines", 0.1, debug_target_spin, 0, 1);
-      //image_handler::get().draw_v2("/debug_target", 1400, 600, 0, true, 0, {255, 255, 255}, 1);
-      //image_handler::get().draw_v2("/pink_scanlines", 0, 0, 0, true, 0, {255, 255, 255}, 1);
-      //image_handler::get().draw_v2("/pink_scanlines", 960, 540, 0, false, 0, {255, 255, 255}, 1);
-
-      //l1.set_start(l1.get_start() + vec2d(0, .4));
-      //l1.set_end(l1.get_end() + vec2d(0, .4));
-
 //-----------------------------------------------------------------------------
 
       SDL_RenderPresent(render::get().get_r());
@@ -326,7 +316,7 @@ try{
   weapon::preload_weapon_data();
 
   //create the first map and load the player into it
-  map_h::get().set_map("/" + xmlparse::get().get_xml_string("/first_map"));
+  map_h::get().init_map("/" + xmlparse::get().get_xml_string("/first_map"));
 
   if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
     msg::print_error("couldn't init joysticks subsystem! SDL_Error: " + std::string(SDL_GetError()));

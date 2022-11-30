@@ -1,11 +1,28 @@
 #include "pather.h"
 #include "src/utils/rng.h"
+//#include "rng.cpp" //for local testing
 #include <iostream>
 #include <cmath>
 #include <bits/stdc++.h>
 #include <vector>
 #include <utility>
 #include <string>
+
+
+//prioritizes rank, then rightmost point, then bottommost point
+bool p_o_i::operator<(const p_o_i &rhs) const {
+  if(rank < rhs.rank) { return true; }
+  else if (rank > rhs.rank) { return false; }
+  else {
+    if(x < rhs.x) { return true; }
+    else if (x > rhs.x) { return false; }
+    else {
+      if(y < rhs.y) { return true; }
+      else { return false; }
+    }
+  }
+}
+
 
 pather::~pather() {
   for(int i=0; i<r; i++) {
@@ -661,7 +678,7 @@ void pather::find_path_data() {
 }
 
 //=============================================================================
-void pather::get_far_point(std::vector<std::pair<int, std::pair<int, int>>> & vals, int rank) const {
+void pather::get_far_point(std::vector<p_o_i> & vals, int rank) const {
   get_far_point_v1(vals, rank);
 }
 
@@ -674,23 +691,24 @@ void pather::get_far_point(std::vector<std::pair<int, std::pair<int, int>>> & va
 //given priority.
 //a returned rank of -1 means there were not enough local maxima to satisfy
 //the given number of ranks. 
-void pather::get_far_point_v1(std::vector<std::pair<int, std::pair<int, int>>> & vals, int rank) const {
+void pather::get_far_point_v1(std::vector<p_o_i> & vals, int rank) const {
 //  std::pair<int, std::pair<int, int>> vals[rank];
 
   //for safety, init values to 0
   for(int i=0; i<rank; i++) {
-    vals.push_back({-1, {0, 0}});
+    vals.push_back({});
   }
 
   //find local maxima
   for(int i=0; i<r; i++) {
     for(int j=0; j<c; j++) {
-      if(a[i][j] > 0 && a[i][j] < INT_MAX && is_local_max(i, j) && a[i][j] >= vals[0].first) {
-        vals[0].first = a[i][j]; 
-        vals[0].second = {j, i};
+      if(a[i][j] > 0 && a[i][j] < INT_MAX && is_local_max(i, j) && a[i][j] >= vals[0].rank) {
+        vals[0].rank = a[i][j]; 
+        vals[0].x = j;
+        vals[0].y = i;
         std::sort(vals.begin(), vals.end());
-        std::cout << "added (" << j << "," << i << "):" << a[i][j] << " and sorted: ";
-        for(auto v : vals) { std::cout << "(" << v.second.first << "," << v.second.second << "):" << v.first << " "; }
+//        std::cout << "added (" << j << "," << i << "):" << a[i][j] << " and sorted: ";
+  //      for(auto v : vals) { std::cout << "(" << v.x << "," << v.y << "):" << v.rank << " "; }
         std::cout << std::endl;
       }
     }

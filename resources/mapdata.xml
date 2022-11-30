@@ -97,6 +97,10 @@
     <x_chunk>0</x_chunk>
     <y_chunk>0</y_chunk>
   </start_chunk>
+  <end_chunk>
+    <x_chunk>7</x_chunk>
+    <y_chunk>4</y_chunk>
+  </end_chunk>
 </debug_2>
 <test1>
   <background>/debug_heart_</background>

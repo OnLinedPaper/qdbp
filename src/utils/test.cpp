@@ -18,7 +18,7 @@ int main(void) {
 
   p->print();
 
-  std::vector<std::pair<int, std::pair<int, int>>> res;
+  std::vector<p_o_i> res;
   p->get_far_point(res, std::sqrt(rows*cols) / 2);
 
   delete p;

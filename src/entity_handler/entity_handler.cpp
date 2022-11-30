@@ -83,6 +83,46 @@ void e_handler::finish_map_change() {
   }
 }
 
+//if this is called, the map handler has decided it's time to extend the
+//current map. this is a complicated process that removes the left half
+//of the map and appends a new right half to the map. 
+//first, destroy all entites in the left half of the map, as specified
+//by the given coordinates.
+void e_handler::prep_for_map_extend(double sever_point) {
+  //everything to the left of the "sever point" was left behind in the
+  //section of map that's just been discarded. if it's still back there,
+  //destroy it now.
+
+  for(weapon *w : shot_all) {
+    if(w->get_pos()[0] < sever_point) { w->set_active(false); }
+  }
+  for(mortal *m : npe_all) {
+    if(!m->get_follow_thru_portals() 
+          && m->is_active() 
+          && m->get_pos()[0] < sever_point
+    ) {
+      m->set_active(false);
+      entity_count_by_id[m->get_id()] -= 1;
+    }
+  }
+}
+
+void e_handler::finish_map_extend(double sever_point) {
+  //the left half of the map is gone, and the right half has been created.
+  //the map's zero point is shifting to the right, and thus every entity
+  //must be shifted to the left an equal amount to maintain its relative
+  //position in the surviving map space.
+
+  for(weapon *w : shot_all) {
+    if(w->is_active()) { w->shift_x(sever_point * -1); }
+  }
+  for(mortal *m : npe_all) {
+    if(m->is_active()) { m->shift_x(sever_point * -1); }
+  }
+  
+  plr->shift_x(sever_point * -1);
+}
+
 int e_handler::get_entity_count_by_id(const std::string &id) {
   if(entity_count_by_id.find(id) 
       == entity_count_by_id.end()) {

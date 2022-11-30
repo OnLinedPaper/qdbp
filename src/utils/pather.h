@@ -3,7 +3,18 @@
 
 #include <vector>
 
+//point of interest
+struct p_o_i {
+  p_o_i() : rank(-1), x(0), y(0) { }
+  p_o_i(int ri, int xi, int yi) : rank(ri), x(xi), y(yi) { }
+  int rank;
+  int x, y;
+
+  bool operator<(const p_o_i &rhs) const;
+};
+
 /*
+TODO: rewrite this
 an experimental qdbp environment design is a grid of chunks, some passable
 and some impassable. such a grid is split into strips, blocks, or other 
 shapes, and it is up to the player to construct a viable path through them.
@@ -55,9 +66,8 @@ public:
   //map that are far from the main path.
   //"rank" is the number of points of interest to find, with the furthest point
   //regarded as rank 1, second furthest as rank 2, and so on.
-  void get_far_point(std::vector<std::pair<int, std::pair<int, int>>> &, int) const;
-  void get_far_point_v1(std::vector<std::pair<int, std::pair<int, int>>> &, int) const;
-  //TODO TODO TODO TODO: make a nicer datatype for the pair nightmare
+  void get_far_point(std::vector<p_o_i> &, int) const;
+  void get_far_point_v1(std::vector<p_o_i> &, int) const;
 
 private:
 

@@ -20,6 +20,8 @@ public:
 
   void set_x(float x) { pos[0] = x; }
   void set_y(float y) { pos[1] = y; }
+  void shift_x(float x) { pos[0] += x; }
+  void shift_y(float y) { pos[1] += y; }
   const vec2d get_vel() const { return vel; }
   void set_vel(vec2d v) { vel = v; }
   void set_vel(float x, float y) { vel[0] = x; vel[1] = y; }

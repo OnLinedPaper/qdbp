@@ -365,6 +365,7 @@ void chunk::draw() const {
     image_handler::get().draw_v2(g_name, x + length/2, y + length/2, 0, 0);
   }
 
+  //debug_draw();
 }
 
 //warning: for reasons i haven't seen fit to investigate this function is
@@ -382,15 +383,15 @@ void chunk::debug_draw() const {
 
 
   //save color
-  SDL_Color c;
-  SDL_GetRenderDrawColor(render::get().get_r(), &(c.r), &(c.g), &(c.b), &(c.a));
+//  SDL_Color c;
+  //SDL_GetRenderDrawColor(render::get().get_r(), &(c.r), &(c.g), &(c.b), &(c.a));
 
-  SDL_SetRenderDrawColor(render::get().get_r(), 200, 200, in_bounds ? 200 : 0, 255);
+  SDL_SetRenderDrawColor(render::get().get_r(), 200, 200, in_bounds ? 200 : 0, 96);
 
   //draw rect
   SDL_RenderFillRect(render::get().get_r(), &r);
-  SDL_SetRenderDrawColor(render::get().get_r(), 64, 255, 64, 255);
-  SDL_RenderDrawRect(render::get().get_r(), &r);
+//  SDL_SetRenderDrawColor(render::get().get_r(), 64, 255, 64, 255);
+  //SDL_RenderDrawRect(render::get().get_r(), &r);
 
   //draw borders
   //for debugging purposes, make border walls red and passable walls green
@@ -409,7 +410,7 @@ void chunk::debug_draw() const {
   }
 
   //restore color
-  SDL_SetRenderDrawColor(render::get().get_r(), c.r, c.g, c.b, c.a);
+//  SDL_SetRenderDrawColor(render::get().get_r(), c.r, c.g, c.b, c.a);
 
   //print inbounds or not
   text t(in_bounds ? "in bounds" : "out of bounds", x + 40, y + 40);
