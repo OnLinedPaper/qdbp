@@ -43,7 +43,7 @@ public:
 
   int get_end() { return end_chunk[1]; }
 
-  void shift_bg(const vec2d &v) { bg.shift_offset(-2000, 0); }
+  void shift_bg(const vec2d &v) { bg.shift_offset(v[0], v[1]); }
 
 private:
   vec2d dim_a;

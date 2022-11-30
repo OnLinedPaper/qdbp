@@ -95,6 +95,8 @@ map::~map() { }
 //right side of the map
 void map::extend_map(const pather &p) {
 
+
+//TODO TODO: rare(?) bug happens occasionally where the map either doesn't jump, the deques aren't switched, or the player doesn't get moved. go pester e_handler about it
   //first, save some data from the inactive deque before it's deleted
   int shift_size = (*dim_inac)[0] * chunk::length;
 
@@ -854,7 +856,6 @@ return false;
 bool map::check_gate(const vec2d &pos) {
   //check if there's a gate in this chunk
   if(get_chunk(convert_chunk_index(pos)).get_has_gate()) {
-std::cout << "has a gate! checking distance..." <<std::endl;
     //check if we're close enough to the gate to jump
     return (get_chunk(convert_chunk_index(pos)).get_midpoint().dist(pos) < 200);
   }

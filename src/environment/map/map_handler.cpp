@@ -33,15 +33,13 @@ void map_h::extend_map() {
   //destroyed deque, set the new entities to the left to accommodate the new
   //zero point, and then append a map to the right
   float shift_size = chunk::length * m->get_inac_dim()[0];
-  std::cout << shift_size << std::endl;
   e_handler::get().prep_for_map_extend(shift_size);
-  //TODO: map moving in here
   pather p(8, 8);
   p.path(m->get_end(), 0.4);
   m->extend_map(p);
 
   //TODO: stop background from jumping
-  m->shift_bg(e_handler::get().get_plr_pos()); 
+  m->shift_bg({-1 * shift_size, 0}); 
 
   e_handler::get().finish_map_extend(shift_size);
 }

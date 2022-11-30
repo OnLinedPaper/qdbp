@@ -104,6 +104,13 @@ void e_handler::prep_for_map_extend(double sever_point) {
       m->set_active(false);
       entity_count_by_id[m->get_id()] -= 1;
     }
+    //don't let followers get caught outside the map
+    else if(m->get_follow_thru_portals()  
+          && m->is_active() 
+          && m->get_pos()[0] < sever_point
+    ) {
+      m->set_pos(get_plr_pos());
+    }
   }
 }
 
