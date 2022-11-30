@@ -64,7 +64,7 @@ map::map(std::string n) :
   //init the spawning rules for each chunk
   parse_spawn_rules();
 }
-
+/*
 map::map(const pather &p) :
   acti_deque(DEQUE_A),
   bg("/debug_star_"),
@@ -86,9 +86,54 @@ map::map(const pather &p) :
   //take the pather and build the map around it
   parse_pather(p);
 }
+*/
 
 map::~map() { }
 
+//given a pather object, delete the left side of the map (trusting e_handler
+//to have already dealt with anything lingering in it) and then build a new
+//right side of the map
+void map::extend_map(const pather &p) {
+
+  //first, save some data from the inactive deque before it's deleted
+  int shift_size = (*dim_inac)[0] * chunk::length;
+
+  //next, clear out the inactive deque
+  (*c_deque_inac).clear();
+  (*dim_inac) = {0, 0};
+
+  //next, stitch up the left side of the active deque
+  for(int i=0; i<(*dim_acti)[1]; i++) {
+    check_barriers(0, i);
+  }
+
+  //next, shift the entire active deque to the left (the e_handler will later
+  //deal with the "displaced" entities
+  //also, check every chunk for portals and get rid of all of them
+  for(int i=0; i<(*dim_acti)[1]; i++) {
+    for(int j=0; j<(*dim_acti)[0]; j++) {
+      (*c_deque)[index(j, i, c_deque, dim_acti)].shift_tlc(-1 * shift_size, 0);
+      (*c_deque)[index(j, i, c_deque, dim_acti)].remove_gate();
+    }
+  }
+
+  //next, deactivate this deque
+  flip_active_deque();
+
+
+  //from this point on, the active deque is being created
+  (*dim_acti)[0] = p.get_c();
+  (*dim_acti)[1] = p.get_r();
+  start_chunk = vec2d(0, p.get_start());
+  end_chunk = vec2d((*dim_acti)[0]-1, p.get_end());
+
+  init_c_deque(c_deque, dim_acti);
+
+  parse_pather(p);
+
+}
+
+//flip the active and passive deques, and associated data
 void map::flip_active_deque() {
   if(acti_deque == DEQUE_A) {
 
@@ -145,6 +190,7 @@ void map::init_c_deque(std::deque<chunk> *c_d, vec2d *d) {
   (*c_d).shrink_to_fit(); 
 }
 
+/*
 void map::init_c_deque() {
   //reserve space
   //c_map.reserve(x_dim * y_dim);
@@ -187,6 +233,7 @@ void map::init_c_deque() {
   //specific and is not guaranteed to have any effect)
   (*c_deque).shrink_to_fit();
 }
+*/
 
 //EXPECTS TO BE CALLED ON THE ACTIVE DEQUE
 void map::init_special_chunks() {
@@ -249,7 +296,7 @@ void map::parse_pather(const pather &p) {
   for(int y=0; y<p.get_r(); y++) {
     for(int x=0; x<p.get_c(); x++) {
       if(p.at(x, y) == 0) {
-        (*c_deque)[index(x, y, c_deque, dim_acti)] = chunk(x, y, f, f, f, f, "default_impassible");
+        (*c_deque)[index(x, y, c_deque, dim_acti)] = chunk(x+(*dim_inac)[0], y, f, f, f, f, "default_impassible");
       }
       check_barriers(x, y);
     }
@@ -735,7 +782,7 @@ chunk & map::get_chunk(const vec2d &coord) {
   }  
   else {
     //it's in the active deque
-    return (*c_deque)[index(coord[0], coord[1], c_deque, dim_acti)]; 
+    return (*c_deque)[index(coord[0] - (*dim_inac)[0], coord[1], c_deque, dim_acti)]; 
   }
 }
 
@@ -807,6 +854,7 @@ return false;
 bool map::check_gate(const vec2d &pos) {
   //check if there's a gate in this chunk
   if(get_chunk(convert_chunk_index(pos)).get_has_gate()) {
+std::cout << "has a gate! checking distance..." <<std::endl;
     //check if we're close enough to the gate to jump
     return (get_chunk(convert_chunk_index(pos)).get_midpoint().dist(pos) < 200);
   }

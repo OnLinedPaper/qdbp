@@ -9,7 +9,7 @@
 class map {
 public:
   map(std::string);
-  map(const pather &);
+//  map(const pather &);
   ~map();
 
   void draw() const;
@@ -18,6 +18,9 @@ public:
   const vec2d convert_chunk_index(const vec2d &pos) const;
   const vec2d & get_acti_dim() const { return (*dim_acti); }
   const vec2d & get_inac_dim() const { return (*dim_inac); }
+
+  //extends the map outwards to the right and shrinks it from the left
+  void extend_map(const pather &);
 
   //checks the boundaries of the current chunk and compares the source and 
   //destination positions to see if any barriers are crossed
@@ -39,6 +42,8 @@ public:
   void spawn_closet_entities();
 
   int get_end() { return end_chunk[1]; }
+
+  void shift_bg(const vec2d &v) { bg.shift_offset(-2000, 0); }
 
 private:
   vec2d dim_a;
@@ -63,7 +68,7 @@ private:
   bool is_pather_gen;
 
   void validate();
-  void init_c_deque();
+//  void init_c_deque();
   void init_c_deque(std::deque<chunk> *, vec2d *);
   void init_special_chunks();
   void parse_pather(const pather &);

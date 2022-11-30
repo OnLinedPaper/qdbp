@@ -204,6 +204,12 @@ void chunk::add_gate(std::string dest, std::string name) {
   g_name = "/" + name;
 }
 
+void chunk::remove_gate() {
+  has_gate = false;
+  g_dest = "";
+  g_name = "";
+}
+
 //push back a new spawn rule
 void chunk::add_spawn_rule (
   uint8_t spawn_type, int max_count, int total_count, int tick_spawn_delay,
@@ -324,7 +330,6 @@ void chunk::spawn_closet_entities() {
 void chunk::draw() const {
   float x = tlc[0];
   float y = tlc[1];
-  //debug_draw(x, y);
   //draw 2 barriers on each line where border[i] = true -
   //that's where a border is
   //check in order: u, d, l, r

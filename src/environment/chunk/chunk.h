@@ -58,12 +58,15 @@ public:
   );
   }
 
+  void shift_tlc(float x, float y) { tlc[0] += x; tlc[1] += y; }
+
   bool get_in_bounds() const { return in_bounds; }
   void set_in_bounds(bool i) { in_bounds = i; }
   bool get_has_gate() const { return has_gate; }
   std::string get_gate_dest() const { return g_dest; }
 
   void add_gate(std::string dest, std::string name); 
+  void remove_gate();
 
   //adds an entity spawning rule to the vector of spawn rules
   void add_spawn_rule (

@@ -28,31 +28,22 @@ void map_h::set_map(std::string s) {
 
 }
 
-void map_h::set_map() {
-  //warn e_handler for a jump - wipe existing entities
-  //TODO: change this to shift entities
-  e_handler::get().prep_for_map_change();
-  int next_start = m->get_end();
-
-  delete m;
-
-  pather p(8, 12);
-  p.path(next_start, 0.4);
-  m = new map(p);
-
-  //teleport player to new location, and spawn other npes near it
-  e_handler::get().finish_map_change();
-}
-
 void map_h::extend_map() {
   //warn e_handler for a jump - eliminate all entities in the soon-to-be
   //destroyed deque, set the new entities to the left to accommodate the new
   //zero point, and then append a map to the right
-  e_handler::get().prep_for_map_extend(chunk::length * m->get_inac_dim()[0]);
+  float shift_size = chunk::length * m->get_inac_dim()[0];
+  std::cout << shift_size << std::endl;
+  e_handler::get().prep_for_map_extend(shift_size);
   //TODO: map moving in here
   pather p(8, 8);
   p.path(m->get_end(), 0.4);
-  e_handler::get().finish_map_extend(chunk::length * m->get_inac_dim()[0]);
+  m->extend_map(p);
+
+  //TODO: stop background from jumping
+  m->shift_bg(e_handler::get().get_plr_pos()); 
+
+  e_handler::get().finish_map_extend(shift_size);
 }
 
 void map_h::jump() {
@@ -64,12 +55,7 @@ void map_h::jump() {
 bool map_h::try_jump() {
 
   if(m->check_gate(e_handler::get().get_plr_pos())) {
-    //the player's close enough to the gate to be able to make the jump
-    //change the map to its new location
-    //TODO: instead of changing map, make this into the keygate and
-    //spawn a new map via pather
     extend_map();
-    //set_map("/" + m->get_gate_dest(e_handler::get().get_plr_pos()));
     return true;
   }
   return false;

@@ -15,7 +15,7 @@ public:
 
   void init_map(std::string);
   void set_map(std::string);
-  void set_map();
+//  void set_map();
   void extend_map();
   void jump();
   bool try_jump();
