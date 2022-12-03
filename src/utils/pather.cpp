@@ -1,6 +1,7 @@
 #include "pather.h"
 #include "src/utils/rng.h"
 //#include "rng.cpp" //for local testing
+#include "src/utils/message.h"
 #include <iostream>
 #include <cmath>
 #include <bits/stdc++.h>
@@ -36,7 +37,12 @@ pather::pather(int rows, int cols):
     r(rows)
   , c(cols) 
 {
-  if(r < 1 || c < 1) { throw("invalid pather dimensions!"); }
+  if(r < 1 || c < 1) { 
+    std::string e_msg = "invalid pather dimensions: " 
+        + std::to_string(rows) + ", " + std::to_string(cols) + "!";
+    msg::get().print_error("pather::pather threw: " + e_msg);
+    throw(e_msg); 
+  }
 
   a = new int*[r];
 

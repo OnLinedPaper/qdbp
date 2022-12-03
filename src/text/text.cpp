@@ -21,7 +21,8 @@ text::text(const std::string &m, float x, float y) :
 {
   if(font == NULL) {
     std::string e_msg =
-      std::string("(From text): Couldn't init font! Error: ") + SDL_GetError();
+      std::string("Couldn't init font! Error: ") + SDL_GetError();
+    msg::get().print_error("text::text threw error: " + e_msg);
     throw(e_msg);
   }
 }
@@ -45,7 +46,9 @@ void text::draw() {
 
     SDL_Surface *txts = TTF_RenderText_Solid(font, msg.c_str(), col);
     if(txts == NULL) {
-      throw(std::string("(From text): Couldn't create surface! Error: ") + SDL_GetError());
+      std::string e_msg = std::string("(From text): Couldn't create surface! Error: ") + SDL_GetError();
+      msg::get().print_error("text::draw threw error: " + e_msg);
+      throw(e_msg);
     }
     txtt = SDL_CreateTextureFromSurface(render::get().get_r(), txts);
     dims.w = txts->w;

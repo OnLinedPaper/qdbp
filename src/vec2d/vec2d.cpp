@@ -1,4 +1,5 @@
 #include "vec2d.h"
+#include "src/utils/message.h"
 #include <iostream>
 #include <cmath>
 
@@ -48,7 +49,10 @@ vec2d vec2d::operator*(float scalar_val) const {
 }
 
 vec2d vec2d::operator/(float scalar_val) const {
-  if(scalar_val == 0) { throw "can't divide vector by 0!\n"; }
+  if(scalar_val == 0) { 
+    msg::print_error("vec2d::operator/ attempted to divide by zero!");
+    throw "can't divide vector by 0!\n"; 
+  }
   return vec2d(x / scalar_val, y / scalar_val);
 }
 

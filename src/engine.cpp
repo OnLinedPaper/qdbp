@@ -287,37 +287,60 @@ catch(std::string e) { msg::print_error(e); msg::get().close_log(); return; }
 
 engine::engine() : debug_swirly_int(0), controller(NULL) {
 try{
+  msg::get();
+  msg::get().init_log("");
+  msg::get().log("loading xml data...");
+
   //init the singletons
   //note that many require xmlparse to init themselves, so
   //xmlparse builds its trees first
+  msg::get().log("- loading gamedata...");
   xmlparse::get().build_tree("resources/gamedata.xml");
+  msg::get().log("- loading imagedata...");
   xmlparse::get().build_tree("resources/imagedata.xml");
+  msg::get().log("- loading mapdata...");
   xmlparse::get().build_tree("resources/mapdata.xml");
+  msg::get().log("- loading chunkdata...");
   xmlparse::get().build_tree("resources/chunkdata.xml");
+  msg::get().log("xml loaded.");
 
 
+  msg::get().log("initializing singletons...");
+  msg::get().log("- initializing rng...");
   rng::get().seed(0); //TODO: use std::time(NULL) once done debugging
+  msg::get().log("- initializing render...");
   render::get().get_r();
+  msg::get().log("- initializing viewport...");
   viewport::get();
+  msg::get().log("- initializing image handler...");
   image_handler::get();
+  msg::get().log("- initializing timeframe...");
   t_frame::get();
+  msg::get().log("- initializing entity handler...");
   e_handler::get();
+  msg::get().log("- initializing text handler...");
   text_h::get();
+  msg::get().log("- initializing hud...");
   hud::get();
-
-  msg::get();
-  msg::get().init_log("");
+  msg::get().log("singletons initialized.");
 
   //grab framerate data, can't do this till singletons are created
+  msg::get().log("loading framerate data...");
   t_frame::get().set_f_delay(xmlparse::get().get_xml_float("/msdelay"));
   t_frame::get().set_t_delay(t_frame::tickrate);
+  msg::get().log("framerate data loaded.");
 
   //preload weapon data, can't do this till the tree is built
+  msg::get().log("loading weapon data...");
   weapon::preload_weapon_data();
+  msg::get().log("weapon data loaded.");
 
   //create the first map and load the player into it
+  msg::get().log("loading first map...");
   map_h::get().init_map("/" + xmlparse::get().get_xml_string("/first_map"));
+  msg::get().log("first map loaded.");
 
+  msg::get().log("searching for joysticks...");
   if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
     msg::print_error("couldn't init joysticks subsystem! SDL_Error: " + std::string(SDL_GetError()));
   }
@@ -333,10 +356,14 @@ try{
     }
   }
 
+  msg::get().log("initializing SDL...");
   if( SDL_InitSubSystem(SDL_INIT_EVERYTHING) < 0) {
     msg::print_error("Couldn't init SDL! Error: " + std::string(SDL_GetError()));
     throw("couldn't start SDL!");
   }
+  msg::get().log("SDL initialized.");
+  msg::get().log("---- engine loaded successfully! ----");
+  
 } catch (std::string e) { msg::print_error(e); msg::get().close_log(); return; }
 }
 

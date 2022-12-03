@@ -28,6 +28,9 @@ public:
   static const uint8_t INITIAL;
   static const uint8_t CLOSET;
 
+  //reset a chunk's data
+  void rechunk(float, float, bool, bool, bool, bool, std::string);
+
   //check if a given point is in a chunk - if not, check if it's above,
   //below, left, or right
   unsigned char chunk_pos(vec2d&) const;

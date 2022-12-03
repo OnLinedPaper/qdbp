@@ -1,7 +1,10 @@
 #include "message.h"
+#include "src/timeframe/timeframe.h"
 #include <string>
 #include <iostream>
 #include <experimental/filesystem>
+#include <ctime>
+#include <iomanip>
 
 const std::string msg::rn = "\033[0;31m";
 const std::string msg::rb = "\033[1;31m";
@@ -23,6 +26,7 @@ msg::~msg() {
 void msg::print_error(const std::string message) {
   std::cerr << rb << "error! " << rn << message << none << std::endl;
   if(get().outfile && get().outfile.is_open()) {
+    get().timestamp();
     get().outfile << "error! " << message << std::endl;
   }
 }
@@ -30,6 +34,7 @@ void msg::print_error(const std::string message) {
 void msg::print_warn(const std::string message) {
   std::cerr << yb << "warning: " << yn << message << none << std::endl;
   if(get().outfile && get().outfile.is_open()) {
+    get().timestamp();
     get().outfile << "warning: " << message << std::endl;
   }
 
@@ -38,6 +43,7 @@ void msg::print_warn(const std::string message) {
 void msg::print_alert(const std::string message) {
   std::cerr << cn << "- " << message << none << std::endl;
   if(get().outfile && get().outfile.is_open()) {
+    get().timestamp();
     get().outfile << "- " << message << std::endl;
   }
 
@@ -46,6 +52,7 @@ void msg::print_alert(const std::string message) {
 void msg::print_good(const std::string message) {
   std::cerr << gn << message << none << std::endl;
   if(get().outfile && get().outfile.is_open()) {
+    get().timestamp();
     get().outfile << message << std::endl;
   }
 
@@ -63,6 +70,24 @@ void msg::init_log(const std::string filename) {
   outfile.open(fname);
   if(!outfile) {
     print_warn("Couldn't open output file " + fname + "!");
+  }
+}
+
+void msg::timestamp() {
+  if(get().outfile && get().outfile.is_open()) {
+    //https://stackoverflow.com/a/16358111/7431860
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+    get().outfile << std::put_time(&tm, "%Y-%m-%d %H-%M-%S") << " | ";
+
+    get().outfile << std::setw(10) << t_frame::get().get_t() << "  :  ";
+  }
+}
+
+void msg::log(const std::string message) {
+  if(get().outfile && get().outfile.is_open()) {
+    get().timestamp();
+    get().outfile << message << std::endl;
   }
 }
 

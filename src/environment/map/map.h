@@ -73,7 +73,7 @@ private:
   void init_special_chunks();
   void parse_pather(const pather &);
   void parse_spawn_rules();
-  void check_barriers(int, int);
+  void check_barriers(int, int, bool);
 
   //TODO: get active deque
   void flip_active_deque();

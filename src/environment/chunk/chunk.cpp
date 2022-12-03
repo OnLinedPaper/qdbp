@@ -6,8 +6,6 @@
 #include "src/xml_parser/xmlparse.h"
 #include "src/entity_handler/entity_handler.h"
 #include "src/utils/rng.h"
-
-//TODO: remove when done with testing
 #include "src/utils/message.h"
 #include "src/text/text.h"
 
@@ -128,6 +126,39 @@ chunk::~chunk() {
   }
   spawn_rules.clear();
 }
+
+//reinitialize a chunk
+void chunk::rechunk(float x, float y, bool u, bool d, bool l, bool r, std::string type)
+{
+  //reset the variables
+  tlc = {x * length, y * length};
+  border[0] = u;
+  border[1] = d;
+  border[2] = l;
+  border[3] = r;
+  i1_name = "/boundary_marker";
+  i2_name = "/boundary_point";
+  frame_bump = 0;
+  in_bounds = false;
+  has_gate = false;
+  g_dest = "";
+  g_name = "";
+
+  if(!type.empty()) {
+    //load the chunk data here
+    //note that these xml calls are REALLY expensive... only use when necessary
+    if(type.compare("default_impassible")) {
+      std::cout << "xml" << std::endl;
+      in_bounds = xmlparse::get().get_xml_bool("/chunk_types/"+type+"/in_bounds");
+    }
+    else { in_bounds = false; }
+  }
+  else { in_bounds = true; }
+
+  //invalidate spawn rules
+  spawn_rules.clear();
+}
+
 
 unsigned char chunk::chunk_pos(vec2d &v) const {
   return( this->chunk_pos(v[0], v[1]) );
@@ -328,6 +359,7 @@ void chunk::spawn_closet_entities() {
 }
 
 void chunk::draw() const {
+try {
   float x = tlc[0];
   float y = tlc[1];
   //draw 2 barriers on each line where border[i] = true -
@@ -371,6 +403,10 @@ void chunk::draw() const {
   }
 
   //debug_draw();
+} catch (std::string e_msg) {
+  msg::get().print_error("chunk::draw threw error: " + e_msg);
+  throw(e_msg);
+}
 }
 
 //warning: for reasons i haven't seen fit to investigate this function is

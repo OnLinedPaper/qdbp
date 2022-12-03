@@ -10,8 +10,6 @@
 const unsigned char map::DEQUE_A = 0;
 const unsigned char map::DEQUE_B = 1;
 
-//TODO: completely rework this. this is what inits a brand new map and should
-//do exactly that - should ALSO prepare for extending.
 //make an empty deque to the left and a normal active deque to the right.
 map::map(std::string n) :
   acti_deque(DEQUE_A),
@@ -21,8 +19,8 @@ map::map(std::string n) :
   is_pather_gen(false)
 {
   //deque a is always the first active deque, and b is the first inactive
-  //create the empty b first
-  dim_b = {4, 4};//TODO: make this empty once im comfident i can extend a map properly
+  //create the empty b first - does not NEED to be empty actually
+  dim_b = {4, 4};
   vec2d temp_dim = {0, 0};
   dim_inac = &temp_dim;
   init_c_deque(&c_deque_b, &dim_b);
@@ -53,7 +51,7 @@ map::map(std::string n) :
   //check the left size border of the active deque for borders between it and
   //the inactive deque
   for(int i=0; i<(*dim_acti)[1]; i++) {
-    check_barriers(0, i);
+    check_barriers(0, i, true);
   }
 
   //set the sever point - the spot between the deques
@@ -64,29 +62,6 @@ map::map(std::string n) :
   //init the spawning rules for each chunk
   parse_spawn_rules();
 }
-/*
-map::map(const pather &p) :
-  acti_deque(DEQUE_A),
-  bg("/debug_star_"),
-  name(""),
-  is_pather_gen(true)
-{
-  dim_a[0] = p.get_c();
-  dim_a[1] = p.get_r();
-  start_chunk = vec2d(0, p.get_start());
-  end_chunk = vec2d(dim_a[0]-1, p.get_end());
-
-
-  validate(); //TODO: decide if this is necessary
-
-  //init the deque with the chunks
-  //TODO: modify it instead by growing/shrinking it
-  init_c_deque();
-  
-  //take the pather and build the map around it
-  parse_pather(p);
-}
-*/
 
 map::~map() { }
 
@@ -96,19 +71,12 @@ map::~map() { }
 void map::extend_map(const pather &p) {
 
 
-//TODO TODO: don't empty and refill the deque, that's wasteful. use what's in there
-//and figure out what to do with any extra. 
   //first, save some data from the inactive deque before it's deleted
   int shift_size = (*dim_inac)[0] * chunk::length;
 
   //next, clear out the inactive deque
-  (*c_deque_inac).clear();
-  (*dim_inac) = {0, 0};
-
-  //next, stitch up the left side of the active deque
-  for(int i=0; i<(*dim_acti)[1]; i++) {
-    check_barriers(0, i);
-  }
+//  (*c_deque_inac).clear();
+  //(*dim_inac) = {0, 0};
 
   //next, shift the entire active deque to the left (the e_handler will later
   //deal with the "displaced" entities
@@ -119,6 +87,12 @@ void map::extend_map(const pather &p) {
       (*c_deque)[index(j, i, c_deque, dim_acti)].remove_gate();
     }
   }
+
+  //next, stitch up the left side of the active deque
+  for(int i=0; i<(*dim_acti)[1]; i++) {
+    check_barriers(0, i, false);
+  }
+
 
   //next, deactivate this deque
   flip_active_deque();
@@ -131,6 +105,11 @@ void map::extend_map(const pather &p) {
   end_chunk = vec2d((*dim_acti)[0]-1, p.get_end());
 
   init_c_deque(c_deque, dim_acti);
+
+  //after init, but before path read, quickly switch decks again to stitch up
+  //the left side of the inactive deque
+  flip_active_deque();
+  flip_active_deque();
 
   parse_pather(p);
 
@@ -162,7 +141,9 @@ void map::flip_active_deque() {
 
   }
   else {
-    throw "tried to set a nonexistent deque as active!";
+    std::string e_msg = "tried to set a nonexistent deque as active!";
+    msg::get().print_error("map::flip_active_deque threw error: " + e_msg);
+    throw e_msg;
   }
 }
 
@@ -172,8 +153,11 @@ void map::init_c_deque(std::deque<chunk> *c_d, vec2d *d) {
   int up, dn, lf, rt;
   up = dn = lf = rt = 0;
 
-  std::string default_type = "default";
+  std::string default_type = "";
   
+  //resize the deque to the appropriate size, keeping it as is if needed
+  (*c_d).resize((*d)[0] * (*d)[1], {0, 0});
+
   for(int j=0; j<(*d)[1]; j++) {
     for(int i=0; i<(*d)[0]; i++) {
       up = dn = lf = rt = 0;
@@ -184,7 +168,7 @@ void map::init_c_deque(std::deque<chunk> *c_d, vec2d *d) {
       if(j == (*d)[1] - 1) { dn = 1; }
 
 
-      (*c_d).emplace_back(i+(*dim_inac)[0], j, up, dn, lf, rt, default_type);
+      (*c_d)[index(i, j, c_d, d)].rechunk(i+(*dim_inac)[0], j, up, dn, lf, rt, default_type);
     }
   }
 
@@ -274,11 +258,11 @@ void map::init_special_chunks() {
         "); valid y coords: (0 to " + std::to_string((*dim_acti)[1]-1) + ")");
     }
     else {
-      //replace a chunk with this new one
-      (*c_deque)[index(x, y, c_deque, dim_acti)] = chunk(x + (*dim_inac)[0], y, f, f, f, f, t);
+      //update a chunk with this new one
+      (*c_deque)[index(x, y, c_deque, dim_acti)].rechunk(x + (*dim_inac)[0], y, f, f, f, f, t);
 
       //check the barriers
-      check_barriers(x, y);
+      check_barriers(x, y, true);
 
       //add the gate
       if(std::find(traits.begin(), traits.end(), "jump_gate") != traits.end()) {
@@ -299,15 +283,14 @@ void map::parse_pather(const pather &p) {
   for(int y=0; y<p.get_r(); y++) {
     for(int x=0; x<p.get_c(); x++) {
       if(p.at(x, y) == 0) {
-        (*c_deque)[index(x, y, c_deque, dim_acti)] = chunk(x+(*dim_inac)[0], y, f, f, f, f, "default_impassible");
+        (*c_deque)[index(x, y, c_deque, dim_acti)].rechunk(x+(*dim_inac)[0], y, f, f, f, f, "default_impassible");
       }
-      check_barriers(x, y);
+      check_barriers(x, y, true);
     }
   }
 
   //place the gate - always at the "point of greatest interest", which is
   //to say, the point furthest from the main path
-  //TODO: eventually, convert this from an actual jump gate to just the keygate
   std::vector<p_o_i> points;
   p.get_far_point(points, 1);
   (*c_deque)[index(points[0].x, points[0].y, c_deque, dim_acti)].add_gate("NONE", "debug_gate");
@@ -615,7 +598,7 @@ void map::parse_spawn_rules() {
 //=============================================================================
 
 //ALWAYS ASSUMES THIS IS BEING CALLED ON THE ACTIVE DEQUE
-void map::check_barriers(int x, int y) {
+void map::check_barriers(int x, int y, bool check_interactions) {
   //a change has been made to this chunk - check all nearby chunks
   //and add or remove barriers as needed
 
@@ -700,7 +683,7 @@ void map::check_barriers(int x, int y) {
 
   //-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
   //SPECIAL - check leftmost wall against the inactive deque
-  if(x == 0) {
+  if(check_interactions && x == 0) {
     //check if there actually is a chunk to the left (not guaranteed as deques might be different sizes)
     if (index(x, y, c_deque_inac, dim_inac) != SIZE_MAX) {
       if ((*c_deque)[index(x, y, c_deque, dim_acti)].get_in_bounds() ^ (*c_deque_inac)[index((int)(*dim_inac)[0]-1, (int)y, c_deque_inac, dim_inac)].get_in_bounds())
@@ -742,7 +725,7 @@ const vec2d map::get_start_pos() const {
 
     //no in-bounds chunks were found
     std::string error = name + " has no chunks that are in bounds!";
-    msg::print_error(error);
+    msg::print_error("map::get_start_pos threw error: " + error);
     throw(error);
   }
 }
@@ -776,7 +759,6 @@ void map::truncate_chunk_index(vec2d &i) {
 }
 
 //convert a set of chunk coordinates to an actual chunk
-//TODO: sanity check and return NULL if it doesn't exist
 chunk & map::get_chunk(const vec2d &coord) {
   //determine which side of the map this coordinate is on
   if(coord[0] < (*dim_inac)[0]) {
@@ -804,7 +786,6 @@ size_t map::index(const vec2d &v, std::deque<chunk> *c_d, vec2d *d) const {
   return index(v[0], v[1], c_d, d);
 }
 
-//TODO: refactor for 2 maps
 unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) {
 
   //check the last chunk that was occupied, and return the position
@@ -888,6 +869,7 @@ void map::spawn_closet_entities() {
 }
 
 void map::draw() const {
+try {
   //draw the bg first
   bg.draw();
 
@@ -903,6 +885,10 @@ void map::draw() const {
       (*c_deque_inac)[index(i, j, c_deque_inac, dim_inac)].draw();
     }
   }
+} catch (std::string e_msg) {
+  msg::get().print_error("map::draw threw error: " + e_msg);
+  throw(e_msg);
+}
 }
 
 void map::validate() {

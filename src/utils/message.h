@@ -30,6 +30,8 @@ public:
   static void print_good(const std::string message);
 
   void init_log(const std::string filename);
+  void timestamp();
+  void log(const std::string message);
   void close_log();
 
 private:

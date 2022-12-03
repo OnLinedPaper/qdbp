@@ -24,7 +24,7 @@ rcoa_struct::~rcoa_struct() { }
 
 
 image::image (const std::string name)
-/*try*/ :
+try :
   dimensions(
     xmlp::get().get_xml_float(name + "/dimensions/width"),
     xmlp::get().get_xml_float(name + "/dimensions/height")
@@ -75,15 +75,11 @@ image::image (const std::string name)
 
   fill_t_vec(name);
 }
-/*catch (std::string &s) {
+catch (std::string &s) {
   //something went wrong with image initialization
-  msg::print_warn("couldn't load " + name);
-  msg::print_alert("(loading a default texture...)");
-
-  fill_t_vec("");
-
-  msg::print_alert("(success)");
-}*/
+  msg::print_error("image::image couldn't load image with name \"" + name + "\" and threw error: " + s);
+  throw(s);
+}
 
 image::~image() {
   for(SDL_Texture *t : t_vec) {
@@ -253,7 +249,10 @@ void image::draw_r_c_o_all(float x_pos, float y_pos, float angle,
     //if there's not already a shader texture for the shape, throw error
     //(should have been initialized with init_shader)
     if(shader_t == NULL) {
-      throw("shader texture was not initialized before call to draw_r_c_o_all!");
+    std::string e_msg =
+      std::string("shader texture was not initialized before call to draw_r_c_o_all!");
+      msg::get().print_error("image::r_c_o_draw_all threw error: " + e_msg);
+      throw(e_msg);
     }
   
     //get size and position info for rendering, displacing up and to the left to account for the

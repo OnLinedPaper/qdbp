@@ -238,8 +238,9 @@ std::vector<hy_box> const &mortal::get_box_ref(int type) const {
     return(vacuumboxes);
   }
   else {
-    msg::print_error("requested invalid hitbox type!");
-    throw("bad box type");
+    std::string e_msg = "mortal requested an invalid hitbox type!";
+    msg::print_error("mortal::get_box_ref threw error: " + e_msg);
+    throw(e_msg);
   } 
 }
 

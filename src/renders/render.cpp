@@ -1,14 +1,19 @@
 #include "render.h"
+#include "src/utils/message.h"
 #include <iostream>
 #include "src/viewport/viewport.h"
 
 render::render() : w(nullptr), r(nullptr) {
   if( SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
-    throw(std::string("Couldn't init SDL! Error: ") + SDL_GetError());
+    std::string e_msg = std::string("Couldn't init SDL! Error: ") + SDL_GetError();
+    msg::get().print_error("render::render threw error: " + e_msg);
+    throw(e_msg);
   }
 
   if(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-    throw(std::string("Couldn't init images! Error: ") + SDL_GetError());
+    std::string e_msg = std::string("Couldn't init images! Error: ") + SDL_GetError();
+    msg::get().print_error("render::render threw error: " + e_msg);
+    throw(e_msg);
   }
 
   w = init_window();
@@ -40,7 +45,9 @@ SDL_Window *render::init_window() {
 
   w = SDL_CreateWindow(title.c_str(), 0, 0, DM.w, DM.h, flags);
   if(w == NULL) {
-    throw(std::string("Couldn't init a window! Error: ") + SDL_GetError());
+    std::string e_msg = std::string("Couldn't init a window! Error: ") + SDL_GetError();
+    msg::get().print_error("render::init_window threw error: " + e_msg);
+    throw(e_msg);
   }
   return w;
 }
@@ -56,7 +63,9 @@ SDL_Renderer *render::init_renderer() {
 
   SDL_Renderer *r = SDL_CreateRenderer(w, -1, flags);
   if(r == NULL) {
-    throw(std::string("Couldn't init a renderer! Error: ") + SDL_GetError());
+    std::string e_msg = std::string("Couldn't init a renderer! Error: ") + SDL_GetError();
+    msg::get().print_error("render::init_render threw error: " + e_msg);
+    throw(e_msg);
   }
   return r;
 }
