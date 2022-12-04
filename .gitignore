@@ -9,6 +9,7 @@ a.out
 debug
 run
 tools/*
+a.out
 
 #directories
 build
