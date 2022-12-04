@@ -1,4 +1,5 @@
 #include "movable.h"
+#include "src/utils/message.h"
 
 movable::movable(std::string path) :
   id(xmlparse::get().get_xml_string(path + "/id")),
@@ -39,6 +40,13 @@ void movable::rebuff(unsigned char posi) {
 
     //reset position to previous
     pos = last_pos;
+
+    if(posi & chunk::UP && posi & chunk::DN) {
+      msg::get().print_warn("movable::rebuff triggered UP and DN at the same time");
+    }
+    if(posi & chunk::LF && posi & chunk::RT) {
+      msg::get().print_warn("movable::rebuff triggered LF and RT at the same time");
+    }
   }
 }
 

@@ -815,9 +815,13 @@ unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) {
   ].chunk_rebuff(curr_pos);
   //if no collision, check the chunk we're trying to enter
   if(!r) {
-    r = r | (*new_chunk_deque)[
+    unsigned char rc = (*new_chunk_deque)[
       index(new_chunk[0], new_chunk[1], new_chunk_deque, new_chunk_deque_dim)
     ].chunk_rebuff(prev_pos);
+    if(rc) {
+      //bitwise logic to make the corner rebuff properly
+      r = r | (~rc);
+    }
   }
   if(!r) {
     //the new chunk is not blocked by barriers, or is this same chunk

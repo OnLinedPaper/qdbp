@@ -95,7 +95,7 @@
   </special_chunks>
   <start_chunk>
     <x_chunk>0</x_chunk>
-    <y_chunk>1</y_chunk>
+    <y_chunk>0</y_chunk>
   </start_chunk>
   <end_chunk>
     <x_chunk>7</x_chunk>
