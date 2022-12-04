@@ -89,7 +89,7 @@
           <heat>
             <max_heat>400</max_heat>
             <max_overheat>200</max_overheat>
-            <boost_heat_per_tick>3</boost_heat_per_tick>
+            <boost_heat_per_tick>1.8</boost_heat_per_tick>
             <regen_heat_per_tick>1.1</regen_heat_per_tick>
             <cool_per_tick>1</cool_per_tick>
             <vent_heat_per_tick>2</vent_heat_per_tick>
@@ -99,8 +99,8 @@
             <vel_cap>16</vel_cap>
             <vel_boost>1.5</vel_boost>
             <vel_decay>0.1</vel_decay>
-            <vel_accel>1</vel_accel>
-            <vel_boost_accel>3</vel_boost_accel>
+            <vel_accel>2</vel_accel>
+            <vel_boost_accel>4</vel_boost_accel>
           </movement>
           <textures>
             <body>arrow2</body>

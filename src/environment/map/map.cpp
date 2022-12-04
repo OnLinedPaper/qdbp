@@ -614,13 +614,16 @@ void map::check_barriers(int x, int y, bool check_interactions) {
   //use XOR (^) to check them
   //- if both are in or out of bounds- no barriers
   //- if one is and one isn't- set it accordingly
+  //BOTH get barriers, but only in-bounds chunks draw them. this avoids a
+  //literal corner case where it's possible to fly into an out of bounds
+  //chunk by perfectly hitting its corner
 
   //check left chunk
   if(x > 0) {
     if((*c_deque)[index(x, y, c_deque, dim_acti)].get_in_bounds() ^ (*c_deque)[index(x-1, y, c_deque, dim_acti)].get_in_bounds()) {
       //they are not the same
-      (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_lf();
-      (*c_deque)[index(x-1, y, c_deque, dim_acti)].set_bound_b_rt();
+      (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_lf(true);
+      (*c_deque)[index(x-1, y, c_deque, dim_acti)].set_b_rt(true);
 
     }
     else {
@@ -636,8 +639,8 @@ void map::check_barriers(int x, int y, bool check_interactions) {
     //check right chunk
     if((*c_deque)[index(x, y, c_deque, dim_acti)].get_in_bounds() ^ (*c_deque)[index(x+1, y, c_deque, dim_acti)].get_in_bounds()) {
       //they are not the same
-      (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_rt();
-      (*c_deque)[index(x+1, y, c_deque, dim_acti)].set_bound_b_lf();
+      (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_rt(true);
+      (*c_deque)[index(x+1, y, c_deque, dim_acti)].set_b_lf(true);
 
     }
     else {
@@ -652,8 +655,8 @@ void map::check_barriers(int x, int y, bool check_interactions) {
   if(y > 0) {
     if((*c_deque)[index(x, y, c_deque, dim_acti)].get_in_bounds() ^ (*c_deque)[index(x, y-1, c_deque, dim_acti)].get_in_bounds()) {
       //they are not the same
-      (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_up();
-      (*c_deque)[index(x, y-1, c_deque, dim_acti)].set_bound_b_dn();
+      (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_up(true);
+      (*c_deque)[index(x, y-1, c_deque, dim_acti)].set_b_dn(true);
 
     }
     else {
@@ -669,8 +672,8 @@ void map::check_barriers(int x, int y, bool check_interactions) {
     //check right chunk
     if((*c_deque)[index(x, y, c_deque, dim_acti)].get_in_bounds() ^ (*c_deque)[index(x, y+1, c_deque, dim_acti)].get_in_bounds()) {
       //they are not the same
-      (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_dn();
-      (*c_deque)[index(x, y+1, c_deque, dim_acti)].set_bound_b_up();
+      (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_dn(true);
+      (*c_deque)[index(x, y+1, c_deque, dim_acti)].set_b_up(true);
 
     }
     else {
@@ -806,9 +809,16 @@ unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) {
   truncate_chunk_index(new_chunk);
 
   //it's a valid chunk
+  //check the chunk we're trying to leave
   unsigned char r = (*old_chunk_deque)[
     index(old_chunk[0], old_chunk[1], old_chunk_deque, old_chunk_deque_dim)
   ].chunk_rebuff(curr_pos);
+  //if no collision, check the chunk we're trying to enter
+  if(!r) {
+    r = r | (*new_chunk_deque)[
+      index(new_chunk[0], new_chunk[1], new_chunk_deque, new_chunk_deque_dim)
+    ].chunk_rebuff(prev_pos);
+  }
   if(!r) {
     //the new chunk is not blocked by barriers, or is this same chunk
     //check if it's in bounds

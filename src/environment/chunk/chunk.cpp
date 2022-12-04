@@ -360,6 +360,8 @@ void chunk::spawn_closet_entities() {
 
 void chunk::draw() const {
 try {
+//only draw if in bounds
+if(in_bounds) {
   float x = tlc[0];
   float y = tlc[1];
   //draw 2 barriers on each line where border[i] = true -
@@ -401,6 +403,7 @@ try {
   if(has_gate) {
     image_handler::get().draw_v2(g_name, x + length/2, y + length/2, 0, 0);
   }
+}
 
   //debug_draw();
 } catch (std::string e_msg) {

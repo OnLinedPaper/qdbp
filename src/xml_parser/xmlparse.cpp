@@ -5,6 +5,8 @@
 #include <cstdio>
 #include <regex>
 #include <fstream>
+//TODO: calling any xml_get function is REALLY EXPENSIVE apparently. reduce
+//the number of calls to this entire suite to the minimum amount possible.
 
 xmlparse::xmlparse() : root(new xmlnode()), show_debug_msg(true) { }
 
