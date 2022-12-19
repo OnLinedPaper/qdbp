@@ -4,7 +4,8 @@
 #include "src/utils/message.h"
 #include <iostream>
 #include <cmath>
-#include <bits/stdc++.h>
+#include <climits>
+#include <algorithm>
 #include <vector>
 #include <utility>
 #include <string>
