@@ -4,7 +4,8 @@ DIR := ${CURDIR}
 CFLAGS= -Wall -Wpedantic --std=c++17 -I$(DIR)
 OFLAGS = -O3
 DFLAGS = -g -ggdb -O0
-LFLAGS= -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lstdc++fs
+LFLAGS= -lstdc++fs #-lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf 
+MFLAGS= -DRENDER_NC
 WFLAGS= -lmingw32 -mwindows -I$(DIR)/lib -L$(DIR)/lib
 DDIR = debugging
 XDIR = bin
@@ -20,13 +21,13 @@ SPECIAL_LFLAGS = #-I$(DIR)/lib -L$(DIR)/lib -Wl,-R,$(DIR)/lib -Wl,--verbose
 
 DEPS = background.h chunk.h debug_follower.h debug_hittable.h debug_killable.h debug_player.o drawable.h engine.h entity_handler.h gunner.h hitbox.h hitline.h hud.h hybrid_box.h image.h image_handler.h map.h map_handler.h message.h mortal.h movable.h pather.h player.h rect2d.h render.h rng.h text.h text_handler.h timeframe.h vec2d.h viewport.h weapon.h xmlnode.h xmlparse.h 
 
-OBJS:= pather.o map.o map_handler.o background.o chunk.o debug_follower.o debug_hittable.o debug_killable.o debug_player.o drawable.o engine.o entity_handler.o gunner.o hitbox.o hitline.o hud.o hybrid_box.o image.o image_handler.o map.o map_handler.o message.o mortal.o movable.o pather.o player.o rect2d.o render.o rng.o text.o text_handler.o timeframe.o vec2d.o viewport.o weapon.o xmlnode.o xmlparse.o
+OBJS:= background.o chunk.o debug_follower.o debug_hittable.o debug_killable.o debug_player.o drawable.o engine.o entity_handler.o gunner.o hitbox.o hitline.o hud.o hybrid_box.o image.o image_handler.o map.o map_handler.o message.o mortal.o movable.o pather.o player.o rect2d.o render.o rng.o text.o text_handler.o timeframe.o vec2d.o viewport.o weapon.o xmlnode.o xmlparse.o
 #OBJS:= engine.o render.o movable.o xmlparse.o xmlnode.o vec2d.o viewport.o image.o timeframe.o chunk.o map.o message.o image_handler.o background.o rect2d.o debug_hittable.o drawable.o hittable.o hitbox.o hitline.o hybrid_box.o map_handler.o debug_follower.o entity_handler.o text_handler.o text.o heatable.o debug_heatable.o weapon.o killable.o debug_killable.o mortal.o
 WOBJS:= $(addprefix $(WBDIR)/,$(OBJS))
 DOBJS:= $(addprefix $(DBDIR)/,$(OBJS))
 OBJS:= $(addprefix $(BDIR)/,$(OBJS))
 
-SRCS = engine.cpp render.cpp movable.cpp xmlparse.cpp xmlnode.cpp vec2d.cpp viewport.cpp image.cpp timeframe.cpp chunk.cpp map.cpp message.cpp image_handler.cpp background.cpp rect2d.cpp debug_hittable.cpp drawable.cpp hitbox.cpp hitline.cpp hud.cpp hybrid_box.cpp map_handler.cpp debug_follower.cpp entity_handler.cpp text_handler.cpp text.cpp weapon.cpp debug_killable.cpp mortal.cpp debug_player.cpp player.cpp gunner.cpp rng.cpp pather.cpp
+SRCS = engine.cpp render.cpp movable.cpp xmlparse.cpp xmlnode.cpp vec2d.cpp viewport.cpp image.cpp timeframe.cpp chunk.cpp map.cpp message.cpp image_handler.cpp background.cpp rect2d.cpp debug_hittable.cpp drawable.cpp hitbox.cpp hitline.cpp hud.cpp hybrid_box.cpp map_handler.cpp debug_follower.cpp entity_handler.cpp text_handler.cpp text.cpp weapon.cpp debug_killable.cpp mortal.cpp debug_player.cpp player.cpp gunner.cpp rng.cpp pather.cpp engine_nc.cpp
 
 PATHS = . entity_handler environment/background environment/chunk environment/map hud image movers movers/drawable movers/drawable/mortal movers/drawable/mortal/debug_entities rect2d rect2d/hitbox renders text timeframe utils vec2d viewport xml_parser
 VPATH = $(addprefix src/,$(PATHS))
@@ -40,19 +41,19 @@ VPATH = $(addprefix src/,$(PATHS))
 $(BDIR)/%.o: %.cpp %.h
 	@mkdir -p $(BDIR)
 	@printf "building %s\n" $@
-	@$(CC) $(CFLAGS) $(OFLAGS) -c -o $@ $<
+	@$(CC) $(CFLAGS) $(OFLAGS) $(MFLAGS) -c -o $@ $<
 
 $(WBDIR)/%.o: %.cpp %.h
 	@mkdir -p $(BDIR)
 	@mkdir -p $(WBDIR)
 	@printf "building winobj %s\n" $@
-	@$(WC) $(CFLAGS) $(OFLAGS) $(WFLAGS) -c -o $@ $<
+	@$(WC) $(CFLAGS) $(OFLAGS) $(MFLAGS) $(WFLAGS) -c -o $@ $<
 
 $(DBDIR)/%.o: %.cpp %.h
 	@mkdir -p $(BDIR)
 	@mkdir -p $(DBDIR)
 	@printf "building debug obj %s\n" $@
-	@$(CC) $(CFLAGS) $(DFLAGS) -c -o $@ $<
+	@$(CC) $(CFLAGS) $(DFLAGS) $(MFLAGS) -c -o $@ $<
 
 run: $(OBJS) main_driver.cpp
 	@mkdir -p $(XDIR)

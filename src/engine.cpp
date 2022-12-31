@@ -1,6 +1,12 @@
+#include "engine.h"
+
+#if defined RENDER_NC
+#include "engine_nc.cpp"
+#endif
+
+#if defined RENDER_SDL
 #include <ctime>
 
-#include "engine.h"
 #include "src/renders/render.h"
 #include "src/xml_parser/xmlparse.h"
 #include "src/viewport/viewport.h"
@@ -12,9 +18,9 @@
 #include "src/movers/drawable/mortal/weapon.h"
 #include "src/hud/hud.h"
 #include "src/utils/rng.h"
+#include "src/text/text.h"
 
 #include <SDL2/SDL_ttf.h>
-#include "src/text/text.h"
 
 //looking for the constructors? they're below "play"
 
@@ -369,7 +375,7 @@ try{
 
 engine::~engine() {
   msg::get().close_log();
-  close_SDL();
+  SDL_Quit();
 }
 
 void engine::next_tick() {
@@ -401,11 +407,7 @@ void engine::next_tick() {
   t_frame::get().incr_t();
 
 }
-
-void engine::close_SDL() {
-
-  SDL_Quit();
-}
+#endif
 
 void engine::incr_debug_swirly() {
     debug_swirly_int = (debug_swirly_int+1) % 4;

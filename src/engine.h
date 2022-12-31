@@ -29,7 +29,6 @@ private:
 
   bool init();
   void load_media();
-  void close_SDL();
 
   void next_tick();
 
