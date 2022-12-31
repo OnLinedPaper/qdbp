@@ -2,7 +2,7 @@
 valgrind-out.txt
 full-valgrind-out.txt
 out.txt
-test.*
+src/utils/test*
 a.out
 
 #executables
