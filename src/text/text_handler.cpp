@@ -1,4 +1,6 @@
 #include "text_handler.h"
+
+#if defined RENDER_SDL
 #include "src/utils/message.h"
 #include <string>
 
@@ -25,3 +27,4 @@ text_h::text_h() :
 text_h::~text_h() {
   TTF_CloseFont(font);
 }
+#endif

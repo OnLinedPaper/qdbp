@@ -1,5 +1,9 @@
 #include "src/movers/drawable/mortal/debug_entities/debug_killable.h"
 
+#if defined RENDER_NC
+#include "debug_killable_nc.cpp"
+#endif
+
 d_killable::d_killable(const std::string &path) :
   mortal(path)
 { }
@@ -8,6 +12,7 @@ void d_killable::update() {
   mortal::update(); 
 }
 
+#if defined RENDER_SDL
 void d_killable::draw() const {
 
   SDL_Rect dest_r;
@@ -23,5 +28,5 @@ void d_killable::draw() const {
   image_handler::get().draw_v2(image_name, dest_r.x, dest_r.y, last_angle, false, 0, team_col, 1);
 
   mortal::draw();
-
 }
+#endif

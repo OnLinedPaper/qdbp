@@ -1,7 +1,10 @@
+#include "image.h"
+
+#if defined RENDER_SDL
+
 #include <SDL2/SDL.h>
 #include "src/renders/render.h"
 #include "src/xml_parser/xmlparse.h"
-#include "image.h"
 #include "src/timeframe/timeframe.h"
 #include "src/viewport/viewport.h"
 #include "src/utils/message.h"
@@ -397,6 +400,13 @@ void image::draw_tile(float parallax, float x_offset, float y_offset) const {
     }
   }
 }
+
+#endif
+
+
+
+
+
 /*
 void image::DEBUG_draw_with_texture_overlay(float x_pos, float y_pos, float angle, bool relative_to_screen, float frame_bump, const SDL_Color &mod, float opacity, rcoa_struct *rcoa_s) {
   SDL_Rect dest_r;

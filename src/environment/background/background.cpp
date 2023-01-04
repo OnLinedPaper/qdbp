@@ -2,9 +2,14 @@
 #include "src/image/image_handler.h"
 #include <string>
 
+#if defined RENDER_NC
+#include "background_nc.cpp"
+#endif
+
 b_ground::b_ground(std::string name) : bg_name(name), x_offset(0), y_offset(0) { }
 b_ground::~b_ground() { }
 
+#if defined RENDER_SDL
 void b_ground::draw() const {
   if(!bg_name.empty()) {
     //include offset here so that on map shift, the world doesn't distort
@@ -14,3 +19,4 @@ void b_ground::draw() const {
     image_handler::get().draw_tile(bg_name + "fg", 1.2, x_offset * 1.2, y_offset);
   }
 }
+#endif

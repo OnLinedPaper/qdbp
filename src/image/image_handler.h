@@ -1,5 +1,8 @@
 #ifndef IMAGE_HANDLER_H_
 #define IMAGE_HANDLER_H_
+
+#if defined RENDER_SDL
+
 #include <unordered_map>
 #include <src/image/image.h>
 
@@ -54,6 +57,7 @@ private:
   image_handler &operator=(const image_handler&) = delete;
 };
 
+#endif
 #endif
 
 

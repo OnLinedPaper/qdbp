@@ -2,6 +2,10 @@
 #include "src/movers/drawable/mortal/weapon.h"
 #include "src/utils/rng.h"
 
+#if defined RENDER_NC
+#include "debug_player_nc.cpp"
+#endif
+
 d_player::d_player(const std::string path) :
   player(path)
 { }
@@ -17,6 +21,7 @@ void d_player::move_rt()
 
 void d_player::update() { player::update(); }
 
+#if defined RENDER_SDL
 void d_player::draw() const {
 
   vec2d dest_v = {pos[0], pos[1]};
@@ -50,3 +55,4 @@ void d_player::draw() const {
 
   player::draw();
 }
+#endif

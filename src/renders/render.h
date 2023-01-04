@@ -1,6 +1,8 @@
 #ifndef RENDER_H_
 #define RENDER_H_
 
+#if defined RENDER_SDL
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <string>
@@ -34,4 +36,5 @@ private:
 
 };
 
+#endif
 #endif

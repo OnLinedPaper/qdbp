@@ -1,3 +1,4 @@
+#if defined RENDER_SDL
 #include "text.h"
 #include "src/renders/render.h"
 #include "src/utils/message.h"
@@ -59,3 +60,4 @@ void text::draw() {
   SDL_RenderCopy(render::get().get_r(), txtt, NULL, &dims);
 
 }
+#endif

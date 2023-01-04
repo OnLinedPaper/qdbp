@@ -3,6 +3,7 @@
 
 #include "src/vec2d/vec2d.h"
 #include "src/image/image.h"
+#include <vector>
 
 class chunk {
 public:

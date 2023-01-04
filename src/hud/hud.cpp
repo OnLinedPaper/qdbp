@@ -4,6 +4,10 @@
 #include "src/image/image_handler.h"
 #include "src/entity_handler/entity_handler.h"
 
+#if defined RENDER_NC
+#include "hud_nc.cpp"
+#endif
+
 hud::hud() :
   blc_outline("/" + xmlparse::get().get_xml_string(path + "/textures/blc_outline")),
   blc_outline_ht(xmlparse::get().get_xml_int(blc_outline + "/dimensions/height")),
@@ -49,8 +53,8 @@ hud::~hud() { }
 
 void hud::update() { }
 
+#if defined RENDER_SDL
 void hud::draw() { 
-//TODO
   //used for flicker effects
   static float i=0;
   i += 0.2;
@@ -355,3 +359,4 @@ void hud::draw_overheat_warning() {
   );
 
 }
+#endif

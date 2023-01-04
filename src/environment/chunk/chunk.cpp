@@ -9,6 +9,10 @@
 #include "src/utils/message.h"
 #include "src/text/text.h"
 
+#if defined RENDER_NC
+#include "chunk_nc.cpp"
+#endif
+
 const unsigned char chunk::IN = 0;
 const unsigned char chunk::UP = 1;
 const unsigned char chunk::DN = 2;
@@ -358,6 +362,7 @@ void chunk::spawn_closet_entities() {
   spawn_entities(chunk::CLOSET);
 }
 
+#if defined RENDER_SDL
 void chunk::draw() const {
 try {
 //only draw if in bounds
@@ -459,6 +464,5 @@ void chunk::debug_draw() const {
   //print inbounds or not
   text t(in_bounds ? "in bounds" : "out of bounds", x + 40, y + 40);
   t.draw();
-
-
 }
+#endif

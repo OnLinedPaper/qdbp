@@ -1,6 +1,8 @@
 #ifndef TEXT_HANDLER_H_
 #define TEXT_HANDLER_H_
 
+#if defined RENDER_SDL
+
 #include <SDL2/SDL_ttf.h>
 #include <vector>
 
@@ -30,4 +32,5 @@ private:
 
 };
 
+#endif
 #endif

@@ -4,6 +4,10 @@
 #include "src/viewport/viewport.h"
 #include "src/rect2d/rect2d.h"
 
+#if defined RENDER_NC
+#include "hitline_nc.cpp"
+#endif
+
 hitline::hitline(const vec2d &s, const vec2d &e) :
   start(s),
   end(e)
@@ -48,6 +52,7 @@ bool hitline::collides(const hitline &l) const {
   return (t >= 0 && t <= 1 && u >= 0 && u <= 1); 
 }
 
+#if defined RENDER_SDL
 void hitline::draw() const {
 
     //save color
@@ -67,3 +72,4 @@ void hitline::draw() const {
     //restore color
     SDL_SetRenderDrawColor(render::get().get_r(), c.r, c.g, c.b, c.a);
 }
+#endif

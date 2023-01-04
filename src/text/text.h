@@ -1,6 +1,7 @@
 #ifndef TEXT_H_
 #define TEXT_H_
 
+#if defined RENDER_SDL
 #include <string>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -41,4 +42,5 @@ private:
   text &operator=(const text&) = delete;
 };
 
+#endif
 #endif

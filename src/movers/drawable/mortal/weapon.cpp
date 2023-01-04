@@ -4,6 +4,10 @@
 #include "src/utils/message.h"
 #include "src/utils/rng.h"
 
+#if defined RENDER_NC
+#include "weapon_nc.cpp"
+#endif
+
   std::map<uint8_t, float> weapon::id_to_heat;
   std::map<uint8_t, float> weapon::id_to_delay;
   std::map<uint8_t, std::string> weapon::id_to_path;
@@ -141,9 +145,11 @@ void weapon::preload_weapon_data() {
   return;
 }
 
+#if defined RENDER_SDL
 void weapon::draw() const {
   image_handler::get().draw_v2(image_name, pos[0], pos[1], last_angle, false, 0, team_col, 1);
 }
+#endif
 
 void weapon::fire(
   const mortal *p,

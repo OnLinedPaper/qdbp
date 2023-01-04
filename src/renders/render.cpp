@@ -3,6 +3,11 @@
 #include <iostream>
 #include "src/viewport/viewport.h"
 
+#if defined RENDER_NC
+#include "render_nc.cpp"
+#endif
+
+#if defined RENDER_SDL
 render::render() : w(nullptr), r(nullptr) {
   if( SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
     std::string e_msg = std::string("Couldn't init SDL! Error: ") + SDL_GetError();
@@ -83,3 +88,4 @@ void render::shade_display(float shade) {
   );
   SDL_RenderFillRect(render::get().get_r(), &r);
 }
+#endif

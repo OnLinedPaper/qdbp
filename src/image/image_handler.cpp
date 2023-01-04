@@ -1,4 +1,7 @@
 #include "image_handler.h"
+
+#if defined RENDER_SDL
+
 #include <utility>
 #include <algorithm>
 #include "src/utils/rng.h"
@@ -87,6 +90,10 @@ void image_handler::jitter_col(int strength, SDL_Color &c) {
   c.g += std::clamp(rng::get().get_gfx(-strength, strength), 0, 255);
   c.b += std::clamp(rng::get().get_gfx(-strength, strength), 0, 255);
 }
+
+#endif
+
+
 
 //deprecated drawing functions
 /*

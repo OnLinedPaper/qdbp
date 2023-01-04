@@ -12,6 +12,7 @@ drawable::drawable(const std::string path, const vec2d vel, const vec2d pos) :
   frame_bump(rand()),
   last_angle(0)
 { 
+#if defined RENDER_SDL
   image_handler::get_col_from_team(team_name, team_col); 
   
   //don't apply color jitter to WHITE team, that's for debugging and it helps
@@ -19,6 +20,7 @@ drawable::drawable(const std::string path, const vec2d vel, const vec2d pos) :
   if(strcmp(team_name.c_str(), "WHITE") != 0) {
     image_handler::jitter_col(40, team_col);
   }
+#endif
 }
  
 void drawable::update() {

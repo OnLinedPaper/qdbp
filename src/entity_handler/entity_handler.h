@@ -1,4 +1,4 @@
-#ifndef ENTITY_HANDER_H_
+#ifndef ENTITY_HANDLER_H_
 #define ENTITY_HANDLER_H_
 
 #include "src/movers/drawable/drawable.h"

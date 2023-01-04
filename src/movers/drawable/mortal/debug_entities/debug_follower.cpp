@@ -2,6 +2,10 @@
 #include "src/image/image_handler.h"
 #include "src/entity_handler/entity_handler.h"
 
+#if defined RENDER_NC
+#include "debug_follower_nc.cpp"
+#endif
+
 d_follower::d_follower(const std::string path) :
   mortal(path),
   player_pos(0, 0)
@@ -30,6 +34,7 @@ void d_follower::update() {
   }
 }
 
+#if defined RENDER_SDL
 void d_follower::draw() const {
   SDL_Rect dest_r;
 
@@ -43,3 +48,4 @@ void d_follower::draw() const {
   mortal::draw();
  
 }
+#endif

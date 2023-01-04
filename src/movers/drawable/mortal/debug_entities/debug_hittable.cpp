@@ -3,6 +3,10 @@
 #include "src/image/image_handler.h"
 #include "src/rect2d/hitbox/hitbox.h"
 
+#if defined RENDER_NC
+#include "debug_hittable_nc.cpp"
+#endif
+
 d_hittable::d_hittable(const std::string path) :
   mortal(path)
 { }
@@ -11,6 +15,7 @@ void d_hittable::update() {
   mortal::update();
 }
 
+#if defined RENDER_SDL
 void d_hittable::draw() const {
   SDL_Rect dest_r;
 
@@ -23,3 +28,4 @@ void d_hittable::draw() const {
 
   mortal::draw();
 }
+#endif

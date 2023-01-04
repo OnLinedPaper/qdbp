@@ -1,6 +1,8 @@
 #ifndef IMAGE_H_
 #define IMAGE_H_
 
+#if defined RENDER_SDL
+
 #include <SDL2/SDL.h>
 #include <vector>
 #include "src/vec2d/vec2d.h"
@@ -77,4 +79,5 @@ private:
   SDL_Texture *shader_t;
 };
 
+#endif
 #endif
