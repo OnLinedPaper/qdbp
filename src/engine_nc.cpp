@@ -127,7 +127,12 @@ bool engine::player_input() {
 
   //process the keystrokes here
 
-  return true; 
+  //quit
+  if(key_map[KEY_ESC/8] & (1 << (KEY_ESC % 8))) {
+    return true;
+  }
+
+  return false;
 }
 
 
