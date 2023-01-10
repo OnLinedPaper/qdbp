@@ -2,5 +2,7 @@
 #include "viewport.h"
 #include "src/renders/render.h"
 
-viewport::viewport() { }
+viewport::viewport() { 
+
+}
 #endif

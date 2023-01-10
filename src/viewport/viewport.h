@@ -36,6 +36,13 @@ private:
   viewport();
   viewport(const viewport&) = delete;
   viewport &operator=(const viewport&) = delete;
+
+#if defined RENDER_NC
+  //these are special values related to ncurses rendering
+  int prev_LINES, prev_COLS;  //used to detect changes in window size
+  vec2d nc_pix_dims;          //pixels per block (font aspect ratio)
+  vec2d nc_world_dims;        //world units per block
+#endif
 };
 
 #endif

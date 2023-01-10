@@ -1,10 +1,10 @@
 CC=g++
 WC=x86_64-w64-mingw32-g++
 DIR := ${CURDIR}
-CFLAGS= -Wall -Wpedantic --std=c++17 -I$(DIR)
+CFLAGS= -Wall -Wpedantic --std=c++17 -I$(DIR) #-Wextra -Werror
 OFLAGS = -O3
-DFLAGS = -g -ggdb -O0
-LFLAGS= -lstdc++fs -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf 
+DFLAGS = -g -ggdb -O0 -fstack-protector-all #-fno-stack-protector
+LFLAGS= -lstdc++fs -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lncurses
 MFLAGS= -DRENDER_NC
 WFLAGS= -lmingw32 -mwindows -I$(DIR)/lib -L$(DIR)/lib
 DDIR = debugging

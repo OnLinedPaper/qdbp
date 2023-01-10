@@ -4,7 +4,6 @@
 #include "engine_nc.cpp"
 #endif
 
-#if defined RENDER_SDL
 #include <ctime>
 
 #include "src/renders/render.h"
@@ -20,7 +19,9 @@
 #include "src/utils/rng.h"
 #include "src/text/text.h"
 
+#if defined RENDER_SDL
 #include <SDL2/SDL_ttf.h>
+#endif
 
 //looking for the constructors? they're below "play"
 
@@ -28,14 +29,10 @@
 //main loop that plays the game
 void engine::play() {
 try{
-  bool quit = false;
-  bool pause = false;
-  bool debug_mode = false;
-  SDL_Event e;
-
-
 //- debug stuff  -    -    -    -    -    -    -    -    -    -    -    -    -        
 
+#if defined RENDER_SDL
+  //SDL DEBUGGING
   text t1("pos:", 10, 30);
   text t1a("", 280, 30);
   text t6("heat:", 10, 30);
@@ -56,129 +53,27 @@ try{
   text t13a("", 280, 240);
   text t14("venting?", 10, 270);
   text t14a("", 280, 270);
+#endif
+
+#if defined RENDER_NC
+  //NCURSES DEBUGGING
+#endif
 
 
   e_handler::get()
       .add_npe("mortal/mortals/debug_follower");
-/*
-  e_handler::get()
-      .add_npe("hittable/debug_stationary", {1500, 500}, {0, 10});
-
-  e_handler::get()
-      .add_npe("hittable/debug_stationary", {2500, 500}, {0, 125});
-
-  e_handler::get().add_npe("mortal/mortals/fishbone", {500, 2500}, {0, 0});
-*/
-
 
 //-    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -        
 
-  const Uint8* keystate = SDL_GetKeyboardState(NULL);
-  
   while(!quit) {
 
 //==== PLAYER INPUT here ======================================================
 
-    //get the keystate
-    SDL_PumpEvents();
-
-    if(pause) { /*pause menu*/ }
-    else {
-      //no keybounce protection
-
-      //handle movement
-      if(keystate[SDL_SCANCODE_W])
-        { e_handler::get().move_plr(e_handler::UP); }
-      if(keystate[SDL_SCANCODE_A])
-        { e_handler::get().move_plr(e_handler::LF); }
-      if(keystate[SDL_SCANCODE_S])
-        { e_handler::get().move_plr(e_handler::DN); }
-      if(keystate[SDL_SCANCODE_D])
-        { e_handler::get().move_plr(e_handler::RT); }
-
-      if(keystate[SDL_SCANCODE_LSHIFT])
-        { e_handler::get().boost_plr(true); }
-      else { e_handler::get().boost_plr(false); }
-
-      //handle shooting
-      static vec2d angle(0, 0);
-      angle[0] = 0;
-      angle[1] = 0;
-
-      //handle shooting
-      if(keystate[SDL_SCANCODE_H]) { angle[0] -= 1; }
-      if(keystate[SDL_SCANCODE_L]) { angle[0] += 1; }
-      if(keystate[SDL_SCANCODE_K]) { angle[1] -= 1; }
-      if(keystate[SDL_SCANCODE_J]) { angle[1] += 1; }
-        
-      if(angle.magnitude() > 0) { e_handler::get().plr_shoot(angle); }
-      
-
-
-      if(controller) {
-        //process controller input
-        vec2d lrud(
-          SDL_JoystickGetAxis(controller, LSTICK_LR),
-          SDL_JoystickGetAxis(controller, LSTICK_UD)
-        );
-
-        if(abs(lrud[0]) > CONTROLLER_DEADZONE) {
-          if(lrud[0] < 0) { e_handler::get().move_plr(e_handler::LF); }
-          else { e_handler::get().move_plr(e_handler::RT); }
-        }
-        if(abs(lrud[1]) > CONTROLLER_DEADZONE) {
-          if(lrud[1] < 0) { e_handler::get().move_plr(e_handler::UP); }
-          else { e_handler::get().move_plr(e_handler::DN); }
-        }
-      }
-    }
-
-
-    while(SDL_PollEvent(&e) != 0) {
-      //get an event: protect from keybounce
-      if(e.type == SDL_QUIT || keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
-      else if(e.type == SDL_KEYDOWN) {
-
-        //pause unpause
-        if(keystate[SDL_SCANCODE_P]) { pause = !pause; }
-
-        if(keystate[SDL_SCANCODE_O]) {
-          map_h::get().try_jump();
-        }
-
-        if(keystate[SDL_SCANCODE_V]) {
-          //toggle venting
-          e_handler::get().toggle_plr_vent();
-        }
-
-        if(keystate[SDL_SCANCODE_R]) {
-          e_handler::get().toggle_plr_regen();
-        }
-
-        //draw debug things
-        if(keystate[SDL_SCANCODE_COMMA]) {
-          e_handler::get().set_draw_debug_info(
-            !e_handler::get().get_draw_debug_info()
-          );
-          
-          debug_mode = !debug_mode;
-        }
-
- 
-        //debugging section
-        if(debug_mode) {
-          if(keystate[SDL_SCANCODE_X]) {
-            e_handler::get().DEBUG_get_plr()->take_damage(1, -1, false);
-          }
-        }
-
-      }
-    }
+  quit = player_input();
 
 //==== UPDATE stuff here ======================================================
 
-    if(pause) {
-    }
+    if(pause) { }
     else {
       map_h::get().update();
       e_handler::get().update_entities();
@@ -197,11 +92,12 @@ try{
       hud::get().draw();
 
 
-      if(pause) { render::get().shade_display(0.7); }
+      //if(pause) { render::get().shade_display(0.7); }
 
 //---- DRAW DEBUG STUFF here --------------------------------------------------
 
-
+#if defined RENDER_SDL
+      //SDL DEBUGGING
       t1a.set_msg(e_handler::get().get_plr_pos().to_string());
 /*
       t6a.set_msg(std::to_string(e_handler::get().get_plr_heat_frac()));
@@ -235,10 +131,21 @@ try{
 */
       t1.draw();
       t1a.draw();
+#endif
+
+#if defined RENDER_NC
+      //NCURSES DEBUGGING
+#endif
     
 //-----------------------------------------------------------------------------
 
+#if defined RENDER_SDL
       SDL_RenderPresent(render::get().get_r());
+#endif
+
+#if defined RENDER_NC
+      //TODO: nc rendering
+#endif
     }
 
 //==== DEBUG STUFF here =======================================================
@@ -253,7 +160,6 @@ try{
     next_tick();
   }
   msg::get().close_log();
-  SDL_Quit();
 }
 catch(std::string e) { msg::print_error(e); msg::get().close_log(); return; }
 }
@@ -291,7 +197,14 @@ catch(std::string e) { msg::print_error(e); msg::get().close_log(); return; }
 #############################################################################*/
 
 
-engine::engine() : debug_swirly_int(0), controller(NULL) {
+#if defined RENDER_SDL
+engine::engine() : 
+    debug_swirly_int(0)
+  , controller(NULL) 
+  , quit(false)
+  , pause(false)
+  , debug_mode(false)
+{
 try{
   msg::get();
   msg::get().init_log("");
@@ -406,6 +319,110 @@ void engine::next_tick() {
   //go to next tick
   t_frame::get().incr_t();
 
+}
+
+bool engine::player_input() {
+  const static Uint8* keystate = SDL_GetKeyboardState(NULL);
+  SDL_Event e;
+
+    //get the keystate
+    SDL_PumpEvents();
+
+    if(pause) { /*pause menu*/ }
+    else {
+      //no keybounce protection
+
+      //handle movement
+      if(keystate[SDL_SCANCODE_W])
+        { e_handler::get().move_plr(e_handler::UP); }
+      if(keystate[SDL_SCANCODE_A])
+        { e_handler::get().move_plr(e_handler::LF); }
+      if(keystate[SDL_SCANCODE_S])
+        { e_handler::get().move_plr(e_handler::DN); }
+      if(keystate[SDL_SCANCODE_D])
+        { e_handler::get().move_plr(e_handler::RT); }
+
+      if(keystate[SDL_SCANCODE_LSHIFT])
+        { e_handler::get().boost_plr(true); }
+      else { e_handler::get().boost_plr(false); }
+
+      //handle shooting
+      static vec2d angle(0, 0);
+      angle[0] = 0;
+      angle[1] = 0;
+
+      //handle shooting
+      if(keystate[SDL_SCANCODE_H]) { angle[0] -= 1; }
+      if(keystate[SDL_SCANCODE_L]) { angle[0] += 1; }
+      if(keystate[SDL_SCANCODE_K]) { angle[1] -= 1; }
+      if(keystate[SDL_SCANCODE_J]) { angle[1] += 1; }
+        
+      if(angle.magnitude() > 0) { e_handler::get().plr_shoot(angle); }
+      
+
+
+      if(controller) {
+        //process controller input
+        vec2d lrud(
+          SDL_JoystickGetAxis(controller, LSTICK_LR),
+          SDL_JoystickGetAxis(controller, LSTICK_UD)
+        );
+
+        if(abs(lrud[0]) > CONTROLLER_DEADZONE) {
+          if(lrud[0] < 0) { e_handler::get().move_plr(e_handler::LF); }
+          else { e_handler::get().move_plr(e_handler::RT); }
+        }
+        if(abs(lrud[1]) > CONTROLLER_DEADZONE) {
+          if(lrud[1] < 0) { e_handler::get().move_plr(e_handler::UP); }
+          else { e_handler::get().move_plr(e_handler::DN); }
+        }
+      }
+    }
+
+
+    while(SDL_PollEvent(&e) != 0) {
+      //get an event: protect from keybounce
+      if(e.type == SDL_QUIT || keystate[SDL_SCANCODE_ESCAPE]) { return true; }
+      else if(e.type == SDL_KEYDOWN) {
+
+        //pause unpause
+        if(keystate[SDL_SCANCODE_P]) { pause = !pause; }
+
+        if(keystate[SDL_SCANCODE_O]) {
+          map_h::get().try_jump();
+        }
+
+        if(keystate[SDL_SCANCODE_V]) {
+          //toggle venting
+          e_handler::get().toggle_plr_vent();
+        }
+
+        if(keystate[SDL_SCANCODE_R]) {
+          e_handler::get().toggle_plr_regen();
+        }
+
+        //draw debug things
+        if(keystate[SDL_SCANCODE_COMMA]) {
+          e_handler::get().set_draw_debug_info(
+            !e_handler::get().get_draw_debug_info()
+          );
+          
+          debug_mode = !debug_mode;
+        }
+
+ 
+        //debugging section
+        if(debug_mode) {
+          if(keystate[SDL_SCANCODE_X]) {
+            e_handler::get().DEBUG_get_plr()->take_damage(1, -1, false);
+          }
+        }
+
+      }
+    }
+
+
+  return false;
 }
 #endif
 

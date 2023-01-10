@@ -1,10 +1,19 @@
 #ifndef ENGINE_H_
 #define ENGINE_H_
 
-#include <SDL2/SDL.h>
 #include <stdio.h>
 #include <string>
 #include <iostream>
+
+#if defined RENDER_SDL
+#include <SDL2/SDL.h>
+#endif
+
+#if defined RENDER_NC
+#include <linux/input.h>
+#include <ncurses.h>
+#include <sys/ioctl.h>
+#endif
 
 #define CONTROLLER_DEADZONE 8000
 
@@ -31,11 +40,22 @@ private:
   void load_media();
 
   void next_tick();
+  bool player_input(); 
+
 
   int debug_swirly_int;
   char const debug_swirly();
   void incr_debug_swirly();
+  bool quit, pause, debug_mode;
+
+#if defined RENDER_SDL
   SDL_Joystick *controller;
+#endif
+
+#if defined RENDER_NC
+  FILE *kbd;
+  char key_map[KEY_MAX/8 +1];
+#endif
 };
 
 #endif //ENGINE_H_

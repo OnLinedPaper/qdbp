@@ -121,13 +121,26 @@ void e_handler::finish_map_extend(double sever_point) {
   //position in the surviving map space.
 
   for(weapon *w : shot_all) {
-    if(w->is_active()) { w->shift_x(sever_point * -1); }
+    if(w->is_active()) { 
+      w->set_pos(
+        w->get_x() + sever_point * -1,
+        w->get_y()
+      ); 
+    }
   }
   for(mortal *m : npe_all) {
-    if(m->is_active()) { m->shift_x(sever_point * -1); }
+    if(m->is_active()) { 
+      m->set_pos(
+        m->get_x() + sever_point * -1,
+        m->get_y()
+      ); 
+    }
   }
   
-  plr->shift_x(sever_point * -1);
+  plr->set_pos(
+    plr->get_x() + sever_point * -1,
+    plr->get_y()
+  );
 }
 
 int e_handler::get_entity_count_by_id(const std::string &id) {
