@@ -86,6 +86,8 @@ engine::~engine() {
 
 void engine::next_tick() { }
 
+//=============================================================================
+
 bool engine::player_input() { 
 
   //i have no FUCKING idea why but if i put the file pointer into a class
@@ -111,6 +113,19 @@ bool engine::player_input() {
   //TODO: go grab the documentation from the ncurses_rendering branch
   static char key_map[KEY_MAX/8 +1];
  
+//-----------------------------------------------------------------------------
+//actual input logic here
+
+  //consume characters so they don't clutter input
+  while(getch() != ERR) { }
+
+  //wipe char array
+  memset(key_map, 0, sizeof(key_map));
+
+  //fill it with keyboard data
+  ioctl(fileno(kbd), EVIOCGKEY(sizeof(key_map)), key_map);
+
+  //process the keystrokes here
 
   return true; 
 }
