@@ -141,10 +141,14 @@ try{
 
 #if defined RENDER_SDL
       SDL_RenderPresent(render::get().get_r());
+
+      incr_debug_swirly();
+      fprintf(stdout, "%c\r", debug_swirly());
+      fflush(stdout);
 #endif
 
 #if defined RENDER_NC
-      //TODO: nc rendering
+      render::get().nc_render();
 #endif
     }
 
@@ -152,10 +156,6 @@ try{
 
 
 //==== GAME TICK here =========================================================
-
-    incr_debug_swirly();
-    fprintf(stdout, "%c\r", debug_swirly());
-    fflush(stdout);
 
     next_tick();
   }
