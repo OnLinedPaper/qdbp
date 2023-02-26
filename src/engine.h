@@ -37,6 +37,17 @@ private:
   char const debug_swirly();
   void incr_debug_swirly();
   SDL_Joystick *controller;
+
+  void player_input();
+
+  SDL_Event e;
+  const Uint8* keystate;
+
+  bool quit;
+  bool pause;
+  bool debug_mode;
+
+
 };
 
 #endif //ENGINE_H_
