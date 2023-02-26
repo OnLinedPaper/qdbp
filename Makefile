@@ -1,7 +1,7 @@
 CC=g++
 WC=x86_64-w64-mingw32-g++
 DIR := ${CURDIR}
-CFLAGS= -Wall -Wpedantic --std=c++17 -I$(DIR)
+CFLAGS= -Wall -Wpedantic --std=c++17 -I$(DIR) -fstack-protector-all -fsanitize=address
 OFLAGS = -O3
 DFLAGS = -g -ggdb -O0
 LFLAGS= -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lstdc++fs
