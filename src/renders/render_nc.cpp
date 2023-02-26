@@ -47,20 +47,20 @@ void render::nc_check_stale_win_size() {
   //r contains a buffer of characters that's meant to be used for rendering.
   //it's sized to the window (terminal) and must be resized if the window
   //changed, or was just initialized. 
-  static int last_lines = -1;
-  static int last_cols = -1;
+  static int prev_LINES = -1;
+  static int prev_COLS = -1;
 
   //check for cases where window size has changed (or just been created) and
   //adjust size accordingly, blockign rendering for that frame
-  if(r == NULL || LINES != last_lines || COLS != last_cols) {
+  if(r == NULL || LINES != prev_LINES || COLS != prev_COLS) {
     free(r);
     r = (char *)malloc(sizeof(char) * LINES * COLS);
     if(r == NULL) {
       //TODO: error messaging
       throw("malloc failed");
     }
-    last_lines = LINES;
-    last_cols = COLS;
+    prev_LINES = LINES;
+    prev_COLS = COLS;
     nc_render_this_frame = false;
   }
   else {

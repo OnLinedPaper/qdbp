@@ -40,7 +40,6 @@ private:
   void load_media();
 
   void next_tick();
-  bool player_input(); 
 
 
   int debug_swirly_int;
@@ -50,11 +49,13 @@ private:
 
 #if defined RENDER_SDL
   SDL_Joystick *controller;
+  bool player_input(const Uint8*, SDL_Event &); 
 #endif
 
 #if defined RENDER_NC
   FILE *kbd;
   char key_map[KEY_MAX/8 +1];
+  bool player_input(static char*); 
 #endif
 };
 

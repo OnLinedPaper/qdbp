@@ -12,6 +12,8 @@ viewport::viewport() {
 
   SDL_GetWindowSize(render::get().get_w(), &view_width, &view_height);
 }
+
+void viewport::set_pos(const vec2d p) { pos = p; }
 #endif
 
 viewport::~viewport() { }

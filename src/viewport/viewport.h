@@ -27,7 +27,13 @@ public:
   float get_brc_x() const { return pos[0] + (view_width / 2); }
   float get_brc_y() const { return pos[1] + (view_height / 2); }
 
-  void set_pos(const vec2d p) { pos = p; }
+  void set_pos(const vec2d p); 
+
+#if defined RENDER_NC
+  //these are special functions for converting between ncurses
+  //screen units and world units
+  void nc_world_coord_to_view_coord(int &, int&);
+#endif
 
 private:
   int view_width, view_height;
@@ -42,6 +48,8 @@ private:
   int prev_LINES, prev_COLS;  //used to detect changes in window size
   vec2d nc_pix_dims;          //pixels per block (font aspect ratio)
   vec2d nc_world_dims;        //world units per block
+
+  void recalculate_view_dims();
 #endif
 };
 

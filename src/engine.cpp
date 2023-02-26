@@ -63,13 +63,32 @@ try{
   e_handler::get()
       .add_npe("mortal/mortals/debug_follower");
 
+//- load stuff   -    -    -    -    -    -    -    -    -    -    -    -    -
+
+#if defined RENDER_SDL
+  const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+  SDL_Event e;
+#endif
+
+
+#if defined RENDER_NC
+  //TODO: this apparently goes inside as a class member variable, see to it
+  FILE *kbd = fopen(
+    xmlparse::get().get_xml_string("/ncurses_rendering/keyboard_input_device").c_str(),
+    "r"
+  );
+  char key_map[KEY_MAX/8 +1];
+#endif
+
 //-    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -        
 
   while(!quit) {
 
 //==== PLAYER INPUT here ======================================================
 
-  quit = player_input();
+#if defined RENDER_SDL
+  quit = player_input(keystate, e);
+#endif
 
 //==== UPDATE stuff here ======================================================
 
@@ -200,10 +219,10 @@ catch(std::string e) { msg::print_error(e); msg::get().close_log(); return; }
 #if defined RENDER_SDL
 engine::engine() : 
     debug_swirly_int(0)
-  , controller(NULL) 
   , quit(false)
   , pause(false)
   , debug_mode(false)
+  , controller(NULL) 
 {
 try{
   msg::get();
@@ -321,9 +340,7 @@ void engine::next_tick() {
 
 }
 
-bool engine::player_input() {
-  const static Uint8* keystate = SDL_GetKeyboardState(NULL);
-  SDL_Event e;
+bool engine::player_input(const Uint8* keystate, SDL_Event &e) {
 
     //get the keystate
     SDL_PumpEvents();
