@@ -40,6 +40,7 @@ private:
   SDL_Joystick *controller;
 
   void player_input();
+  void player_input_2();
 
   SDL_Event e;
   const Uint8* keystate;

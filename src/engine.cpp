@@ -71,63 +71,7 @@ try{
 //==== PLAYER INPUT here ======================================================
 
 //    player_input();
-
-  while(getch() != ERR) {}
-
-      //wipe the character array
-      memset(key_map, 0, sizeof(key_map)); 
-
-      //fill array with keyboard state
-      ioctl(fileno(nc_kbd), EVIOCGKEY(sizeof(key_map)), key_map);
-      
-      //for my own reference:
-      //the function above fills a char array with bit data; each space in the
-      //array carries data for eight keys, all a 1 or 0. a bitmask is used to 
-      //extract this data, one bit at a time.
-
-      if(pause) { /* pause menu */ }
-      else {
-        //no keybounce protection in this section
-
-        //handle movement
-        if(key_map[KEY_W/8] & (1 << (KEY_W % 8)))
-          { e_handler::get().move_plr(e_handler::UP); }
-        if(key_map[KEY_A/8] & (1 << (KEY_A % 8)))
-          { e_handler::get().move_plr(e_handler::LF); }
-        if(key_map[KEY_S/8] & (1 << (KEY_S % 8)))
-          { e_handler::get().move_plr(e_handler::DN); }
-        if(key_map[KEY_D/8] & (1 << (KEY_D % 8)))
-          { e_handler::get().move_plr(e_handler::RT); }
-       
-
-        //protect against keybounce in this section by waiting until the
-        //user releases the key to allow the effect again 
-        
-        //debug toggle
-        static bool comma_down = false;
-        if(key_map[KEY_COMMA/8] & (1 << (KEY_COMMA % 8))) { 
-          if(!comma_down) {
-            e_handler::get().set_draw_debug_info(
-              !e_handler::get().get_draw_debug_info()
-            );
-
-            debug_mode = !debug_mode;
-            comma_down = true;
-          }
-        }
-        else { comma_down = false; }
-
-        //quit
-        static bool esc_down = false;
-        if(key_map[KEY_ESC/8] & (1 << (KEY_ESC % 8))) {
-          if(!esc_down) {
-            quit = true;
-            esc_down = true;
-          }
-        }
-        else { esc_down = false; }
-      }
-
+    player_input_2();
 //==== UPDATE stuff here ======================================================
 
     if(pause) {
@@ -242,6 +186,66 @@ catch(std::string e) { msg::print_error(e); msg::get().close_log(); return; }
 ####################################    #######################################
 #####################################  ########################################
 #############################################################################*/
+
+void engine::player_input_2() {
+  while(getch() != ERR) {}
+
+      //wipe the character array
+      memset(key_map, 0, sizeof(key_map)); 
+
+      //fill array with keyboard state
+      ioctl(fileno(nc_kbd), EVIOCGKEY(sizeof(key_map)), key_map);
+      
+      //for my own reference:
+      //the function above fills a char array with bit data; each space in the
+      //array carries data for eight keys, all a 1 or 0. a bitmask is used to 
+      //extract this data, one bit at a time.
+
+      if(pause) { /* pause menu */ }
+      else {
+        //no keybounce protection in this section
+
+        //handle movement
+        if(key_map[KEY_W/8] & (1 << (KEY_W % 8)))
+          { e_handler::get().move_plr(e_handler::UP); }
+        if(key_map[KEY_A/8] & (1 << (KEY_A % 8)))
+          { e_handler::get().move_plr(e_handler::LF); }
+        if(key_map[KEY_S/8] & (1 << (KEY_S % 8)))
+          { e_handler::get().move_plr(e_handler::DN); }
+        if(key_map[KEY_D/8] & (1 << (KEY_D % 8)))
+          { e_handler::get().move_plr(e_handler::RT); }
+       
+
+        //protect against keybounce in this section by waiting until the
+        //user releases the key to allow the effect again 
+        
+        //debug toggle
+        static bool comma_down = false;
+        if(key_map[KEY_COMMA/8] & (1 << (KEY_COMMA % 8))) { 
+          if(!comma_down) {
+            e_handler::get().set_draw_debug_info(
+              !e_handler::get().get_draw_debug_info()
+            );
+
+            debug_mode = !debug_mode;
+            comma_down = true;
+          }
+        }
+        else { comma_down = false; }
+
+        //quit
+        static bool esc_down = false;
+        if(key_map[KEY_ESC/8] & (1 << (KEY_ESC % 8))) {
+          if(!esc_down) {
+            quit = true;
+            esc_down = true;
+          }
+        }
+        else { esc_down = false; }
+      }
+
+
+}
 
 void engine::player_input() {
     //get the keystate
