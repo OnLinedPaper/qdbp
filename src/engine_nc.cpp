@@ -88,7 +88,7 @@ void engine::next_tick() { }
 
 //=============================================================================
 
-bool engine::player_input() { 
+void engine::player_input() { 
 
   //i have no FUCKING idea why but if i put the file pointer into a class
   //member variable it immediately causes stack smashing
@@ -129,10 +129,10 @@ bool engine::player_input() {
 
   //quit
   if(key_map[KEY_ESC/8] & (1 << (KEY_ESC % 8))) {
-    return true;
+    quit = true;
   }
 
-  return false;
+  return;
 }
 
 

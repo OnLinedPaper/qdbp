@@ -34,7 +34,6 @@ void viewport::recalculate_view_dims() {
 
   //determine if the terminal is currently wide or tall
   bool wider = COLS * nc_pix_dims[0] > LINES * nc_pix_dims[1];
-  std::cout << (wider ? "WIDE" : "TALL") << std::endl;
 }
 
 

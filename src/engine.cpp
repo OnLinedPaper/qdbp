@@ -65,20 +65,6 @@ try{
 
 //- load stuff   -    -    -    -    -    -    -    -    -    -    -    -    -
 
-#if defined RENDER_SDL
-  const Uint8 *keystate = SDL_GetKeyboardState(NULL);
-  SDL_Event e;
-#endif
-
-
-#if defined RENDER_NC
-  //TODO: this apparently goes inside as a class member variable, see to it
-  FILE *kbd = fopen(
-    xmlparse::get().get_xml_string("/ncurses_rendering/keyboard_input_device").c_str(),
-    "r"
-  );
-  char key_map[KEY_MAX/8 +1];
-#endif
 
 //-    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -        
 
@@ -86,9 +72,7 @@ try{
 
 //==== PLAYER INPUT here ======================================================
 
-#if defined RENDER_SDL
-  quit = player_input(keystate, e);
-#endif
+  player_input();
 
 //==== UPDATE stuff here ======================================================
 
@@ -222,7 +206,7 @@ engine::engine() :
   , quit(false)
   , pause(false)
   , debug_mode(false)
-  , controller(NULL) 
+  , controller(NULL)
 {
 try{
   msg::get();
@@ -278,6 +262,7 @@ try{
   map_h::get().init_map("/" + xmlparse::get().get_xml_string("/first_map"));
   msg::get().log("first map loaded.");
 
+  
   msg::get().log("searching for joysticks...");
   if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
     msg::print_error("couldn't init joysticks subsystem! SDL_Error: " + std::string(SDL_GetError()));
@@ -300,6 +285,9 @@ try{
     throw("couldn't start SDL!");
   }
   msg::get().log("SDL initialized.");
+
+  //first init on keystate
+  keystate = SDL_GetKeyboardState(NULL);
   msg::get().log("---- engine loaded successfully! ----");
   
 } catch (std::string e) { msg::print_error(e); msg::get().close_log(); return; }
@@ -340,7 +328,7 @@ void engine::next_tick() {
 
 }
 
-bool engine::player_input(const Uint8* keystate, SDL_Event &e) {
+void engine::player_input() {
 
     //get the keystate
     SDL_PumpEvents();
@@ -377,7 +365,6 @@ bool engine::player_input(const Uint8* keystate, SDL_Event &e) {
       if(angle.magnitude() > 0) { e_handler::get().plr_shoot(angle); }
       
 
-
       if(controller) {
         //process controller input
         vec2d lrud(
@@ -399,7 +386,7 @@ bool engine::player_input(const Uint8* keystate, SDL_Event &e) {
 
     while(SDL_PollEvent(&e) != 0) {
       //get an event: protect from keybounce
-      if(e.type == SDL_QUIT || keystate[SDL_SCANCODE_ESCAPE]) { return true; }
+      if(e.type == SDL_QUIT || keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
       else if(e.type == SDL_KEYDOWN) {
 
         //pause unpause
@@ -439,7 +426,7 @@ bool engine::player_input(const Uint8* keystate, SDL_Event &e) {
     }
 
 
-  return false;
+  return;
 }
 #endif
 

@@ -60,5 +60,6 @@ bool map_h::try_jump() {
 }
 
 void map_h::update() {
+return;
   m->spawn_closet_entities();
 }

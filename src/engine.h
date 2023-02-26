@@ -49,13 +49,16 @@ private:
 
 #if defined RENDER_SDL
   SDL_Joystick *controller;
-  bool player_input(const Uint8*, SDL_Event &); 
+
+  SDL_Event e;
+  const Uint8 *keystate;
+  void player_input(); 
 #endif
 
 #if defined RENDER_NC
   FILE *kbd;
   char key_map[KEY_MAX/8 +1];
-  bool player_input(static char*); 
+  void player_input(); 
 #endif
 };
 
