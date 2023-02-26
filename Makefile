@@ -4,7 +4,7 @@ DIR := ${CURDIR}
 CFLAGS= -Wall -Wpedantic --std=c++17 -I$(DIR)
 OFLAGS = -O3
 DFLAGS = -g -ggdb -O0
-LFLAGS= -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lstdc++fs
+LFLAGS= -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lstdc++fs -lncurses
 WFLAGS= -lmingw32 -mwindows -I$(DIR)/lib -L$(DIR)/lib
 DDIR = debugging
 XDIR = bin

@@ -16,6 +16,9 @@
 #include <SDL2/SDL_ttf.h>
 #include "src/text/text.h"
 
+#include <unistd.h>
+#include <ncurses.h>
+
 //looking for the constructors? they're below "play"
 
 
@@ -67,7 +70,64 @@ try{
 
 //==== PLAYER INPUT here ======================================================
 
-    player_input();
+//    player_input();
+
+  while(getch() != ERR) {}
+
+      //wipe the character array
+      memset(key_map, 0, sizeof(key_map)); 
+
+      //fill array with keyboard state
+      ioctl(fileno(nc_kbd), EVIOCGKEY(sizeof(key_map)), key_map);
+      
+      //for my own reference:
+      //the function above fills a char array with bit data; each space in the
+      //array carries data for eight keys, all a 1 or 0. a bitmask is used to 
+      //extract this data, one bit at a time.
+
+      if(pause) { /* pause menu */ }
+      else {
+        //no keybounce protection in this section
+
+        //handle movement
+        if(key_map[KEY_W/8] & (1 << (KEY_W % 8)))
+          { e_handler::get().move_plr(e_handler::UP); }
+        if(key_map[KEY_A/8] & (1 << (KEY_A % 8)))
+          { e_handler::get().move_plr(e_handler::LF); }
+        if(key_map[KEY_S/8] & (1 << (KEY_S % 8)))
+          { e_handler::get().move_plr(e_handler::DN); }
+        if(key_map[KEY_D/8] & (1 << (KEY_D % 8)))
+          { e_handler::get().move_plr(e_handler::RT); }
+       
+
+        //protect against keybounce in this section by waiting until the
+        //user releases the key to allow the effect again 
+        
+        //debug toggle
+        static bool comma_down = false;
+        if(key_map[KEY_COMMA/8] & (1 << (KEY_COMMA % 8))) { 
+          if(!comma_down) {
+            e_handler::get().set_draw_debug_info(
+              !e_handler::get().get_draw_debug_info()
+            );
+
+            debug_mode = !debug_mode;
+            comma_down = true;
+          }
+        }
+        else { comma_down = false; }
+
+        //quit
+        static bool esc_down = false;
+        if(key_map[KEY_ESC/8] & (1 << (KEY_ESC % 8))) {
+          if(!esc_down) {
+            quit = true;
+            esc_down = true;
+          }
+        }
+        else { esc_down = false; }
+      }
+
 //==== UPDATE stuff here ======================================================
 
     if(pause) {
@@ -363,7 +423,28 @@ try{
   msg::get().log("---- engine loaded successfully! ----");
 
   keystate = SDL_GetKeyboardState(NULL);
-  
+  nc_kbd = fopen(
+      xmlparse::get().get_xml_string("/ncurses_rendering/keyboard_input_device").c_str(),
+      "r"
+    );
+    if(nc_kbd == NULL) {
+      //some kind of error here - probably either a bad path, or insufficient permissions
+      if(errno == 2) {
+        //file path was bad
+        msg::print_error("couldn't open keyboard input at \"" + 
+            xmlparse::get().get_xml_string("/ncurses_rendering/keyboard_input_device") + "\"");
+        msg::print_alert("(the path to your keyboard may be incorrect. check /dev/input/by-path/ for available devices, and select the corresponding /dev/input/event* alias for the device you want. you can use xinput to determine the proper id for event*. use this path to update \"keyboard_input_device\" in gamedata.xml)");
+        throw("bad keyboard path!");
+      }
+      else if(errno == 13) {
+        //insufficient permissions
+        msg::print_error("insufficient permissions to read keyboard input at \"" + 
+            xmlparse::get().get_xml_string("/ncurses_rendering/keyboard_input_device") + "\"");
+        msg::print_alert("(you might not have group access to your specified input - check the group of your device file with 'ls -l /dev/input' and then your own group membership with 'groups your_username'.)");
+        msg::print_alert("(you may need to log out for any changes to group permissions to take effect.)");
+        throw("insufficient keyboard permissions!");
+      }
+    } 
 } catch (std::string e) { msg::print_error(e); msg::get().close_log(); return; }
 }
 

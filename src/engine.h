@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string>
 #include <iostream>
+#include <linux/input.h>
 
 #define CONTROLLER_DEADZONE 8000
 
@@ -42,6 +43,10 @@ private:
 
   SDL_Event e;
   const Uint8* keystate;
+
+
+  FILE *nc_kbd;
+  char key_map[KEY_MAX/8 +1];
 
   bool quit;
   bool pause;
