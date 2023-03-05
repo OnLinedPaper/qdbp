@@ -10,44 +10,44 @@ gunner::gunner(const std::string &path, const vec2d &p, const vec2d &v) :
 
   //weapon id of -1 means no weapon at all, though warn the user, since a 
   //weapon-less gunner should really be a mortal instead
-  weapon_id(xmlparse::get().safe_get_xml_int(path + "/gunning/weapon_id", -1)),
+  weapon_id(xmlparse::get().get_xml_int(path + "/gunning/weapon_id", true, -1)),
   
   //ms multiplier, makes projectile live longer at higher numbers
   //TODO: add addition alongside the multiplier? same for below
-  w_life_ms_mod(xmlparse::get().safe_get_xml_float(
-    path + "/gunning/life_tick_multi", 1
+  w_life_ms_mod(xmlparse::get().get_xml_float(
+    path + "/gunning/life_tick_multi", true, 1
   )),
 
   //distance multiplier, make projectile go farther at higher numbers
-  w_life_dist_mod(xmlparse::get().safe_get_xml_float(
-    path + "/gunning/life_dist_multi", 1
+  w_life_dist_mod(xmlparse::get().get_xml_float(
+    path + "/gunning/life_dist_multi", true, 1
   )),
 
   //inaccuracy multiplier, make projectile LESS accurate at higher numbers
   //("0" makes the projectile perfectly accurate)
-  w_inacc_mod(xmlparse::get().safe_get_xml_float(
-    path + "/gunning/inacc_multi", 1
+  w_inacc_mod(xmlparse::get().get_xml_float(
+    path + "/gunning/inacc_multi", true, 1
   )),
 
   //velocity multiplier, makes projectile faster at higher numbers
-  w_vel_mod(xmlparse::get().safe_get_xml_float(
-    path + "/gunning/velocity_multi", 1
+  w_vel_mod(xmlparse::get().get_xml_float(
+    path + "/gunning/velocity_multi", true, 1
   )),
 
   //adds the ability to pierce additional targets - note that 3 is max, and
   //values over 3 don't add any further benefit
-  w_pierce_mod(xmlparse::get().safe_get_xml_int(
-    path + "/gunning/extra_piercing_count", 0
+  w_pierce_mod(xmlparse::get().get_xml_int(
+    path + "/gunning/extra_piercing_count", true, 0
   )),
 
   //damage multiplier, makes projectile deal more damage at higher numbers
-  w_damage_mod(xmlparse::get().safe_get_xml_float(
-    path + "/gunning/damage_multi", 1
+  w_damage_mod(xmlparse::get().get_xml_float(
+    path + "/gunning/damage_multi", true, 1
   )),
 
   //firing speed delay multiplier, makes projectile fire faster at LOW numbers
-  w_delay_mod(xmlparse::get().safe_get_xml_float(
-    path + "/gunning/firing_delay_multi", 1
+  w_delay_mod(xmlparse::get().get_xml_float(
+    path + "/gunning/firing_delay_multi", true, 1
   )),
 
   //shot angle, defaults to straight up (0, 0)
