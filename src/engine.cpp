@@ -70,8 +70,8 @@ try{
 
 //==== PLAYER INPUT here ======================================================
 
-//    player_input();
-    player_input_2();
+    player_input();
+//    player_input_2();
 //==== UPDATE stuff here ======================================================
 
     if(pause) {
