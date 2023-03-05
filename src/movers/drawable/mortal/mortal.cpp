@@ -15,55 +15,55 @@ mortal::mortal(const std::string &path, const vec2d &p, const vec2d &v) :
   tangible(true),
 
   //get max health - default to 1 np, which creates the entity
-  max_health(xmlparse::get().safe_get_xml_float(
-    path + "/health/health_max", 1
+  max_health(xmlparse::get().get_xml_float(
+    path + "/health/health_max", true, 1
   )),
   curr_health(max_health),
 
   //get health segments - default to 1, which makes a single bar
-  health_segments(xmlparse::get().safe_get_xml_float(
-    path + "/health/health_segments", 1
+  health_segments(xmlparse::get().get_xml_float(
+    path + "/health/health_segments", true, 1
   )),
 
   h_is_regenerating(false),
   //get regen rate - default to 0, meaning no regen
-  h_regen_rate(xmlparse::get().safe_get_xml_float(
-    path + "/health/health_regen_rate", 0
+  h_regen_rate(xmlparse::get().get_xml_float(
+    path + "/health/health_regen_rate", true, 0
   )),
 
   dies_on_update(false),
 
   //get max shield segments - default to 0, meaning no shields
-  max_shield_segments(xmlparse::get().safe_get_xml_int(
-    path + "/health/shield_segments", 0
+  max_shield_segments(xmlparse::get().get_xml_int(
+    path + "/health/shield_segments", true, 0
   )),
   curr_shield_segments(max_shield_segments),
 
   s_is_regenerating(true),
   //get regen rate - default to 0, meaning no shield regen
-  s_regen_rate(xmlparse::get().safe_get_xml_float(
-    path + "/health/shield_regen_rate", 0
+  s_regen_rate(xmlparse::get().get_xml_float(
+    path + "/health/shield_regen_rate", true, 0
   )),
 
   //get first shield size - arbitrarily make first size 0.5?
   //that'll make the first shield seg take half the bar
-  first_s_size(xmlparse::get().safe_get_xml_float(
-    path + "/health/shield_first_seg_size", 0.5
+  first_s_size(xmlparse::get().get_xml_float(
+    path + "/health/shield_first_seg_size", true, 0.5
   )),
 
   //weak boxes take 4x damage by default
-  weakbox_scale(xmlparse::get().safe_get_xml_float(
-    path + "/health/scaling/weak", 4
+  weakbox_scale(xmlparse::get().get_xml_float(
+    path + "/health/scaling/weak", true, 4
   )),
 
   //hurtboxes take 1x damage by default
-  hurtbox_scale(xmlparse::get().safe_get_xml_float(
-    path + "/health/scaling/hurt", 1
+  hurtbox_scale(xmlparse::get().get_xml_float(
+    path + "/health/scaling/hurt", true, 1
   )),
 
   //armor takes 1/4x damage by default
-  armorbox_scale(xmlparse::get().safe_get_xml_float(
-    path + "/health/scaling/armor", 1
+  armorbox_scale(xmlparse::get().get_xml_float(
+    path + "/health/scaling/armor", true, 1
   )),
 
   max_health_mod(1),
@@ -74,7 +74,9 @@ mortal::mortal(const std::string &path, const vec2d &p, const vec2d &v) :
   first_s_size_mod(1)
 {
   //load all hitboxes into their vectors
-  for(std::string p : xmlparse::get().get_all_child_tags(path + "/hitboxes")) {
+  std::vector<std::string> hitboxes_v;
+  xmlparse::get().get_all_child_tags(path + "/hitboxes", hitboxes_v);
+  for(std::string p : hitboxes_v) {
     hy_box h(path + "/hitboxes/" + p);
 
     if(h.get_type() == hitbox::TYPE_HITBOX) {
