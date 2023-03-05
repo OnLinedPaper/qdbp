@@ -1,0 +1,12 @@
+<zero>zero text</zero>
+<one>
+  <three>three text</three>
+  <four>four text</four>
+</one>
+<two>two text</two>
+<five>
+  <six>
+    <seven>true</seven>
+  </six>
+  <eight></eight>
+</five>

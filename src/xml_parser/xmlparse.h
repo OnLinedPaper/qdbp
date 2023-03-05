@@ -1,7 +1,7 @@
 #ifndef XMLPARSE_H_
 #define XMLPARSE_H_
 
-#include "xmlnode.h"
+#include "src/xml_parser/xmlnode.h"
 #include <regex>
 #include <string>
 
