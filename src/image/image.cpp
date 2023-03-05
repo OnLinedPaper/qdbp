@@ -40,11 +40,13 @@ try :
 {
   //blend mode will almost always be regular alpha blending, but can be 
   //switched to something else
-  xmlparse::get().set_show_debug_msg(false);
-  if(!xmlparse::get().safe_get_xml_string(name + "/blend", "").compare("ADD")) {
+  //(temporarily switch off xml flags since this usually "fails")
+  uint16_t xml_flags = xmlparse::get().get_dbg_msg_flags();
+  xmlparse::get().set_dbg_msg_flags(xmlparse::DBG_ONLY_FATAL);
+  if(!xmlparse::get().get_xml_string(name + "/blend", true, "").compare("ADD")) {
     blend = SDL_BLENDMODE_ADD;
   }
-  xmlparse::get().set_show_debug_msg(true);
+  xmlparse::get().set_dbg_msg_flags(xml_flags);
 
   //validate size and frames
   if(dimensions[0] <= 0) {

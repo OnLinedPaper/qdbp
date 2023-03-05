@@ -8,32 +8,32 @@ player::player(const std::string &path) :
 player::player(const std::string &path, const vec2d &p, const vec2d &v) :
   gunner(path, p, v),
   heat(0),
-  max_heat(xmlparse::get().safe_get_xml_float(
-    path + "/heat/max_heat", 100
+  max_heat(xmlparse::get().get_xml_float(
+    path + "/heat/max_heat", true, 100
   )),
-  max_overheat(xmlparse::get().safe_get_xml_float (
-    path + "/heat/max_overheat", 50
+  max_overheat(xmlparse::get().get_xml_float (
+    path + "/heat/max_overheat", true, 50
   )),
-  boost_heat_per_tick(xmlparse::get().safe_get_xml_float(
-    path + "/heat/boost_heat_per_tick", 0
+  boost_heat_per_tick(xmlparse::get().get_xml_float(
+    path + "/heat/boost_heat_per_tick", true, 0
   )),
-  regen_heat_per_tick(xmlparse::get().safe_get_xml_float(
-    path + "/heat/regen_heat_per_tick", 0
+  regen_heat_per_tick(xmlparse::get().get_xml_float(
+    path + "/heat/regen_heat_per_tick", true, 0
   )),
-  cool_per_tick(xmlparse::get().safe_get_xml_float(
-    path + "/heat/cool_per_tick", 1
+  cool_per_tick(xmlparse::get().get_xml_float(
+    path + "/heat/cool_per_tick", true, 1
   )),
-  vent_cool_per_tick(xmlparse::get().safe_get_xml_float(
-    path + "/heat/vent_heat_per_tick", 1
+  vent_cool_per_tick(xmlparse::get().get_xml_float(
+    path + "/heat/vent_heat_per_tick", true, 1
   )),
-  vent_startup_tick_delay(xmlparse::get().safe_get_xml_float(
-    path + "/heat/vent_delay_tick", 0
+  vent_startup_tick_delay(xmlparse::get().get_xml_float(
+    path + "/heat/vent_delay_tick", true, 0
   )),
-  boost_vel_multiplier(xmlparse::get().safe_get_xml_float(
-    path + "/movement/vel_boost", 1
+  boost_vel_multiplier(xmlparse::get().get_xml_float(
+    path + "/movement/vel_boost", true, 1
   )),
-  boost_accel_multiplier(xmlparse::get().safe_get_xml_float(
-    path + "/movement/vel_boost_accel", 1
+  boost_accel_multiplier(xmlparse::get().get_xml_float(
+    path + "/movement/vel_boost_accel", true, 1
   )),
   max_heat_mod(1),
   max_overheat_mod(1),

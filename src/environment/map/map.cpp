@@ -2,6 +2,7 @@
 #include <vector>
 #include <sstream>
 #include <string>
+#include <algorithm>
 #include "map.h"
 #include "src/xml_parser/xmlparse.h"
 #include "src/utils/message.h"
@@ -227,13 +228,14 @@ void map::init_special_chunks() {
   //make path, for convenience's sake
   std::string s_path = name + "/special_chunks";
 
-  if(!xmlparse::get().check_path(s_path, false)) {
+  if(!xmlparse::get().check_path(s_path)) {
     //special chunks isn't in the xml path - return immediately
     return;
   }
 
   //get the special chunks
-  std::vector<std::string> specials = xmlparse::get().get_all_child_tags(s_path);
+  std::vector<std::string> specials;
+  xmlparse::get().get_all_child_tags(s_path, specials);
 
   //some variables we'll use
   int x = 0;
@@ -248,7 +250,8 @@ void map::init_special_chunks() {
     y = xmlparse::get().get_xml_int(s_path + "/" + s_c_name + "/y_chunk");
     t = xmlparse::get().get_xml_string(s_path + "/" + s_c_name + "/type");
 
-    std::vector<std::string> traits = xmlparse::get().get_all_child_tags(s_path + "/" + s_c_name);
+    std::vector<std::string> traits;
+    xmlparse::get().get_all_child_tags(s_path + "/" + s_c_name, traits);
 
     if(x < 0 || x >= (*dim_acti)[0] || y < 0 || y >= (*dim_acti)[1]) {
       //this chunk isn't valid - skip it
@@ -303,13 +306,14 @@ void map::parse_spawn_rules() {
   //to the chunks in question
   std::string s_path = name + "/entity_spawning";
 
-  if(!xmlparse::get().check_path(s_path, false)) {
+  if(!xmlparse::get().check_path(s_path)) {
     //there's no spawn rules for this map (what?) so return immediately
     return;
   }
 
   //get the spawn rules
-  std::vector<std::string> rules = xmlparse::get().get_all_child_tags(s_path);
+  std::vector<std::string> rules;
+  xmlparse::get().get_all_child_tags(s_path, rules);
 
   int x, y = 0;
   float x_coord, y_coord = 0;
@@ -486,7 +490,7 @@ void map::parse_spawn_rules() {
     //- the path of the entity to spawn, as would be passed to entity handler
     entity = xmlparse::get().get_xml_string(s_path + "/" + s_r_name + "/entity");
 
-    if(!xmlparse::get().check_path("/movers/mortal/" + entity, false)) {
+    if(!xmlparse::get().check_path("/movers/mortal/" + entity)) {
       msg::print_warn("bad entity path \"/movers/mortal/" + entity + "\" for rule " +
         s_path + "/" + s_r_name);
       msg::print_alert("is the entity path spelled correctly?");

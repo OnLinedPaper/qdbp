@@ -1,300 +1,369 @@
-#include "xmlparse.h"
+#include "src/xml_parser/xmlparse.h"
 #include "src/utils/message.h"
 #include <iostream>
-#include <string>
-#include <cstdio>
-#include <regex>
 #include <fstream>
-//TODO: calling any xml_get function is REALLY EXPENSIVE apparently. reduce
-//the number of calls to this entire suite to the minimum amount possible.
+#include <deque>
 
-xmlparse::xmlparse() : root(new xmlnode()), show_debug_msg(true) { }
+const uint16_t xmlparse::DBG_ALL         = 1<<15;
+const uint16_t xmlparse::DBG_DEFAULT     = 1<<14;
+const uint16_t xmlparse::DBG_ONLY_FATAL  = 1<<13;
+const uint16_t xmlparse::DBG_TREE_PRINT  = 1<< 5;
+const uint16_t xmlparse::DBG_FATAL_ERROR = 1<< 4;
+const uint16_t xmlparse::DBG_TREE_BUILD  = 1<< 3;
+const uint16_t xmlparse::DBG_GET_FAIL    = 1<< 2;
+const uint16_t xmlparse::DBG_PATH_FAIL   = 1<< 1;
+const uint16_t xmlparse::DBG_NONE        = 1<< 0;
+
+
+xmlparse::xmlparse() : root(new xmlnode()), dbg_msg_flags(0) { 
+  set_dbg_msg_flags(DBG_DEFAULT);
+}
 
 xmlparse::~xmlparse() {
   delete root;
 }
 
-//============================================================================
-
-void xmlparse::build_tree(const std::string file_name) {
-
-
-  //get the xml file
-  std::FILE *fp = std::fopen(file_name.c_str(), "rb");
-  if(!fp) {
-    msg::print_warn("when bulding tree, file \"" + file_name + "\" couldn't be opened!");
-    msg::print_alert("(did you rename / misspell / delete the file by mistake?)");
+void xmlparse::set_dbg_msg_flags(uint16_t i) {
+  dbg_msg_flags = 0;
+  if(i & DBG_ALL) {
+    dbg_msg_flags = DBG_TREE_PRINT | DBG_FATAL_ERROR | DBG_TREE_BUILD | DBG_GET_FAIL | DBG_PATH_FAIL;
+  }
+  else if(i & DBG_DEFAULT) {
+    dbg_msg_flags = DBG_TREE_PRINT | DBG_FATAL_ERROR | DBG_GET_FAIL;
+  }
+  else if(i & DBG_ONLY_FATAL) {
+    dbg_msg_flags = DBG_FATAL_ERROR;
+  }
+  else if(i & DBG_NONE) {
     return;
   }
-
-  //get the size of the string buffer, allocate that memory, and
-  //fill it in
-  std::string contents = "";
-  std::fseek(fp, 0, SEEK_END);
-
-  //make it this big
-  contents.resize(std::ftell(fp));
-
-  //go the fromt and read everything into the string
-  std::rewind(fp);
-  size_t read = 0;
-  read = std::fread(&contents[0], 1, contents.size(), fp);
-  if(read != contents.size()) {
-    msg::print_warn("xmlparser expected " + std::to_string(contents.size()) + ", read " + std::to_string(read));
-  }
-
-  std::fclose(fp);
-
-//-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
-//we have the contents, now load them into the nodes
-
-  //iterator to go through the string
-  std::sregex_iterator rxi(contents.begin(), contents.end(), tree_rx);
-  std::sregex_iterator end;
-
-  while(rxi != end) {
-    std::smatch m = *rxi;
-    recurse_build_tree(m, "/");
-    rxi++;
+  else {
+    dbg_msg_flags = i;
   }
 }
 
-//============================================================================
+void xmlparse::build_tree(const std::string &file_name) {
 
-std::string xmlparse::get_xml_string(const std::string path) {
-  try {
-    return(root->recursive_get_value(path, show_debug_msg));
-  }
-  catch (const std::string e) {
-    //something went wrong, add some data and throw the exception
-    if(show_debug_msg) {
-      msg::print_alert("bad tag path: " + path);
+  //perform xml parsing with the file pointer - never load the file into memory
+
+  std::ifstream infile(file_name, std::ios::in);
+  if(!infile) {
+    if(dbg_msg_flags & DBG_TREE_BUILD) {
+      msg::print_error("when bulding tree, file \"" + file_name + "\" couldn't be opened!");
+      msg::print_alert("(did you rename / misspell / delete the file by mistake?)");
     }
-    std::string error = e + " bad tag path: " + path;
-
-    throw error;
+    throw("S-H-I-T!");
   }
-}
 
-//-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   - 
+  //parent node, child tag
+  std::vector<std::pair<xmlnode *, std::string>> unclosed_tags;
+  char c = ' ';
+  std::string s, m = "";
 
-std::string xmlparse::safe_get_xml_string(const std::string path, std::string def) {
-  try {
-    return get_xml_string(path);
-  }
-  catch (std::string e) {
-    if(show_debug_msg) {
-      msg::print_good("==== safe mode: returning \"" + def + "\" ====");
+  //current node that's being added to
+  xmlnode *current = root;
+
+  //will skip whitespace manually
+  infile >> std::noskipws;
+
+  //read through file
+  while(infile.good() && !infile.eof()) {
+    //consume whitespace
+    while(std::isspace((char)infile.peek())) { infile.get(); }
+
+    //determine if this is a tag, or content
+    if((char)infile.peek() == '<') {
+      //this is a tag
+
+      //consume opening "<"
+      infile.get();
+
+      if((char)infile.peek() == '/') {
+        //this is a close tag - ensure that it matches the previously opened
+        //tag, and then close it  
+
+        //consume opening "/"
+        infile.get();
+        s = "";
+        while((char)infile.peek() != '>') {
+          infile >> c;
+          s += c;
+        }
+        
+        if(s.compare(unclosed_tags.back().second) == 0) {
+          //debug message
+          if(dbg_msg_flags & DBG_TREE_BUILD) {
+            m = "closing tag \"" + s + "\"";
+            msg::get().print_alert(m);
+          }
+
+          //set the current to the parent node
+          current = unclosed_tags.back().first;
+
+          //pop the last node off the vector
+          unclosed_tags.pop_back();
+        }
+        else {
+          //uh oh. mismatched tags
+          if(dbg_msg_flags & DBG_FATAL_ERROR) {
+            m = "xmlparse::build_tree threw error: closing tag \"" + s + "\" does not match opening tag \"" + unclosed_tags.back().second + "\"";
+            msg::get().print_error(m);
+          }
+          throw("S-H-I-T!");
+        }
+      }      
+      else {
+        //this is an open tag - get its name
+        s = "";
+        while((char)infile.peek() != '>') {
+          infile >> c;
+          s += c;
+        }
+
+        //debug message
+        if(dbg_msg_flags & DBG_TREE_BUILD) {
+          m = "adding child \"" + s + "\" to \"" + current->get_name() + "\"";
+          msg::get().print_alert(m);
+        }
+
+        //save current tag to return to
+        unclosed_tags.push_back(std::make_pair(current, s));
+
+        //make a new node and switch to it
+        current = current->add_child(s);
+
+      }
+      //consume closing ">"
+      infile.get();
     }
-    return def;
-  }
-}
+    else {
+      //this is a tag's value
 
+      //get content
+      s = "";
+      while((char)infile.peek() != '<' && !infile.eof()) {
+        infile >> c;
+        s += c;
+      }
 
-//============================================================================
+      //debug message
+      if(dbg_msg_flags & DBG_TREE_BUILD) {
+        std::string m = "adding value \"" + s + "\" to \"" + current->get_name() + "\"";
+        msg::get().print_alert(m);
+      }
 
-int xmlparse::get_xml_int(const std::string path) {
-  std::string retval = get_xml_string(path);
-  try {
-    return std::stoi(retval);
-  }
-  catch (const std::invalid_argument& ia) {
-    //they probably tried to convert a string or something
-    std::string error = "can't convert this value to an int!";
-    if(show_debug_msg) {
-      msg::print_error(error);
-      msg::print_alert("value: " + retval);
-      msg::print_alert("bad tag path: " + path);
+      current->set_value(s);
     }
-    throw error;
   }
+  return;
 }
 
-//-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   - 
+xmlnode * xmlparse::get_child(const std::string &path) {
+  //extract the path from the string
+  std::string s = "";
 
-int xmlparse::safe_get_xml_int(const std::string path, int def) {
-  try {
-    return get_xml_int(path);
-  }
-  catch (std::string e) {
-    if(show_debug_msg) {
-      msg::print_good("==== safe mode: returning " + std::to_string(def) + " ====");
+  xmlnode *current = root;
+
+  //iterate through string
+  for(char c : path) {
+    if(c == '/') {
+      if(!s.empty()) {
+        current = current->get_child(s);
+
+        //does this child exist?
+        if(!current) {
+          break;
+        }
+
+        s = "";
+      }
     }
-    return def;
-  }
-}
-
-//============================================================================
-
-float xmlparse::get_xml_float(const std::string path) {
-  std::string retval = get_xml_string(path);
-  try {
-    return std::stod(retval);
-  }
-  catch (const std::invalid_argument& ia) {
-    //they probably tried to convert a string or something
-    std::string error = "can't convert this value to a float!";
-    if(show_debug_msg) {
-      msg::print_error(error);
-      msg::print_alert("value: " + retval);
-      msg::print_alert("bad tag path: " + path);
+    else {
+      s += c;
     }
-    throw error;
   }
-}
-
-//-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   - 
-
-float xmlparse::safe_get_xml_float(const std::string path, float def) {
-  try {
-    return get_xml_float(path);
+  
+  if(current) {
+    current = current->get_child(s);
   }
-  catch (std::string e) {
-    if(show_debug_msg) {
-      msg::print_good("==== safe mode: returning " + std::to_string(def) + " ====");
+
+  //does this child exist?
+  if(!current) {
+    if(dbg_msg_flags & DBG_PATH_FAIL) {
+      std::string m = "failed to locate tag \"" + s + "\" in path \"" + path + "\"";
+      msg::get().print_warn(m);
     }
-    return def;
+  }
+
+  return current;
+}
+
+//reminder: prints to stdout
+void xmlparse::print_tree() { 
+  std::deque<std::pair<xmlnode *, int>> nodes;
+  nodes.push_back(std::make_pair(root, 0));
+
+  if(dbg_msg_flags & DBG_TREE_PRINT) {
+      std::string m = "dumping xml tree to stdout";
+      msg::get().print_alert(m);
+  }
+
+  //walk through nodes
+  while(nodes.size()) {
+    //get the node...
+    xmlnode *current = nodes[0].first;
+    //...and its depth (for formatting)
+    int depth = nodes[0].second;
+
+    //pop that entry off the front
+    nodes.pop_front();
+
+    //print node's name and value, and some formatting
+    for (int i=0; i<depth; i++) { std::cout << "  "; }
+    std::cout << "\"" << current->get_name() << "\" | \"";
+    std::cout << current->get_value() << "\"" << std::endl;
+
+    std::vector<std::string> v;
+    current->get_children(v);
+
+    for(const std::string &s : v) {
+      nodes.push_front(std::make_pair(current->get_child(s), depth+1));
+    }
   }
 }
 
-//============================================================================
-
-bool xmlparse::get_xml_bool(const std::string path) {
-  std::string retval = get_xml_string(path);
-
-  std::regex t("^[Tt][Rr][Uu][Ee]$");
-  std::regex f("^[Ff][Aa][Ll][Ss][Ee]$");
-
-  if(std::regex_match(retval, t)) {
-    return true;
-  }
-  else if(std::regex_match(retval, f)) {
-    return false;
+void xmlparse::get_all_child_tags(const std::string &path, std::vector<std::string> &v) {
+  //get the child node
+  xmlnode *current = get_child(path);
+  if(current) {
+    current->get_children(v);
   }
   else {
-    std::string error = "can't convert this value to bool!";
-    if(show_debug_msg) {
-      msg::print_error(error);
-      msg::print_alert("value: " + retval);
-      msg::print_alert("bad tag path: " + path);
+    //child does not exist
+    if(dbg_msg_flags & DBG_FATAL_ERROR) {
+      std::string m = "xmlparse::get_all_child_tags threw error: bad tag path \"" + path + "\"";
+      msg::get().print_error(m);
     }
-    throw error;
+    throw("S-H-I-T!");
   }
 }
 
-//-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   - 
+bool xmlparse::check_path(const std::string &path) {
+  bool is_valid = get_child(path) != NULL;
+  return (is_valid);
+}
 
-bool xmlparse::safe_get_xml_bool(const std::string path, bool def) {
-  try {
-    return get_xml_bool(path);
-  }
-  catch (std::string e) {
-    if(show_debug_msg) {
-      msg::print_good("==== safe mode: returning " + std::to_string(def) + " ====");
+void xmlparse::print_get_bad_value_msg(const std::string &func_name, const std::string &path, const std::string &value, bool safe_mode, const std::string &def) {
+  
+  if(safe_mode) {
+    if(dbg_msg_flags & DBG_GET_FAIL) {
+      std::string m = func_name + " issued warning: bad tag value \"" + value + "\" for path \"" + path + "\"";
+      msg::get().print_warn(m);
+      m = "safe mode: returning default value \"" + def + "\"";
+      msg::get().print_alert(m);
     }
-    return def;
-  }
-}
-
-
-//============================================================================
-
-bool xmlparse::check_path(const std::string path, bool send_alert) const {
-  return(root->recursive_check_path(path, send_alert && show_debug_msg));
-}
-
-void xmlparse::print_tree() {
-  std::cout << msg::cn << std::endl;
-  root->recursive_print(0);
-  std::cout << msg::none << std::endl;
-}
-
-std::vector<std::string> xmlparse::get_all_child_tags(const std::string path) const {
-  try {
-    return(root->recursive_get_all_child_tags(path));
-  }
-  catch (std::string s) {
-    //one of the tags was bad
-    if(show_debug_msg) {
-      msg::print_alert("bad tag path: " + path);
-    }
-    return std::vector<std::string>();
-  }
-}
-
-//============================================================================
-
-void xmlparse::recurse_build_tree(const std::smatch m, const std::string path) {
-  //get the string first that holds this regex chunk
-  std::string content = m.str();
-
-  std::sregex_iterator rxi;
-  std::sregex_iterator end;
-  unsigned first = 0;
-  unsigned last = 0;
-
-  bool is_comment = true;
-
-  while(is_comment) {
-    is_comment = false;
-
-    //get the top tag - note that it is expected there are
-    //no children whose names are duplicated by one of
-    //their parents
-    first = content.find_first_of("<") + 1;
-    last = content.find_first_of(">");
-
-    //check first to see if this is a comment - if so,
-    //ignore it
-    if(
-      !content.substr(first, 3).compare("!--") &&
-      !content.substr(last-2, 2).compare("--")
-    ) {
-      //it's a comment
-      //erase it and try again
-      is_comment = true;
-
-      content = content.erase(first-1, last-first+2);
-    }
-  }
-
-  std::string top_tag = content.substr(first, last-first);
-  std::string open_tag = "<" + top_tag + ">";
-  std::string close_tag = "</" + top_tag + ">";
-
-  //cut the start and end tags off
-  first = content.find_first_of(open_tag) + 1;
-  last = content.find_last_of(close_tag);
-  std::string new_content = content.substr(first, last-first);
-
-  rxi = std::sregex_iterator(content.begin(), content.end(), tag_rx);
-
-  if(rxi != end) {
-    //this is a tag with only a value in it
-
-    //trim the value out
-    first = content.find_first_of(">") + 1;
-    last = content.find_last_of("<");
-    std::string value = content.substr(first, last-first);
-
-    std::smatch m = *rxi;
-    //insert the value
-    root->insert_child(top_tag, path, value);
   }
   else {
-
-    //the tag has some html in it
-    root->insert_child(top_tag, path);
-
-    //look for more matches
-    rxi = std::sregex_iterator(new_content.begin(), new_content.end(), tree_rx);
-
-    while(rxi != end) {
-      std::smatch m = *rxi;
-      recurse_build_tree(m, path + top_tag + "/");
-      rxi++;
+    if(dbg_msg_flags & DBG_FATAL_ERROR) {
+      std::string m = func_name + " raised error: bad tag value \"" + value + "\" for path \"" + path + "\"";
+      msg::get().print_error(m);
     }
+  }
+}
 
+void xmlparse::print_get_bad_path_msg(const std::string &func_name, const std::string &path, bool safe_mode, const std::string &def) {
+  
+  if(safe_mode) {
+    if(dbg_msg_flags & DBG_GET_FAIL) {
+      std::string m = func_name + " issued warning: bad tag path \"" + path + "\"";
+      msg::get().print_warn(m);
+      m = "safe mode: returning default value \"" + def + "\"";
+      msg::get().print_alert(m);
+    }
+  }
+  else {
+    if(dbg_msg_flags & DBG_FATAL_ERROR) {
+      std::string m = func_name + " raised error: bad tag path \"" + path + "\"";
+      msg::get().print_error(m);
+    }
+  }
+}
+
+std::string xmlparse::get_xml_string(const std::string &path, bool safe_mode, std::string def) {
+  xmlnode *current = get_child(path);
+  if(!current) {
+
+    print_get_bad_path_msg("xmlparse::get_xml_string", path, safe_mode, def);
+
+    if(safe_mode) { return def; }
+    else { throw("S-H-I-T!"); }
   }
 
+  return current->get_value();
+}
+
+int xmlparse::get_xml_int(const std::string &path, bool safe_mode, int def) {
+  xmlnode *current = get_child(path);
+  if(!current) {
+
+    print_get_bad_path_msg("xmlparse::get_xml_int", path, safe_mode, std::to_string(def));
+
+    if(safe_mode) { return def; }
+    else { throw("S-H-I-T!"); }
+  }
+
+  //attempt to parse value
+  try {
+    return std::stoi(current->get_value());
+  } catch(std::invalid_argument const &e) {
+
+    print_get_bad_value_msg("xmlparse::get_xml_int", path, current->get_value(), safe_mode, std::to_string(def));
+
+    if(safe_mode) { return def; }
+    else { throw("S-H-I-T!"); }
+  }
+}
+
+float xmlparse::get_xml_float(const std::string &path, bool safe_mode, float def) {
+  xmlnode *current = get_child(path);
+  if(!current) {
+
+    print_get_bad_path_msg("xmlparse::get_xml_float", path, safe_mode, std::to_string(def));
+
+    if(safe_mode) { return def; }
+    else { throw("S-H-I-T!"); }
+  }
+
+  //attempt to parse value
+  try {
+    return std::stof(current->get_value());
+  } catch(std::invalid_argument const &e) {
+
+    print_get_bad_value_msg("xmlparse::get_xml_float", path, current->get_value(), safe_mode, std::to_string(def));
+
+    if(safe_mode) { return def; }
+    else { throw("S-H-I-T!"); }
+  }
+}
+
+bool xmlparse::get_xml_bool(const std::string &path, bool safe_mode, bool def) {
+  xmlnode *current = get_child(path);
+  if(!current) {
+
+    print_get_bad_path_msg("xmlparse::get_xml_bool", path, safe_mode, std::to_string(def));
+
+    if(safe_mode) { return def; }
+    else { throw("S-H-I-T!"); }
+  }
+
+  //check true or false
+  if(current->get_value().compare("true") == 0)  { return  true; }
+  if(current->get_value().compare("false") == 0) { return false; }
+  
+  //bad input or badly formatted
+  print_get_bad_value_msg("xmlparse::get_xml_bool", path, current->get_value(), safe_mode, std::to_string(def));
+  msg::get().print_alert("value must be either \"true\" or \"false\", without capitalization or whitespace");
+  
+  if(safe_mode) { return def; }
+  else { throw("S-H-I-T!"); }
 }

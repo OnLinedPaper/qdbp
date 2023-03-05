@@ -1,11 +1,17 @@
-#ifndef XMLNODE_H_
-#define XMLNODE_H_
+#ifndef XMLNODE_V2_H_
+#define XMLNODE_V2_H_
 
-#include <string>
 #include <map>
+#include <string>
 #include <vector>
-#include <fstream>
 
+//second attempt at XML parsing. not going to use any recursion. still on
+//the fence about regular expressions.
+
+//node in this case is a heavily simplified version of its previous setup
+//and will rely on the handler to deal with most of the work now.
+//it includes a name for the tag, a value in the tag, and a map of children.
+//that's it.
 class xmlnode {
 public:
   xmlnode();
@@ -13,30 +19,28 @@ public:
   xmlnode(std::string const, std::string const);
   ~xmlnode();
 
-  const std::string get_value() const { return value; }
-  void set_value(const std::string val) { value = val; }
-
   const std::string get_name() const { return name; }
-  void set_name(const std::string n) { name = n; }
+  void set_name(const std::string &n) { name = n; }
 
-  void add_child(const std::string n);
-  void insert_child(const std::string name, const std::string path);
-  void insert_child(const std::string name, const std::string path, const std::string value);
+  const std::string get_value() const { return value; }
+  void set_value(const std::string &v) { value = v; }
 
-  void recursive_print(const int depth);
-  void recursive_file_print(std::ofstream &f, int depth);
-  std::string recursive_get_value(const std::string path, bool send_alert);
-  std::vector<std::string> recursive_get_all_child_tags(const std::string path);
-  bool recursive_check_path(const std::string path, bool send_alert);
+  //creates a new node in the array of children with NO VALUE - this must be
+  //set afterwards!
+  //returns a pointer to the newly created child
+  xmlnode * add_child(const std::string &n);
 
-protected:
-  std::string dive_name(const std::string) const;
-  std::string dive_path(const std::string) const;
+  //returns NULL if there is no child; otherwise returns a pointer to the 
+  //child node
+  xmlnode *get_child(const std::string &n); //use std::map::count
+
+  //returns a vector of child node keys
+  void get_children(std::vector<std::string> &);
 
 private:
-  std::string name; //one name for the tag
-  std::string value;  //one value per xml tag
-  std::map<std::string, xmlnode*> children; //the children of this node
+  std::string name;
+  std::string value;
+  std::map<std::string, xmlnode *> children;
 
 };
 
