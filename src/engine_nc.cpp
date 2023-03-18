@@ -2,6 +2,9 @@
 
 #if defined RENDER_NC
 #include <ctime>
+#include <unistd.h>
+#include <ncurses.h>
+#include <linux/input.h>
 
 #include "engine.h"
 #include "src/renders/render_nc.h"
