@@ -48,10 +48,15 @@ void image_handler::draw_box(const vec2d &v1, const vec2d &v2, bool filled, char
   viewport::get().nc_world_coord_to_view_coord(x_brc, y_brc);
   
   //draw
-  for(int j=y_tlc; j<=y_brc; j++) {
-    for(int i=x_tlc; i<=x_brc; i++) {
-      r[j*C + i] = c;
+  if(filled) {
+    for(int j=y_tlc; j<=y_brc; j++) {
+      for(int i=x_tlc; i<=x_brc; i++) {
+        r[j*C + i] = c;
+      }
     }
+  }
+  else {
+    //TODO: call draw_line 4 times
   }
 
   
