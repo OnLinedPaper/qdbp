@@ -4,7 +4,7 @@
 #include <iostream>
 #include "src/viewport/viewport.h"
 
-render::render() : w(NULL), r(NULL), nc_render_this_frame(true) { 
+render::render() : prev_LINES(-1), prev_COLS(-1), w(NULL), r(NULL), nc_render_this_frame(true) { 
   initscr();
   cbreak();
   noecho();
@@ -23,6 +23,18 @@ render::~render() {
   free(r);
 }
 
+void render::get_r(char * &r_in, int &L, int &C) {
+  //if the window resized, it's not safe to draw into the array anymore
+  if(LINES != prev_LINES || COLS != prev_COLS) {
+    r_in = NULL;
+    L = -1;
+    C = -1;
+  }
+  r_in = r;
+  L = prev_LINES;
+  C = prev_COLS;
+}
+
 void render::nc_render() { 
   nc_check_stale_win_size();
 
@@ -31,14 +43,22 @@ void render::nc_render() {
     //draw
     for(int i=0; i<COLS; i++) {
       for(int j=0; j<LINES; j++) {
+        //add the contents of the array to the screen buffer
         mvwaddch(w, j, i, r[j*COLS+i]);
-        //TODO: bg is already going to overlap this, is it necessary?
-        //given that it's a tiny array i don't think it matters...
+
+        //reset the array
+        //bg is already going to overlap everything, so it isn't exactly
+        //necessary, but given that the array is probably never going to be 
+        //more than around 50 thousand characters (modern screens have 
+        //2 million + pixels, for comparison) i don't think it could hurt...
+        //it'll also provide an indicator if BG stops working
         r[j*COLS+i] = '?';
       }
     }
 
+    //pretty little blinky on the bottom left corner!
     draw_blinky();
+    //render the buffer to the terminal
     wrefresh(w);
   }
 }
@@ -47,8 +67,6 @@ void render::nc_check_stale_win_size() {
   //r contains a buffer of characters that's meant to be used for rendering.
   //it's sized to the window (terminal) and must be resized if the window
   //changed, or was just initialized. 
-  static int prev_LINES = -1;
-  static int prev_COLS = -1;
 
   //check for cases where window size has changed (or just been created) and
   //adjust size accordingly, blockign rendering for that frame

@@ -33,9 +33,14 @@ public:
   //these are special functions for converting between ncurses
   //screen units and world units
   void nc_world_coord_to_view_coord(int &, int&);
+
+  //given a rectangle, determines if any point of it is currently on the
+  //screen. note that this expects the value to be in world coords.
+  bool on_screen(const vec2d &, const vec2d &);
 #endif
 
 private:
+  //dimensions of the viewport, in world units
   int view_width, view_height;
   vec2d pos;
 
@@ -50,6 +55,7 @@ private:
   vec2d nc_world_dims;        //world units per block
 
   void recalculate_view_dims();
+
 #endif
 };
 

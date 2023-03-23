@@ -21,11 +21,16 @@ public:
     return instance;
   }
 
-  char * const get_r() { return r; } 
+  //FIRST checks to make sure that the window hasn't been resized, and then
+  //assigns the pointer and the sizes of the array. 
+  //pointer points to NULL if it's been resized, and the ints are set to -1.
+  void get_r(char * &, int &, int &); 
 
   void nc_render();
 
 private:
+
+  int prev_LINES, prev_COLS;
 
   WINDOW *w;  //ncurses window
   char *r; //array of characters that holds the next thing to be drawn on
@@ -34,7 +39,6 @@ private:
                              //a window resize
   void nc_check_stale_win_size(); //check window size to prevent segfaults
   void draw_blinky(); //qdbp
-
 
   render();
   render(const render&) = delete;

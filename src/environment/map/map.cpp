@@ -363,6 +363,7 @@ void map::parse_spawn_rules() {
     //  unit size of a chunk. the center of the entity will be placed here.
     //- passing -1 in either field will result in a random coordinate being 
     //  used at spawn time
+    //TODO: switch this up to use chunk::length instead of "1000" - current chunk length is 500!
     x_coord = xmlparse::get().get_xml_float(s_path + "/" + s_r_name + "/x_coord");
     y_coord = xmlparse::get().get_xml_float(s_path + "/" + s_r_name + "/y_coord");
   

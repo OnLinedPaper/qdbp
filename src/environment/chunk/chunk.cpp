@@ -160,6 +160,9 @@ void chunk::rechunk(float x, float y, bool u, bool d, bool l, bool r, std::strin
   else { in_bounds = true; }
 
   //invalidate spawn rules
+  for(auto r : spawn_rules) {
+    delete r;
+  }
   spawn_rules.clear();
 }
 

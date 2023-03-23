@@ -149,7 +149,24 @@ try{
 #endif
 
 #if defined RENDER_NC
-    //NCUIRSES DEBUGGING
+    //NCURSES DEBUGGING
+
+    int x = e_handler::get().get_plr_pos()[0];
+    int y = e_handler::get().get_plr_pos()[1];
+//    int v = e_handler::get().get_plr_pos()[0]+25;
+  //  int w = e_handler::get().get_plr_pos()[1]+25;
+    int v = 0;
+    int w = 0;
+
+    viewport::get().nc_world_coord_to_view_coord(x, y);
+    viewport::get().nc_world_coord_to_view_coord(v, w);
+
+    char *r; int L, C = 0;
+    render::get().get_r(r, L, C);
+    if(r) {
+      r[y*C + x] = 'x';
+      r[w*C + v] = 'z';
+    }
 
 #endif
 

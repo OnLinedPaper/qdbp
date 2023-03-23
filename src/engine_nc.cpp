@@ -50,7 +50,7 @@ try {
   msg::get().log("- initializing rng...");
   rng::get().seed(0); //TODO: use std::time(NULL) once done debugging
   msg::get().log("- initializing render...");
-  render::get().get_r();
+  render::get();
   msg::get().log("- initializing viewport...");
   viewport::get();
   msg::get().log("- initializing timeframe...");
@@ -87,7 +87,37 @@ engine::~engine() {
   msg::get().close_log();
 }
 
-void engine::next_tick() { }
+//TODO: usleep is deprecated, move to nanosleep later
+void engine::next_tick() { 
+  //GAME IS SET TO 20 TICKS PER SECOND
+
+  //get the desired delay between frames
+  float t_delay = t_frame::get().get_t_delay();
+  //get the actual delay
+  float elapsed = t_frame::get().get_elapsed_ms();
+
+  //delay some ms
+  if(t_delay - elapsed > 0){
+    //took some time to compute
+    if(t_delay - elapsed <= t_delay) {
+      //took less than delay to compute
+      usleep((t_delay - elapsed) * 1000);
+    }
+    else {
+      //took "no time" - usually happens on startup. delay max time
+      usleep(t_delay * 1000);
+    }
+  }
+  else {
+    //took a longtime to compute this round - no delay
+    //SDL_Delay(0);
+  }
+
+  //go to next tick
+  t_frame::get().incr_t();
+
+
+}
 
 //=============================================================================
 
@@ -129,10 +159,40 @@ void engine::player_input() {
   ioctl(fileno(kbd), EVIOCGKEY(sizeof(key_map)), key_map);
 
   //process the keystrokes here
+  if(pause) { }
+  else {
+    //no keybounce protection in this section
 
-  //quit
-  if(key_map[KEY_ESC/8] & (1 << (KEY_ESC % 8))) {
-    quit = true;
+    //handle movement
+    if(key_map[KEY_W/8] & (1 << (KEY_W % 8)))
+      { e_handler::get().move_plr(e_handler::UP); }
+    if(key_map[KEY_A/8] & (1 << (KEY_A % 8)))
+      { e_handler::get().move_plr(e_handler::LF); }
+    if(key_map[KEY_S/8] & (1 << (KEY_S % 8)))
+      { e_handler::get().move_plr(e_handler::DN); }
+    if(key_map[KEY_D/8] & (1 << (KEY_D % 8)))
+      { e_handler::get().move_plr(e_handler::RT); }
+
+
+
+    //keybounce protection from this point on
+    //quit
+    static bool q_keydown = false;
+    if(key_map[KEY_ESC/8] & (1 << (KEY_ESC % 8))) {
+      if(!q_keydown) {
+        q_keydown = true;
+        quit = true;
+      }
+    } else { q_keydown = false; }
+
+    //jump through a gate
+    static bool o_keydown = false;
+    if(key_map[KEY_O/8] & (1 << (KEY_O %8))) {
+      if(!o_keydown) {
+        o_keydown = true;
+        map_h::get().try_jump();
+      }
+    } else { o_keydown = false; }
   }
 
   return;
