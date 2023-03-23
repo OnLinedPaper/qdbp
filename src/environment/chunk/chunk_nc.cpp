@@ -9,6 +9,7 @@
 #include "src/utils/rng.h"
 #include "src/utils/message.h"
 #include "src/text/text.h"
+#include "src/image/image_handler_nc.h"
 
 void chunk::draw() const { 
   int x_tlc = tlc[0];
@@ -34,15 +35,11 @@ void chunk::draw() const {
     //TODO: borders and such
 
     //tlc
-    r[y_tlc*C + x_tlc] = 'C';
+    image_handler::get().draw_point(tlc, 'C');
 
     //interior space
-    for(int j=y_tlc; j<=y_brc; j++) {
-      for(int i=x_tlc; i<=x_brc; i++) {
-        if(in_bounds) {
-          r[j*C + i] = ' ';
-        }
-      }
+    if(in_bounds) {
+      image_handler::get().draw_box(tlc, {tlc[0] + length, tlc[1] + length}, true, ' ');
     }
 
     if(has_gate) {

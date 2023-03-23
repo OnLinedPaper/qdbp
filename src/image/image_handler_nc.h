@@ -3,6 +3,8 @@
 
 #if defined RENDER_NC
 
+#include "src/vec2d/vec2d.h"
+
 /*
 an entirely separate image handler that runs on ncurses. different things 
 being done, meant to only be called by other ncurses versions of the code.
@@ -38,7 +40,7 @@ private:
   image_handler();
   image_handler(const image_handler&) = delete;
   image_handler &operator=(const image_handler&) = delete;
-}
+};
 
 #endif
 #endif

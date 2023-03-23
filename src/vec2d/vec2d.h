@@ -10,6 +10,7 @@ class vec2d {
 public:
   vec2d() : x(0), y(0) { }
   vec2d(float xin, float yin) : x(xin), y(yin) { }
+  vec2d(int xin, int yin) : x((float)xin), y((float)yin) { }
   vec2d(const vec2d& v) : x(v[0]), y(v[1]) { }
   vec2d& operator=(const vec2d &v) {
     if(this != &v) {

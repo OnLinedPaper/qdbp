@@ -93,6 +93,7 @@ void viewport::nc_world_coord_to_view_coord(int &x, int &y) {
 #endif
 
 //tlc and brc are points in world units
+//TODO: validate this against bottom right side of screen
 bool viewport::on_screen(const vec2d &tlc_in, const vec2d &brc_in) {
   if(  
     tlc_in[0] > get_brc_x() ||
