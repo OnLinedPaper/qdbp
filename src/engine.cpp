@@ -169,14 +169,39 @@ try{
       r[w*C + v] = 'z';
     }
 
-    vec2d p1 = {1000, 1000};
-    vec2d p2 = {1300, 1200};
-    vec2d p3 = {1000, 1300};
-    vec2d p4 = {1200, 1000};
-    viewport::get().nc_pinch_line_to_viewport(p1, p2);
-    viewport::get().nc_pinch_line_to_viewport(p3, p2);
-    image_handler::get().draw_line(p1, p2, 'L'); 
-    image_handler::get().draw_line(p3, p4, 'L'); 
+    //gauntlet of lines to test
+    //vertical
+    image_handler::get().draw_line({1000, 1000}, {1000, 1300}, '0'); 
+    image_handler::get().draw_line({1050, 1300}, {1050, 1000}, '0'); 
+    //horizontal
+    image_handler::get().draw_line({600, 800}, {900, 800}, '0'); 
+    image_handler::get().draw_line({900, 850}, {600, 850}, '0'); 
+
+    //hard positive
+    image_handler::get().draw_line({1100, 1000}, {1200, 1300}, '0'); 
+    image_handler::get().draw_line({1250, 1300}, {1150, 1000}, '0'); 
+    
+    //neutral positive
+    image_handler::get().draw_line({1200, 1000}, {1400, 1200}, '0'); 
+    image_handler::get().draw_line({1450, 1200}, {1250, 1000}, '0'); 
+
+    //soft positive
+    image_handler::get().draw_line({1300, 1000}, {1600, 1100}, '0'); 
+    image_handler::get().draw_line({1650, 1050}, {1350, 950}, '0'); 
+
+    //hard negative
+    image_handler::get().draw_line({900, 1000}, {800, 1300}, '0'); 
+    image_handler::get().draw_line({850, 1300}, {950, 1000}, '0'); 
+
+    //neutral negative
+    image_handler::get().draw_line({800, 1000}, {600, 1200}, '0'); 
+    image_handler::get().draw_line({650, 1200}, {850, 1000}, '0'); 
+    
+    //soft negative
+    image_handler::get().draw_line({700, 1000}, {400, 1100}, '0'); 
+    image_handler::get().draw_line({450, 1050}, {750, 950}, '0'); 
+     
+    
 
 #endif
 

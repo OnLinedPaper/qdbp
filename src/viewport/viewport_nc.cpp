@@ -102,6 +102,7 @@ void viewport::nc_pinch_line_to_viewport(vec2d &p1, vec2d &p2) {
   //to handle here. 
   //TODO: figoure out how and why this works, then document it.
 
+
   //see if it's above the screen
   if(p1[1] < get_tlc_y()) { 
     float m = (p2[0]-p1[0])/(p2[1]-p1[1]);
@@ -149,7 +150,8 @@ void viewport::nc_pinch_line_to_viewport(vec2d &p1, vec2d &p2) {
     p2[1] -= m * (p2[0] - get_brc_x());
     p2[0] = get_brc_x();
   }
-    
+  
+  
   return;
 }
 

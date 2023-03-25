@@ -25,14 +25,20 @@ void image_handler::draw_point(const vec2d &v, char c) {
   return;
 }
 
-void image_handler::draw_line(const vec2d &p1, const vec2d &p2, char c) {
+void image_handler::draw_line(const vec2d &p1_in, const vec2d &p2_in, char c) {
   //check if the line is on screen
-  if(!viewport::get().on_screen(p1, p2)) { return; }
+  if(!viewport::get().on_screen(p1_in, p2_in)) { return; }
 
   //now check if it's safe to darw
   char *r = NULL; int L, C = 0;
   render::get().get_r(r, L, C);
   if(r == NULL) { return; }
+
+  //pinch the line such that it safely appears on screen
+  vec2d p1, p2;
+  p1[0] = p1_in[0]; p1[1] = p1_in[1];
+  p2[0] = p2_in[0]; p2[1] = p2_in[1];
+  viewport::get().nc_pinch_line_to_viewport(p1, p2);
 
   /*
   adopting a somewhat naive implementation of bresenham's algorithm for this
