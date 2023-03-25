@@ -42,6 +42,24 @@ void chunk::draw() const {
       image_handler::get().draw_box(tlc, {tlc[0] + length, tlc[1] + length}, true, ' ');
     }
 
+    //boundaries
+    if(border[0]) {
+      //top is a border
+      image_handler::get().draw_line(tlc, {tlc[0] + length, tlc[1]}, 'X');
+    }
+    if(border[1]) {
+      //bottom is a border
+      image_handler::get().draw_line({tlc[0], tlc[1] + length}, {tlc[0] + length, tlc[1] + length}, 'X');
+    }
+    if(border[2]) {
+      //left is a border
+      image_handler::get().draw_line(tlc, {tlc[0], tlc[1] + length}, 'X');
+    }
+    if(border[3]) {
+      //right is a border
+      image_handler::get().draw_line({tlc[0] + length, tlc[1]}, {tlc[0] + length, tlc[1] + length}, 'X');
+    }
+
     if(has_gate) {
       r[y_mid * C + x_mid] = 'O';
     }

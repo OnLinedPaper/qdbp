@@ -103,7 +103,7 @@ void map::extend_map(const pather &p) {
   (*dim_acti)[0] = p.get_c();
   (*dim_acti)[1] = p.get_r();
   start_chunk = vec2d(0, p.get_start());
-  end_chunk = vec2d((*dim_acti)[0]-1, p.get_end());
+  end_chunk = vec2d((*dim_acti)[0]-1, (float)p.get_end());
 
   init_c_deque(c_deque, dim_acti);
 

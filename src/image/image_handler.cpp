@@ -1,7 +1,7 @@
 #include "image_handler.h"
 
 #if defined RENDER_NC
-#include "src/image/image_handler_nc.cpp"
+#include "src/image/image_handler_nc.h"
 #endif
 #if defined RENDER_SDL
 

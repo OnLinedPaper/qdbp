@@ -34,6 +34,10 @@ public:
   //screen units and world units
   void nc_world_coord_to_view_coord(int &, int&);
 
+  //this pinches a line to the viewport. it expects its inputs in world coords,
+  //and modifies the given vectors. 
+  void nc_pinch_line_to_viewport(vec2d &, vec2d &);
+
   //given a rectangle, determines if any point of it is currently on the
   //screen. note that this expects the value to be in world coords.
   bool on_screen(const vec2d &, const vec2d &);

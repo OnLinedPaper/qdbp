@@ -39,7 +39,7 @@ void map_h::extend_map() {
   m->extend_map(p);
 
   //TODO: stop background from jumping
-  m->shift_bg({-1 * shift_size, 0}); 
+  m->shift_bg({-1 * shift_size, (float)0}); 
 
   e_handler::get().finish_map_extend(shift_size);
 }

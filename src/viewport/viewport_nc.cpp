@@ -90,16 +90,86 @@ void viewport::nc_world_coord_to_view_coord(int &x, int &y) {
     y = (y * (prev_LINES - 1)) / view_height;
   }
 }
-#endif
+
+//p1 and p2 are points in world units that need to be pinched to screen units.
+//the given vectors are modified. 
+void viewport::nc_pinch_line_to_viewport(vec2d &p1, vec2d &p2) {
+  if(!viewport::on_screen(p1, p2)) { return; }
+
+  //wrote this all out at 4am. it's mostly trial and error.
+  //TODO TODO: just rewrite this shit. take the time to make sure p1 is
+  //always on the left and then work things out from there. too many cases
+  //to handle here. 
+  //TODO: figoure out how and why this works, then document it.
+
+  //see if it's above the screen
+  if(p1[1] < get_tlc_y()) { 
+    float m = (p2[0]-p1[0])/(p2[1]-p1[1]);
+    p1[0] -= m * (p1[1] - get_tlc_y());
+    p1[1] = get_tlc_y();
+  }
+  if(p2[1] < get_tlc_y()) { 
+    float m = (p1[0]-p2[0])/(p1[1]-p2[1]);
+    p2[0] -= m * (p2[1] - get_tlc_y());
+    p2[1] = get_tlc_y();
+  }
+
+  //see if it's below the screen
+  if(p1[1] > get_brc_y()) { 
+    float m = (p2[0]-p1[0])/(p2[1]-p1[1]);
+    p1[0] -= m * (p1[1] - get_brc_y());
+    p1[1] = get_brc_y();
+  }
+  if(p2[1] > get_brc_y()) { 
+    float m = (p1[0]-p2[0])/(p1[1]-p2[1]);
+    p2[0] -= m * (p2[1] - get_brc_y());
+    p2[1] = get_brc_y();
+  }
+
+  //see if it's to the left of the screen
+  if(p1[0] < get_tlc_x()) {
+    float m = (p2[1]-p1[1])/(p2[0]-p1[0]);
+    p1[1] -= m * (p1[0] - get_tlc_x()); 
+    p1[0] = get_tlc_x();
+  }
+  if(p2[0] < get_tlc_x()) {
+    float m = (p1[1]-p2[1])/(p1[0]-p2[0]);
+    p2[1] -= m * (p2[0] - get_tlc_x()); 
+    p2[0] = get_tlc_x();
+  }
+
+  //see if it's to the right of the screen
+  if(p1[0] > get_brc_x()) { 
+    float m = (p2[1]-p1[1])/(p2[0]-p1[0]);
+    p1[1] -= m * (p1[0] - get_brc_x());
+    p1[0] = get_brc_x();
+  }
+  if(p2[0] > get_brc_x()) { 
+    float m = (p2[1]-p1[1])/(p2[0]-p1[0]);
+    p2[1] -= m * (p2[0] - get_brc_x());
+    p2[0] = get_brc_x();
+  }
+    
+  return;
+}
 
 //tlc and brc are points in world units
 //TODO: validate this against bottom right side of screen
-bool viewport::on_screen(const vec2d &tlc_in, const vec2d &brc_in) {
+bool viewport::on_screen(const vec2d &v1, const vec2d &v2) {
+  //x_tlc, y_tlc holds tlc; x_brc, y_brc holds brc
+  //smaller of the two values
+  int x_tlc = (v1[0] < v2[0] ? v1[0] : v2[0]);
+  int y_tlc = (v1[1] < v2[1] ? v1[1] : v2[1]);
+  //other values
+  int x_brc = (v1[0] < v2[0] ? v2[0] : v1[0]);
+  int y_brc = (v1[1] < v2[1] ? v2[1] : v1[1]);
+
   if(  
-    tlc_in[0] > get_brc_x() ||
-    tlc_in[1] > get_brc_y() ||
-    brc_in[0] < get_tlc_x() ||
-    brc_in[1] < get_tlc_y()
+    x_tlc > get_brc_x() ||
+    y_tlc > get_brc_y() ||
+    x_brc < get_tlc_x() ||
+    y_brc < get_tlc_y()
   ) { return false; }
   return true;
 }
+#endif

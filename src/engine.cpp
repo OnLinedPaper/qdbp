@@ -2,6 +2,7 @@
 
 #if defined RENDER_NC
 #include "engine_nc.cpp"
+#include "src/image/image_handler_nc.h"
 #endif
 
 #include <ctime>
@@ -167,6 +168,15 @@ try{
       r[y*C + x] = 'x';
       r[w*C + v] = 'z';
     }
+
+    vec2d p1 = {1000, 1000};
+    vec2d p2 = {1300, 1200};
+    vec2d p3 = {1000, 1300};
+    vec2d p4 = {1200, 1000};
+    viewport::get().nc_pinch_line_to_viewport(p1, p2);
+    viewport::get().nc_pinch_line_to_viewport(p3, p2);
+    image_handler::get().draw_line(p1, p2, 'L'); 
+    image_handler::get().draw_line(p3, p4, 'L'); 
 
 #endif
 
