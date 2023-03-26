@@ -64,8 +64,6 @@ void pather::path(int start, float density) {
   path_v3(start);
   fill_v2(density);
   check_path_exists(start);
-  //TODO: remove this when done testing
-  print();
 }
 
 /*=============================================================================

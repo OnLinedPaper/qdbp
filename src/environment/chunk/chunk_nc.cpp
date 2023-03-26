@@ -32,11 +32,6 @@ void chunk::draw() const {
     viewport::get().nc_world_coord_to_view_coord(x_brc, y_brc);
 
 
-    //TODO: borders and such
-
-    //tlc
-    image_handler::get().draw_point(tlc, 'C');
-
     //interior space
     if(in_bounds) {
       image_handler::get().draw_box(tlc, {tlc[0] + length, tlc[1] + length}, true, ' ');
@@ -61,7 +56,7 @@ void chunk::draw() const {
     }
 
     if(has_gate) {
-      r[y_mid * C + x_mid] = 'O';
+      image_handler::get().draw_point({tlc[0] + (length/2), tlc[1] + (length/2)}, 'G');
     }
 
   }

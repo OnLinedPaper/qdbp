@@ -165,7 +165,7 @@ try{
     char *r; int L, C = 0;
     render::get().get_r(r, L, C);
     if(r) {
-      r[y*C + x] = 'x';
+      image_handler::get().draw_point(e_handler::get().get_plr_pos(), 'P');
       r[w*C + v] = 'z';
     }
 

@@ -5,6 +5,7 @@
 #include "src/environment/chunk/chunk.h"
 #include <iostream>
 #include <ncurses.h>
+#include <cmath>
 
 viewport::viewport() { 
   view_width = view_height = 0;
@@ -73,8 +74,11 @@ void viewport::recalculate_view_dims() {
 //x and y are points in world units that need to be converted to screen 
 //units - note that they may be offscreen, in which case the max value
 //for the screen dim is returned
-void viewport::nc_world_coord_to_view_coord(int &x, int &y) { 
+//TODO: figure out eventually how to do this without floating point division
+void viewport::nc_world_coord_to_view_coord(int &x_in, int &y_in) { 
   recalculate_view_dims();
+  float x = x_in;
+  float y = y_in;
   x = x - get_tlc_x();
   y = y - get_tlc_y();
 
@@ -89,6 +93,9 @@ void viewport::nc_world_coord_to_view_coord(int &x, int &y) {
   else {
     y = (y * (prev_LINES - 1)) / view_height;
   }
+
+  x_in = std::round(x);
+  y_in = std::round(y);
 }
 
 //p1 and p2 are points in world units that need to be pinched to screen units.
@@ -160,11 +167,11 @@ void viewport::nc_pinch_line_to_viewport(vec2d &p1, vec2d &p2) {
 bool viewport::on_screen(const vec2d &v1, const vec2d &v2) {
   //x_tlc, y_tlc holds tlc; x_brc, y_brc holds brc
   //smaller of the two values
-  int x_tlc = (v1[0] < v2[0] ? v1[0] : v2[0]);
-  int y_tlc = (v1[1] < v2[1] ? v1[1] : v2[1]);
+  int x_tlc = std::round((v1[0] < v2[0] ? v1[0] : v2[0]));
+  int y_tlc = std::round((v1[1] < v2[1] ? v1[1] : v2[1]));
   //other values
-  int x_brc = (v1[0] < v2[0] ? v2[0] : v1[0]);
-  int y_brc = (v1[1] < v2[1] ? v2[1] : v1[1]);
+  int x_brc = std::round((v1[0] < v2[0] ? v2[0] : v1[0]));
+  int y_brc = std::round((v1[1] < v2[1] ? v2[1] : v1[1]));
 
   if(  
     x_tlc > get_brc_x() ||
