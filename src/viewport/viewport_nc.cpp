@@ -26,7 +26,7 @@ void viewport::set_pos(const vec2d p) {
   pos = p;
 }
 
-//viewport generally tries to keep 2 chunks as the larger of
+//viewport generally tries to keep 4 chunks as the larger of
 //its two dimensions. 
 //any time the window is resized, this function runs to re-determine the 
 //ratio of world units to "screen units", which is to say, how many world 
@@ -55,14 +55,14 @@ void viewport::recalculate_view_dims() {
   //determine if the terminal is currently wide or tall
   bool wider = prev_COLS * nc_pix_dims[0] > prev_LINES * nc_pix_dims[1];
   if(wider) {
-    nc_world_dims[0] = (chunk::length * 2) / prev_COLS;
+    nc_world_dims[0] = (chunk::length * 4) / prev_COLS;
     view_width = nc_world_dims[0] * prev_COLS;
 
     nc_world_dims[1] = (nc_world_dims[0] * nc_pix_dims[1]) / nc_pix_dims[0];
     view_height = nc_world_dims[1] * prev_LINES;
   }
   else {
-    nc_world_dims[1] = (chunk::length * 2) / prev_LINES;
+    nc_world_dims[1] = (chunk::length * 4) / prev_LINES;
     view_height = nc_world_dims[1] * prev_LINES;
 
     nc_world_dims[0] = (nc_world_dims[1] * nc_pix_dims[0]) / nc_pix_dims[1];
@@ -103,6 +103,29 @@ void viewport::nc_world_coord_to_view_coord(int &x_in, int &y_in) {
 void viewport::nc_pinch_line_to_viewport(vec2d &p1, vec2d &p2) {
   if(!viewport::on_screen(p1, p2)) { return; }
 
+  //determine which point is on the left
+  bool p1_left = p1[0] < p2[0];
+  if(!p1_left) {
+    //x
+    float tmp = p1[0];
+    p1[0] = p2[0];
+    p2[0] = tmp;
+
+    //y
+    tmp = p1[1];
+    p1[1] = p2[1];
+    p2[1] = tmp;
+  }
+/*
+  //p1 is now on the left; p2 is on the right. 
+  //because on_screen was called earlier, no need to determine right of p1 or
+  //left of p2 - with certainty, they will be on the screen. 
+
+  //first, determine slope
+  float m = (p2[1]-p1[1])/(p2[0]-p1[0]);
+
+  return;
+*/
   //wrote this all out at 4am. it's mostly trial and error.
   //TODO TODO: just rewrite this shit. take the time to make sure p1 is
   //always on the left and then work things out from there. too many cases
@@ -160,6 +183,7 @@ void viewport::nc_pinch_line_to_viewport(vec2d &p1, vec2d &p2) {
   
   
   return;
+
 }
 
 //tlc and brc are points in world units

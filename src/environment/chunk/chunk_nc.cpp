@@ -56,7 +56,7 @@ void chunk::draw() const {
     }
 
     if(has_gate) {
-      image_handler::get().draw_point({tlc[0] + (length/2), tlc[1] + (length/2)}, 'G');
+      image_handler::get().draw_circle({tlc[0] + (length/2), tlc[1] + (length/2)}, (length/2.5), false, 'G');
     }
 
   }
