@@ -187,11 +187,23 @@ void image_handler::draw_box(const vec2d &v1, const vec2d &v2, bool filled, char
 void image_handler::draw_circle(const vec2d &v, float r, bool filled, char c) {
   draw_point(v, c);
 
-  //establish initial vars - start at bottom of circle, and draw towards the right
-  float x = 0;
-  float y = r;
+  //using bresenham's circle here. god the derivation made my hand hurt.
 
-  //while(x<y) {
+  //establish initial vars - start at bottom of circle, and draw towards the right
+  int x = 0;
+  int y = r;
+  int error = 3 - 2*r;
+
+  while(x<=y) {
+
+    if(error > 0) {
+      y--;
+      error += 2 * (5 - 2 * y + 2 * x);
+    }
+    else {
+      error += 2 * (3 + 2 * x);
+    }
+
     draw_point({v[0]+x, v[1]+y}, c);
     draw_point({v[0]+x, v[1]-y}, c);
     draw_point({v[0]-x, v[1]+y}, c);
@@ -201,6 +213,6 @@ void image_handler::draw_circle(const vec2d &v, float r, bool filled, char c) {
     draw_point({v[0]-y, v[1]+x}, c);
     draw_point({v[0]-y, v[1]-x}, c);
     x++;
-  //}
+  }
 }
 #endif
