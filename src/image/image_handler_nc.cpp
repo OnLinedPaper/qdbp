@@ -183,4 +183,24 @@ void image_handler::draw_box(const vec2d &v1, const vec2d &v2, bool filled, char
     //TODO: call draw_line 4 times
   }
 }
+
+void image_handler::draw_circle(const vec2d &v, float r, bool filled, char c) {
+  draw_point(v, c);
+
+  //establish initial vars - start at bottom of circle, and draw towards the right
+  float x = 0;
+  float y = r;
+
+  //while(x<y) {
+    draw_point({v[0]+x, v[1]+y}, c);
+    draw_point({v[0]+x, v[1]-y}, c);
+    draw_point({v[0]-x, v[1]+y}, c);
+    draw_point({v[0]-x, v[1]-y}, c);
+    draw_point({v[0]+y, v[1]+x}, c);
+    draw_point({v[0]+y, v[1]-x}, c);
+    draw_point({v[0]-y, v[1]+x}, c);
+    draw_point({v[0]-y, v[1]-x}, c);
+    x++;
+  //}
+}
 #endif
