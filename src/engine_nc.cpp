@@ -173,6 +173,9 @@ void engine::player_input() {
     if(key_map[KEY_D/8] & (1 << (KEY_D % 8)))
       { e_handler::get().move_plr(e_handler::RT); }
 
+    if(key_map[KEY_SLEFT/8] & (1 << (KEY_SLEFT % 8)))
+      { e_handler::get().boost_plr(true); }
+    else { e_handler::get().boost_plr(false); }
 
 
     //keybounce protection from this point on

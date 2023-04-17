@@ -73,3 +73,4 @@ void hitline::draw() const {
     SDL_SetRenderDrawColor(render::get().get_r(), c.r, c.g, c.b, c.a);
 }
 #endif
+

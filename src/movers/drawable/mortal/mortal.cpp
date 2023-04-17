@@ -132,9 +132,6 @@ void mortal::set_pos(float x, float y) {
 
 void mortal::draw() const {
   drawable::draw();
-  if(e_handler::get().get_draw_debug_info()) {
-    draw_boxes();
-  }
 }
 
 void mortal::draw_boxes() const {

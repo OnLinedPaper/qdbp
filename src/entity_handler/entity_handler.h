@@ -119,7 +119,7 @@ private:
   std::unordered_map<std::string, int> entity_count_by_id;
 
   bool draw_debug_info;
-
+  bool draw_boxes;
 };
 
 #endif

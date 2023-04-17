@@ -185,8 +185,6 @@ void image_handler::draw_box(const vec2d &v1, const vec2d &v2, bool filled, char
 }
 
 void image_handler::draw_circle(const vec2d &v, float r, bool filled, char c) {
-  draw_point(v, c);
-
   //using bresenham's circle here. god the derivation made my hand hurt.
 
   //establish initial vars - start at bottom of circle, and draw towards the right

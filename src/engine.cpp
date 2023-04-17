@@ -156,19 +156,20 @@ try{
     int y = e_handler::get().get_plr_pos()[1];
 //    int v = e_handler::get().get_plr_pos()[0]+25;
   //  int w = e_handler::get().get_plr_pos()[1]+25;
-    int v = 0;
-    int w = 0;
+//    int v = 0;
+  //  int w = 0;
 
     viewport::get().nc_world_coord_to_view_coord(x, y);
-    viewport::get().nc_world_coord_to_view_coord(v, w);
+    //viewport::get().nc_world_coord_to_view_coord(v, w);
 
     char *r; int L, C = 0;
     render::get().get_r(r, L, C);
     if(r) {
       image_handler::get().draw_point(e_handler::get().get_plr_pos(), 'P');
-      r[w*C + v] = 'z';
+   //   r[w*C + v] = 'z';
     }
 
+/*
     //gauntlet of lines to test
     //vertical
     image_handler::get().draw_line({1000, 1000}, {1000, 1300}, '0'); 
@@ -200,7 +201,7 @@ try{
     //soft negative
     image_handler::get().draw_line({700, 1000}, {400, 1100}, '0'); 
     image_handler::get().draw_line({450, 1050}, {750, 950}, '0'); 
-     
+  */   
     
 
 #endif

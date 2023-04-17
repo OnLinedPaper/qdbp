@@ -27,8 +27,13 @@ const uint8_t e_handler::WHT = 9;
 //==== INSTANCE THINGS ========================================================
 
 e_handler::e_handler() :
-  draw_debug_info(xmlparse::get().get_xml_int("/draw_debug_info"))
-{ }
+  draw_debug_info(xmlparse::get().get_xml_int("/draw_debug_info")),
+  draw_boxes(false)
+{ 
+#if defined RENDER_NC
+  draw_boxes = true;
+#endif
+}
 
 e_handler::~e_handler() {
   delete plr;
@@ -252,7 +257,7 @@ void e_handler::draw_entities() {
     if(h->is_active()) { h->draw(); }
   }
 
-  if(draw_debug_info) {
+  if(draw_debug_info || draw_boxes) {
     plr->draw_boxes();
     for(mortal *h : npe_all) { h->draw_boxes(); }
     for(weapon *w : shot_all) { w->draw_boxes(); }
