@@ -55,14 +55,14 @@ void viewport::recalculate_view_dims() {
   //determine if the terminal is currently wide or tall
   bool wider = prev_COLS * nc_pix_dims[0] > prev_LINES * nc_pix_dims[1];
   if(wider) {
-    nc_world_dims[0] = (chunk::length * 2) / prev_COLS;
+    nc_world_dims[0] = (chunk::length * 4) / prev_COLS;
     view_width = nc_world_dims[0] * prev_COLS;
 
     nc_world_dims[1] = (nc_world_dims[0] * nc_pix_dims[1]) / nc_pix_dims[0];
     view_height = nc_world_dims[1] * prev_LINES;
   }
   else {
-    nc_world_dims[1] = (chunk::length * 2) / prev_LINES;
+    nc_world_dims[1] = (chunk::length * 4) / prev_LINES;
     view_height = nc_world_dims[1] * prev_LINES;
 
     nc_world_dims[0] = (nc_world_dims[1] * nc_pix_dims[0]) / nc_pix_dims[1];
