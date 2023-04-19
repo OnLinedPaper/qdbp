@@ -173,9 +173,21 @@ void engine::player_input() {
     if(key_map[KEY_D/8] & (1 << (KEY_D % 8)))
       { e_handler::get().move_plr(e_handler::RT); }
 
-    if(key_map[KEY_SLEFT/8] & (1 << (KEY_SLEFT % 8)))
+    if(key_map[KEY_LEFTSHIFT/8] & (1 << (KEY_LEFTSHIFT % 8)))
       { e_handler::get().boost_plr(true); }
     else { e_handler::get().boost_plr(false); }
+
+    //handle shooting
+    static vec2d angle(0, 0);
+    angle[0] = 0;
+    angle[1] = 0;
+
+    if(key_map[KEY_H/8] & (1 << (KEY_H % 8))) { angle[0] -= 1; }
+    if(key_map[KEY_L/8] & (1 << (KEY_L % 8))) { angle[0] += 1; }
+    if(key_map[KEY_K/8] & (1 << (KEY_K % 8))) { angle[1] -= 1; }
+    if(key_map[KEY_J/8] & (1 << (KEY_J % 8))) { angle[1] += 1; }
+
+    if(angle.magnitude() > 0) { e_handler::get().plr_shoot(angle); }
 
 
     //keybounce protection from this point on

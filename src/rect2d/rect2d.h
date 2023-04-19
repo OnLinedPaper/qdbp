@@ -36,6 +36,9 @@ public:
   vec2d get_brc() const { return vec2d(tlc[0] + dims[0], tlc[1] + dims[1]); }
 
 private:
+#if defined RENDER_NC
+  char colo_to_char(int, int, int) const;
+#endif
 
   vec2d tlc;
   vec2d dims;

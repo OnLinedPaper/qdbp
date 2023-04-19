@@ -27,7 +27,21 @@ void rect2d::draw(int red, int green, int blue) const {
       (tlc[1] + dims[1] - viewport::get().get_tlc_y())
     },
     true,
-    'X'
+    colo_to_char(red, green, blue)
   );
+}
+
+//"converts" color to char - uses the passed-in color of the different
+//types of hitbox to turn them into a char
+char rect2d::colo_to_char(int r, int g, int b) const {
+  if(r==  0 && g==200 && b==  0) { return 'H'; }
+  if(r==255 && g==  0 && b==  0) { return '+'; }
+  if(r==255 && g==255 && b==  0) { return 'w'; }
+  if(r==255 && g==128 && b==  0) { return 'A'; }
+  if(r==  0 && g==255 && b==255) { return 'S'; }
+  if(r==255 && g==128 && b==255) { return 'p'; }
+  if(r==  0 && g==  0 && b==128) { return ' '; }
+
+  return '?';
 }
 #endif

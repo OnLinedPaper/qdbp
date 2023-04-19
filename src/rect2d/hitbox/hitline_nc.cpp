@@ -13,6 +13,6 @@ void hitline::draw() const {
     end[0] - viewport::get().get_tlc_x(),
     end[1] - viewport::get().get_tlc_y()
   },
-  'x');
+  '-');
 }
 #endif
