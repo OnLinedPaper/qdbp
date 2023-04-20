@@ -8,7 +8,6 @@
     <height>16</height>
   </aspect_ratio>
 
-  <keyboard_input_device>/dev/input/event4</keyboard_input_device>
 </ncurses_rendering>
 
 <hud>

@@ -33,6 +33,9 @@ log
 #demo files
 win_demo.zip
 
+#files that will always differ between devices
+resources/nc_input_data.xml
+
 #...and these
 GPUCache
 .atom-dbg.cson

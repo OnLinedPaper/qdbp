@@ -43,6 +43,8 @@ try {
   xmlparse::get().build_tree("resources/mapdata.xml");
   msg::get().log("- loading chunkdata...");
   xmlparse::get().build_tree("resources/chunkdata.xml");
+   msg::get().log("- loading ncurses input data...");
+  xmlparse::get().build_tree("resources/nc_input_data.xml");
   msg::get().log("xml loaded.");
 
 
@@ -128,7 +130,7 @@ void engine::player_input() {
   //this is annoying because i have to rely on it closing automatically when it
   //goes out of scope, which doesn't happen until the program terminates. SIGH.
   static FILE *kbd = fopen(
-    xmlparse::get().get_xml_string("/ncurses_rendering/keyboard_input_device").c_str(),
+    xmlparse::get().get_xml_string("/ncurses_input/keyboard_input_device").c_str(),
     "r"
   );
   
