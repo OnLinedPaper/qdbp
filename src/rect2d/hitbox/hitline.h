@@ -25,6 +25,9 @@ public:
 
 
 private:
+#ifdef RENDER_NC
+  char angle_to_char() const;
+#endif
   vec2d start;
   vec2d end;
 
