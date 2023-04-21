@@ -249,15 +249,22 @@ bool e_handler::check_category_collision(weapon *w, mortal *h, int type) {
 
 void e_handler::draw_entities() {
   plr->draw();
+  if(draw_boxes) { plr->draw_boxes(); }
 
   for(weapon *w : shot_all) { 
-    if(w->is_active()) { w->draw(); }
+    if(w->is_active()) { 
+      w->draw(); 
+      if(draw_boxes) { w->draw_boxes(); }
+    }
   }
   for(mortal *h : npe_all) { 
-    if(h->is_active()) { h->draw(); }
+    if(h->is_active()) { 
+      h->draw(); 
+      if(draw_boxes) { h->draw_boxes(); }
+    }
   }
 
-  if(draw_debug_info || draw_boxes) {
+  if(draw_debug_info) {
     plr->draw_boxes();
     for(mortal *h : npe_all) { h->draw_boxes(); }
     for(weapon *w : shot_all) { w->draw_boxes(); }

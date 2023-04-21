@@ -20,11 +20,11 @@ void rect2d::coord_draw(float x, float y) const {
 
 void rect2d::draw(int red, int green, int blue) const { 
   image_handler::get().draw_box({
-      (tlc[0] - viewport::get().get_tlc_x()),
-      (tlc[1] - viewport::get().get_tlc_y())
+      (tlc[0]),// - viewport::get().get_tlc_x()/2),
+      (tlc[1]),// - viewport::get().get_tlc_y()/2)
     }, {
-      (tlc[0] + dims[0] - viewport::get().get_tlc_x()),
-      (tlc[1] + dims[1] - viewport::get().get_tlc_y())
+      (tlc[0] + dims[0]),// - viewport::get().get_tlc_x()/2),
+      (tlc[1] + dims[1])// - viewport::get().get_tlc_y()/2)
     },
     true,
     colo_to_char(red, green, blue)

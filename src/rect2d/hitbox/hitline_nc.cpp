@@ -7,11 +7,11 @@
 
 void hitline::draw() const {
   image_handler::get().draw_line({
-    start[0] - viewport::get().get_tlc_x(),
-    start[1] - viewport::get().get_tlc_y()
+    start[0],// - viewport::get().get_tlc_x(),
+    start[1],// - viewport::get().get_tlc_y()
   }, {
-    end[0] - viewport::get().get_tlc_x(),
-    end[1] - viewport::get().get_tlc_y()
+    end[0],// - viewport::get().get_tlc_x(),
+    end[1]// - viewport::get().get_tlc_y()
   },
   angle_to_char());
 }
