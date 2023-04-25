@@ -21,6 +21,8 @@ public:
   ~image_handler();
 
   //ALL of these draw functions expect their inputs to be in WORLD COORDINATES
+  //ALL of these functions ACCOUNT FOR VIEWPORT by default since they call
+  //nc_world_coord_to_view_coord as they run
 
   //dras a single point at specified world coordinates
   void draw_point(const vec2d &, char);
@@ -28,9 +30,16 @@ public:
   //draws a line from the first world coordinate to the second
   void draw_line(const vec2d &, const vec2d &, char);
 
+  //draws a line with fixed positions and endpoints on the screen
+  void draw_fixed_line(int, int, int, int, char);
+
   //draws a box from the first world coordiante to the second
   //can be drawn filled or empty
   void draw_box(const vec2d &, const vec2d &, bool, char);
+
+  //draws a box with fixed positions and dimensions on the screen
+  //can be drawn filled or empty
+  void draw_fixed_box(int, int, int, int, bool, char);
 
   //draws a circle with a given radius
   //can be drawn filled or empty

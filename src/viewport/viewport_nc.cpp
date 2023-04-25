@@ -98,7 +98,8 @@ void viewport::nc_world_coord_to_view_coord(int &x_in, int &y_in) {
   y_in = std::round(y);
 }
 
-//p1 and p2 are points in world units that need to be pinched to screen units.
+//p1 and p2 are points in world units that need to be pinched to the dimensions
+//of the screen.
 //the given vectors are modified. 
 void viewport::nc_pinch_line_to_viewport(vec2d &p1, vec2d &p2) {
   if(!viewport::on_screen(p1, p2)) { return; }
@@ -116,21 +117,15 @@ void viewport::nc_pinch_line_to_viewport(vec2d &p1, vec2d &p2) {
     p1[1] = p2[1];
     p2[1] = tmp;
   }
-/*
-  //p1 is now on the left; p2 is on the right. 
-  //because on_screen was called earlier, no need to determine right of p1 or
-  //left of p2 - with certainty, they will be on the screen. 
 
-  //first, determine slope
-  float m = (p2[1]-p1[1])/(p2[0]-p1[0]);
-
-  return;
-*/
-  //wrote this all out at 4am. it's mostly trial and error.
-  //TODO TODO: just rewrite this shit. take the time to make sure p1 is
-  //always on the left and then work things out from there. too many cases
-  //to handle here. 
-  //TODO: figoure out how and why this works, then document it.
+  //determine if both points of the line are in the box defined by the screen
+  //if they are: return line
+  //if not:
+  //- define box as 4 lines
+  //- if one point is outside box:
+  //- - determine intersection of line and box, and replace oob point with intersection
+  //- if two are outside:
+  //- - do above for both
 
 
   //see if it's above the screen

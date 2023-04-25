@@ -165,11 +165,16 @@ try{
     char *r; int L, C = 0;
     render::get().get_r(r, L, C);
     if(r) {
+      float heat_frac = e_handler::get().get_plr_heat_frac();
+      float ovrh_frac = e_handler::get().get_plr_overheat_frac();
+      image_handler::get().draw_fixed_box(1, L-2, 3, (L - (L/3)*heat_frac), true, '-');
+      image_handler::get().draw_fixed_box(1, L-2, 3, (L - (L/3)*ovrh_frac), true, '=');
+      image_handler::get().draw_fixed_box(0, 2*L/3, 4, L-2, false, 'H');
       //image_handler::get().draw_point(e_handler::get().get_plr_pos(), 'P');
    //   r[w*C + v] = 'z';
     }
 
-/*
+
     //gauntlet of lines to test
     //vertical
     image_handler::get().draw_line({1000, 1000}, {1000, 1300}, '0'); 
@@ -201,7 +206,7 @@ try{
     //soft negative
     image_handler::get().draw_line({700, 1000}, {400, 1100}, '0'); 
     image_handler::get().draw_line({450, 1050}, {750, 950}, '0'); 
-  */   
+     
     
 
 #endif

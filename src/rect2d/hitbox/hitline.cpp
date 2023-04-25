@@ -27,7 +27,7 @@ hitline::hitline(const vec2d &s, float length, float in_angle) :
   end[1] = start[1] + (cos(angle) * length);
 }
 
-bool hitline::collides(const hitline &l) const {
+bool hitline::collides(const hitline &l, int *xout, int *yout) const {
   //adapted from https://stackoverflow.com/a/565282/7431860
   //and from https://github.com/pgkelley4/line-segments-intersect
 
@@ -40,7 +40,7 @@ bool hitline::collides(const hitline &l) const {
   if(numerator == 0 && denominator == 0) {
     //colinear - cnvert to box and check for collision
     rect2d r1(start[0], start[1], end[0] - start[0], end[1] - start[1]); 
-    return(r1.overlap(l));
+    if(!r1.overlap(l)) { return false; }
   }
   else if(denominator == 0) {
     return false;
@@ -49,7 +49,14 @@ bool hitline::collides(const hitline &l) const {
   float u = numerator / denominator;
   float t = (l.get_start() - start).cross(s) / denominator;
 
-  return (t >= 0 && t <= 1 && u >= 0 && u <= 1); 
+  if(!(t >= 0 && t <= 1 && u >= 0 && u <= 1)) { return false; }
+
+
+  //collides from this point on
+
+  //adapted from here https://stackoverflow.com/a/1968345/7431860
+
+  return true;
 }
 
 #if defined RENDER_SDL

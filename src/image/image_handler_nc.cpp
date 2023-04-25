@@ -40,6 +40,37 @@ void image_handler::draw_line(const vec2d &p1_in, const vec2d &p2_in, char c) {
   p2[0] = p2_in[0]; p2[1] = p2_in[1];
   viewport::get().nc_pinch_line_to_viewport(p1, p2);
 
+  //lp is left point; rp is right point
+  //TODO: this probably isn't strictly necessary anymore
+  bool p1_left = p1[0] < p2[0];
+  int lp_x = (p1_left ? p1[0] : p2[0]);
+  int lp_y = (p1_left ? p1[1] : p2[1]);
+  int rp_x = (p1_left ? p2[0] : p1[0]);
+  int rp_y = (p1_left ? p2[1] : p1[1]);
+
+  //convert - yes this drops precision, no i don't care
+  viewport::get().nc_world_coord_to_view_coord(lp_x, lp_y);
+  viewport::get().nc_world_coord_to_view_coord(rp_x, rp_y);
+
+  draw_fixed_line(lp_x, lp_y, rp_x, rp_y, c);
+}
+
+void image_handler::draw_fixed_line(int x_p1, int y_p1, int x_p2, int y_p2, char c) {
+  //x_p1, y_p1, x_p2, y_p2 are all related directly to screen, not to world coords
+
+  //check if it's safe to draw
+  char *r = NULL; int L, C = 0;
+  render::get().get_r(r, L, C);
+  if(r == NULL) { return; }
+
+  //make sure none of these coords are out of bounds
+  if(
+    (x_p1 < 0 || x_p1 > C) ||
+    (x_p2 < 0 || x_p2 > C) ||
+    (y_p1 < 0 || y_p1 > L) ||
+    (y_p2 < 0 || y_p2 > L)
+  ) { return; }
+
   /*
   adopting a somewhat naive implementation of bresenham's algorithm for this
   one. i'll tidy it up when i eventually get around to converting all floats
@@ -69,16 +100,12 @@ void image_handler::draw_line(const vec2d &p1_in, const vec2d &p2_in, char c) {
   then, draw y and increment x. 
   */
 
-  //lp is left point; rp is right point
-  bool p1_left = p1[0] < p2[0];
-  int lp_x = (p1_left ? p1[0] : p2[0]);
-  int lp_y = (p1_left ? p1[1] : p2[1]);
-  int rp_x = (p1_left ? p2[0] : p1[0]);
-  int rp_y = (p1_left ? p2[1] : p1[1]);
-
-  //convert - yes this drops precision, no i don't care
-  viewport::get().nc_world_coord_to_view_coord(lp_x, lp_y);
-  viewport::get().nc_world_coord_to_view_coord(rp_x, rp_y);
+ //lp is left point; rp is right point
+  bool p1_left = x_p1 < x_p2;
+  int lp_x = (p1_left ? x_p1 : x_p2);
+  int lp_y = (p1_left ? y_p1 : y_p2);
+  int rp_x = (p1_left ? x_p2 : x_p1);
+  int rp_y = (p1_left ? y_p2 : y_p1);
 
   //offset all coordinates such that lp is 0, 0; this makes subsequent 
   //calculations much easier
@@ -116,7 +143,7 @@ void image_handler::draw_line(const vec2d &p1_in, const vec2d &p2_in, char c) {
   int m_error = m - rp_x;
 
   int x_render, y_render = 0;
-  for(int x = 0, y = 0; x < rp_x; x++) {
+  for(int x = 0, y = 0; x <= rp_x; x++) {
     x_render = x;
     y_render = y;
 
@@ -140,8 +167,6 @@ void image_handler::draw_line(const vec2d &p1_in, const vec2d &p2_in, char c) {
       m_error -= 2 * rp_x;
     }
   }
-
-  
 }
 
 void image_handler::draw_box(const vec2d &v1, const vec2d &v2, bool filled, char c) {
@@ -180,7 +205,37 @@ void image_handler::draw_box(const vec2d &v1, const vec2d &v2, bool filled, char
     draw_line({v1[0], v2[1]}, {v2[0], v2[1]}, c);
     draw_line({v1[0], v1[1]}, {v1[0], v2[1]}, c);
     draw_line({v2[0], v1[1]}, {v2[0], v2[1]}, c);
-    //TODO: call draw_line 4 times
+  }
+}
+
+void image_handler::draw_fixed_box(int x_tlc, int y_tlc, int x_brc, int y_brc, bool filled, char c) {
+  //x_tlc, y_tlc, x_brc, and y_brc all relate directly to the screen, not to world coords
+
+  //check if it's safe to draw
+  char *r = NULL; int L, C = 0;
+  render::get().get_r(r, L, C);
+  if(r == NULL) { return; }
+
+  //make sure none of these coords are out of bounds
+  if(
+    (x_tlc < 0 || x_tlc >= C) ||
+    (x_brc < 0 || x_brc >= C) ||
+    (y_tlc < 0 || y_tlc >= L) ||
+    (y_brc < 0 || y_brc >= L)
+  ) { return; }
+
+  if(filled) {
+    for(int j=y_tlc; j<=y_brc; j++) {
+      for(int i=x_tlc; i<=x_brc; i++) {
+        r[j*C + i] = c;
+      }
+    }
+  }
+  else {
+    draw_fixed_line(x_tlc, y_tlc, x_brc, y_tlc, c);
+    draw_fixed_line(x_brc, y_tlc, x_brc, y_brc, c);
+    draw_fixed_line(x_tlc, y_brc, x_brc, y_brc, c);
+    draw_fixed_line(x_tlc, y_tlc, x_tlc, y_brc, c);
   }
 }
 
