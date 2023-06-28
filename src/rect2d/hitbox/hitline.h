@@ -15,12 +15,14 @@ public:
   hitline(const vec2d &s, float length, float in_angle);
 
   //determines whether two lines collide
-  bool collides(const hitline &, int * = NULL, int * = NULL) const;
+  bool collides(const hitline &, float * = NULL, float * = NULL) const;
 
   const vec2d get_start() const { return start; }
   void set_start(const vec2d &v) { start = v; }
   const vec2d get_end() const { return end; }
   void set_end(const vec2d &v) { end = v; }
+
+  float get_len() const;
 
   void draw() const;
 

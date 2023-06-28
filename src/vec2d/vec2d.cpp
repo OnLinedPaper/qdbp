@@ -6,6 +6,10 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+
+//"vec2d" represents a vector in 2d space whose start point is 0,0 and whose
+//end point is x,y. 
+
 //these operators let us return values with array notation
 float &vec2d::operator [](int i) {
   //return a reference
@@ -105,10 +109,16 @@ vec2d vec2d::normalize() const {
   return vec2d(x / m, y / m);
 }
 
+//vector dot product represents the area of the parallelogram existing in a
+//perpendicular plane whose sides are this and v; a dot product of 0 means the
+//vectors are perpendicular
 float vec2d::dot(const vec2d &v) const {
   return ((x * v[0]) + (y * v[1]));
 }
 
+//vector cross product represents the area of the parallelogram existing in a 
+//parallel plane whose sides are this and v; a cross product of 0 means the 
+//vectors are colinear
 float vec2d::cross(const vec2d &v) const {
   return ((x * v[1]) - (y * v[0]));
 }

@@ -23,6 +23,8 @@
 #include <SDL2/SDL_ttf.h>
 #endif
 
+#include <limits.h>
+
 //looking for the constructors? they're below "play"
 
 
@@ -31,6 +33,35 @@ void engine::play() {
 try{
 
 //- debug stuff  -    -    -    -    -    -    -    -    -    -    -    -    -        
+
+  float htest_x = FLT_MAX;
+  float *htp_x;
+  htp_x = &htest_x;
+  float htest_y = FLT_MAX;
+  float *htp_y;
+  htp_y = &htest_y;
+
+  float l1x1, l1y1, l1x2, l1y2, l2x1, l2y1, l2x2, l2y2;
+
+  while(true) {
+    std::cin >> l1x1 >> l1y1 >> l1x2 >> l1y2 >> l2x1 >> l2y1 >> l2x2 >> l2y2;
+  
+
+    hitline l1({l1x1, l1y1}, {l1x2, l1y2});
+    std::cout << l1.get_len() <<std::endl;
+    hitline l2({l2x1, l2y1}, {l2x2, l2y2});
+
+    bool collides = l1.collides(l2, htp_x, htp_y);
+    std::cout << "l1: (" << l1x1 << "," << l1y1 << ") -> (" << l1x2 << "," << l1y2 << ") | l2: (" << l2x1 << "," << l2y1 << ") -> (" << l2x2 << "," << l2y2 << ")  ||  ";
+    std::cout << "collision: " << (collides ? "true" : "false");
+    if(collides) {
+      std::cout << "  ||  intercept exists: " << ((htest_x < 100000 && htest_y < 10000) ? "true" : "false");
+      if(htest_x < 100000 && htest_y < 100000) {
+        std::cout << "  ||  intercept point: " << htest_x << ", " << htest_y << std::endl;
+      }
+    }
+  }
+  return;
 
 #if defined RENDER_SDL
   //SDL DEBUGGING
