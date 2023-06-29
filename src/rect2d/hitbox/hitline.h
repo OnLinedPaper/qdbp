@@ -22,7 +22,7 @@ public:
   const vec2d get_end() const { return end; }
   void set_end(const vec2d &v) { end = v; }
 
-  float get_len() const;
+  float get_len() const { return length; };
 
   void draw() const;
 
@@ -31,9 +31,12 @@ private:
 #ifdef RENDER_NC
   char angle_to_char() const;
 #endif
+  float calc_len() const;
+
   vec2d start;
   vec2d end;
 
+  float length;
 };
 
 

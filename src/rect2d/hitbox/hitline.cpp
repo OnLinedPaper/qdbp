@@ -13,9 +13,11 @@
 hitline::hitline(const vec2d &s, const vec2d &e) :
   start(s),
   end(e)
-{ }
+{ 
+  length = calc_len();
+}
 
-hitline::hitline(const vec2d &s, float length, float in_angle) :
+hitline::hitline(const vec2d &s, float len, float in_angle) :
   start(s),
   end(s)
 {
@@ -25,13 +27,18 @@ hitline::hitline(const vec2d &s, float length, float in_angle) :
   double angle = ((in_angle+180) * PI) / 180;
 
   //assume a line straight up, and then offset it by rotating
-  end[0] = start[0] - (sin(angle) * length);
-  end[1] = start[1] + (cos(angle) * length);
+  end[0] = start[0] - (sin(angle) * len);
+  end[1] = start[1] + (cos(angle) * len);
+
+  length = len;
 }
 
 bool hitline::collides(const hitline &l, float *xout, float *yout) const {
   //adapted from https://stackoverflow.com/a/565282/7431860
   //and from https://github.com/pgkelley4/line-segments-intersect
+
+  //set these immediately to avoid confusion down the line
+  *xout = FLT_MAX; *yout = FLT_MAX;
 
   vec2d r = end - start;
   vec2d s = l.get_end() - l.get_start();
@@ -58,7 +65,6 @@ bool hitline::collides(const hitline &l, float *xout, float *yout) const {
     else if(greatest_len < total_len) {
       //overlapping
       //cannot determine single point of intersection
-      *xout = FLT_MAX; *yout = FLT_MAX;
       return true;
     }
     else {
@@ -98,7 +104,7 @@ bool hitline::collides(const hitline &l, float *xout, float *yout) const {
   return true;
 }
 
-float hitline::get_len() const {
+float hitline::calc_len() const {
   return std::sqrt(std::pow((end[0] - start[0]), 2) + std::pow((end[1]-start[1]), 2));
 }
 

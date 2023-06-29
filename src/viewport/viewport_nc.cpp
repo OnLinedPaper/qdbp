@@ -3,9 +3,11 @@
 #include "src/renders/render_nc.h"
 #include "src/xml_parser/xmlparse.h"
 #include "src/environment/chunk/chunk.h"
+#include "src/rect2d/hitbox/hitline.h"
 #include <iostream>
 #include <ncurses.h>
 #include <cmath>
+#include <limits.h>
 
 viewport::viewport() { 
   view_width = view_height = 0;
@@ -101,8 +103,56 @@ void viewport::nc_world_coord_to_view_coord(int &x_in, int &y_in) {
 //p1 and p2 are points in world units that need to be pinched to the dimensions
 //of the screen.
 //the given vectors are modified. 
+//TODO: move this somewhere else, like pinch_to_box?
 void viewport::nc_pinch_line_to_viewport(vec2d &p1, vec2d &p2) {
   if(!viewport::on_screen(p1, p2)) { return; }
+
+  //TAKE TWO - use intersection of lines to determine if intercept exists, and
+  //if it does, replace it
+
+  float x_collide, y_collide = FLT_MAX;
+  float *x_ptr; x_ptr = &x_collide;
+  float *y_ptr; y_ptr = &y_collide;
+  hitline l_in(p1, p2);
+  hitline l_chk({0, 0}, {0, 0});
+
+  //check up
+  l_chk.set_start({get_tlc_x(), get_tlc_y()});
+  l_chk.set_end(  {get_brc_x(), get_tlc_y()});
+  if(l_in.collides(l_chk, x_ptr, y_ptr) && x_collide != FLT_MAX) {
+    //collision - truncate line segment to up line
+    if(p1[1] < get_tlc_y()) { p1[0] = x_collide; p1[1] = get_tlc_y(); }
+    else {                    p2[0] = x_collide; p2[1] = get_tlc_y(); }
+  }
+
+  //check dn
+  l_chk.set_start({get_tlc_x(), get_brc_y()});
+  l_chk.set_end(  {get_brc_x(), get_brc_y()});
+  if(l_in.collides(l_chk, x_ptr, y_ptr) && x_collide != FLT_MAX) {
+    //collision - truncate line segment to dn line
+    if(p1[1] > get_brc_y()) { p1[0] = x_collide; p1[1] = get_brc_y(); }
+    else {                    p2[0] = x_collide; p2[1] = get_brc_y(); }
+  }
+
+  //check lf
+  l_chk.set_start({get_tlc_x(), get_tlc_y()});
+  l_chk.set_end(  {get_tlc_x(), get_brc_y()});
+  if(l_in.collides(l_chk, x_ptr, y_ptr) && x_collide != FLT_MAX) {
+    //collision - truncate line segment to lf line
+    if(p1[0] < get_tlc_x()) { p1[0] = get_tlc_x(); p1[1] = y_collide; }
+    else {                    p2[0] = get_tlc_x(); p2[1] = y_collide; }
+  }
+
+  //check rt
+  l_chk.set_start({get_brc_x(), get_tlc_y()});
+  l_chk.set_end(  {get_brc_x(), get_brc_y()});
+  if(l_in.collides(l_chk, x_ptr, y_ptr) && x_collide != FLT_MAX) {
+    //collision - truncate line segment to rt line
+    if(p1[0] > get_brc_x()) { p1[0] = get_brc_x(); p1[1] = y_collide; }
+    else {                    p2[0] = get_brc_x(); p2[1] = y_collide; }
+  }
+
+/*
 
   //determine which point is on the left
   bool p1_left = p1[0] < p2[0];
@@ -175,7 +225,7 @@ void viewport::nc_pinch_line_to_viewport(vec2d &p1, vec2d &p2) {
     p2[1] -= m * (p2[0] - get_brc_x());
     p2[0] = get_brc_x();
   }
-  
+*/  
   
   return;
 
@@ -193,8 +243,8 @@ bool viewport::on_screen(const vec2d &v1, const vec2d &v2) {
   int y_brc = std::round((v1[1] < v2[1] ? v2[1] : v1[1]));
 
   if(  
-    x_tlc > get_brc_x() ||
-    y_tlc > get_brc_y() ||
+    x_tlc >= get_brc_x() ||
+    y_tlc >= get_brc_y() ||
     x_brc < get_tlc_x() ||
     y_brc < get_tlc_y()
   ) { return false; }

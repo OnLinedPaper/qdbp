@@ -34,6 +34,7 @@ try{
 
 //- debug stuff  -    -    -    -    -    -    -    -    -    -    -    -    -        
 
+/*
   float htest_x = FLT_MAX;
   float *htp_x;
   htp_x = &htest_x;
@@ -62,6 +63,7 @@ try{
     }
   }
   return;
+*/
 
 #if defined RENDER_SDL
   //SDL DEBUGGING
@@ -211,8 +213,8 @@ try{
     image_handler::get().draw_line({1000, 1000}, {1000, 1300}, '0'); 
     image_handler::get().draw_line({1050, 1300}, {1050, 1000}, '0'); 
     //horizontal
-    image_handler::get().draw_line({600, 800}, {900, 800}, '0'); 
-    image_handler::get().draw_line({900, 850}, {600, 850}, '0'); 
+    image_handler::get().draw_line({1200, 800}, {900, 800}, '0'); 
+    image_handler::get().draw_line({900, 850}, {1200, 850}, '0'); 
 
     //hard positive
     image_handler::get().draw_line({1100, 1000}, {1200, 1300}, '0'); 

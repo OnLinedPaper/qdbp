@@ -65,10 +65,10 @@ void image_handler::draw_fixed_line(int x_p1, int y_p1, int x_p2, int y_p2, char
 
   //make sure none of these coords are out of bounds
   if(
-    (x_p1 < 0 || x_p1 > C) ||
-    (x_p2 < 0 || x_p2 > C) ||
-    (y_p1 < 0 || y_p1 > L) ||
-    (y_p2 < 0 || y_p2 > L)
+    (x_p1 < 0 || x_p1 >= C) ||
+    (x_p2 < 0 || x_p2 >= C) ||
+    (y_p1 < 0 || y_p1 >= L) ||
+    (y_p2 < 0 || y_p2 >= L)
   ) { return; }
 
   /*
@@ -158,6 +158,13 @@ void image_handler::draw_fixed_line(int x_p1, int y_p1, int x_p2, int y_p2, char
 
     x_render += offset_x;
     y_render += offset_y;
+
+    //due to int rounding errors and what i assume is an update issue
+    //somewhere, these values occasionally stray past the bounds by 1
+    if(x_render >= C) { x_render = C-1; }
+    if(x_render < 0 ) { x_render = 0;   }
+    if(y_render >= L) { y_render = L-1; }
+    if(y_render < 0 ) { y_render = 0;   }
 
     r[y_render * C + x_render] = c;
 
