@@ -45,6 +45,14 @@ public:
   //can be drawn filled or empty
   void draw_circle(const vec2d &, float, bool, char);
 
+  //draws a word at the given world coordinate
+  //can be drawn with or without highlight
+  void draw_word(const vec2d &, const std::string &, bool = false);
+
+  //draws a word with fixed positions and dimensions on the screen
+  //can be drawn with or without highlight
+  void draw_fixed_word(int, int, const std::string &, bool = false);
+
 private:
   image_handler();
   image_handler(const image_handler&) = delete;

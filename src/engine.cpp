@@ -32,7 +32,7 @@
 void engine::play() {
 try{
 
-//- debug stuff  -    -    -    -    -    -    -    -    -    -    -    -    -        
+//- debug stuff  -    -    -    -    -    -    -    -    -    -    -    -    -
 
 /*
   float htest_x = FLT_MAX;
@@ -185,6 +185,7 @@ try{
 #if defined RENDER_NC
     //NCURSES DEBUGGING
 
+
     int x = e_handler::get().get_plr_pos()[0];
     int y = e_handler::get().get_plr_pos()[1];
 //    int v = e_handler::get().get_plr_pos()[0]+25;
@@ -242,6 +243,8 @@ try{
      
     
 
+    image_handler::get().draw_fixed_word(2, 2, "test\nword");
+    image_handler::get().draw_word({1600, 1600}, "  ==  \n=word=\n=test=\n  ==  ");
 #endif
 
     

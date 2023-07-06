@@ -25,6 +25,81 @@ void image_handler::draw_point(const vec2d &v, char c) {
   return;
 }
 
+void image_handler::draw_word(const vec2d &v, const std::string &s, bool highlight) {
+  //check if it's safe to draw
+  char *r = NULL; int L, C = 0;
+  render::get().get_r(r, L, C);
+  if(r == NULL) { return; }
+
+  //translate top left corner to view coords
+  int x = v[0];
+  int y = v[1];
+  viewport::get().nc_world_coord_to_view_coord(x, y, false);
+
+
+  //get "dimensions" of word to determine if it's on screen
+  int w = 0;
+  int h = 0;
+  int count = 0;
+  for(uint i=0; i<s.length(); i++) {
+    if(s[i] == '\n') {
+      w = (count > w ? count : w);
+      h++;
+      count = 0;
+    }
+    else {
+      count++;
+    }
+  }
+
+  w = (count > w ? count : w);
+  if(w > 0) { h++; }
+
+  //check if it's on screen
+  if(
+      x >= C ||
+      y >= L ||
+      x + w < 0 ||
+      y + h < 0
+  ) { return; }
+  
+  draw_fixed_word(x, y, s, highlight);
+}
+
+void image_handler::draw_fixed_word(int x, int y, const std::string &s, bool highlight) {
+  //check if it's safe to draw
+  char *r = NULL; int L, C = 0;
+  render::get().get_r(r, L, C);
+  if(r == NULL) { return; }
+
+  //x and y are both screen coords, not world coords. this function is notable
+  //as being one of the only ones that allows negative coords in, for the 
+  //purpose of word triming. 
+
+  //draw word on screen as best as possible: "fit" it to the screen if it would
+  //be otherwise ofscreen. also interpret newlines.
+
+  int i = 0; 
+  int j = 0;
+  for(auto c : s) {
+    //check of we're below the screen, and quit if so
+    if(y+j >= L) { return; }
+
+    //check for newline
+    if(c == '\n') { j++; i=0; continue; }
+
+    //check if we're above the screen, to the left of it, or to the right of it
+    //and skip this letter if so
+    if(y+j < 0 || x+i < 0 || x+i >= C) { i++; continue; }
+
+
+    r[(y+j)*C + (x+i)] = c;
+
+    i++;
+  }
+  
+}
+
 void image_handler::draw_line(const vec2d &p1_in, const vec2d &p2_in, char c) {
   //check if the line is on screen
   if(!viewport::get().on_screen(p1_in, p2_in)) { return; }
@@ -49,6 +124,7 @@ void image_handler::draw_line(const vec2d &p1_in, const vec2d &p2_in, char c) {
   int rp_y = (p1_left ? p2[1] : p1[1]);
 
   //convert - yes this drops precision, no i don't care
+//TODO: i do in fact care. come back once everything is ints
   viewport::get().nc_world_coord_to_view_coord(lp_x, lp_y);
   viewport::get().nc_world_coord_to_view_coord(rp_x, rp_y);
 
