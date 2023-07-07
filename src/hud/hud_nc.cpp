@@ -3,7 +3,7 @@
 #include "src/viewport/viewport.h"
 #include "src/renders/render_nc.h"
 #include "src/xml_parser/xmlparse.h"
-#include "src/image/image_handler.h"
+#include "src/image/image_handler_nc.h"
 #include "src/entity_handler/entity_handler.h"
 
 
@@ -42,7 +42,15 @@ void hud::draw() {
   render::get().get_r(r, L, C);
   if(r == NULL) { return; }
 
-  bool full_size = (L > 21 && C > 96);
+  int he_ht = L/3;
+  int he_ht_min = 7;
+  int he_wi = C/12;
+  int he_wi_min = 8;
+
+  bool full_size = (
+      he_ht >= he_ht_min &&
+      he_wi >= he_wi_min
+  );
 
 
 //-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
@@ -52,10 +60,35 @@ void hud::draw() {
   float ovrh_frac = e_handler::get().get_plr_overheat_frac();
  
   if(full_size) {
-
+    //heat border
+    image_handler::get().draw_fixed_box(
+        0, L-he_ht, 
+        he_wi, L-1, 
+        false, 'x'
+);
+    //heat
+    image_handler::get().draw_fixed_box(
+        1, L - ((he_ht-1) * heat_frac),
+        he_wi-1, L-2,
+        true, 'H'
+    );
+    //overheat
+    image_handler::get().draw_fixed_box(
+        1, L - ((he_ht-1) * ovrh_frac),
+        he_wi-1, L-2,
+        true, '!'
+    );
   }
   else {
-    
+    //TODO: fixed width
+    std::string s = "";
+
+    s+= std::to_string((int)(ovrh_frac * 100));
+    s+= "%\n";
+    s += std::to_string((int)(heat_frac * 100));
+    s += "%";
+
+    image_handler::get().draw_fixed_word(0, L-3, s);    
   }
 
   return;

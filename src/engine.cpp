@@ -198,6 +198,7 @@ try{
 
     char *r; int L, C = 0;
     render::get().get_r(r, L, C);
+/*
     if(r) {
       float heat_frac = e_handler::get().get_plr_heat_frac();
       float ovrh_frac = e_handler::get().get_plr_overheat_frac();
@@ -207,7 +208,7 @@ try{
       //image_handler::get().draw_point(e_handler::get().get_plr_pos(), 'P');
    //   r[w*C + v] = 'z';
     }
-
+*/
 
     //gauntlet of lines to test
     //vertical
