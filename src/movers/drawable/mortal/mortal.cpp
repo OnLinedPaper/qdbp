@@ -269,10 +269,15 @@ void mortal::update_boxes() {
 
 //==== DAMAGE AND HEALTH ======================================================
 
+//get fraction of health in this segment which remains
+float mortal::get_seg_frac() const {
+  return (get_health() - (get_health_per_seg() * get_full_health_segs())) / get_health_per_seg();
+}
+
 //get full health segments
 int mortal::get_full_health_segs() const {
   int retval = 0;
-  float health_per_seg = (max_health * max_health_mod) / get_total_health_segs();
+  float health_per_seg = get_health_per_seg();
   float c_health = get_health();
   while(c_health > health_per_seg) {
     c_health -= health_per_seg;
@@ -280,6 +285,10 @@ int mortal::get_full_health_segs() const {
   } 
 
   return retval;
+}
+
+float mortal::get_health_per_seg() const {
+  return (max_health * max_health_mod) / get_total_health_segs();
 }
 
 //returns true if ship took actual damage

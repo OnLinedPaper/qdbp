@@ -52,6 +52,7 @@ public:
   bool    get_plr_is_burnout();
   bool    get_plr_is_vent();
   float 	get_plr_health_frac();
+  float   get_plr_seg_frac();
   int     get_plr_total_health_segs();
   int     get_plr_full_health_segs();
   float   get_plr_h_available_to_regen();

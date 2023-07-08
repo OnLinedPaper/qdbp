@@ -185,67 +185,77 @@ try{
 #if defined RENDER_NC
     //NCURSES DEBUGGING
 
-
-    int x = e_handler::get().get_plr_pos()[0];
-    int y = e_handler::get().get_plr_pos()[1];
-//    int v = e_handler::get().get_plr_pos()[0]+25;
-  //  int w = e_handler::get().get_plr_pos()[1]+25;
-//    int v = 0;
-  //  int w = 0;
-
-    viewport::get().nc_world_coord_to_view_coord(x, y);
-    //viewport::get().nc_world_coord_to_view_coord(v, w);
-
-    char *r; int L, C = 0;
+    //check if it's safe to darw
+    char *r = NULL; int L, C = 0;
     render::get().get_r(r, L, C);
-/*
-    if(r) {
-      float heat_frac = e_handler::get().get_plr_heat_frac();
-      float ovrh_frac = e_handler::get().get_plr_overheat_frac();
-      image_handler::get().draw_fixed_box(1, L-2, 3, (L - (L/3)*heat_frac), true, '-');
-      image_handler::get().draw_fixed_box(1, L-2, 3, (L - (L/3)*ovrh_frac), true, '=');
-      image_handler::get().draw_fixed_box(0, 2*L/3, 4, L-2, false, 'H');
-      //image_handler::get().draw_point(e_handler::get().get_plr_pos(), 'P');
-   //   r[w*C + v] = 'z';
+    if(r != NULL) {
+
+      //this will probably persist into the final version
+      if(debug_mode) {
+        image_handler::get().draw_fixed_word(C-18, L-2, "== debug mode ==");
+      }
+
+
+      int x = e_handler::get().get_plr_pos()[0];
+      int y = e_handler::get().get_plr_pos()[1];
+  //    int v = e_handler::get().get_plr_pos()[0]+25;
+    //  int w = e_handler::get().get_plr_pos()[1]+25;
+  //    int v = 0;
+    //  int w = 0;
+
+      viewport::get().nc_world_coord_to_view_coord(x, y);
+      //viewport::get().nc_world_coord_to_view_coord(v, w);
+
+  /*
+      if(r) {
+        float heat_frac = e_handler::get().get_plr_heat_frac();
+        float ovrh_frac = e_handler::get().get_plr_overheat_frac();
+        image_handler::get().draw_fixed_box(1, L-2, 3, (L - (L/3)*heat_frac), true, '-');
+        image_handler::get().draw_fixed_box(1, L-2, 3, (L - (L/3)*ovrh_frac), true, '=');
+        image_handler::get().draw_fixed_box(0, 2*L/3, 4, L-2, false, 'H');
+        //image_handler::get().draw_point(e_handler::get().get_plr_pos(), 'P');
+     //   r[w*C + v] = 'z';
+      }
+  */
+
+      //gauntlet of lines to test
+      //vertical
+      image_handler::get().draw_line({1000, 1000}, {1000, 1300}, '0'); 
+      image_handler::get().draw_line({1050, 1300}, {1050, 1000}, '0'); 
+      //horizontal
+      image_handler::get().draw_line({1200, 800}, {900, 800}, '0'); 
+      image_handler::get().draw_line({900, 850}, {1200, 850}, '0'); 
+
+      //hard positive
+      image_handler::get().draw_line({1100, 1000}, {1200, 1300}, '0'); 
+      image_handler::get().draw_line({1250, 1300}, {1150, 1000}, '0'); 
+      
+      //neutral positive
+      image_handler::get().draw_line({1200, 1000}, {1400, 1200}, '0'); 
+      image_handler::get().draw_line({1450, 1200}, {1250, 1000}, '0'); 
+
+      //soft positive
+      image_handler::get().draw_line({1300, 1000}, {1600, 1100}, '0'); 
+      image_handler::get().draw_line({1650, 1050}, {1350, 950}, '0'); 
+
+      //hard negative
+      image_handler::get().draw_line({900, 1000}, {800, 1300}, '0'); 
+      image_handler::get().draw_line({850, 1300}, {950, 1000}, '0'); 
+
+      //neutral negative
+      image_handler::get().draw_line({800, 1000}, {600, 1200}, '0'); 
+      image_handler::get().draw_line({650, 1200}, {850, 1000}, '0'); 
+      
+      //soft negative
+      image_handler::get().draw_line({700, 1000}, {400, 1100}, '0'); 
+      image_handler::get().draw_line({450, 1050}, {750, 950}, '0'); 
+       
+      
+
+      image_handler::get().draw_fixed_word(2, 2, "test\nword");
+      image_handler::get().draw_word({1600, 1600}, "  ==  \n=word=\n=test=\n  ==  ");
+
     }
-*/
-
-    //gauntlet of lines to test
-    //vertical
-    image_handler::get().draw_line({1000, 1000}, {1000, 1300}, '0'); 
-    image_handler::get().draw_line({1050, 1300}, {1050, 1000}, '0'); 
-    //horizontal
-    image_handler::get().draw_line({1200, 800}, {900, 800}, '0'); 
-    image_handler::get().draw_line({900, 850}, {1200, 850}, '0'); 
-
-    //hard positive
-    image_handler::get().draw_line({1100, 1000}, {1200, 1300}, '0'); 
-    image_handler::get().draw_line({1250, 1300}, {1150, 1000}, '0'); 
-    
-    //neutral positive
-    image_handler::get().draw_line({1200, 1000}, {1400, 1200}, '0'); 
-    image_handler::get().draw_line({1450, 1200}, {1250, 1000}, '0'); 
-
-    //soft positive
-    image_handler::get().draw_line({1300, 1000}, {1600, 1100}, '0'); 
-    image_handler::get().draw_line({1650, 1050}, {1350, 950}, '0'); 
-
-    //hard negative
-    image_handler::get().draw_line({900, 1000}, {800, 1300}, '0'); 
-    image_handler::get().draw_line({850, 1300}, {950, 1000}, '0'); 
-
-    //neutral negative
-    image_handler::get().draw_line({800, 1000}, {600, 1200}, '0'); 
-    image_handler::get().draw_line({650, 1200}, {850, 1000}, '0'); 
-    
-    //soft negative
-    image_handler::get().draw_line({700, 1000}, {400, 1100}, '0'); 
-    image_handler::get().draw_line({450, 1050}, {750, 950}, '0'); 
-     
-    
-
-    image_handler::get().draw_fixed_word(2, 2, "test\nword");
-    image_handler::get().draw_word({1600, 1600}, "  ==  \n=word=\n=test=\n  ==  ");
 #endif
 
     

@@ -50,8 +50,10 @@ public:
   
   float get_health() const { return curr_health; }
   float get_health_frac() const { return curr_health / (max_health * max_health_mod); }
+  float get_seg_frac() const;
   int   get_total_health_segs() const { return health_segments + health_segment_mod; }
   int   get_full_health_segs() const;
+  float get_health_per_seg() const;
   float get_shields() const { return curr_shield_segments; }
   float get_shield_frac() const { return curr_shields / max_shields; }
   int   get_total_shield_segs() const { return max_shield_segments + max_shield_segments_mod; }

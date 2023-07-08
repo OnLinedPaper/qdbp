@@ -491,6 +491,10 @@ float e_handler::get_plr_health_frac() {
   return plr->get_health_frac();
 }
 
+float e_handler::get_plr_seg_frac() {
+  return plr->get_seg_frac();
+}
+
 int e_handler::get_plr_total_health_segs() {
   return plr->get_total_health_segs();
 }
