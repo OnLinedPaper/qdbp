@@ -61,9 +61,9 @@ void hud::draw() {
   int hl_ht = L/4;
   int hl_ht_min = 6;
   //round up for current seg
-  int hl_cs_wi = (C + 18 - 1) / 18;
+  int hl_cs_wi = (C + 36 - 1) / 36;
   //round down for total segs
-  int hl_bs_wi = C/18;
+  int hl_bs_wi = C/36;
   int hl_wi_min = 6;
 
   bool full_size = (
@@ -104,7 +104,7 @@ void hud::draw() {
         0, L-he_ht, 
         he_wi, L-1, 
         false, 'x'
-);
+    );
     //heat
     image_handler::get().draw_fixed_box(
         1, L - ((he_ht-1) * heat_frac),
@@ -148,15 +148,37 @@ void hud::draw() {
 //draw health
 
   int backup_segs = e_handler::get().get_plr_full_health_segs();
-  float seg_frac = e_handler::get().get_plr_seg_frac();
+  int total_segs = e_handler::get().get_plr_total_health_segs();
+  float cs_frac = e_handler::get().get_plr_seg_frac();
+  float bs_frac = (float)backup_segs / (float)(total_segs - 1);
   bool is_regen = e_handler::get().get_plr_is_regenerating();
 
   if(full_size) {
-    //TODO TODO
+    char cs_c = '+';
+    char bs_c = (char)(backup_segs + 48);
 
+    //health border
+    image_handler::get().draw_fixed_box(
+        he_wi, L-hl_ht, 
+        he_wi + hl_cs_wi + hl_bs_wi + 2, L-1, 
+        false, 'x'
+    );
+    //current segment
+    image_handler::get().draw_fixed_box(
+        he_wi + 1, L - ((hl_ht-1) * cs_frac),
+        he_wi + 1 + hl_cs_wi, L-2,
+        true, cs_c
+    );
+    //backup segments
+    image_handler::get().draw_fixed_box(
+        //always draw at least 1 line for high seg counts that round to zero
+        he_wi + 1 + hl_cs_wi + 1, L - std::max(((hl_ht-1) * bs_frac), (float)2),
+        he_wi + 1 + hl_cs_wi + hl_bs_wi, L-2,
+        true, bs_c
+    );
   }
   else {
-    std::string cs_str = std::to_string((int)(seg_frac * 100));
+    std::string cs_str = std::to_string((int)(cs_frac * 100));
     std::string bs_str = "x" + std::to_string(backup_segs);
 
     if(is_regen) {
