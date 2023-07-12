@@ -8,6 +8,8 @@
 #include "hud_nc.cpp"
 #endif
 
+#if defined RENDER_SDL
+
 hud::hud() :
   blc_outline("/" + xmlparse::get().get_xml_string(path + "/textures/blc_outline")),
   blc_outline_ht(xmlparse::get().get_xml_int(blc_outline + "/dimensions/height")),
@@ -53,7 +55,6 @@ hud::~hud() { }
 
 void hud::update() { }
 
-#if defined RENDER_SDL
 void hud::draw() { 
   //used for flicker effects
   static float i=0;
