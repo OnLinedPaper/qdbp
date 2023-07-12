@@ -58,6 +58,7 @@ public:
   float get_shield_frac() const { return curr_shields / max_shields; }
   int   get_total_shield_segs() const { return max_shield_segments + max_shield_segments_mod; }
   float get_first_shield_frac() const { return first_s_size * first_s_size_mod; }
+  float get_next_shield_seg_frac() const;
 
   float h_available_to_regen() const;
   bool is_regen_h() const { return h_is_regenerating; }

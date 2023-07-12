@@ -527,6 +527,10 @@ float e_handler::get_plr_first_shield_frac() {
   return plr->get_first_shield_frac();
 }
 
+float e_handler::get_plr_next_shield_seg_frac() {
+  return plr->get_next_shield_seg_frac();
+}
+
 void e_handler::teleport_plr(const vec2d &p) {
   plr->teleport(p);
 }

@@ -61,6 +61,7 @@ public:
   int 		get_plr_total_shield_segs();
   float 	get_plr_shield_frac();
   float   get_plr_first_shield_frac();
+  float   get_plr_next_shield_seg_frac();
   const vec2d 	get_plr_pos();
   const vec2d 	get_plr_vel();
 

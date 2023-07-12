@@ -291,6 +291,11 @@ float mortal::get_health_per_seg() const {
   return (max_health * max_health_mod) / get_total_health_segs();
 }
 
+//the fraction of the current seg that is full
+float mortal::get_next_shield_seg_frac() const {
+  //TODO TODO
+}
+
 //returns true if ship took actual damage
 bool mortal::take_damage(float damage, int box_type_hit, bool bypass_shields) {
   if(damage < 0 || tangible == false) { return false; }

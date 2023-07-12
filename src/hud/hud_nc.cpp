@@ -38,6 +38,17 @@ void hud::draw() {
   2 for the borders, and 4 for the health display.
   it takes up 1/18 of the screen width, with a minimum of 6 blocks width:
   2 for the borders, 2 for the health display, and 2 for the segments.
+
+  the shield gauge is split into 2 parts, with segment count on the left
+  and recharge progress on the right. if the width is an odd number, the
+  extra bar goes to the segment count. 
+  dimensions are identical to health, less 1 in all aspects.
+  it takes up 1/4 of the screen height, but is also one less than health, with
+  a minimum of 5 blocks of height: 2 for the borders, and 3 for the shield 
+  disply.
+  it takes up 1/18 of the screen width, but is also one less than health, with a
+  minimum of 5 blocks width: 2 for the borders, 2 for the segments, and 1 for 
+  the charge.
 */
 
 
@@ -58,6 +69,7 @@ void hud::draw() {
   int he_wi = C/12;
   int he_wi_min = 8;
 
+  int hl_buf = he_wi;
   int hl_ht = L/4;
   int hl_ht_min = 6;
   //round up for current seg
@@ -66,11 +78,21 @@ void hud::draw() {
   int hl_bs_wi = C/36;
   int hl_wi_min = 6;
 
+  int sh_buf = hl_buf + hl_cs_wi + hl_bs_wi + 2;
+  bool hl_wi_eq = hl_cs_wi == hl_bs_wi;
+  int sh_ht = hl_ht - 1;
+  int sh_ht_min = hl_ht_min - 1;
+  int sh_ts_wi = (hl_wi_eq ? hl_cs_wi : hl_cs_wi - 1);
+  int sh_ch_wi = (hl_wi_eq ? hl_bs_wi - 1 : hl_bs_wi);
+  int sh_wi_min = hl_wi_min - 1;
+
   bool full_size = (
       he_ht >= he_ht_min &&
       he_wi >= he_wi_min &&
       hl_ht >= hl_ht_min &&
-      hl_cs_wi + hl_bs_wi + 2 > hl_wi_min
+      hl_cs_wi + hl_bs_wi + 2 > hl_wi_min &&
+      sh_ht >= sh_ht_min &&
+      sh_ts_wi + sh_ch_wi + 2 > sh_wi_min
   );
 
 
@@ -120,25 +142,24 @@ void hud::draw() {
   }
   else {
     //stackoverflow.com/a/26343947
-    std::string heat_str = std::to_string((int)(heat_frac * 100));
-    std::string ovrh_str = std::to_string((int)(ovrh_frac * 100));
+    std::string heat_str = std::to_string((int)(heat_frac * 100)) + "%";
+    std::string ovrh_str = std::to_string((int)(ovrh_frac * 100)) + "%";
 
     if(is_burnout) {
-      if(blink < 32) { ovrh_str = "OVR"; heat_str = "HTD"; }
+      if(blink < 32) { ovrh_str = "BRNT"; heat_str = "OUT!"; }
     }
     else if(is_vent) {
-      if(blink < 32) { ovrh_str = "VNT"; }
+      if(blink < 32) { ovrh_str = "VENT"; }
     }
     else if(heat_frac == 1) {
-      if(blink < 32) { heat_str = "!!!"; }     
-      else {           heat_str = "WRN"; }
+      if(blink < 32) { heat_str = "!!!!"; }     
+      else {           heat_str = "WARN"; }
     }
 
     std::string s = "HEAT\n";
-    s += std::string(3 - std::min((size_t)3, ovrh_str.length()), ' ') + ovrh_str;
-    s += "%\n";
-    s += std::string(3 - std::min((size_t)3, heat_str.length()), ' ') + heat_str;
-    s += "%";
+    s += std::string(4 - std::min((size_t)4, ovrh_str.length()), ' ') + ovrh_str;
+    s += "\n";
+    s += std::string(4 - std::min((size_t)4, heat_str.length()), ' ') + heat_str;
 
     image_handler::get().draw_fixed_word(0, L-4, s);    
   }
@@ -148,9 +169,9 @@ void hud::draw() {
 //draw health
 
   int backup_segs = e_handler::get().get_plr_full_health_segs();
-  int total_segs = e_handler::get().get_plr_total_health_segs();
+  int health_total_segs = e_handler::get().get_plr_total_health_segs();
   float cs_frac = e_handler::get().get_plr_seg_frac();
-  float bs_frac = (float)backup_segs / (float)(total_segs - 1);
+  float bs_frac = (float)backup_segs / (float)(health_total_segs - 1);
   bool is_regen = e_handler::get().get_plr_is_regenerating();
 
   if(full_size) {
@@ -159,26 +180,26 @@ void hud::draw() {
 
     //health border
     image_handler::get().draw_fixed_box(
-        he_wi, L-hl_ht, 
-        he_wi + hl_cs_wi + hl_bs_wi + 2, L-1, 
+        hl_buf, L-hl_ht, 
+        hl_buf + hl_cs_wi + hl_bs_wi + 2, L-1, 
         false, 'x'
     );
     //current segment
     image_handler::get().draw_fixed_box(
-        he_wi + 1, L - ((hl_ht-1) * cs_frac),
-        he_wi + 1 + hl_cs_wi, L-2,
+        hl_buf + 1, L - ((hl_ht-1) * cs_frac),
+        hl_buf + 1 + hl_cs_wi, L-2,
         true, cs_c
     );
     //backup segments
     image_handler::get().draw_fixed_box(
         //always draw at least 1 line for high seg counts that round to zero
-        he_wi + 1 + hl_cs_wi + 1, L - std::max(((hl_ht-1) * bs_frac), (float)2),
-        he_wi + 1 + hl_cs_wi + hl_bs_wi, L-2,
+        hl_buf + 1 + hl_cs_wi + 1, L - std::max(((hl_ht-1) * bs_frac), (float)2),
+        hl_buf + 1 + hl_cs_wi + hl_bs_wi, L-2,
         true, bs_c
     );
   }
   else {
-    std::string cs_str = std::to_string((int)(cs_frac * 100));
+    std::string cs_str = std::to_string((int)(cs_frac * 100)) + "%";
     std::string bs_str = "x" + std::to_string(backup_segs);
 
     if(is_regen) {
@@ -188,10 +209,35 @@ void hud::draw() {
     std::string s = "HLTH\n";
     s += std::string(4 - std::min((size_t)4, bs_str.length()), ' ') + bs_str;
     s += "\n";
-    s += std::string(3 - std::min((size_t)3, cs_str.length()), ' ') + cs_str;
-    s += "%";
+    s += std::string(4 - std::min((size_t)4, cs_str.length()), ' ') + cs_str;
 
     image_handler::get().draw_fixed_word(5, L-3, s);
+  }
+
+//-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+//draw shield
+
+  int shield_total_segs = e_handler::get().get_plr_shields();
+  float shield_charge = e_handler::get().get_plr_shield_frac();
+  float shield_seg_frac = e_handler::get().get_plr_next_shield_seg_frac();
+
+  if(full_size) {
+
+  }
+  else {
+    std::string ts_str = "x" + std::to_string(shield_total_segs);
+    std::string ch_str = std::to_string((int)(shield_seg_frac * 100)) + "%";
+
+    if(shield_charge == 1) {
+      ch_str = "FULL";
+    }
+
+    std::string s = "SHLD\n";
+    s += std::string(4 - std::min((size_t)4, ch_str.length()), ' ') + ch_str;
+    s += "\n";
+    s += std::string(4 - std::min((size_t)4, ts_str.length()), ' ') + ts_str;
+
+    image_handler::get().draw_fixed_word(10, L-3, s);
   }
 
   return;
