@@ -48,20 +48,68 @@ public:
 
 //==== DAMAGE AND HEALTH ======================================================
   
+  //return current health value. note that since max health can be modified,
+  //this number represents just the number, and is not particularly meaningful
   float get_health() const { return curr_health; }
+
+  //return a float from 0.0 to 1.0 representing the fractional amount of health
+  //remaining
   float get_health_frac() const { return curr_health / (max_health * max_health_mod); }
+
+  //get fractional amount of health remaining in the current segment
+  float get_seg_frac() const;
+
+  //get the total number of health segments
   int   get_total_health_segs() const { return health_segments + health_segment_mod; }
+
+  //get the number of "full" health segs - note that this is technically
+  //the RESERVE health segs, as the current one is not included in the count,
+  //even if it is full
   int   get_full_health_segs() const;
+
+  //get the amount of health a segment currently contains
+  float get_health_per_seg() const;
+
+
+  //get the count of fully charged shield segments
   float get_shields() const { return curr_shield_segments; }
+
+  //get the fractional amount of shield charge - note that like get_health(), 
+  //this does not actually provide much useful info on its own, since shield
+  //segs and first seg size can alter how much the charge is "worth"
   float get_shield_frac() const { return curr_shields / max_shields; }
+
+  //get the total count of shield segs 
   int   get_total_shield_segs() const { return max_shield_segments + max_shield_segments_mod; }
+
+  //get the fractional value of charge that must be filled before the first
+  //seg comes back online. this is typically larger than the remaining segs,
+  //to provide a penalty for allowing shields to fully deplete
   float get_first_shield_frac() const { return first_s_size * first_s_size_mod; }
 
+  //get the fractional value of the current seg's charge against how much it
+  //needs to become charged
+  float get_next_shield_seg_frac() const;
+
+
+  //check whether the current segment can regenerate health
   float h_available_to_regen() const;
+
+  //check if the mortal is currently regenerating health - note that this is
+  //almost always false for non-player mortals, as they are not meant to 
+  //regenerate health
   bool is_regen_h() const { return h_is_regenerating; }
+
+  //toggle the health regeneration state
   void toggle_regen_h() { h_is_regenerating = !h_is_regenerating; }
+
+  //check if the mortal is currently regenerating shields - note that this is
+  //almost always true for players, as they passively regenerate shields
   bool is_regen_s() const { return s_is_regenerating; }
+
+  //toggle the shield regeneration state
   void toggle_regen_s() { s_is_regenerating = !s_is_regenerating; }
+
 
   //damage scales depending on which box was struck
   virtual bool take_damage

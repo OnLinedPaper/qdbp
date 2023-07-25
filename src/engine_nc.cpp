@@ -129,6 +129,7 @@ void engine::player_input() {
   //member variable it immediately causes stack smashing
   //this is annoying because i have to rely on it closing automatically when it
   //goes out of scope, which doesn't happen until the program terminates. SIGH.
+  //TODO: check to see if this still happens after fixing xml parser
   static FILE *kbd = fopen(
     xmlparse::get().get_xml_string("/ncurses_input/keyboard_input_device").c_str(),
     "r"
@@ -204,12 +205,50 @@ void engine::player_input() {
 
     //jump through a gate
     static bool o_keydown = false;
-    if(key_map[KEY_O/8] & (1 << (KEY_O %8))) {
+    if(key_map[KEY_O/8] & (1 << (KEY_O % 8))) {
       if(!o_keydown) {
         o_keydown = true;
         map_h::get().try_jump();
       }
     } else { o_keydown = false; }
+
+    //toggle venting
+    static bool v_keydown = false;
+    if(key_map[KEY_V/8] & (1 << (KEY_V % 8))) {
+      if(!v_keydown) {
+        v_keydown = true;
+        e_handler::get().toggle_plr_vent();
+      }
+    } else { v_keydown = false; }
+
+    //toggle regen
+    static bool r_keydown = false;
+    if(key_map[KEY_R/8] & (1 << (KEY_R % 8))) {
+      if(!r_keydown) {
+        r_keydown = true;
+        e_handler::get().toggle_plr_regen();
+      }
+    } else { r_keydown = false; }
+
+
+    //toggle debug mode
+    static bool comma_keydown = false;
+    if(key_map[KEY_COMMA/8] & (1 << (KEY_COMMA % 8))) {
+      if(!comma_keydown) {
+        comma_keydown = true;
+        debug_mode = !debug_mode;
+      }
+    } else { comma_keydown = false; }
+
+
+    //debugging section
+    static bool x_keydown = false;
+    if(key_map[KEY_X/8] & (1 << (KEY_X % 8))) {
+      if(!x_keydown) {
+        x_keydown = true;
+        e_handler::get().DEBUG_get_plr()->take_damage(1, -1, false);
+      }
+    } else { x_keydown = false; }
   }
 
   return;

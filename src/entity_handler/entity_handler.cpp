@@ -491,6 +491,10 @@ float e_handler::get_plr_health_frac() {
   return plr->get_health_frac();
 }
 
+float e_handler::get_plr_seg_frac() {
+  return plr->get_seg_frac();
+}
+
 int e_handler::get_plr_total_health_segs() {
   return plr->get_total_health_segs();
 }
@@ -521,6 +525,14 @@ float e_handler::get_plr_shield_frac() {
 
 float e_handler::get_plr_first_shield_frac() {
   return plr->get_first_shield_frac();
+}
+
+float e_handler::get_plr_next_shield_seg_frac() {
+  return plr->get_next_shield_seg_frac();
+}
+
+bool e_handler::get_plr_is_regenerating_shields() {
+  return plr->is_regen_s();
 }
 
 void e_handler::teleport_plr(const vec2d &p) {

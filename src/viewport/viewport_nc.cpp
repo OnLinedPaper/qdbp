@@ -77,22 +77,28 @@ void viewport::recalculate_view_dims() {
 //units - note that they may be offscreen, in which case the max value
 //for the screen dim is returned
 //TODO: figure out eventually how to do this without floating point division
-void viewport::nc_world_coord_to_view_coord(int &x_in, int &y_in) { 
+void viewport::nc_world_coord_to_view_coord(int &x_in, int &y_in, bool force_onscreen) { 
   recalculate_view_dims();
   float x = x_in;
   float y = y_in;
   x = x - get_tlc_x();
   y = y - get_tlc_y();
 
-  if(x < 0) { x = 0; }
-  else if(x >= view_width) { x = prev_COLS - 1; }
+  if(force_onscreen) {
+    if(x < 0) { x = 0; }
+    else if(x >= view_width) { x = prev_COLS - 1; }
+    else {
+      x = (x * (prev_COLS - 1)) / view_width;
+    }
+
+    if(y < 0) { y = 0; }
+    else if(y >= view_height) { y = prev_LINES - 1; }
+    else {
+      y = (y * (prev_LINES - 1)) / view_height;
+    }
+  }
   else {
     x = (x * (prev_COLS - 1)) / view_width;
-  }
-
-  if(y < 0) { y = 0; }
-  else if(y >= view_height) { y = prev_LINES - 1; }
-  else {
     y = (y * (prev_LINES - 1)) / view_height;
   }
 

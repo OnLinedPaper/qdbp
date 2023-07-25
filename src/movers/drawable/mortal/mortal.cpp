@@ -269,10 +269,15 @@ void mortal::update_boxes() {
 
 //==== DAMAGE AND HEALTH ======================================================
 
+//get fraction of health in this segment which remains
+float mortal::get_seg_frac() const {
+  return (get_health() - (get_health_per_seg() * get_full_health_segs())) / get_health_per_seg();
+}
+
 //get full health segments
 int mortal::get_full_health_segs() const {
   int retval = 0;
-  float health_per_seg = (max_health * max_health_mod) / get_total_health_segs();
+  float health_per_seg = get_health_per_seg();
   float c_health = get_health();
   while(c_health > health_per_seg) {
     c_health -= health_per_seg;
@@ -280,6 +285,29 @@ int mortal::get_full_health_segs() const {
   } 
 
   return retval;
+}
+
+float mortal::get_health_per_seg() const {
+  return (max_health * max_health_mod) / get_total_health_segs();
+}
+
+//the fraction of the current seg that is full
+float mortal::get_next_shield_seg_frac() const {
+  if(get_shields() == get_total_shield_segs()) {
+    return 1;
+  }
+  //check if this is the first seg or not
+  else if(get_shields() == 0) {
+    return get_shield_frac() / get_first_shield_frac();
+  }
+  else {
+    float threshold = get_first_shield_frac();
+    float nonfirst_frac = (1 - get_first_shield_frac()) / (get_total_shield_segs() - 1);
+    for(int i=1; i<get_shields(); i++) {
+      threshold += nonfirst_frac;
+    }
+    return (get_shield_frac() - threshold) / nonfirst_frac;
+  }
 }
 
 //returns true if ship took actual damage
@@ -384,8 +412,7 @@ void mortal::do_health_regen() {
 //regenerates shields up to full strength - note that by default, mortals
 //ALWAYS regenerate shields, and NEVER stop regenerating at full
 void mortal::do_shield_regen() {
-  if(curr_shield_segments < (max_shield_segments + max_shield_segments_mod) 
-      && s_is_regenerating) {
+  if(curr_shield_segments < get_total_shield_segs() && s_is_regenerating) {
     //regen shields
     curr_shields += s_regen_rate * s_regen_rate_mod * t_frame::get().t_adjust();
     //clamp at max shields

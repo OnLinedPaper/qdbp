@@ -32,7 +32,7 @@ public:
 #if defined RENDER_NC
   //these are special functions for converting between ncurses
   //screen units and world units
-  void nc_world_coord_to_view_coord(int &, int &);
+  void nc_world_coord_to_view_coord(int &, int &, bool force_onscreen = true);
 
   //this pinches a line to the viewport. it expects its inputs in world coords,
   //and modifies the given vectors. 

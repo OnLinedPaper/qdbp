@@ -37,8 +37,12 @@ bool hitline::collides(const hitline &l, float *xout, float *yout) const {
   //adapted from https://stackoverflow.com/a/565282/7431860
   //and from https://github.com/pgkelley4/line-segments-intersect
 
-  //set these immediately to avoid confusion down the line
-  *xout = FLT_MAX; *yout = FLT_MAX;
+  bool set_retvals = (xout != NULL && yout != NULL);
+  //check to see whether these are available
+  if(set_retvals) {
+    //set these immediately to avoid confusion down the line
+    *xout = FLT_MAX; *yout = FLT_MAX;
+  }
 
   vec2d r = end - start;
   vec2d s = l.get_end() - l.get_start();
@@ -70,8 +74,10 @@ bool hitline::collides(const hitline &l, float *xout, float *yout) const {
     else {
       //toucking at the very ends 
       //the two middle points are identical and either can be used
-      *xout = x_points[1];
-      *yout = y_points[1];
+      if(set_retvals) {
+        *xout = x_points[1];
+        *yout = y_points[1];
+      }
       return true;
     }
   }
@@ -98,8 +104,10 @@ bool hitline::collides(const hitline &l, float *xout, float *yout) const {
   //t and u are scalar values that are used to move along the line towards
   //r and s, respectively
 
-  *xout = start[0] + t * (end[0] - start[0]);
-  *yout = start[1] + t * (end[1] - start[1]);
+  if(set_retvals) {
+    *xout = start[0] + t * (end[0] - start[0]);
+    *yout = start[1] + t * (end[1] - start[1]);
+  }
 
   return true;
 }

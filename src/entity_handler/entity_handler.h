@@ -52,6 +52,7 @@ public:
   bool    get_plr_is_burnout();
   bool    get_plr_is_vent();
   float 	get_plr_health_frac();
+  float   get_plr_seg_frac();
   int     get_plr_total_health_segs();
   int     get_plr_full_health_segs();
   float   get_plr_h_available_to_regen();
@@ -60,6 +61,8 @@ public:
   int 		get_plr_total_shield_segs();
   float 	get_plr_shield_frac();
   float   get_plr_first_shield_frac();
+  float   get_plr_next_shield_seg_frac();
+  bool    get_plr_is_regenerating_shields();
   const vec2d 	get_plr_pos();
   const vec2d 	get_plr_vel();
 
