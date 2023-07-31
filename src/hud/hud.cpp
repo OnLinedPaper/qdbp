@@ -98,7 +98,7 @@ void hud::draw() {
     display_frac,
     true,
     0,
-    {r, g, b},
+    {r, g, b, 255},
     1
   );
 
@@ -124,7 +124,7 @@ void hud::draw() {
     display_frac,
     true,
     0,
-    {r, g, b},
+    {r, g, b, 255},
     1
   );
 
@@ -156,7 +156,7 @@ void hud::draw() {
     health_curve_hide_angle * (1 - health_seg_angle),
     true,
     0,
-    {r, g, b},
+    {r, g, b, 255},
     1
   );
 
@@ -171,7 +171,7 @@ void hud::draw() {
     (health_curve_hide_angle * (1 - e_handler::get().get_plr_health_frac())),
     true,
     0,
-    {r, g, b},
+    {r, g, b, 255},
     1
   );
 
@@ -188,7 +188,7 @@ void hud::draw() {
       health_divider_hide_angle * ((float)i / e_handler::get().get_plr_total_health_segs()),
       true,
       0,
-      {r, g, b},
+      {r, g, b, 255},
       1
     );
   }
@@ -211,7 +211,7 @@ void hud::draw() {
     shield_curve_hide_angle * display_frac,
     true,
     0,
-    {r, g, b},
+    {r, g, b, 255},
     1
   );
 
@@ -252,7 +252,7 @@ void hud::draw() {
     shield_curve_hide_angle * display_frac,
     true,
     0,
-    {r, g, b},
+    {r, g, b, 255},
     1
   );
 
@@ -272,7 +272,7 @@ void hud::draw() {
       shield_divider_hide_angle * (1 - display_frac),
       true,
       0,
-      {r, g, b},
+      {r, g, b, 255},
       1
     );
 
@@ -293,7 +293,7 @@ void hud::draw() {
         shield_divider_hide_angle * (1 - display_frac),
         true,
         0,
-        {r, g, b},
+        {r, g, b, 255},
         1
       );
 
@@ -318,7 +318,7 @@ void hud::draw() {
     0,
     true,
     0,
-    {r, g, b},
+    {r, g, b, 255},
     1
   );
 
@@ -355,7 +355,7 @@ void hud::draw_overheat_warning() {
     0,
     true,
     0,
-    {r, g, b},
+    {r, g, b, 255},
     overheat_opacity
   );
 

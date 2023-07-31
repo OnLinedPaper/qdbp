@@ -39,7 +39,7 @@ private:
 
   int debug_swirly_int;
   bool quit, pause, debug_mode;
-  char const debug_swirly();
+  char debug_swirly() const;
   void incr_debug_swirly();
   SDL_Joystick *controller;
 };

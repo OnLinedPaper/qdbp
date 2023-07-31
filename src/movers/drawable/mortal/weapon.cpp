@@ -174,8 +174,9 @@ void weapon::fire(
 
   //create velocity, using velocity of parent and weapon, plus some randomness
   vec2d add_vel = (
-    (angle.normalize() * (1 - inaccuracy)) +
-    (randm.normalize() * (inaccuracy))
+    //TODO: verify inacc_mod mechanics
+    (angle.normalize() * (1 - (inaccuracy * inacc_mod))) +
+    (randm.normalize() * (inaccuracy * inacc_mod))
   ).normalize() * (con_vel * vel_mod);
 
   set_vel(start_vel + add_vel);
@@ -189,6 +190,9 @@ void weapon::fire(
 
   //reset armor piercing
   armor_pierce_mod = armor_pierce + pierce_mod;
+
+  //adjust damage modifier
+  impact_damage_mod = damage_mod;
 
   //bring projectile into collision, update, and draw cycles
   set_tangible(true);

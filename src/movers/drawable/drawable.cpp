@@ -8,7 +8,7 @@ drawable::drawable(const std::string path, const vec2d vel, const vec2d pos) :
   movable(path, vel, pos),
   image_name("/" + xmlparse::get().get_xml_string(path + "/textures/body")),
   team_name(xmlparse::get().get_xml_string(path + "/team")),
-  team_col({255, 255, 255}),
+  team_col({255, 255, 255, 255}),
   frame_bump(rand()),
   last_angle(0)
 { 

@@ -39,7 +39,7 @@ public:
 
   //some overloads
   void draw_v2(const std::string name, float x, float y, float frame_bump, float angle) 
-    { draw_v2(name, x, y, angle, false, frame_bump, {255, 255, 255}, 1); }
+    { draw_v2(name, x, y, angle, false, frame_bump, {255, 255, 255, 255}, 1); }
 
   static void get_col_from_team(const std::string, SDL_Color &);
   static void jitter_col(int, SDL_Color &);

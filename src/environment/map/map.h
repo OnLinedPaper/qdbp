@@ -85,9 +85,9 @@ private:
   std::deque<chunk> * deque_from_index(const vec2d &);
   vec2d * dim_from_index(const vec2d &);
   void truncate_chunk_index(vec2d &i);
-  size_t index(int, int, std::deque<chunk> *, vec2d *) const;
-  size_t index(float, float, std::deque<chunk> *, vec2d *) const;
-  size_t index(const vec2d &, std::deque<chunk> *, vec2d *) const;
+  size_t index(int, int, /*std::deque<chunk> *,*/ vec2d *) const;
+  size_t index(float, float, /*std::deque<chunk> *,*/ vec2d *) const;
+  size_t index(const vec2d &, /*std::deque<chunk> *,*/ vec2d *) const;
 };
 
 

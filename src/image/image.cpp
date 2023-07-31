@@ -154,10 +154,12 @@ void image::fill_t_vec(const std::string &name) {
 
 }
 
+/*
 //redefine the dest_r of a given texture, for purposes of rendering to a second target texture
 void image::redefine_dest_r(SDL_Rect &new_context, SDL_Rect &dest_r) {
   
 }
+*/
 
 void image::draw_r_c_o_all(float x_pos, float y_pos, float angle, 
     bool relative_to_screen, float frame_bump, const SDL_Color &mod, 
@@ -234,7 +236,7 @@ void image::draw_r_c_o_all(float x_pos, float y_pos, float angle,
 
     //save the blend modes - these are going to be changed
     uint8_t prev_t_blendmode, prev_ot_blendmode = 0;
-    SDL_Color prev_ot_colormod {0, 0, 0};
+    SDL_Color prev_ot_colormod {0, 0, 0, 255};
     
     SDL_GetTextureColorMod(ot, &prev_ot_colormod.r, &prev_ot_colormod.g, &prev_ot_colormod.b);
     SDL_GetTextureAlphaMod(t, &prev_t_blendmode);
@@ -398,7 +400,7 @@ void image::draw_tile(float parallax, float x_offset, float y_offset) const {
     draw_me.x = i;
     for(int j = dest_r.y; j < viewport::get().get_h(); j += dimensions[1]) {
     draw_me.y = j;
-      draw_r_c_o_all(draw_me.x, draw_me.y, 0, true, 0, {255, 255, 255}, 1);
+      draw_r_c_o_all(draw_me.x, draw_me.y, 0, true, 0, {255, 255, 255, 255}, 1);
     }
   }
 }

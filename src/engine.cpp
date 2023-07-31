@@ -556,7 +556,7 @@ void engine::incr_debug_swirly() {
     debug_swirly_int = (debug_swirly_int+1) % 4;
 }
 
-char const engine::debug_swirly() {
+char engine::debug_swirly() const {
   char c = '+';
 
   switch(debug_swirly_int) {

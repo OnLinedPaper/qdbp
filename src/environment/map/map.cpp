@@ -84,8 +84,8 @@ void map::extend_map(const pather &p) {
   //also, check every chunk for portals and get rid of all of them
   for(int i=0; i<(*dim_acti)[1]; i++) {
     for(int j=0; j<(*dim_acti)[0]; j++) {
-      (*c_deque)[index(j, i, c_deque, dim_acti)].shift_tlc(-1 * shift_size, 0);
-      (*c_deque)[index(j, i, c_deque, dim_acti)].remove_gate();
+      (*c_deque)[index(j, i, /*c_deque,*/ dim_acti)].shift_tlc(-1 * shift_size, 0);
+      (*c_deque)[index(j, i, /*c_deque,*/ dim_acti)].remove_gate();
     }
   }
 
@@ -169,7 +169,7 @@ void map::init_c_deque(std::deque<chunk> *c_d, vec2d *d) {
       if(j == (*d)[1] - 1) { dn = 1; }
 
 
-      (*c_d)[index(i, j, c_d, d)].rechunk(i+(*dim_inac)[0], j, up, dn, lf, rt, default_type);
+      (*c_d)[index(i, j, /*c_d,*/ d)].rechunk(i+(*dim_inac)[0], j, up, dn, lf, rt, default_type);
     }
   }
 
@@ -262,14 +262,14 @@ void map::init_special_chunks() {
     }
     else {
       //update a chunk with this new one
-      (*c_deque)[index(x, y, c_deque, dim_acti)].rechunk(x + (*dim_inac)[0], y, f, f, f, f, t);
+      (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].rechunk(x + (*dim_inac)[0], y, f, f, f, f, t);
 
       //check the barriers
       check_barriers(x, y, true);
 
       //add the gate
       if(std::find(traits.begin(), traits.end(), "jump_gate") != traits.end()) {
-        (*c_deque)[index(x, y, c_deque, dim_acti)].add_gate(
+        (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].add_gate(
           xmlparse::get().get_xml_string(s_path + "/" + s_c_name + "/jump_gate/destination"),
           xmlparse::get().get_xml_string(s_path + "/" + s_c_name + "/jump_gate/body")
         );
@@ -286,7 +286,7 @@ void map::parse_pather(const pather &p) {
   for(int y=0; y<p.get_r(); y++) {
     for(int x=0; x<p.get_c(); x++) {
       if(p.at(x, y) == 0) {
-        (*c_deque)[index(x, y, c_deque, dim_acti)].rechunk(x+(*dim_inac)[0], y, f, f, f, f, "default_impassible");
+        (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].rechunk(x+(*dim_inac)[0], y, f, f, f, f, "default_impassible");
       }
       check_barriers(x, y, true);
     }
@@ -296,7 +296,7 @@ void map::parse_pather(const pather &p) {
   //to say, the point furthest from the main path
   std::vector<p_o_i> points;
   p.get_far_point(points, 1);
-  (*c_deque)[index(points[0].x, points[0].y, c_deque, dim_acti)].add_gate("NONE", "debug_gate");
+  (*c_deque)[index(points[0].x, points[0].y, /*c_deque,*/ dim_acti)].add_gate("NONE", "debug_gate");
 }
 
 //==== spawn rule parsing =====================================================
@@ -347,7 +347,7 @@ void map::parse_spawn_rules() {
       continue;
     }
 
-    if(!(*c_deque)[index(x, y, c_deque, dim_acti)].get_in_bounds()) {
+    if(!(*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].get_in_bounds()) {
       //this chunk isn't in bounds
       msg::print_warn("chunk for spawn rule " + s_path + "/" +
         s_r_name + " (" + std::to_string(x) + "," + std::to_string(y) + 
@@ -582,7 +582,7 @@ void map::parse_spawn_rules() {
 
 //---- add rule to chunk ------------------------------------------------------
 
-    (*c_deque)[index(x, y, c_deque, dim_acti)].add_spawn_rule(
+    (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].add_spawn_rule(
       (!spawn_type.compare("initial") ? chunk::INITIAL : chunk::CLOSET),
       max_count,
       total_count,
@@ -609,10 +609,10 @@ void map::check_barriers(int x, int y, bool check_interactions) {
 
   //first, check to see if this is on the edge of the map
   //if it's in bounds, add a barrier - else, don't
-  if(x == 0) { (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_lf(); }
-  if(y == 0) { (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_up(); }
-  if(x == (*dim_acti)[0]-1) { (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_rt(); }
-  if(y == (*dim_acti)[1]-1) { (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_dn(); }
+  if(x == 0) { (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].set_bound_b_lf(); }
+  if(y == 0) { (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].set_bound_b_up(); }
+  if(x == (*dim_acti)[0]-1) { (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].set_bound_b_rt(); }
+  if(y == (*dim_acti)[1]-1) { (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].set_bound_b_dn(); }
 
   //-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
   //next, check to see if existing chunks need their barriers modified
@@ -625,16 +625,16 @@ void map::check_barriers(int x, int y, bool check_interactions) {
 
   //check left chunk
   if(x > 0) {
-    if((*c_deque)[index(x, y, c_deque, dim_acti)].get_in_bounds() ^ (*c_deque)[index(x-1, y, c_deque, dim_acti)].get_in_bounds()) {
+    if((*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].get_in_bounds() ^ (*c_deque)[index(x-1, y, /*c_deque,*/ dim_acti)].get_in_bounds()) {
       //they are not the same
-      (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_lf(true);
-      (*c_deque)[index(x-1, y, c_deque, dim_acti)].set_b_rt(true);
+      (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].set_b_lf(true);
+      (*c_deque)[index(x-1, y, /*c_deque,*/ dim_acti)].set_b_rt(true);
 
     }
     else {
       //they are the same - remove barriers
-      (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_lf(false);
-      (*c_deque)[index(x-1, y, c_deque, dim_acti)].set_b_rt(false);
+      (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].set_b_lf(false);
+      (*c_deque)[index(x-1, y, /*c_deque,*/ dim_acti)].set_b_rt(false);
     }
   }
 
@@ -642,32 +642,32 @@ void map::check_barriers(int x, int y, bool check_interactions) {
   //check right chunk
   if(x < (*dim_acti)[0] - 1) {
     //check right chunk
-    if((*c_deque)[index(x, y, c_deque, dim_acti)].get_in_bounds() ^ (*c_deque)[index(x+1, y, c_deque, dim_acti)].get_in_bounds()) {
+    if((*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].get_in_bounds() ^ (*c_deque)[index(x+1, y, /*c_deque,*/ dim_acti)].get_in_bounds()) {
       //they are not the same
-      (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_rt(true);
-      (*c_deque)[index(x+1, y, c_deque, dim_acti)].set_b_lf(true);
+      (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].set_b_rt(true);
+      (*c_deque)[index(x+1, y, /*c_deque,*/ dim_acti)].set_b_lf(true);
 
     }
     else {
       //they are the same - remove barriers
-      (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_rt(false);
-      (*c_deque)[index(x+1, y, c_deque, dim_acti)].set_b_lf(false);
+      (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].set_b_rt(false);
+      (*c_deque)[index(x+1, y, /*c_deque,*/ dim_acti)].set_b_lf(false);
     }
   }
 
   //-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
   //check up chunk
   if(y > 0) {
-    if((*c_deque)[index(x, y, c_deque, dim_acti)].get_in_bounds() ^ (*c_deque)[index(x, y-1, c_deque, dim_acti)].get_in_bounds()) {
+    if((*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].get_in_bounds() ^ (*c_deque)[index(x, y-1, /*c_deque,*/ dim_acti)].get_in_bounds()) {
       //they are not the same
-      (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_up(true);
-      (*c_deque)[index(x, y-1, c_deque, dim_acti)].set_b_dn(true);
+      (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].set_b_up(true);
+      (*c_deque)[index(x, y-1, /*c_deque,*/ dim_acti)].set_b_dn(true);
 
     }
     else {
       //they are the same - remove barriers
-      (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_up(false);
-      (*c_deque)[index(x, y-1, c_deque, dim_acti)].set_b_dn(false);
+      (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].set_b_up(false);
+      (*c_deque)[index(x, y-1, /*c_deque,*/ dim_acti)].set_b_dn(false);
     }
   }
 
@@ -675,16 +675,16 @@ void map::check_barriers(int x, int y, bool check_interactions) {
   //check down chunk
   if(y < (*dim_acti)[1] - 1) {
     //check right chunk
-    if((*c_deque)[index(x, y, c_deque, dim_acti)].get_in_bounds() ^ (*c_deque)[index(x, y+1, c_deque, dim_acti)].get_in_bounds()) {
+    if((*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].get_in_bounds() ^ (*c_deque)[index(x, y+1, /*c_deque,*/ dim_acti)].get_in_bounds()) {
       //they are not the same
-      (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_dn(true);
-      (*c_deque)[index(x, y+1, c_deque, dim_acti)].set_b_up(true);
+      (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].set_b_dn(true);
+      (*c_deque)[index(x, y+1, /*c_deque,*/ dim_acti)].set_b_up(true);
 
     }
     else {
       //they are the same - remove barriers
-      (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_dn(false);
-      (*c_deque)[index(x, y+1, c_deque, dim_acti)].set_b_up(false);
+      (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].set_b_dn(false);
+      (*c_deque)[index(x, y+1, /*c_deque,*/ dim_acti)].set_b_up(false);
     }
   }
 
@@ -693,15 +693,15 @@ void map::check_barriers(int x, int y, bool check_interactions) {
   //SPECIAL - check leftmost wall against the inactive deque
   if(check_interactions && x == 0) {
     //check if there actually is a chunk to the left (not guaranteed as deques might be different sizes)
-    if (index(x, y, c_deque_inac, dim_inac) != SIZE_MAX) {
-      if ((*c_deque)[index(x, y, c_deque, dim_acti)].get_in_bounds() ^ (*c_deque_inac)[index((int)(*dim_inac)[0]-1, (int)y, c_deque_inac, dim_inac)].get_in_bounds())
+    if (index(x, y, /*c_deque_inac,*/ dim_inac) != SIZE_MAX) {
+      if ((*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].get_in_bounds() ^ (*c_deque_inac)[index((int)(*dim_inac)[0]-1, (int)y, /*c_deque_inac,*/ dim_inac)].get_in_bounds())
       {
-        (*c_deque)[index(x, y, c_deque, dim_acti)].set_bound_b_lf();
-        (*c_deque_inac)[index((int)((*dim_inac)[0]-1), (int)y, c_deque_inac, dim_inac)].set_bound_b_rt();
+        (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].set_bound_b_lf();
+        (*c_deque_inac)[index((int)((*dim_inac)[0]-1), (int)y, /*c_deque_inac,*/ dim_inac)].set_bound_b_rt();
       }
       else {
-        (*c_deque)[index(x, y, c_deque, dim_acti)].set_b_lf(false);
-        (*c_deque_inac)[index((int)(*dim_inac)[0]-1, (int)y, c_deque_inac, dim_inac)].set_b_rt(false);
+        (*c_deque)[index(x, y, /*c_deque,*/ dim_acti)].set_b_lf(false);
+        (*c_deque_inac)[index((int)(*dim_inac)[0]-1, (int)y, /*c_deque_inac,*/ dim_inac)].set_b_rt(false);
       }
     }
   }
@@ -712,9 +712,9 @@ void map::check_barriers(int x, int y, bool check_interactions) {
 const vec2d map::get_start_pos() const {
   //check if chunk is in bounds, or find one if it isn't
 
-  if((*c_deque)[index(start_chunk[0], start_chunk[1], c_deque, dim_acti)].get_in_bounds()) {
+  if((*c_deque)[index(start_chunk[0], start_chunk[1], /*c_deque,*/ dim_acti)].get_in_bounds()) {
     //it's in bounds
-    return((*c_deque)[index(start_chunk[0], start_chunk[1], c_deque, dim_acti)].get_midpoint());
+    return((*c_deque)[index(start_chunk[0], start_chunk[1], /*c_deque,*/ dim_acti)].get_midpoint());
   }
   else {
     //it's NOT in bounds
@@ -723,10 +723,10 @@ const vec2d map::get_start_pos() const {
     //find one that's in bounds
     for(int j=0; j<(*dim_acti)[1]; j++) {
       for(int i=0; i<(*dim_acti)[0]; i++) {
-        if((*c_deque)[index(i, j, c_deque, dim_acti)].get_in_bounds()) {
+        if((*c_deque)[index(i, j, /*c_deque,*/ dim_acti)].get_in_bounds()) {
           //this chunk is in bounds
 
-          return((*c_deque)[index(i, j, c_deque, dim_acti)].get_midpoint());
+          return((*c_deque)[index(i, j, /*c_deque,*/ dim_acti)].get_midpoint());
         }
       }
     }
@@ -771,27 +771,27 @@ chunk & map::get_chunk(const vec2d &coord) {
   //determine which side of the map this coordinate is on
   if(coord[0] < (*dim_inac)[0]) {
     //it's in the inactive deque
-    return((*c_deque_inac)[index(coord[0], coord[1], c_deque_inac, dim_inac)]);
+    return((*c_deque_inac)[index(coord[0], coord[1], /*c_deque_inac,*/ dim_inac)]);
   }  
   else {
     //it's in the active deque
-    return (*c_deque)[index(coord[0] - (*dim_inac)[0], coord[1], c_deque, dim_acti)]; 
+    return (*c_deque)[index(coord[0] - (*dim_inac)[0], coord[1], /*c_deque,*/ dim_acti)]; 
   }
 }
 
 //given an x position, a y position, a deque, and its dimensions, convert
 //the position pair into an actual index where the chunk can be located.
-size_t map::index(int x, int y, std::deque<chunk> *c_d, vec2d *d) const {
+size_t map::index(int x, int y, /*std::deque<chunk> *c_d,*/ vec2d *d) const {
   //sanity checking
   if(x >= (*d)[0] || y >= (*d)[1] || x < 0 || y < 0) { return SIZE_MAX; }
 
   return (x + (*d)[0] * y);
 }
-size_t map::index(float x, float y, std::deque<chunk> *c_d, vec2d *d) const {
-  return index((int)x, (int)y, c_d, d);
+size_t map::index(float x, float y, /*std::deque<chunk> *c_d,*/ vec2d *d) const {
+  return index((int)x, (int)y, /*c_d,*/ d);
 }
-size_t map::index(const vec2d &v, std::deque<chunk> *c_d, vec2d *d) const {
-  return index(v[0], v[1], c_d, d);
+size_t map::index(const vec2d &v, /*std::deque<chunk> *c_d,*/ vec2d *d) const {
+  return index(v[0], v[1], /*c_d,*/ d);
 }
 
 unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) {
@@ -816,12 +816,12 @@ unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) {
   //it's a valid chunk
   //check the chunk we're trying to leave
   unsigned char r = (*old_chunk_deque)[
-    index(old_chunk[0], old_chunk[1], old_chunk_deque, old_chunk_deque_dim)
+    index(old_chunk[0], old_chunk[1], /*old_chunk_deque,*/ old_chunk_deque_dim)
   ].chunk_rebuff(curr_pos);
   //if no collision, check the chunk we're trying to enter
   if(!r) {
     unsigned char rc = (*new_chunk_deque)[
-      index(new_chunk[0], new_chunk[1], new_chunk_deque, new_chunk_deque_dim)
+      index(new_chunk[0], new_chunk[1], /*new_chunk_deque,*/ new_chunk_deque_dim)
     ].chunk_rebuff(prev_pos);
     if(rc) {
       //bitwise logic to make the corner rebuff properly
@@ -837,13 +837,13 @@ unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) {
     //past the end of the deque
     //next, once we're sure the chunk exists, check to see if it's "in bounds"
     if(
-      (index(new_chunk[0], new_chunk[1], new_chunk_deque, new_chunk_deque_dim) == SIZE_MAX)
+      (index(new_chunk[0], new_chunk[1], /*new_chunk_deque,*/ new_chunk_deque_dim) == SIZE_MAX)
     ) {
       //this is out of bounds - force a rebuff
       r = (*old_chunk_deque)[index(
           old_chunk[0],
           old_chunk[1],
-          old_chunk_deque,
+          /*old_chunk_deque,*/
           old_chunk_deque_dim
         )].chunk_rebuff_forced(curr_pos);
     }
@@ -895,13 +895,13 @@ try {
   //delegate this to each chunk's draw
   for(int j=0; j<(*dim_acti)[1]; j++) {
     for(int i=0; i<(*dim_acti)[0]; i++) {
-      (*c_deque)[index(i, j, c_deque, dim_acti)].draw();
+      (*c_deque)[index(i, j, /*c_deque,*/ dim_acti)].draw();
     }
   }
   //same here
   for(int j=0; j<(*dim_inac)[1]; j++) {
     for(int i=0; i<(*dim_inac)[0]; i++) {
-      (*c_deque_inac)[index(i, j, c_deque_inac, dim_inac)].draw();
+      (*c_deque_inac)[index(i, j, /*c_deque_inac,*/ dim_inac)].draw();
     }
   }
 } catch (std::string e_msg) {
