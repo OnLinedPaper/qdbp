@@ -11,7 +11,7 @@
 //end point is x,y. 
 
 //these operators let us return values with array notation
-float &vec2d::operator [](int i) {
+cint &vec2d::operator [](cint i) {
   //return a reference
   switch(i) {
     case 0:
@@ -24,7 +24,7 @@ float &vec2d::operator [](int i) {
       return max;
   }
 }
-float vec2d::operator [](int i) const {
+cint vec2d::operator [](cint i) const {
   //return a const val
   switch(i) {
     case 0:
@@ -40,19 +40,19 @@ float vec2d::operator [](int i) const {
 
 //-----------------------------------------------------------------------------
 //scalar const operations
-vec2d vec2d::operator+(float scalar_val) const {
+vec2d vec2d::operator+(cint scalar_val) const {
   return vec2d(x + scalar_val, y + scalar_val);
 }
 
-vec2d vec2d::operator-(float scalar_val) const {
+vec2d vec2d::operator-(cint scalar_val) const {
   return vec2d(x - scalar_val, y - scalar_val);
 }
 
-vec2d vec2d::operator*(float scalar_val) const {
+vec2d vec2d::operator*(cint scalar_val) const {
   return vec2d(x * scalar_val, y * scalar_val);
 }
 
-vec2d vec2d::operator/(float scalar_val) const {
+vec2d vec2d::operator/(cint scalar_val) const {
   if(scalar_val == 0) { 
     msg::print_error("vec2d::operator/ attempted to divide by zero!");
     throw "can't divide vector by 0!\n"; 
@@ -92,17 +92,17 @@ bool vec2d::operator==(const vec2d &v) const {
 //-----------------------------------------------------------------------------
 //related to vector properties
 
-float vec2d::magnitude() const {
-  return sqrt((x * x) + (y * y));
+cint vec2d::magnitude() const {
+  return (cint)sqrt((x * x) + (y * y));
 }
 
-float vec2d::magnitudeSquared() const {
+cint vec2d::magnitudeSquared() const {
   return ((x * x) + (y * y));
 }
 
 vec2d vec2d::normalize() const {
   //NOTE: will not normalize beyond .001, returns this
-  float m = this->magnitude();
+  cint m = this->magnitude();
   if(m < .001 && m > -.001) {
     return *this;
   }
@@ -112,18 +112,18 @@ vec2d vec2d::normalize() const {
 //vector dot product represents the area of the parallelogram existing in a
 //perpendicular plane whose sides are this and v; a dot product of 0 means the
 //vectors are perpendicular
-float vec2d::dot(const vec2d &v) const {
+cint vec2d::dot(const vec2d &v) const {
   return ((x * v[0]) + (y * v[1]));
 }
 
 //vector cross product represents the area of the parallelogram existing in a 
 //parallel plane whose sides are this and v; a cross product of 0 means the 
 //vectors are colinear
-float vec2d::cross(const vec2d &v) const {
+cint vec2d::cross(const vec2d &v) const {
   return ((x * v[1]) - (y * v[0]));
 }
 
-vec2d vec2d::cap(float scalar_val) const {
+vec2d vec2d::cap(cint scalar_val) const {
   //"cap" a vector's magnitude at a certain value
 
   //don't "cap" if value is negative
@@ -141,10 +141,10 @@ vec2d vec2d::cap(float scalar_val) const {
   }
 }
 
-vec2d vec2d::decay(float scalar_val) const {
+vec2d vec2d::decay(cint scalar_val) const {
   //"decay" a vector by removing a fraction of its magnitude
-  float m = this->magnitude();
-  if(m < 0.05 && m > -0.05) {
+  cint m = this->magnitude();
+  if(m < 5 && m > -5) {
     return(vec2d(0,0));
   }
   return((this->normalize() * (
@@ -152,9 +152,9 @@ vec2d vec2d::decay(float scalar_val) const {
   ));
 }
 
-float vec2d::dist(const vec2d &v) const {
+cint vec2d::dist(const vec2d &v) const {
   //get the distance between 2 vec2d
-  return sqrt(
+  return (cint)sqrt(
     (v[0] - x) * (v[0] - x) +
     (v[1] - y) * (v[1] - y)
   );
@@ -168,9 +168,9 @@ float vec2d::angle_rad() const {
 return(std::atan2(y, x));
 }
 
-float vec2d::angle_deg() const {
+cint vec2d::angle_deg() const {
   //return an angle between 0 and 360
-  return(int((this->angle_rad() * (180/PI) + 90) + 360) % 360);
+  return(cint((this->angle_rad() * (180/PI) + 90) + 360) % 360);
 }
 
 

@@ -787,9 +787,9 @@ size_t map::index(int x, int y, /*std::deque<chunk> *c_d,*/ vec2d *d) const {
 
   return (x + (*d)[0] * y);
 }
-size_t map::index(float x, float y, /*std::deque<chunk> *c_d,*/ vec2d *d) const {
-  return index((int)x, (int)y, /*c_d,*/ d);
-}
+//size_t map::index(float x, float y, /*std::deque<chunk> *c_d,*/ vec2d *d) const {
+//  return index((int)x, (int)y, /*c_d,*/ d);
+//}
 size_t map::index(const vec2d &v, /*std::deque<chunk> *c_d,*/ vec2d *d) const {
   return index(v[0], v[1], /*c_d,*/ d);
 }

@@ -4,13 +4,14 @@
 #include <iostream>
 #include <float.h>
 #include <string>
+#include "types.h"
 
 class vec2d {
   //a 2d vector class, for position and velocity
 public:
   vec2d() : x(0), y(0) { }
-  vec2d(float xin, float yin) : x(xin), y(yin) { }
-  vec2d(int xin, int yin) : x((float)xin), y((float)yin) { }
+  //vec2d(float xin, float yin) : x((cint)xin), y((cint)yin) { }
+  vec2d(cint xin, cint yin) : x(xin), y(yin) { }
   vec2d(const vec2d& v) : x(v[0]), y(v[1]) { }
   vec2d& operator=(const vec2d &v) {
     if(this != &v) {
@@ -22,14 +23,14 @@ public:
 
 
   //these operators let us return values with array notation
-  float &operator [](int i);
-  float operator [](int i) const;
+  cint &operator [](cint i);
+  cint operator [](cint i) const;
 
   //these return a vector modified in a scalar way
-  vec2d operator+(float scalar_val) const;
-  vec2d operator-(float scalar_val) const;
-  vec2d operator*(float scalar_val) const;
-  vec2d operator/(float scalar_val) const;
+  vec2d operator+(cint scalar_val) const;
+  vec2d operator-(cint scalar_val) const;
+  vec2d operator*(cint scalar_val) const;
+  vec2d operator/(cint scalar_val) const;
   vec2d operator-() const; //negation
 
   //these return a vector modified by another vector
@@ -45,29 +46,29 @@ public:
 
   //these modify the vector in question itself in a scalar way
 
-  float magnitude() const;
-  float magnitudeSquared() const;
+  cint magnitude() const;
+  cint magnitudeSquared() const;
   vec2d normalize() const; //NOTE: will not normalize beyond .001, returns this
 
-  float dot(const vec2d &v) const;
-  float cross(const vec2d &v) const;
+  cint dot(const vec2d &v) const;
+  cint cross(const vec2d &v) const;
 
-  vec2d cap(float scalar_val) const;
-  vec2d decay(float scalar_val) const;
+  vec2d cap(cint scalar_val) const;
+  vec2d decay(cint scalar_val) const;
 
-  float dist(const vec2d &) const;
+  cint dist(const vec2d &) const;
 
 
 
   float angle_rad() const;
-  float angle_deg() const;
+  cint angle_deg() const;
 
   std::string to_string() const;
 
 private:
-  float x;
-  float y;
-  float max = FLT_MAX;
+  cint x;
+  cint y;
+  cint max = CINT_MAX;
   float PI = 3.141592653589793238462643383279502884;
 };
 
