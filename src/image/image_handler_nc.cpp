@@ -325,15 +325,23 @@ void image_handler::draw_fixed_box(int x_tlc, int y_tlc, int x_brc, int y_brc, b
 void image_handler::draw_circle(const vec2d &v, float r, bool filled, char c) {
   //using bresenham's circle here. god the derivation made my hand hurt.
 
+  //check if the circle is on screen by making it into a box
+  if(!viewport::get().on_screen({v[0]-r, v[1]-r}, {v[0]+r, v[1]+r})) { return; }
+
   //establish initial vars - start at bottom of circle, and draw towards the right
   int x = 0;
   int y = r;
+  //reduce total runtime of this calculation by stepping "one pixel" at a time.
+  //most terminals are taller than they are wide so i'm using x as the step to
+  //avoid skipping pixels.
+  int step = viewport::get().get_nc_world_dims()[0];
   int error = 3 - 2*r;
 
   while(x<=y) {
 
+
     if(error > 0) {
-      y--;
+      y -= step;
       error += 2 * (5 - 2 * y + 2 * x);
     }
     else {
@@ -348,7 +356,8 @@ void image_handler::draw_circle(const vec2d &v, float r, bool filled, char c) {
     draw_point({v[0]+y, v[1]-x}, c);
     draw_point({v[0]-y, v[1]+x}, c);
     draw_point({v[0]-y, v[1]-x}, c);
-    x++;
+
+    x += step;
   }
 }
 #endif

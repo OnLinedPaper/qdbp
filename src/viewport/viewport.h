@@ -41,6 +41,8 @@ public:
   //given a rectangle, determines if any point of it is currently on the
   //screen. note that this expects the value to be in world coords.
   bool on_screen(const vec2d &, const vec2d &);
+
+  const vec2d &get_nc_world_dims() const { return nc_world_dims; }
 #endif
 
 private:

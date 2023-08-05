@@ -799,6 +799,19 @@ unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) {
   //check the last chunk that was occupied, and return the position
   //relative to that chunk
 
+  //check to see if the player is about to leave the map entirely - there are
+  //no valid chunks on its borders to check rebuff on
+
+  unsigned char rm = 0;
+  if(curr_pos[0] < 0) { rm = rm|chunk::LF; }
+  if(curr_pos[1] < 0) { rm = rm|chunk::UP; }
+  if(curr_pos[0] >= (dim_a[0] + dim_b[0]) * chunk::length) { rm = rm|chunk::RT; }
+  if(curr_pos[1] >= dim_a[1] * chunk::length && curr_pos[1] >= dim_b[1] * chunk::length) { rm = rm|chunk::DN; }
+
+  if(rm) { 
+    return rm; 
+  }
+
   //check to see if the new chunk is valid - previously, through an oversight,
   //it was possible to leave the map through a chunk that has no barriers
   //if the corner was hit at EXACTLY the right angle to travel into the new
