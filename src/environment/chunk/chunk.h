@@ -3,15 +3,16 @@
 
 #include "src/vec2d/vec2d.h"
 #include "src/image/image.h"
+#include "types.h"
 #include <vector>
 
 class chunk {
 public:
   chunk(vec2d&);
-  chunk(float, float);
+  chunk(cint, cint);
   chunk(vec2d&, bool, bool, bool, bool);
-  chunk(float, float, bool, bool, bool, bool);
-  chunk(float, float, bool, bool, bool, bool, std::string);
+  chunk(cint, cint, bool, bool, bool, bool);
+  chunk(cint, cint, bool, bool, bool, bool, std::string);
 
   chunk(const chunk&);
   chunk &operator=(const chunk&);
@@ -24,18 +25,18 @@ public:
   static const unsigned char LF;
   static const unsigned char RT;
 
-  static const float length;
+  static const cint length;
 
   static const uint8_t INITIAL;
   static const uint8_t CLOSET;
 
   //reset a chunk's data
-  void rechunk(float, float, bool, bool, bool, bool, std::string);
+  void rechunk(cint, cint, bool, bool, bool, bool, std::string);
 
   //check if a given point is in a chunk - if not, check if it's above,
   //below, left, or right
   unsigned char chunk_pos(vec2d&) const;
-  unsigned char chunk_pos(float, float) const;
+  unsigned char chunk_pos(cint, cint) const;
   unsigned char chunk_rebuff(vec2d &) const;
   unsigned char chunk_rebuff_forced(vec2d &) const;
 
@@ -62,7 +63,7 @@ public:
   );
   }
 
-  void shift_tlc(float x, float y) { tlc[0] += x; tlc[1] += y; }
+  void shift_tlc(cint x, cint y) { tlc[0] += x; tlc[1] += y; }
 
   bool get_in_bounds() const { return in_bounds; }
   void set_in_bounds(bool i) { in_bounds = i; }
@@ -74,8 +75,8 @@ public:
 
   //adds an entity spawning rule to the vector of spawn rules
   void add_spawn_rule (
-      uint8_t, int, int, int, const std::string &, uint8_t, float, float, 
-      float, float, float, float, float
+      uint8_t, int, int, int, const std::string &, uint8_t, cint, cint, 
+      cint, cint, cint, cint, float
   );
   
   //spawn any entities that are coded into the xml - other entities, such as
@@ -104,12 +105,12 @@ private:
     std::string entity;           //abbreviated xml path to entity
     std::string id;               //standardized entity id
     uint8_t team;                 //see entity handler for team codes
-    float min_spawn_distance;     //min distance from player before spawn
-    float max_spawn_distance;     //max distance from player that allows spawn
-    float x_coord;                //x coordinate in the chunk to spawn entity at
-    float y_coord;                //y coordinate in the chunk to spawn entity at
-    float x_dir_comp;             //x direction component
-    float y_dir_comp;             //y direction component
+    cint min_spawn_distance;     //min distance from player before spawn
+    cint max_spawn_distance;     //max distance from player that allows spawn
+    cint x_coord;                //x coordinate in the chunk to spawn entity at
+    cint y_coord;                //y coordinate in the chunk to spawn entity at
+    cint x_dir_comp;             //x direction component
+    cint y_dir_comp;             //y direction component
     float vel_frac;               //fraction of max velocity the entity spawns with
   };
 

@@ -6,6 +6,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+const cint vec2d::NORMALIZE_FACTOR = 16;
 
 //"vec2d" represents a vector in 2d space whose start point is 0,0 and whose
 //end point is x,y. 
@@ -100,13 +101,18 @@ cint vec2d::magnitudeSquared() const {
   return ((x * x) + (y * y));
 }
 
-vec2d vec2d::normalize() const {
+//normalizes, BUT uses NORMALIZE_FACTOR as the zero point instead of 1
+vec2d vec2d::normalizeStart() const {
   //NOTE: will not normalize beyond .001, returns this
   cint m = this->magnitude();
-  if(m < .001 && m > -.001) {
+  if(m < scale_factor && m > scale_factor) {
     return *this;
   }
-  return vec2d(x / m, y / m);
+  return vec2d((x << NORMALIZE_FACTOR) / m, (y << NORMALIZE_FACTOR) / m);
+}
+
+vec2d vec2d::normalizeFinish() const {
+  return vec2d((x >> NORMALIZE_FACTOR), (y >> NORMALIZE_FACTOR));
 }
 
 //vector dot product represents the area of the parallelogram existing in a
@@ -133,7 +139,7 @@ vec2d vec2d::cap(cint scalar_val) const {
 
   if(this->magnitude() > scalar_val) {
     //too big
-    return (this->normalize() * scalar_val);
+    return (this->normalizeStart() * scalar_val).normalizeFinish();
   }
   else {
     //not too big
@@ -147,9 +153,9 @@ vec2d vec2d::decay(cint scalar_val) const {
   if(m < 5 && m > -5) {
     return(vec2d(0,0));
   }
-  return((this->normalize() * (
-    (m - (m * scalar_val)) > 0 ? (m - (m * scalar_val)) : 0)
-  ));
+  return((this->normalizeStart() * (
+    (m - (m * scalar_val)/scale_factor) > 0 ? (m - (m * scalar_val)/scale_factor) : 0)
+  )).normalizeFinish();
 }
 
 cint vec2d::dist(const vec2d &v) const {

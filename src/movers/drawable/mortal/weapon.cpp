@@ -23,13 +23,13 @@ weapon::weapon(const std::string path) :
   )),
   life_dist(xmlparse::get().get_xml_float(
     path + "/shot/dist_lifespan"
-  )),
+  ) * scale_factor),
   inaccuracy(xmlparse::get().get_xml_float(
     path + "/shot/inaccuracy"
-  )),
+  ) * scale_factor),
   con_vel(xmlparse::get().get_xml_float(
     path + "/shot/constant_vel"
-  )),
+  ) * scale_factor),
   impact_damage(xmlparse::get().get_xml_float(
     path + "/damage/impact_damage"
   )),
@@ -173,11 +173,33 @@ void weapon::fire(
   vec2d randm((int)(rng::get().get_shot() % 63 - 31), (int)(rng::get().get_shot() % 63 - 31));
 
   //create velocity, using velocity of parent and weapon, plus some randomness
+  
+  //first, prepare the angle
+  //then, prepare some randomness
+  //then, multiply them by base speed
+  vec2d add_vel = (
+      (
+          (
+              ((angle.normalizeStart() * ((scale_factor - ((inaccuracy * inacc_mod) / scale_factor))))/scale_factor)
+            + ((randm.normalizeStart() * ((inaccuracy * inacc_mod) / scale_factor)) / scale_factor)
+          )
+      * ((con_vel * vel_mod)/scale_factor)
+      ).normalizeFinish()
+  );
+/*
+  vec2d add_vel = (
+    (angle.normalizeStart() * (con_vel * vel_mod) 
+        * ((1000 - (inaccuracy * inacc_mod)))
+        )/1000).normalizeFinish();
+*/
+/*
+  //create velocity, using velocity of parent and weapon, plus some randomness
   vec2d add_vel = (
     //TODO: verify inacc_mod mechanics
     (angle.normalize() * (1 - (inaccuracy * inacc_mod))) +
     (randm.normalize() * (inaccuracy * inacc_mod))
   ).normalize() * (con_vel * vel_mod);
+*/
 
   set_vel(start_vel + add_vel);
 

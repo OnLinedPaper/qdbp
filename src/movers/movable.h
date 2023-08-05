@@ -7,6 +7,7 @@
 #include "src/xml_parser/xmlparse.h"
 #include <cmath>
 #include "src/timeframe/timeframe.h"
+#include "types.h"
 
 class movable {
 public:
@@ -18,19 +19,19 @@ public:
   const std::string &get_id() { return id; }
   const std::string &get_type() { return entity_type; }
 
-  void set_x(float x) { pos[0] = x; }
-  void set_y(float y) { pos[1] = y; }
-  float get_x() const { return pos[0]; }
-  float get_y() const { return pos[1]; }
-  void shift_x(float x) { pos[0] += x; last_pos = pos; }
-  void shift_y(float y) { pos[1] += y; last_pos = pos; }
+  void set_x(cint x) { pos[0] = x; }
+  void set_y(cint y) { pos[1] = y; }
+  cint get_x() const { return pos[0]; }
+  cint get_y() const { return pos[1]; }
+  void shift_x(cint x) { pos[0] += x; last_pos = pos; }
+  void shift_y(cint y) { pos[1] += y; last_pos = pos; }
   const vec2d get_vel() const { return vel; }
   void set_vel(vec2d v) { vel = v; }
-  void set_vel(float x, float y) { vel[0] = x; vel[1] = y; }
-  float get_vel_cap() { return vel_cap; }
+  void set_vel(cint x, cint y) { vel[0] = x; vel[1] = y; }
+  cint get_vel_cap() { return vel_cap; }
   const vec2d get_pos() const { return pos; }
   virtual void set_pos(const vec2d p) { this->set_pos(p[0], p[1]); }
-  virtual void set_pos(float x, float y) { pos[0] = x; pos[1] = y; last_pos = pos; }
+  virtual void set_pos(cint x, cint y) { pos[0] = x; pos[1] = y; last_pos = pos; }
   void teleport(const vec2d p) { set_pos(p); }
   void stop() { vel[0] = 0; vel[1] = 0; }
 
@@ -54,12 +55,12 @@ protected:
   vec2d pos;
   vec2d last_pos;
   vec2d vel;
-  float vel_accel;
-  float vel_accel_mod;
-  float vel_cap;
-  float vel_cap_mod;
-  //float vel_overcap;
-  float vel_decay;
+  cint vel_accel;
+  cint vel_accel_mod;
+  cint vel_cap;
+  cint vel_cap_mod;
+  //cint vel_overcap;
+  cint vel_decay;
   bool moved;
 
   bool follow_thru_portals;

@@ -18,7 +18,7 @@ const unsigned char chunk::UP = 1;
 const unsigned char chunk::DN = 2;
 const unsigned char chunk::LF = 4;
 const unsigned char chunk::RT = 8;
-const float chunk::length = 500;
+const cint chunk::length = 500 * scale_factor;
 
 const uint8_t chunk::INITIAL = 0;
 const uint8_t chunk::CLOSET = 1;
@@ -35,7 +35,7 @@ chunk::chunk(vec2d &v) :
   g_name("")
   { }
 
-chunk::chunk(float x, float y) :
+chunk::chunk(cint x, cint y) :
   tlc(x*length, y*length),
   border {0, 0, 0, 0},
   i1_name("/boundary_marker"),
@@ -59,7 +59,7 @@ chunk::chunk(vec2d &v, bool u, bool d, bool l, bool r) :
   g_name("")
   { }
 
-chunk::chunk(float x, float y, bool u, bool d, bool l, bool r) :
+chunk::chunk(cint x, cint y, bool u, bool d, bool l, bool r) :
   tlc(x*length, y*length),
   border {u, d, l, r},
   i1_name("/boundary_marker"),
@@ -71,7 +71,7 @@ chunk::chunk(float x, float y, bool u, bool d, bool l, bool r) :
   g_name("")
   { }
 
-chunk::chunk(float x, float y, bool u, bool d, bool l, bool r, std::string type) :
+chunk::chunk(cint x, cint y, bool u, bool d, bool l, bool r, std::string type) :
   tlc(x*length, y*length),
   border {u, d, l, r},
   i1_name("/boundary_marker"),
@@ -132,7 +132,7 @@ chunk::~chunk() {
 }
 
 //reinitialize a chunk
-void chunk::rechunk(float x, float y, bool u, bool d, bool l, bool r, std::string type)
+void chunk::rechunk(cint x, cint y, bool u, bool d, bool l, bool r, std::string type)
 {
   //reset the variables
   tlc = {x * length, y * length};
@@ -171,7 +171,7 @@ unsigned char chunk::chunk_pos(vec2d &v) const {
   return( this->chunk_pos(v[0], v[1]) );
 }
 
-unsigned char chunk::chunk_pos(float x_coord, float y_coord) const {
+unsigned char chunk::chunk_pos(cint x_coord, cint y_coord) const {
   unsigned char retval = 0;
   //return 0 if it's in this chunk - otherwise, use bitwise
   //OR to add the location qualifiers
@@ -251,9 +251,9 @@ void chunk::remove_gate() {
 //push back a new spawn rule
 void chunk::add_spawn_rule (
   uint8_t spawn_type, int max_count, int total_count, int tick_spawn_delay,
-  const std::string &entity, uint8_t team, float min_spawn_distance,
-  float max_spawn_distance, float x_coord, float y_coord, float x_dir_comp,
-  float y_dir_comp, float vel_frac
+  const std::string &entity, uint8_t team, cint min_spawn_distance,
+  cint max_spawn_distance, cint x_coord, cint y_coord, cint x_dir_comp,
+  cint y_dir_comp, float vel_frac
 ) {
   spawn_rules.push_back(new spawn_rule {
     spawn_type,
@@ -320,16 +320,17 @@ void chunk::spawn_entities(uint8_t spawn_type) {
           //calculate initial direction
           //first get the components and normalize them
           vec2d spawn_dir = {r->x_dir_comp, r->y_dir_comp};
-          spawn_dir = spawn_dir.normalize();
+          spawn_dir = spawn_dir.normalizeStart();
 
           //now multiply any components by 100
           spawn_dir = spawn_dir * 100;
+          spawn_dir.normalizeFinish();
           //if any of the components are 0, give them a random value
           if(spawn_dir[0] == 0) { spawn_dir[0] += rng::get().get_map(-100, 100); }
           if(spawn_dir[1] == 0) { spawn_dir[1] += rng::get().get_map(-100, 100); }
 
           //one last normalize
-          spawn_dir = spawn_dir.normalize();
+          spawn_dir = spawn_dir.normalizeStart().normalizeFinish();
 
           //finally, check the velocity fraction
           float vel_f = r->vel_frac;
@@ -370,8 +371,8 @@ void chunk::draw() const {
 try {
 //only draw if in bounds
 if(in_bounds) {
-  float x = tlc[0];
-  float y = tlc[1];
+  cint x = tlc[0];
+  cint y = tlc[1];
   //draw 2 barriers on each line where border[i] = true -
   //that's where a border is
   //check in order: u, d, l, r

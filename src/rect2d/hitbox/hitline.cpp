@@ -17,7 +17,7 @@ hitline::hitline(const vec2d &s, const vec2d &e) :
   length = calc_len();
 }
 
-hitline::hitline(const vec2d &s, float len, float in_angle) :
+hitline::hitline(const vec2d &s, cint len, float in_angle) :
   start(s),
   end(s)
 {
@@ -33,7 +33,7 @@ hitline::hitline(const vec2d &s, float len, float in_angle) :
   length = len;
 }
 
-bool hitline::collides(const hitline &l, float *xout, float *yout) const {
+bool hitline::collides(const hitline &l, cint *xout, cint *yout) const {
   //adapted from https://stackoverflow.com/a/565282/7431860
   //and from https://github.com/pgkelley4/line-segments-intersect
 
@@ -41,27 +41,27 @@ bool hitline::collides(const hitline &l, float *xout, float *yout) const {
   //check to see whether these are available
   if(set_retvals) {
     //set these immediately to avoid confusion down the line
-    *xout = FLT_MAX; *yout = FLT_MAX;
+    *xout = CINT_MAX; *yout = CINT_MAX;
   }
 
   vec2d r = end - start;
   vec2d s = l.get_end() - l.get_start();
 
-  float u_top = (l.get_start() - start).cross(r); 
-  float denominator = r.cross(s);
+  cint u_top = (l.get_start() - start).cross(r); 
+  cint denominator = r.cross(s);
 
   if(u_top == 0 && denominator == 0) {
     //colinear - check for overlap
     //determine distance between furthest points; if this is less than the sum
     //of the distances of the lines, they overlap
-    float x_points[4] = {start[0], end[0], l.get_start()[0], l.get_end()[0]};
-    float y_points[4] = {start[1], end[1], l.get_start()[1], l.get_end()[1]};
+    cint x_points[4] = {start[0], end[0], l.get_start()[0], l.get_end()[0]};
+    cint y_points[4] = {start[1], end[1], l.get_start()[1], l.get_end()[1]};
     std::sort(x_points, x_points + 4);
     std::sort(y_points, y_points + 4);
 
     hitline l_greatest({x_points[0], y_points[0]}, {x_points[3], y_points[3]});
-    float greatest_len = l_greatest.get_len();
-    float total_len = this->get_len() + l.get_len();
+    cint greatest_len = l_greatest.get_len();
+    cint total_len = this->get_len() + l.get_len();
     if(greatest_len > total_len) {
       //disjoint
       return false;
@@ -87,8 +87,8 @@ bool hitline::collides(const hitline &l, float *xout, float *yout) const {
   }
   
   //TODO: minmax this to remove division
-  float u = u_top / denominator;
-  float t = (l.get_start() - start).cross(s) / denominator;
+  cint u = u_top / denominator;
+  cint t = (l.get_start() - start).cross(s) / denominator;
 
   if(!(t >= 0 && t <= 1 && u >= 0 && u <= 1)) { return false; }
 
@@ -112,7 +112,7 @@ bool hitline::collides(const hitline &l, float *xout, float *yout) const {
   return true;
 }
 
-float hitline::calc_len() const {
+cint hitline::calc_len() const {
   return std::sqrt(std::pow((end[0] - start[0]), 2) + std::pow((end[1]-start[1]), 2));
 }
 

@@ -742,6 +742,11 @@ const vec2d map::get_start_pos() const {
 //this does NOT PERFORM ERROR CHECKING. if given a coordinate system
 //outside the map, it will still return an index.
 const vec2d map::convert_chunk_index(const vec2d &pos) const {
+  if(pos[0] < 0 || pos[1] < 0) {
+    std::string error = "something's out of bounds! coordinates: " + std::to_string(pos[0]) + ", " + std::to_string(pos[1]);
+    msg::print_error("map::convert_chunk_index threw error: " + error);
+    //throw(error);
+  }
   return(vec2d(int(pos[0] / chunk::length), int(pos[1] / chunk::length)));
 }
 
@@ -798,6 +803,19 @@ unsigned char map::check_rebuff(vec2d &curr_pos, vec2d &prev_pos) {
 
   //check the last chunk that was occupied, and return the position
   //relative to that chunk
+
+  //check to see if the player is about to leave the map entirely - there are
+  //no valid chunks on its borders to check rebuff on
+
+  unsigned char rm = 0;
+  if(curr_pos[0] < 0) { rm = rm|chunk::LF; }
+  if(curr_pos[1] < 0) { rm = rm|chunk::UP; }
+  if(curr_pos[0] >= (dim_a[0] + dim_b[0]) * chunk::length) { rm = rm|chunk::RT; }
+  if(curr_pos[1] >= dim_a[1] * chunk::length && curr_pos[1] >= dim_b[1] * chunk::length) { rm = rm|chunk::DN; }
+
+  if(rm) { 
+    return rm; 
+  }
 
   //check to see if the new chunk is valid - previously, through an oversight,
   //it was possible to leave the map through a chunk that has no barriers
@@ -858,7 +876,7 @@ bool map::check_gate(const vec2d &pos) {
   //check if there's a gate in this chunk
   if(get_chunk(convert_chunk_index(pos)).get_has_gate()) {
     //check if we're close enough to the gate to jump
-    return (get_chunk(convert_chunk_index(pos)).get_midpoint().dist(pos) < 200);
+    return (get_chunk(convert_chunk_index(pos)).get_midpoint().dist(pos) < 200000);
   }
   return false;
 }

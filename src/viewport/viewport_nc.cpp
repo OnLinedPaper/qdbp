@@ -61,14 +61,14 @@ void viewport::recalculate_view_dims() {
     view_width = nc_world_dims[0] * prev_COLS;
 
     nc_world_dims[1] = (nc_world_dims[0] * nc_pix_dims[1]) / nc_pix_dims[0];
-    view_height = nc_world_dims[1] * prev_LINES;
+    view_height = (nc_world_dims[0] * nc_pix_dims[1] * prev_LINES) / nc_pix_dims[0];
   }
   else {
     nc_world_dims[1] = (chunk::length * 4) / prev_LINES;
     view_height = nc_world_dims[1] * prev_LINES;
 
     nc_world_dims[0] = (nc_world_dims[1] * nc_pix_dims[0]) / nc_pix_dims[1];
-    view_width = nc_world_dims[0] * prev_COLS;
+    view_width = (nc_world_dims[1] * nc_pix_dims[0] * prev_COLS) / nc_pix_dims[1];
   }
 
 }
@@ -79,8 +79,8 @@ void viewport::recalculate_view_dims() {
 //TODO: figure out eventually how to do this without floating point division
 void viewport::nc_world_coord_to_view_coord(int &x_in, int &y_in, bool force_onscreen) { 
   recalculate_view_dims();
-  float x = x_in;
-  float y = y_in;
+  cint x = x_in;
+  cint y = y_in;
   x = x - get_tlc_x();
   y = y - get_tlc_y();
 
@@ -116,16 +116,16 @@ void viewport::nc_pinch_line_to_viewport(vec2d &p1, vec2d &p2) {
   //TAKE TWO - use intersection of lines to determine if intercept exists, and
   //if it does, replace it
 
-  float x_collide, y_collide = FLT_MAX;
-  float *x_ptr; x_ptr = &x_collide;
-  float *y_ptr; y_ptr = &y_collide;
+  cint x_collide, y_collide = CINT_MAX;
+  cint *x_ptr; x_ptr = &x_collide;
+  cint *y_ptr; y_ptr = &y_collide;
   hitline l_in(p1, p2);
   hitline l_chk({0, 0}, {0, 0});
 
   //check up
   l_chk.set_start({get_tlc_x(), get_tlc_y()});
   l_chk.set_end(  {get_brc_x(), get_tlc_y()});
-  if(l_in.collides(l_chk, x_ptr, y_ptr) && x_collide != FLT_MAX) {
+  if(l_in.collides(l_chk, x_ptr, y_ptr) && x_collide != CINT_MAX) {
     //collision - truncate line segment to up line
     if(p1[1] < get_tlc_y()) { p1[0] = x_collide; p1[1] = get_tlc_y(); }
     else {                    p2[0] = x_collide; p2[1] = get_tlc_y(); }
@@ -134,7 +134,7 @@ void viewport::nc_pinch_line_to_viewport(vec2d &p1, vec2d &p2) {
   //check dn
   l_chk.set_start({get_tlc_x(), get_brc_y()});
   l_chk.set_end(  {get_brc_x(), get_brc_y()});
-  if(l_in.collides(l_chk, x_ptr, y_ptr) && x_collide != FLT_MAX) {
+  if(l_in.collides(l_chk, x_ptr, y_ptr) && x_collide != CINT_MAX) {
     //collision - truncate line segment to dn line
     if(p1[1] > get_brc_y()) { p1[0] = x_collide; p1[1] = get_brc_y(); }
     else {                    p2[0] = x_collide; p2[1] = get_brc_y(); }
@@ -143,7 +143,7 @@ void viewport::nc_pinch_line_to_viewport(vec2d &p1, vec2d &p2) {
   //check lf
   l_chk.set_start({get_tlc_x(), get_tlc_y()});
   l_chk.set_end(  {get_tlc_x(), get_brc_y()});
-  if(l_in.collides(l_chk, x_ptr, y_ptr) && x_collide != FLT_MAX) {
+  if(l_in.collides(l_chk, x_ptr, y_ptr) && x_collide != CINT_MAX) {
     //collision - truncate line segment to lf line
     if(p1[0] < get_tlc_x()) { p1[0] = get_tlc_x(); p1[1] = y_collide; }
     else {                    p2[0] = get_tlc_x(); p2[1] = y_collide; }
@@ -152,7 +152,7 @@ void viewport::nc_pinch_line_to_viewport(vec2d &p1, vec2d &p2) {
   //check rt
   l_chk.set_start({get_brc_x(), get_tlc_y()});
   l_chk.set_end(  {get_brc_x(), get_brc_y()});
-  if(l_in.collides(l_chk, x_ptr, y_ptr) && x_collide != FLT_MAX) {
+  if(l_in.collides(l_chk, x_ptr, y_ptr) && x_collide != CINT_MAX) {
     //collision - truncate line segment to rt line
     if(p1[0] > get_brc_x()) { p1[0] = get_brc_x(); p1[1] = y_collide; }
     else {                    p2[0] = get_brc_x(); p2[1] = y_collide; }

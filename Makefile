@@ -23,7 +23,7 @@ LFLAGS= -lstdc++fs -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lncurses
 #RENDER_NC  - causes the game to compile in terminal mode, with ncurses displaying all graphics as ASCII art
 #FAST  - aliases cint ("custom int") to int_fast32_t
 #SMALL - aliases cint ("custom int") to int_least32_t
-MFLAGS= -DRENDER_SDL -DFAST 
+MFLAGS= -DRENDER_NC -DFAST 
 
 #compilation flags for windows - DEPRECATED
 WFLAGS= -lmingw32 -mwindows -I$(DIR)/lib -L$(DIR)/lib

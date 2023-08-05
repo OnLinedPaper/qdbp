@@ -21,12 +21,12 @@ hitbox::hitbox(std::string path) :
   rect2d(
     0,
     0,
-    xmlparse::get().get_xml_float(path + "/size"),
-    xmlparse::get().get_xml_float(path + "/size")
+    xmlparse::get().get_xml_float(path + "/size") * scale_factor,
+    xmlparse::get().get_xml_float(path + "/size") * scale_factor
   ),
   offset(
-    xmlparse::get().get_xml_float(path + "/x_offset"),
-    xmlparse::get().get_xml_float(path + "/y_offset")
+    xmlparse::get().get_xml_float(path + "/x_offset") * scale_factor,
+    xmlparse::get().get_xml_float(path + "/y_offset") * scale_factor
   ),
   type(
     str_to_type(xmlparse::get().get_xml_string(path + "/type"))

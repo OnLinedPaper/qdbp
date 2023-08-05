@@ -333,7 +333,7 @@ void image_handler::draw_circle(const vec2d &v, float r, bool filled, char c) {
   while(x<=y) {
 
     if(error > 0) {
-      y--;
+      y -= viewport::get().get_nc_world_dims()[1];
       error += 2 * (5 - 2 * y + 2 * x);
     }
     else {
@@ -348,7 +348,8 @@ void image_handler::draw_circle(const vec2d &v, float r, bool filled, char c) {
     draw_point({v[0]+y, v[1]-x}, c);
     draw_point({v[0]-y, v[1]+x}, c);
     draw_point({v[0]-y, v[1]-x}, c);
-    x++;
+
+    x += viewport::get().get_nc_world_dims()[0];
   }
 }
 #endif

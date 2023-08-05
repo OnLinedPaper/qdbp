@@ -21,13 +21,13 @@ void d_follower::update() {
 
   //check how far we are
   float distance = (this->get_pos() - player_pos).magnitude();
-  if(distance < 1100 && distance > 200) {
+  if(distance < 1100000 && distance > 200000) {
     //accelerate towards player
     vec2d move_towards = this->get_pos() - player_pos;
-    vel = vel -(move_towards.normalize() * t_frame::get().t_adjust()) * vel_accel;
+    vel = vel -((move_towards.normalizeStart() * t_frame::get().t_adjust()) * vel_accel).normalizeFinish();
     moved = true;
   }
-  if(distance > 1500) {
+  if(distance > 1500000) {
     //teleport to player
     teleport(player_pos);
     last_pos = player_pos;

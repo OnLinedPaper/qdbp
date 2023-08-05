@@ -1,6 +1,7 @@
 #ifndef VIEWPORT_H_
 #define VIEWPORT_H_
 #include "src/vec2d/vec2d.h"
+#include "types.h"
 
 class viewport {
 public:
@@ -18,14 +19,14 @@ public:
   int get_h() const { return view_height; }
 
   //center of the screen - player position
-  float get_x() const { return pos[0]; }
-  float get_y() const { return pos[1]; }
+  cint get_x() const { return pos[0]; }
+  cint get_y() const { return pos[1]; }
   //top left corner
-  float get_tlc_x() const { return pos[0] - (view_width / 2); }
-  float get_tlc_y() const { return pos[1] - (view_height / 2); }
+  cint get_tlc_x() const { return pos[0] - (view_width / 2); }
+  cint get_tlc_y() const { return pos[1] - (view_height / 2); }
   //bottom right corner
-  float get_brc_x() const { return pos[0] + (view_width / 2); }
-  float get_brc_y() const { return pos[1] + (view_height / 2); }
+  cint get_brc_x() const { return pos[0] + (view_width / 2); }
+  cint get_brc_y() const { return pos[1] + (view_height / 2); }
 
   void set_pos(const vec2d p); 
 
@@ -41,6 +42,8 @@ public:
   //given a rectangle, determines if any point of it is currently on the
   //screen. note that this expects the value to be in world coords.
   bool on_screen(const vec2d &, const vec2d &);
+
+  const vec2d &get_nc_world_dims() const { return nc_world_dims; }
 #endif
 
 private:

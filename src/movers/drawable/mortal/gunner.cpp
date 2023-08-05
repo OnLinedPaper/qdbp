@@ -21,18 +21,18 @@ gunner::gunner(const std::string &path, const vec2d &p, const vec2d &v) :
   //distance multiplier, make projectile go farther at higher numbers
   w_life_dist_mod(xmlparse::get().get_xml_float(
     path + "/gunning/life_dist_multi", true, 1
-  )),
+  ) * scale_factor),
 
   //inaccuracy multiplier, make projectile LESS accurate at higher numbers
   //("0" makes the projectile perfectly accurate)
   w_inacc_mod(xmlparse::get().get_xml_float(
     path + "/gunning/inacc_multi", true, 1
-  )),
+  ) * scale_factor),
 
   //velocity multiplier, makes projectile faster at higher numbers
   w_vel_mod(xmlparse::get().get_xml_float(
     path + "/gunning/velocity_multi", true, 1
-  )),
+  ) * scale_factor),
 
   //adds the ability to pierce additional targets - note that 3 is max, and
   //values over 3 don't add any further benefit

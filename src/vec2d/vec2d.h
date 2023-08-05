@@ -48,7 +48,14 @@ public:
 
   cint magnitude() const;
   cint magnitudeSquared() const;
-  vec2d normalize() const; //NOTE: will not normalize beyond .001, returns this
+
+  //normalize is a 2 part function to avoid rounding errors with ints.
+  //the first one is called on a vector to scale it up by NORMALZIE_FACTOR
+  //and then normalize it, and the second scales it back down.
+  //THESE MUST BE CALLED BEFORE ANY NON MULTIPLICATION OPERATIONS!
+  //they can only be deferred until the end of a multiplication chain.
+  vec2d normalizeStart() const; //NOTE: will not normalize beyond 1, returns this
+  vec2d normalizeFinish() const;
 
   cint dot(const vec2d &v) const;
   cint cross(const vec2d &v) const;
@@ -64,6 +71,8 @@ public:
   cint angle_deg() const;
 
   std::string to_string() const;
+
+  static const cint NORMALIZE_FACTOR;
 
 private:
   cint x;

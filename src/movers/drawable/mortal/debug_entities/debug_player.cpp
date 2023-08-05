@@ -29,12 +29,12 @@ void d_player::draw() const {
 
   static int debug_target_spin = 0;
 
-  //TODO: twitchy outline
   //the outline, fading with health
   //image_handler::get().draw_v2(image_name + "_outline", dest_r.x, dest_r.y, last_angle, false, 0, team_col, get_health_frac());
 
   rand_v = {(float)rng::get().get_gfx(), (float)rng::get().get_gfx()};
-  rand_v = rand_v.normalize();
+  //TODO: check this to make sure new normalization logig didn't break it
+  rand_v = rand_v.normalizeStart().normalizeFinish();
   image_handler::get().draw_v2(
       image_name + "_outline"
     , dest_v[0] + (10 * (1 - get_health_frac()) * rand_v[0])
