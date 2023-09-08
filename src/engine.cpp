@@ -121,6 +121,7 @@ try{
 //==== UPDATE stuff here ======================================================
 
     if(pause) {
+      
     }
     else {
       map_h::get().update();
@@ -480,7 +481,13 @@ void engine::player_input() {
     else if(e.type == SDL_KEYDOWN) {
 
       //pause unpause
-      if(keystate[SDL_SCANCODE_P]) { pause = !pause; }
+      if(keystate[SDL_SCANCODE_P]) { 
+        if(!pause) {
+        }
+        else {
+        }
+        pause = !pause;
+      }
 
       if(keystate[SDL_SCANCODE_O]) {
         map_h::get().try_jump();
