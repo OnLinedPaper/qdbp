@@ -11,13 +11,13 @@ d_player::d_player(const std::string path) :
 { }
 
 void d_player::move_up()
-  { vel[1] -= vel_accel * t_frame::get().t_adjust(); moved = true; }
+  { vel[1] -= vel_accel * t_frame::get().t_adjust() * t_frame::get().get_t_dilate(); moved = true; }
 void d_player::move_dn()
-  { vel[1] += vel_accel * t_frame::get().t_adjust(); moved = true; }
+  { vel[1] += vel_accel * t_frame::get().t_adjust() * t_frame::get().get_t_dilate(); moved = true; }
 void d_player::move_lf()
-  { vel[0] -= vel_accel * t_frame::get().t_adjust(); moved = true; }
+  { vel[0] -= vel_accel * t_frame::get().t_adjust() * t_frame::get().get_t_dilate(); moved = true; }
 void d_player::move_rt()
-  { vel[0] += vel_accel * t_frame::get().t_adjust(); moved = true; }
+  { vel[0] += vel_accel * t_frame::get().t_adjust() * t_frame::get().get_t_dilate(); moved = true; }
 
 void d_player::update() { player::update(); }
 

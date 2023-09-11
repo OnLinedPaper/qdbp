@@ -56,12 +56,12 @@ void movable::update() {
 
   //move, based on velocity AND time since last frame -
   //this prevents lag spikes from "slowing time"
-  pos[0] += vel[0] * t_frame::get().t_adjust();
-  pos[1] += vel[1] * t_frame::get().t_adjust();
+  pos[0] += vel[0] * t_frame::get().t_adjust() * t_frame::get().get_t_dilate();
+  pos[1] += vel[1] * t_frame::get().t_adjust() * t_frame::get().get_t_dilate();
 
   if(moved == false) {
     //decay velocity only when user hasn't moved
-    vel = vel.decay(vel_decay * t_frame::get().t_adjust());
+    vel = vel.decay(vel_decay * t_frame::get().t_adjust() * t_frame::get().get_t_dilate());
   }
   //reset moved
   moved = false;

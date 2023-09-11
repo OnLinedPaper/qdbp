@@ -84,7 +84,7 @@ bool gunner::can_shoot() {
   //get elapsed ticks...
   float elapsed_ticks = t_frame::get().get_t() - last_shot_time; 
   //...then scale elapsed time for any lag
-  elapsed_ticks *= t_frame::get().t_adjust();
+  elapsed_ticks *= t_frame::get().t_adjust() * t_frame::get().get_t_dilate();
 
   //get delay between shots...
   float shot_delay = weapon::get_delay_from_id(weapon_id);

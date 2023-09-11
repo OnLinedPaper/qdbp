@@ -251,6 +251,16 @@ void engine::player_input() {
     } else { x_keydown = false; }
   }
 
+  static bool b_keydown = false;
+  static bool bullettime = false;
+  if(key_map[KEY_B/8] & (1 << (KEY_B % 8))) {
+    if(!b_keydown) {
+      b_keydown = true;
+      if(bullettime) { t_frame::get().set_t_dilate(1); bullettime = false; }
+      else           { t_frame::get().set_t_dilate(0.25); bullettime = true; }
+    } else { b_keydown = false; }
+  }
+
   return;
 }
 

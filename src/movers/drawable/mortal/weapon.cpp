@@ -212,9 +212,9 @@ void weapon::update() {
     //subtract time, compensating for lag - slower game ticks means faster 
     //projectile movement and quicker drain on life ticks
     life_tick_mod -= 
-        t_frame::get().get_elapsed_t() * t_frame::get().t_adjust();
+        t_frame::get().get_elapsed_t() * t_frame::get().t_adjust() * t_frame::get().get_t_dilate();
 
     //subtract distance, which has already had any lag factored in
-    dist_tick_mod -= vel.magnitude();
+    dist_tick_mod -= vel.magnitude() * t_frame::get().get_t_dilate();
   }
 }

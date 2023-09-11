@@ -43,6 +43,10 @@ public:
   //time adjust: lag compensation and fps modification
   float t_adjust() const { return d_factor() * t_factor(); }
 
+  //time dilation - see below
+  float get_t_dilate() const { return t_dilate; }
+  void set_t_dilate(float t) { t_dilate = t; }
+
   float get_elapsed_ms() { return elapsed_ms; }
   float get_elapsed_t() { return t_factor(); }
 
@@ -50,7 +54,9 @@ public:
 
 
 private:
+  //current game tick
   float tick;
+  //ms between game ticks - currently 20 and will probably stay that way
   float tick_delay;
 
   float elapsed_ms;  
@@ -60,9 +66,19 @@ private:
   float delay_factor;
   float fps_factor;
 
-  t_frame() : tick(0), tick_delay(0), 
+  //"time dilation" factor - bullettime, essentially, but can either slow down
+  //or speed up the entire game.
+  //0.5 means entities move at half speed, their projectiles live twice as
+  //long (but not twice as far), etc.
+  //2 means entities move at double speed, etc etc
+  //THIS IS A GAMEPLAY ELEMENT, NOT A LOGICAL ELEMENT!
+  //no matter how large or small this is, the game still (ideally) ticks at 20
+  //ticks per second. 
+  float t_dilate;
+
+  t_frame() : tick(0), tick_delay(tickrate), 
       elapsed_ms(0), 
-      frame(0), frame_delay(0), delay_factor(1) { }
+      frame(0), frame_delay(0), delay_factor(1), t_dilate(1) { }
   t_frame(const t_frame&) = delete;
   t_frame &operator=(const t_frame&) = delete;
 };

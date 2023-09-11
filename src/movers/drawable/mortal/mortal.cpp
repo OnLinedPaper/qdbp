@@ -399,7 +399,7 @@ void mortal::do_health_regen() {
 
   if(h_available > 0) {
     //see max we can regenerate this tick
-    float max_available = h_regen_rate * h_regen_rate_mod * t_frame::get().t_adjust();
+    float max_available = h_regen_rate * h_regen_rate_mod * t_frame::get().t_adjust() * t_frame::get().get_t_dilate();
     //regen up to health cap
     curr_health += (max_available < h_available ? max_available : h_available);
   }
@@ -414,7 +414,7 @@ void mortal::do_health_regen() {
 void mortal::do_shield_regen() {
   if(curr_shield_segments < get_total_shield_segs() && s_is_regenerating) {
     //regen shields
-    curr_shields += s_regen_rate * s_regen_rate_mod * t_frame::get().t_adjust();
+    curr_shields += s_regen_rate * s_regen_rate_mod * t_frame::get().t_adjust() * t_frame::get().get_t_dilate();
     //clamp at max shields
     curr_shields = (curr_shields > max_shields ? max_shields : curr_shields);
 

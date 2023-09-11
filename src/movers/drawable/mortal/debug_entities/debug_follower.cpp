@@ -24,7 +24,7 @@ void d_follower::update() {
   if(distance < 1100 && distance > 200) {
     //accelerate towards player
     vec2d move_towards = this->get_pos() - player_pos;
-    vel = vel -(move_towards.normalize() * t_frame::get().t_adjust()) * vel_accel;
+    vel = vel -(move_towards.normalize() * t_frame::get().t_adjust() * t_frame::get().get_t_dilate()) * vel_accel;
     moved = true;
   }
   if(distance > 1500) {
