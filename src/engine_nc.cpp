@@ -258,8 +258,9 @@ void engine::player_input() {
       b_keydown = true;
       if(bullettime) { t_frame::get().set_t_dilate(1); bullettime = false; }
       else           { t_frame::get().set_t_dilate(0.25); bullettime = true; }
-    } else { b_keydown = false; }
-  }
+    } 
+  } else { b_keydown = false; }
+
 
   return;
 }

@@ -5,7 +5,7 @@ CFLAGS= -Wall -Wextra -Wpedantic --std=c++17 -I$(DIR) -fstack-protector-all #-fs
 OFLAGS = -O3 -g
 DFLAGS = -g -ggdb -O0 #-fstack-protector-all #-fsanitize=address #-fno-stack-protector
 LFLAGS= -lstdc++fs -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lncurses
-MFLAGS= -DRENDER_NC
+MFLAGS= -DRENDER_SDL
 WFLAGS= -lmingw32 -mwindows -I$(DIR)/lib -L$(DIR)/lib
 DDIR = debugging
 XDIR = bin

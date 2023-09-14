@@ -423,9 +423,25 @@ void engine::player_input() {
   //get the keystate
   SDL_PumpEvents();
 
-  if(pause) { /*pause menu*/ }
+  if(e.type == SDL_QUIT || keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
+
+  if(pause) {
+    //THIS IS FOR THE PAUSE MENU
+
+    //pause unpause
+    static bool p_keydown = true;
+    if(keystate[SDL_SCANCODE_P]) { 
+      if(!p_keydown) {
+        p_keydown = true;
+        pause = false;
+      }
+    } else { p_keydown = false; }
+
+
+  }
   else {
-    //no keybounce protection
+    //THIS IS FOR NORMAL GAMEPLAY - no menus open or anything
+    //no keybounce protection -   -   -   -   -   -   -   -   -   -   -   -   -
 
     //handle movement
     if(keystate[SDL_SCANCODE_W])
@@ -456,8 +472,85 @@ void engine::player_input() {
     
 
 
+    //past this point, keybounce protection   -   -   -   -   -   -   -   -   -
+
+    //pause unpause
+    static bool p_keydown = false;
+    if(keystate[SDL_SCANCODE_P]) { 
+      if(!p_keydown) {
+        p_keydown = true;
+        pause = true;
+      }
+    } else { p_keydown = false; }
+
+    //change maps
+    static bool o_keydown = false;
+    if(keystate[SDL_SCANCODE_O]) {
+      if(!o_keydown) {
+        o_keydown = true;
+        map_h::get().try_jump();
+      }
+    } else { o_keydown = false; }
+
+    //toggle venting
+    static bool v_keydown = false;
+    if(keystate[SDL_SCANCODE_V]) {
+      if(!v_keydown) {
+        v_keydown = true;
+        e_handler::get().toggle_plr_vent();
+      }
+    } else { v_keydown = false; }
+
+    //toggle regen
+    static bool r_keydown = false;
+    if(keystate[SDL_SCANCODE_R]) {
+      if(!r_keydown) {
+        r_keydown = true;
+        e_handler::get().toggle_plr_regen();
+      }
+    } else { r_keydown = false; }
+
+
+ 
+   
+    //TODO: DEBUGGING - remove later, or move to player
+    static bool bullettime = false;
+    static bool b_keydown = false;
+    if(keystate[SDL_SCANCODE_B]) {
+      if(!b_keydown) {
+        b_keydown = true;
+        if(bullettime) { t_frame::get().set_t_dilate(1); bullettime = false; }
+        else           { t_frame::get().set_t_dilate(0.25); bullettime = true; }
+      }
+    } else { b_keydown = false; }
+
+    //toggle debug mode
+    static bool comma_keydown = false;
+    if(keystate[SDL_SCANCODE_COMMA]) {
+      if(!comma_keydown) {
+        comma_keydown = true;
+        e_handler::get().set_draw_debug_info(
+          !e_handler::get().get_draw_debug_info()
+        );
+        
+        debug_mode = !debug_mode;
+      }
+    } else { comma_keydown = false; }
+
+    //damage the player
+    static bool x_keydown = false;
+    if(debug_mode) {
+      if(keystate[SDL_SCANCODE_X]) {
+        if(!x_keydown) {
+          x_keydown = true;
+          e_handler::get().DEBUG_get_plr()->take_damage(1, -1, false);
+        }
+      } else { x_keydown = false; }
+    }
+
+
     if(controller) {
-      //process controller input
+      //process controller input  -   -   -   -   -   -   -   -   -   -   -   -
       vec2d lrud(
         SDL_JoystickGetAxis(controller, LSTICK_LR),
         SDL_JoystickGetAxis(controller, LSTICK_UD)
@@ -471,54 +564,6 @@ void engine::player_input() {
         if(lrud[1] < 0) { e_handler::get().move_plr(e_handler::UP); }
         else { e_handler::get().move_plr(e_handler::DN); }
       }
-    }
-  }
-
-
-  while(SDL_PollEvent(&e) != 0) {
-    //get an event: protect from keybounce
-    if(e.type == SDL_QUIT || keystate[SDL_SCANCODE_ESCAPE]) { quit = true; }
-    else if(e.type == SDL_KEYDOWN) {
-
-      //pause unpause
-      if(keystate[SDL_SCANCODE_P]) { 
-        if(!pause) {
-        }
-        else {
-        }
-        pause = !pause;
-      }
-
-      if(keystate[SDL_SCANCODE_O]) {
-        map_h::get().try_jump();
-      }
-
-      if(keystate[SDL_SCANCODE_V]) {
-        //toggle venting
-        e_handler::get().toggle_plr_vent();
-      }
-
-      if(keystate[SDL_SCANCODE_R]) {
-        e_handler::get().toggle_plr_regen();
-      }
-
-      //draw debug things
-      if(keystate[SDL_SCANCODE_COMMA]) {
-        e_handler::get().set_draw_debug_info(
-          !e_handler::get().get_draw_debug_info()
-        );
-        
-        debug_mode = !debug_mode;
-      }
-
-
-      //debugging section
-      if(debug_mode) {
-        if(keystate[SDL_SCANCODE_X]) {
-          e_handler::get().DEBUG_get_plr()->take_damage(1, -1, false);
-        }
-      }
-
     }
   }
 }
